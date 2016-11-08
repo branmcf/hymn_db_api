@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Hapi server-side for HymnDatabase",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"hello world\""
+  },
+  "author": "Tyler Kirkpatrick, Danh Nguyen, Justin Suh",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^15.2.0"
+  }
+}
