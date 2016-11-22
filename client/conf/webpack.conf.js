@@ -28,7 +28,7 @@ module.exports = {
           'style',
           'css',
           'sass',
-          'postcss'
+          'postcss',
         ]
       },
       {
@@ -44,7 +44,14 @@ module.exports = {
           'html'
         ]
       }, 
-      { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
+      {
+        test: /\.(jpg|png)$/,
+        loader: 'file',
+      },
+      { 
+        test: /\.(woff2?|ttf|eot|svg|otf)$/, 
+        loader: 'url?limit=10000' 
+      }
     ]
   },
   plugins: [
