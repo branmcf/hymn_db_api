@@ -1,3 +1,4 @@
+@import url('../node_modules/bootstrap/dist/css/bootstrap.css');
 html, body, #root {
   margin: 0;
   height: 100%;
@@ -26,6 +27,8 @@ a {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #2196f3;
+
 }
 
 .header {
@@ -50,8 +53,8 @@ a {
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background-color: #cf4646;
   color: white;
+  min-height: 80%; 
 }
 .title-h1 {
   font-weight: 300;
@@ -109,4 +112,9 @@ a {
 .tech-h3 {
   font-size: 1.5rem;
   margin: 0 0 2rem 0;
+}
+
+.options {
+  text-align: center;
+  margin: 1rem 0rem 1rem 0rem;
 }
