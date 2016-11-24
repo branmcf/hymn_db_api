@@ -9,6 +9,7 @@
   "author": "Tyler Kirkpatrick, Danh Nguyen, Justin Suh",
   "license": "ISC",
   "dependencies": {
-    "hapi": "^15.2.0"
+    "hapi": "^15.2.0",
+    "hapi-mysql": "^1.0.15"
   }
 }

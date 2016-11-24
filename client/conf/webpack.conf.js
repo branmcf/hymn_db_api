@@ -28,7 +28,7 @@ module.exports = {
           'style',
           'css',
           'sass',
-          'postcss'
+          'postcss',
         ]
       },
       {
@@ -43,6 +43,14 @@ module.exports = {
         loaders: [
           'html'
         ]
+      }, 
+      {
+        test: /\.(jpg|png)$/,
+        loader: 'file',
+      },
+      { 
+        test: /\.(woff2?|ttf|eot|svg|otf)$/, 
+        loader: 'url?limit=10000' 
       }
     ]
   },
@@ -55,7 +63,12 @@ module.exports = {
     new webpack.ContextReplacementPlugin(
       /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
       conf.paths.src
-    )
+    ),
+    new webpack.ProvidePlugin({   
+        jQuery: 'jquery',
+        $: 'jquery',
+        jquery: 'jquery'
+    })
   ],
   postcss: () => [autoprefixer],
   debug: true,

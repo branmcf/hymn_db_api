@@ -2,25 +2,24 @@ import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {routing, RootComponent} from './routes';
 
-import {TechsModule} from './techs';
-
-import {MainComponent} from './main';
-import {HeaderComponent} from './header';
-import {TitleComponent} from './title';
-import {FooterComponent} from './footer';
+import {EntryComponent} from './entry/entry.component';
+import {MainComponent} from './main.component';
+import {HeaderComponent} from './header/header.component';
+import {TitleComponent} from './title/title.component';
+import {FooterComponent} from './footer/footer.component';
 
 @NgModule({
   imports: [
     BrowserModule,
     routing,
-    TechsModule
   ],
   declarations: [
     RootComponent,
     MainComponent,
     HeaderComponent,
     TitleComponent,
-    FooterComponent
+    FooterComponent,
+    EntryComponent
   ],
   bootstrap: [RootComponent]
 })

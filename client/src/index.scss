@@ -1,3 +1,19 @@
+@import url('../node_modules/bootstrap/dist/css/bootstrap.css');
+
+@font-face {
+  font-family: Qanelas Light;
+  src: local("Qanelas Soft Light"),
+       url(../fonts/QanelasSoftDEMO-UltraLight.otf);
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Qanelas Medium;
+  src: local("Qanelas Soft Light"),
+       url(../fonts/QanelasSoftDEMO-Medium.otf);
+  font-weight: normal;
+}
+
 html, body, #root {
   margin: 0;
   height: 100%;
@@ -14,6 +30,7 @@ a {
 
   &:hover {
     color: #5aadbb;
+    text-decoration: none;
   }
 }
 
@@ -21,17 +38,29 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+
+  background: url(../img/landing-photo.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+
+  .header {
+    background-color: transparent;
+  }
 }
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding: 5rem;
+
 }
 
 .header {
   display: flex;
   align-items: center;
   background-color: #1f1f1f;
+  font-family: 'Qanelas Light', 'sans-serif';
 }
 .header-title {
   flex: 1;
@@ -50,11 +79,12 @@ a {
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background-color: #cf4646;
-  color: white;
+  color: #2e6da4;
+  min-height: 80%; 
+  font-family: 'Qanelas Medium', 'sans-serif';
 }
 .title-h1 {
-  font-weight: 300;
+  font-weight: 500;
   font-size: 4rem;
   margin: 1rem;
 }
@@ -109,4 +139,13 @@ a {
 .tech-h3 {
   font-size: 1.5rem;
   margin: 0 0 2rem 0;
+}
+
+.options {
+  text-align: center;
+  margin: 15rem 0rem 1rem 0rem;
+}
+
+.entry-body {
+  padding: 5rem 5rem 5rem 5rem;
 }
