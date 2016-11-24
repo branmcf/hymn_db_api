@@ -2,7 +2,7 @@
 
 import {Component} from '@angular/core';
 import {TestBed, async} from '@angular/core/testing';
-import {MainComponent} from './main';
+import {MainComponent} from './main.component';
 
 @Component({selector: 'fountain-techs', template: ''})
 class MockTechsComponent {}

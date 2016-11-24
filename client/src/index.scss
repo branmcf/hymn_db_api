@@ -38,11 +38,15 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  
+
   background: url(../img/landing-photo.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
+
+  .header {
+    background-color: transparent;
+  }
 }
 .main {
   flex: 1;
@@ -55,8 +59,7 @@ a {
 .header {
   display: flex;
   align-items: center;
-  background-color: #2e6da4;
-  opacity: 0.85;
+  background-color: #1f1f1f;
   font-family: 'Qanelas Light', 'sans-serif';
 }
 .header-title {
