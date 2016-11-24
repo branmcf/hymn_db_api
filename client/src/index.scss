@@ -59,12 +59,12 @@ a {
 .header {
   display: flex;
   align-items: center;
-  background-color: #1f1f1f;
+  background-color: #337ab7;
   font-family: 'Qanelas Light', 'sans-serif';
 }
 .header-title {
   flex: 1;
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin: 1rem;
 }
 .header-date {
@@ -85,7 +85,7 @@ a {
 }
 .title-h1 {
   font-weight: 500;
-  font-size: 4rem;
+  font-size: 3rem;
   margin: 1rem;
 }
 .title-logo {
@@ -148,4 +148,14 @@ a {
 
 .entry-body {
   padding: 5rem 5rem 5rem 5rem;
+
+  .card-header {
+    color: white;
+    background-color: #337ab7;
+  }
+
+  .card-block {
+    background-color: #d9edf7;
+  }
+
 }

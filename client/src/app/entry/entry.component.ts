@@ -14,8 +14,8 @@ export class EntryComponent {
       this.departments = [
 			{ id: 1, name: 'IT' },
 			{ id: 2, name: 'Marketing' },
-			{ id: 2, name: 'Accounting' },
-			{ id: 2, name: 'HR' }
+			{ id: 3, name: 'Accounting' },
+			{ id: 4, name: 'HR' }
 		];
 
 			this.user = {};
@@ -24,7 +24,7 @@ export class EntryComponent {
   }
 
 
-	save() {
-    console.log('save');
+	next() {
+    console.log('next');
 	}
 }

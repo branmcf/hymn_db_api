@@ -1,69 +1,54 @@
 <div class="entry-container">
       <hymn-header></hymn-header>
   
-      <div class="row entry-body">
-            <div class="col-md-5">
-            <div class="panel panel-info">
-                  <div class="panel-heading">
-                  User information
-                  </div>
-                  <div class="panel-body">
+      <div class="entry-body row">
+            <div class="col-md-6 offset-md-3">
+                  <div class="card">
+                        <div class="card-header">
+                        Tell us a little about yourself
+                        </div>
+                        <div class="card-block">
 
-                  <div class="form-group">
-                        <label for="user_name">
-                        Name
-                        </label>
-                        <input  id="user_name"
-                        class="form-control"
-                        />
-                  </div>
+                              <div class="form-group">
+                                    <label for="user_name">
+                                    Name
+                                    </label>
+                                    <input  id="user_name"
+                                    class="form-control"
+                                    />
+                              </div>
 
-                  <div class="form-group">
-                        <label for="user_email">
-                        Email
-                        </label>
-                        <input  id="user_email"
-                        class="form-control"
-                        />
-                  </div>
-                  <br />
+                              <div class="form-group">
+                                    <label for="user_email">
+                                    Email
+                                    </label>
+                                    <input  id="user_email"
+                                    class="form-control"
+                                    />
+                              </div>
 
-                  <div class="form-group">
-                        <label for="user_isEmployee">
-                        <input  id="user_isEmployee"
-                              type="checkbox"
-                        />
-                        Employee
-                        </label>
-                  </div>
+                              <div class="form-group">
+                                    <label for="user_password">
+                                    Password
+                                    </label>
+                                    <input  type="password" id="user_password"
+                                    class="form-control"
+                                    />
+                              </div>
 
-                  <div class="form-group" [hidden]="!user.isEmployee">
-                        <label for="departmentId">
-                        Department
-                        </label>
-                        <select id="departmentId"
-                        class="form-control">
-                        <option></option>
-                        <option *ngFor="let department of departments"
-                              [value]="department.id">
-                              {{ department.name }}
-                        </option>
-                        </select>
-                  </div>
+                              <div class="col-md-12">
+                                    <a class="btn btn-block btn-success"
+                                    (click)="next()">
+                                    Next
+                                    </a>
+                                    <a class="btn btn-block btn-secondary"
+                                    routerLink="/">
+                                    Return to home
+                                    </a>
+                              </div>
+                        </div>
 
                   </div>
-            </div>
-            </div>
-
-            <div class="col-md-12">
-            <a class="btn btn-primary"
-                  (click)="save()">
-                  Save
-            </a>
-            <a class="btn btn-default"
-                  routerLink="/accounts">
-                  Return to list
-            </a>
             </div>
       </div>
 </div>
