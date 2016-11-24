@@ -6,7 +6,25 @@ import { Component } from '@angular/core';
 })
 
 export class EntryComponent {
-  constructor() {
-    console.log('Entry');
+  title : string;
+	user: any;
+	departments: any[];
+
+	constructor () {
+      this.departments = [
+			{ id: 1, name: 'IT' },
+			{ id: 2, name: 'Marketing' },
+			{ id: 2, name: 'Accounting' },
+			{ id: 2, name: 'HR' }
+		];
+
+			this.user = {};
+
+			this.title = 'New Account';
   }
+
+
+	save() {
+    console.log('save');
+	}
 }
