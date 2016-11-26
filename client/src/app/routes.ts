@@ -3,7 +3,6 @@
 import {Component} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {MainComponent} from './main.component';
-import {EntryComponent} from './entry/entry.component';
 
 @Component({
   selector: 'hymn-root',
@@ -18,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'entry',
-    component: EntryComponent
+    loadChildren: './entry/entry.module#EntryModule'
   }
 ];
 
