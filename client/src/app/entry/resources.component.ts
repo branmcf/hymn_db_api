@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   template: require('./resources.html'),
 })
 
-export class EntryResourcesComponent {
-}
+export class EntryResourcesComponent {}
+
