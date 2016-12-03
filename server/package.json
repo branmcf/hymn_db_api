@@ -9,7 +9,15 @@
   "author": "Tyler Kirkpatrick, Danh Nguyen, Justin Suh",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "good-console": "^6.3.1",
     "hapi": "^15.2.0",
-    "hapi-mysql": "^1.0.15"
+    "hapi-mysql": "^1.0.15",
+    "hapi-swagger": "^7.4.0",
+    "joi": "^10.0.2",
+    "mongodb": "^2.2.12",
+    "mongoose": "^4.7.1",
+    "mysql": "^2.12.0"
   }
 }
