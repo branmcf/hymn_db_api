@@ -1,19 +1,19 @@
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {routing, RootComponent} from './routes';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { Routing, RootComponent } from './routes';
 
-import {HeaderModule} from './header/header.module';
-import {EntryModule} from './entry/entry.module';
+import { HeaderModule } from './header/header.module';
+import { EntryModule } from './entry/entry.module';
 
-import {MainComponent} from './main.component';
-import {TitleComponent} from './title/title.component';
-import {FooterComponent} from './footer/footer.component';
+import { MainComponent } from './main.component';
+import { TitleComponent } from './title/title.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   imports: [
     BrowserModule,
     HeaderModule,
-    routing,
+    Routing,
     EntryModule
   ],
   declarations: [
@@ -22,6 +22,15 @@ import {FooterComponent} from './footer/footer.component';
     TitleComponent,
     FooterComponent,
   ],
-  bootstrap: [RootComponent]
+  bootstrap: [
+    RootComponent
+  ],
+  providers: [
+  ]
 })
-export class AppModule {}
+
+export class AppModule {
+  constructor() {
+    
+  }
+}

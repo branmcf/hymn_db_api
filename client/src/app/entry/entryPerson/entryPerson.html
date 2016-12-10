@@ -1,0 +1,158 @@
+<div class="entry-container">
+    <hymn-header></hymn-header>
+    <div class="entry-body row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    Please fill out this form to have your information included in The Center for Congregational Song's database so that we can
+                    connect people to you who could use your expertise to encourage, promote, or enliven their congregation's
+                    song.
+                </div>
+                <div class="card-block">
+                    <h4 class="card-title">Clinician/Consultant</h4>
+
+                    <div class="form-group">
+                        <label for="person_fname">First Name</label>
+                        <input id="person_fname" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_lname">Last Name</label>
+                        <input id="person_lname" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_email">Email</label>
+                        <input id="person_email" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_city">City</label>
+                        <input id="person_city" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_state_prov">State/Province</label>
+                        <input id="person_state_prov" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_country">Country</label>
+                        <input id="person_country" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_url">Personal/Professional Website</label>
+                        <input type="url" id="person_url" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_social">Personal/Professional Website</label>
+                        <input type="url" id="person_social" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_member">Are you a Hymn Society Member?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="isMember" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="isMember" value="no" /> No
+                        </form>
+                    </div>
+ 
+                    <div class="form-group">
+                        <label for="person_categories">Which Topics/Situations Are You Comfortable Working With?</label>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Contemporary Song/Band
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Traditional Hymnody
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Musician/Pastor RelationshipSong/Band
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Cantoring
+                            </label>
+                        </div>     
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Song Enlivening
+                            </label>
+                        </div>        
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Keyboards (piano/organ)
+                            </label>
+                        </div>     
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Worship Planning
+                            </label>
+                        </div>          
+                    </div>
+
+                    <div class="form-group">
+                        <label for="person_categories">Which ethnicities do you work with in at least 10% of your events??</label>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> White
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Black
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
+                            </label>
+                        </div>     
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Asian
+                            </label>
+                        </div>        
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> African
+                            </label>
+                        </div>     
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Middle-Eastern
+                            </label>
+                        </div>  
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="other"> Other...
+                            </label>
+                        </div>
+                        <div class="form-group" [hidden]="!other">
+                            <input id="person_city" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-block btn-info" (click)="next()">Next</a>
+                        <a class="btn btn-block" routerLink="/">Return to home</a>
+                    </div>
+                    
+                </div> <!-- end class card-block-->
+            </div> <!-- end class card -->
+        </div> <!-- end class col-md-8 offset-md-2 -->
+    </div> <!-- end entry-body row -->
+</div>

@@ -1,8 +1,9 @@
 /// <reference path="../../typings/index.d.ts"/>
 
-import {Component} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {MainComponent} from './main.component';
+import { Component } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { MainComponent } from './main.component';
+import { EntryModule } from './entry/entry.module'
 
 @Component({
   selector: 'hymn-root',
@@ -21,4 +22,4 @@ export const routes: Routes = [
   }
 ];
 
-export const routing = RouterModule.forRoot(routes);
+export const Routing = RouterModule.forRoot(routes);

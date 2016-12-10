@@ -4,4 +4,8 @@ import {Component} from '@angular/core';
   selector: 'hymn-app',
   template: require('./main.html')
 })
-export class MainComponent {}
+export class MainComponent {
+  constructor() {
+    
+  }
+}
