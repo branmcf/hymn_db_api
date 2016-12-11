@@ -13,3 +13,4 @@ Authors: Tyler Kirkpatrick, Danh Nguyen, Justin Suh
 
 ### Back End
 * Framework: [Hapi](http://hapijs.com/)
+* Database: [MySQL]()
