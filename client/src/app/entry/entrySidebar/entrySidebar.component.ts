@@ -12,4 +12,8 @@ export class EntrySidebarComponent {
 
   }
 
+  next() {
+  	this.router.navigate(['entry/person']);
+	}
+
 }

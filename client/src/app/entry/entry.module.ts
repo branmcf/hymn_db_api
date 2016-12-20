@@ -8,7 +8,8 @@ import { EntryComponent } from './entryLogin/entryLogin.component';
 import { EntryResourcesComponent } from './entryResources/entryResources.component';
 import { EntryPersonComponent } from './entryPerson/entryPerson.component';
 import { EntryCongregationComponent } from './entryCongregation/entryCongregation.component';
-import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component'
+import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
+import { EntrySidebarComponent } from './entrySidebar/entrySidebar.component';
 import { HeaderModule } from '../header/header.module';
 
 @NgModule({
@@ -18,7 +19,8 @@ import { HeaderModule } from '../header/header.module';
     EntryComponent,
     EntryPersonComponent,
     EntryCongregationComponent,
-    EntryOrgsComponent
+    EntryOrgsComponent,
+    EntrySidebarComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +40,5 @@ import { HeaderModule } from '../header/header.module';
 })
 
 export class EntryModule {
-  constructor() {
 
-  }
 }
