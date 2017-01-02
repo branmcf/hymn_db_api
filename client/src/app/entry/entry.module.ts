@@ -11,6 +11,7 @@ import { EntryCongregationComponent } from './entryCongregation/entryCongregatio
 import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component'
 import { EntryEvent } from './entryEvent/entryEvent.component'
 import { HeaderModule } from '../header/header.module';
+import { SharedModule } from './../shared/shared.module'
 
 @NgModule({
   id: 'entry',
@@ -26,6 +27,7 @@ import { HeaderModule } from '../header/header.module';
     CommonModule,
     HttpModule,
     HeaderModule,
+    SharedModule,
     RouterModule.forRoot([
       { path: 'entry', component: EntryComponent },
       { path: 'entry/resources', component: EntryResourcesComponent },
