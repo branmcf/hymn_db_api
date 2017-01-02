@@ -1,0 +1,101 @@
+<div class="entry-container">
+    <hymn-header></hymn-header>
+    <div class="entry-body row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    Please submit your event information here. We will then include it in our database so that our users can be made aware of this opportunity to encourage, promote, and enliven their congregational song.
+                </div>
+                <div class="card-block">
+                    <h4 class="card-title">Events</h4>
+
+                    <div class="form-group">
+                        <label for="event_title">Event Title</label>
+                        <input id="event_title" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_occurance">Are you a Hymn Society Member?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="occurance" value="annual" /> Annual
+                            <br>
+                            <input type="radio" name="occurance" value="every2yrs" /> Every-Other-Year (once every 2 years)
+                            <br>
+                            <input type="radio" name="occurance" value="once" /> One Time Only
+                            <br>
+                            <input type="radio" name="occurance" value="other" /> Other...
+                            <div class="form-group" [hidden]="!other">
+                                <input id="person_city" class="form-control" />
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_url">Event Website</label>
+                        <input type="url" id="event_url" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_parent">Parent or Sponsoring Organization(s)</label>
+                        <input id="event_parent" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_topic">Topic/Emphasis/Theme</label>
+                        <input id="event_topic" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_desc">Event Description</label>
+                        <input id="event_desc" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_date">Event Start Date</label>
+                        <input type ="date" id="event_date" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_cost">Registration Cost</label>
+                        <form action="" method="post">
+                            <input type="radio" name="cost" value="free" /> Free
+                            <br>
+                            <input type="radio" name="cost" value="under100" /> Under 100
+                            <br>
+                            <input type="radio" name="cost" value="100to200" /> Between 100 and 250
+                            <br>
+                            <input type="radio" name="cost" value="250to500" /> Between 250 and 500
+                            <br>
+                            <input type="radio" name="cost" value="over1000" /> Over 1000
+                        </form>
+                    </div> 
+
+                    <div class="form-group">
+                        <label for="event_city">Event City</label>
+                        <input id="event_cityt" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_state">Event State</label>
+                        <input id="event_state" class="form-control" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="event_country">Event Country</label>
+                        <input id="event_country" class="form-control" />
+                    </div>    
+
+                    <div class="form-group">
+                        <label for="event_cost">Is a Hymn Society member involved?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="cost" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="cost" value="no" /> No
+                        </form>
+                    </div>                 
+
+                </div> <!-- end class card-block-->
+            </div> <!-- end class card -->
+        </div> <!-- end class col-md-8 offset-md-2 -->
+    </div> <!-- end entry-body row -->
+</div>

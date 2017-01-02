@@ -9,6 +9,7 @@ import { EntryResourcesComponent } from './entryResources/entryResources.compone
 import { EntryPersonComponent } from './entryPerson/entryPerson.component';
 import { EntryCongregationComponent } from './entryCongregation/entryCongregation.component';
 import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component'
+import { EntryEvent } from './entryEvent/entryEvent.component'
 import { HeaderModule } from '../header/header.module';
 
 @NgModule({
@@ -18,7 +19,8 @@ import { HeaderModule } from '../header/header.module';
     EntryComponent,
     EntryPersonComponent,
     EntryCongregationComponent,
-    EntryOrgsComponent
+    EntryOrgsComponent,
+    EntryEvent
   ],
   imports: [
     CommonModule,
@@ -30,6 +32,7 @@ import { HeaderModule } from '../header/header.module';
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
       { path: 'entry/orgs', component: EntryOrgsComponent },
+      { path: 'entry/event', component: EntryEvent }
     ])
   ],
   exports: [
