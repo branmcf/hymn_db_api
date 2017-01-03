@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { EntryNavComponent } from './entryNavbar/entryNavbar.component'
+import { EntryNavComponent } from './entryNavbar/entryNavbar.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
