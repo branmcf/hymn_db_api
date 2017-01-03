@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 @Component({
   selector: 'hymn-entry-event',
   template: require('./entryEvent.html'),
-  styleUrls: ['app/entry/entryEvent/entryEvent.css']
+  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
 export class EntryEvent {
