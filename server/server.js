@@ -10,7 +10,6 @@ var connection = mysql.createConnection({
   database : 'testDb'
 });
 //mysql connection
-var mysql = require('mysql');
 connection.connect();
 connection.query('SELECT * from users', function(err, rows, fields) {
   if (!err)
@@ -49,10 +48,6 @@ server.connection({
     host: 'localhost', 
     port: 8000 
 });
-
-//hapi_mysql
-
-//end hapi_mysql
 
 //
 //
@@ -116,13 +111,13 @@ var routes = [
 
 server.route(routes);
 
-//server.start();
-
 // Start the server
 server.start((err) => {
 
     if (err) {
-        throw err;
+      throw err;
     }
-    console.log('Server running at:', server.info.uri);
+    else {
+      console.log('Server running at:', server.info.uri);
+    }
 });
