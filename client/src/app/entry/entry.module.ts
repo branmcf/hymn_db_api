@@ -9,8 +9,9 @@ import { EntryResourcesComponent } from './entryResources/entryResources.compone
 import { EntryPersonComponent } from './entryPerson/entryPerson.component';
 import { EntryCongregationComponent } from './entryCongregation/entryCongregation.component';
 import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
-import { EntrySidebarComponent } from './entrySidebar/entrySidebar.component';
+import { EntryEvent } from './entryEvent/entryEvent.component';
 import { HeaderModule } from '../header/header.module';
+import { SharedModule } from './../shared/shared.module';
 
 @NgModule({
   id: 'entry',
@@ -20,18 +21,20 @@ import { HeaderModule } from '../header/header.module';
     EntryPersonComponent,
     EntryCongregationComponent,
     EntryOrgsComponent,
-    EntrySidebarComponent
+    EntryEvent
   ],
   imports: [
     CommonModule,
     HttpModule,
     HeaderModule,
+    SharedModule,
     RouterModule.forRoot([
       { path: 'entry', component: EntryComponent },
       { path: 'entry/resources', component: EntryResourcesComponent },
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
       { path: 'entry/orgs', component: EntryOrgsComponent },
+      { path: 'entry/events', component: EntryEvent }
     ])
   ],
   exports: [
@@ -40,5 +43,5 @@ import { HeaderModule } from '../header/header.module';
 })
 
 export class EntryModule {
-
+  constructor() {}
 }

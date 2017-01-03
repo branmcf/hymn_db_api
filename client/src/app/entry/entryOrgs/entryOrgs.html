@@ -1,7 +1,6 @@
 <div class="entry-container">
+    <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
-    <hymn-sidebar></hymn-sidebar>
-    
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
             <div class="card">
@@ -9,9 +8,145 @@
                     Please let us know about your organization so that we can connect people to you who might be interested in what you do or in need of resources that you provide.
                 </div>
                 <div class="card-block">
-                    <h4 class="card-title">Organization Information Submission Form</h4>
-                                  
+                    <h4 class="card-title">Organizations</h4>
+
+                    <div class="form-group">
+                        <label for="org_name">Organization Name</label>
+                        <input id="org_name" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="org_url">Organization Website</label>
+                        <input type="url" id="org_url" class="form-control" />
+                    </div>   
+
+                    <div class="form-group">
+                        <label for="org_parent">Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)</label>
+                        <input id="org_parent" class="form-control" />
+                    </div>  
+
+                    <div class="form-group">
+                        <label for="org_denomination">Are you related to or a part of a specific denomination or tradition?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="denomination" value="multidom" /> Ecumenical/Multi-Denominational
+                            <br>
+                            <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
+                            <br>
+                            <input type="radio" name="denomination" value="catholic" /> Roman Catholic
+                            <br>
+                            <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
+                            <br>
+                            <input type="radio" name="denomination" value="lutheran" /> Lutheran
+                            <br>
+                            <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
+                            <br>
+                            <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
+                            <br>
+                            <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
+                            <br>
+                            <input type="radio" name="denomination" value="baptist" /> Pentecostal
+                            <br>                            
+                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
+                                    <input id="congregation_state_prov" class="form-control" />
+                                </div>
+                        </form>
+                    </div>                              
+
+                    <div class="form-group">
+                        <label for="org_city">What city are you located/headquartered?</label>
+                        <input id="org_city" class="form-control" />
+                    </div>   
+
+                    <div class="form-group">
+                        <label for="org_state">What state are you located/headquartered?</label>
+                        <input id="org_state" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="org_country">What country are you located/headquartered?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="country" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="country" value="no" /> No
+                            <br>
+                            <input type="radio" name="country" value="other" /> Other...                <div class="form-group" [hidden]="!other">
+                                    <input id="country" class="form-control" />
+                                </div>
+                        </form>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="org_geogrpahics">What geographic area(s) do you serve?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="geographics" value="city" /> Our City Only
+                            <br>
+                            <input type="radio" name="geographics" value="state" /> Our State Only
+                            <br>
+                            <input type="radio" name="geographics" value="region" /> Our Region Only
+                            <br>
+                            <input type="radio" name="geographics" value="us" /> U.S. Only
+                            <br>
+                            <input type="radio" name="geographics" value="canada" /> Canada Only
+                            <br>
+                            <input type="radio" name="geographics" value="worldwide" /> Worldwide
+                            <br>
+                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
+                                    <input id="congregation_state_prov" class="form-control" />
+                                </div>
+                        </form>
+                    </div>                           
                     
+                    <div class="form-group">
+                        <label for="org_resource">Are any of your resources free?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="resource" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="resource" value="no" /> No
+                            <br>
+                            <input type="radio" name="resource" value="noresource" /> We don't offer resources
+                            <br>
+                        </form>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="org_conference">Are any of your events/conferences free?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="conference" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="conference" value="no" /> No
+                            <br>
+                            <input type="radio" name="conference" value="noconference" /> We don't offer events/conferences
+                            <br>
+                        </form>
+                    </div>      
+
+                    <div class="form-group">
+                        <label for="org_membership">Do you charge for membership?</label>
+                        <form action="" method="post">
+                            <input type="radio" name="membership" value="yes" /> Yes
+                            <br>
+                            <input type="radio" name="membership" value="no" /> No
+                            <br>
+                            <input type="radio" name="membership" value="nomembership" /> We don't offer memberships
+                            <br>
+                        </form>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="org_mission">What is the mission of your organization?</label>
+                        <input id="org_mission" class="form-control" />
+                    </div>                                       
+                    
+                     <div class="form-group">
+                        <label for="org_method">How does your organization encourage, promote, or enliven congregational song?</label>
+                        <input id="org_method" class="form-control" />
+                    </div>  
+
+                    <div>
+                        <a class="btn btn-block btn-primary" >Submit</a>
+                        <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
+                    </div>  
+
                 </div> <!-- end class card-block-->
             </div> <!-- end class card -->
         </div> <!-- end class col-md-8 offset-md-2 -->

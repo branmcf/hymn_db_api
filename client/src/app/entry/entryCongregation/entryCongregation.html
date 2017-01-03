@@ -1,8 +1,6 @@
 <div class="entry-container">
+    <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
-    
-    <hymn-sidebar></hymn-sidebar>
-    
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
             <div class="card">
@@ -18,7 +16,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_url">Congregation's Website</label>
+                        <label for="congregation_url">Congregation Website</label>
                         <input type="url" id="congregation_url" class="form-control" />
                     </div>
 
@@ -40,9 +38,9 @@
                     <div class="form-group">
                         <label for="congregation_country">Country</label>
                         <form action="" method="post">
-                            <input type="radio" name="country" value="yes" /> USA
+                            <input type="radio" name="country" value="usa" /> USA
                             <br>
-                            <input type="radio" name="country" value="no" /> Canada
+                            <input type="radio" name="country" value="canada" /> Canada
                             <br>
                             <input type="radio" name="country" value="other" /> Other...
                             <div class="form-group" [hidden]="!other">
@@ -54,21 +52,21 @@
                     <div class="form-group">
                         <label for="congregation_denom_trad">Denomination/Tradition</label>
                         <form action="" method="post">
-                            <input type="radio" name="denomination" value="yes" /> Roman Catholic
+                            <input type="radio" name="denomination" value="catholic" /> Roman Catholic
                             <br>
-                            <input type="radio" name="denomination" value="no" /> Anglican/Episcopal
+                            <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Lutheran
+                            <input type="radio" name="denomination" value="lutheran" /> Lutheran
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Wesleyan (United Methodist, AME, etc...)
+                            <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Reformed (Presbyterian, RCA, etc...)
+                            <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Baptist/Free-Church
+                            <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Pentecostal
+                            <input type="radio" name="denomination" value="pentecostal" /> Pentecostal
                             <br>
-                            <input type="radio" name="denomination" value="yes" /> Non-Denominational
+                            <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
                             <br>
                             <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
                                 <input id="congregation_state_prov" class="form-control" />
@@ -270,22 +268,22 @@
                     <div class="form-group">
                         <label for="congregation_attendance">On average, how many people attend your weekly worship services?</label>
                         <form action="" method="post">
-                            <input type="radio" name="attendance" value="yes" /> Under 100
+                            <input type="radio" name="attendance" value="under100" /> Under 100
                             <br>
-                            <input type="radio" name="attendance" value="no" /> Between 100 and 250
+                            <input type="radio" name="attendance" value="100to200" /> Between 100 and 250
                             <br>
-                            <input type="radio" name="attendance" value="other" /> Between 250 and 500
+                            <input type="radio" name="attendance" value="250to500" /> Between 250 and 500
                             <br>
-                            <input type="radio" name="attendance" value="other" /> Between 500 and 1000
+                            <input type="radio" name="attendance" value="500to1000" /> Between 500 and 1000
                             <br>
-                            <input type="radio" name="attendance" value="other" /> Over 1000
+                            <input type="radio" name="attendance" value="over1000" /> Over 1000
                         </form>
                     </div> 
 
                     <div>
-                        <a class="btn btn-block btn-info" (click)="next()">Next</a>
-                        <a class="btn btn-block" routerLink="/">Return to home</a>
-                    </div>                                             
+                        <a class="btn btn-block btn-primary" >Submit</a>
+                        <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
+                    </div>                                              
                     
                 </div> <!-- end class card-block-->
             </div> <!-- end class card -->
