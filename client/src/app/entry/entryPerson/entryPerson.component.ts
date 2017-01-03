@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 @Component({
   selector: 'hymn-entry-person',
   template: require('./entryPerson.html'),
+  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
 export class EntryPersonComponent {

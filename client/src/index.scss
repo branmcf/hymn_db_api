@@ -1,5 +1,9 @@
 @import url('../node_modules/bootstrap/dist/css/bootstrap.css');
 
+$primary-color: #337ab7;
+$secondary-color: #3988CC;
+
+
 @font-face {
   font-family: Qanelas Light;
   src: local("Qanelas Soft Light"),
@@ -25,11 +29,11 @@ body, h1, h2, h3 {
 }
 
 a {
-  color: white;
+  color: #fff;
   text-decoration: none;
 
   &:hover {
-    color: #337ab7;
+    color: $primary-color;
     text-decoration: none;
   }
 }
@@ -57,11 +61,14 @@ a {
 .header {
   display: flex;
   align-items: center;
-  background-color: #337ab7;
+  background-color: $primary-color;
   font-family: 'Qanelas Light', 'sans-serif';
   position: fixed; 
   width: 100%; 
   z-index: 1000;
+  a {
+    color: #fff;
+  }
 }
 .header-title {
   flex: 1;
@@ -91,7 +98,7 @@ a {
 }
 .title-logo {
   height: 12rem;
-  background-color: white;
+  background-color: #fff;
   border-radius: 1rem;
   margin: 1rem;
 }
@@ -109,39 +116,6 @@ a {
   color: white;
 }
 
-.techs-container {
-  margin: 1rem;
-}
-.techs-h2 {
-  font-weight: 300;
-  font-size: 1.5rem;
-}
-.techs {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.tech {
-  height: 15rem;
-  width: 15rem;
-  border: 1px solid lightgray;
-  border-radius: 1rem;
-  margin: 1rem;
-  padding: 1rem;
-}
-.tech-logo {
-  width: 5rem;
-  height: 5rem;
-  float: right;
-  margin: 0 0 .5rem .5rem;
-}
-.tech-h3 {
-  font-size: 1.5rem;
-  margin: 0 0 2rem 0;
-}
-
 .options {
   text-align: center;
   margin: 15rem 0rem 1rem 0rem;
@@ -151,14 +125,12 @@ a {
   padding: 5rem 5rem 5rem 5rem;
 
   .card-header {
-    color: white;
-    background-color: #337ab7;
+    background-color: #CCCCCC;
   }
 
   .card-block {
     background-color: #f5f5f5;
   }
-
 }
 
 /*
@@ -217,7 +189,7 @@ a {
   
   .active {
     li {
-      background-color: #337ab7;
+      background-color: $primary-color;
     }
     
   }
@@ -227,7 +199,7 @@ a {
     a {
       padding-right: 20px;
       padding-left: 20px;
-      color: #337ab7;
+      color: $secondary-color;
     }
   }
   li:hover {
@@ -242,5 +214,5 @@ a {
 .nav-sidebar > .active > li,
 .nav-sidebar > .active > li:hover,
 .nav-sidebar > .active > li:focus {
-  background-color: #337ab7;
+  background-color: $secondary-color;
 }
