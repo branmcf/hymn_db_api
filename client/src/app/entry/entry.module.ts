@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { Routing, RootComponent } from './../routes';
+import { FormsModule } from '@angular/forms';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
 import { EntryResourcesComponent } from './entryResources/entryResources.component';
 import { EntryPersonComponent } from './entryPerson/entryPerson.component';
 import { EntryCongregationComponent } from './entryCongregation/entryCongregation.component';
 import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
-import { EntryEvent } from './entryEvent/entryEvent.component';
+import { EntryEventComponent } from './entryEvent/entryEvent.component';
+import { EntryReviewComponent } from './entryReview/entryReview.component';
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
@@ -21,10 +23,12 @@ import { SharedModule } from './../shared/shared.module';
     EntryPersonComponent,
     EntryCongregationComponent,
     EntryOrgsComponent,
-    EntryEvent
+    EntryEventComponent,
+    EntryReviewComponent,
   ],
   imports: [
     CommonModule,
+    FormsModule,
     HttpModule,
     HeaderModule,
     SharedModule,
@@ -34,7 +38,7 @@ import { SharedModule } from './../shared/shared.module';
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
       { path: 'entry/orgs', component: EntryOrgsComponent },
-      { path: 'entry/events', component: EntryEvent }
+      { path: 'entry/events', component: EntryEventComponent }
     ])
   ],
   exports: [

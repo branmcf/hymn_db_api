@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import { Submission } from './submission'
+import { SubmissionResources } from './submission'
 
 @Injectable()
 export class SubmissionRepositoryService {

@@ -7,7 +7,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
   styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
-export class EntryEvent {
+export class EntryEventComponent {
   constructor (private route: ActivatedRoute,
     private router: Router) {
 
