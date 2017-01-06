@@ -27,7 +27,6 @@ import { SubmitService } from '../services/submit.service'
     EntryOrgsComponent,
     EntryEventComponent,
     EntryReviewComponent,
-    SubmitService,
   ],
   imports: [
     CommonModule,
@@ -43,6 +42,9 @@ import { SubmitService } from '../services/submit.service'
       { path: 'entry/orgs', component: EntryOrgsComponent },
       { path: 'entry/events', component: EntryEventComponent }
     ])
+  ],
+  providers:[
+    SubmitService,
   ],
   exports: [
     RouterModule
