@@ -15,6 +15,8 @@ import { EntryReviewComponent } from './entryReview/entryReview.component';
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
+import { SubmitService } from '../services/submit.service'
+
 @NgModule({
   id: 'entry',
   declarations: [
@@ -25,6 +27,7 @@ import { SharedModule } from './../shared/shared.module';
     EntryOrgsComponent,
     EntryEventComponent,
     EntryReviewComponent,
+    SubmitService,
   ],
   imports: [
     CommonModule,
