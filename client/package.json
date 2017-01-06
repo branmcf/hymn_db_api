@@ -9,10 +9,11 @@
     "@angular/router": "^3.0.0",
     "bootstrap": "^4.0.0-alpha.5",
     "bootstrap-loader": "^2.0.0-beta.15",
+    "contentful": "^3.8.0",
     "core-js": "^2.4.1",
     "jquery": "^3.1.1",
-    "rxjs": "5.0.0-beta.12",
-    "zone.js": "^0.6.23"
+    "rxjs": "^5.0.0",
+    "zone.js": "^0.7.4"
   },
   "devDependencies": {
     "autoprefixer": "^6.2.2",
