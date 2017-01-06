@@ -97,8 +97,6 @@ export class EntryCongregationComponent {
       }
     };
 
-    this.au
-
   }
 
 
