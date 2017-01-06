@@ -16,8 +16,27 @@
           </div>
 
           <div class="form-group">
-            <label for="resource_type">Resource Type</label>
-            <input id="resource_type" class="form-control" />
+              <label for="resource_type">Are you a Hymn Society Member?</label>
+              <form action="" method="post">
+                  <input type="radio" name="type" value="book" /> Book
+                  <br>
+                  <input type="radio" name="type" value="blog" /> Blog
+                  <br>
+                  <input type="radio" name="type" value="podcast" /> Podcast
+                  <br>
+                  <input type="radio" name="type" value="news" /> Newsletter/E-News
+                  <br>
+                  <input type="radio" name="type" value="forum" /> Forum
+                  <br>
+                  <input type="radio" name="type" value="audio" /> Audio Track(s)
+                  <br>
+                  <input type="radio" name="type" value="video" /> Video/Visual(s)
+                  <br>
+                  <input type="radio" name="type" value="other" /> Other...
+                  <div class="form-group" [hidden]="!other">
+                      <input id="person_city" class="form-control" />
+                  </div>
+              </form>
           </div>
 
           <div class="form-group">

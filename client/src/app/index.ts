@@ -4,17 +4,20 @@ import { Routing, RootComponent } from './routes';
 
 import { HeaderModule } from './header/header.module';
 import { EntryModule } from './entry/entry.module';
+import { FormsModule } from '@angular/forms';
 
 import { MainComponent } from './main.component';
 import { TitleComponent } from './title/title.component';
 import { FooterComponent } from './footer/footer.component';
+import { InMemoryWebApiModule, InMemoryBackendService } from 'angular-in-memory-web-api';
 
 @NgModule({
   imports: [
     BrowserModule,
     HeaderModule,
     Routing,
-    EntryModule
+    EntryModule,
+    FormsModule
   ],
   declarations: [
     RootComponent,
