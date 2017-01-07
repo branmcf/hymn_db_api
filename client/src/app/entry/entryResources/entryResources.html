@@ -1,0 +1,324 @@
+<div class="entry-container">
+  <entry-nav class="left"></entry-nav>
+  <hymn-header></hymn-header>
+  <div class="entry-body row">
+    <div class="col-md-8 offset-md-3">
+      <div class="card">
+        <div class="card-header">
+          Use this form to submit resources/links to books, blogs, articles, or videos that deal with congregational song. 
+        </div>
+        <div class="card-block">
+          <h4 class="card-title">Readings, Audio, & Videos</h4>
+
+          <div class="form-group">
+            <label for="resource_title">Resource Title</label>
+            <input id="resource_title" class="form-control" />
+          </div>
+
+          <div class="form-group">
+              <label for="resource_type">Are you a Hymn Society Member?</label>
+              <form action="" method="post">
+                  <input type="radio" name="type" value="book" /> Book
+                  <br>
+                  <input type="radio" name="type" value="blog" /> Blog
+                  <br>
+                  <input type="radio" name="type" value="podcast" /> Podcast
+                  <br>
+                  <input type="radio" name="type" value="news" /> Newsletter/E-News
+                  <br>
+                  <input type="radio" name="type" value="forum" /> Forum
+                  <br>
+                  <input type="radio" name="type" value="audio" /> Audio Track(s)
+                  <br>
+                  <input type="radio" name="type" value="video" /> Video/Visual(s)
+                  <br>
+                  <input type="radio" name="type" value="other" /> Other...
+                  <div class="form-group" [hidden]="!other">
+                      <input id="person_city" class="form-control" />
+                  </div>
+              </form>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_url">Website URL</label>
+            <input type="url" id="resource_url" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="resource_parent">Author/Creator</label>
+            <input id="resource_parent" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="resource_parent">Parent Organization or Source</label>
+            <input id="resource_parent" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="resource_description">Resource Description</label>
+            <textarea rows="3" id="resource_description" class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">What categories does this resource
+              fit into or relate to?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> A Hymn written prior to 1970
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Newly Composed Hymn (within the last 10 years)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> A song written by a local church musician - not widely distributed
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Praise and Worship Song (CCM)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Psalm Setting
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned" hymn)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Song from another country (or "World Song")
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Other
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">Does this resource address any of these specific topics/concerns?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Psalm Setting
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Lectionary Based
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Social Justice
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Other
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">What kind of accompaniment does this resource address or lend itself toward?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Acapella
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Organ
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Piano
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Guitar (no band)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Guitar (with band)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Orchestra/Wind Ensemble
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Handbells
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Single/Obbligato Instrument (non-organ/piano/guitar)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">What languages are represented in this resource?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> English
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Spanish
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> French
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Other
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">What types of ensembles are addressed in this resource?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Choir
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Cantor
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Song-Enlivener
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Lead Singer from Band (Solo)
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Lead Singer from Band with Other Vocalists
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox"> Other
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">What ethnicities does this resource represent?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> White
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> Black
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> Hispanic/Latin-American/Caribbean
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> Native American/Indigenous Peoples
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> Asian
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> African
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="ethnicities"> Middle Eastern
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">Is a Hymn Society member involved?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isHymnInvolved"> Yes
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isHymnInvolved"> No
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isHymnInvolved"> Unknown
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="resource_categories">Is this resource free?</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isFree"> Yes
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isFree"> Partially with paywall
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="isFree"> No
+              </label>
+            </div>
+          </div>
+
+          <div>
+              <a class="btn btn-block btn-primary" >Submit</a>
+              <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
+          </div>  
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

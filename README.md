@@ -12,4 +12,5 @@ Authors: Tyler Kirkpatrick, Danh Nguyen, Justin Suh
 * Styling: [Sass](http://sass-lang.com/)
 
 ### Back End
-* Framework: [Hapi](http://hapijs.com/
+* Framework: [Hapi](http://hapijs.com/)
+* Database: [MySQL]()

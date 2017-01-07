@@ -1,5 +1,9 @@
 @import url('../node_modules/bootstrap/dist/css/bootstrap.css');
 
+$primary-color: #337ab7;
+$secondary-color: #3988CC;
+
+
 @font-face {
   font-family: Qanelas Light;
   src: local("Qanelas Soft Light"),
@@ -25,11 +29,11 @@ body, h1, h2, h3 {
 }
 
 a {
-  color: white;
+  color: #fff;
   text-decoration: none;
 
   &:hover {
-    color: #5aadbb;
+    color: $primary-color;
     text-decoration: none;
   }
 }
@@ -52,19 +56,23 @@ a {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 5rem;
-
 }
 
 .header {
   display: flex;
   align-items: center;
-  background-color: #1f1f1f;
+  background-color: $primary-color;
   font-family: 'Qanelas Light', 'sans-serif';
+  position: fixed; 
+  width: 100%; 
+  z-index: 1000;
+  a {
+    color: #fff;
+  }
 }
 .header-title {
   flex: 1;
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin: 1rem;
 }
 .header-date {
@@ -85,12 +93,12 @@ a {
 }
 .title-h1 {
   font-weight: 500;
-  font-size: 4rem;
+  font-size: 3rem;
   margin: 1rem;
 }
 .title-logo {
   height: 12rem;
-  background-color: white;
+  background-color: #fff;
   border-radius: 1rem;
   margin: 1rem;
 }
@@ -108,39 +116,6 @@ a {
   color: white;
 }
 
-.techs-container {
-  margin: 1rem;
-}
-.techs-h2 {
-  font-weight: 300;
-  font-size: 1.5rem;
-}
-.techs {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.tech {
-  height: 15rem;
-  width: 15rem;
-  border: 1px solid lightgray;
-  border-radius: 1rem;
-  margin: 1rem;
-  padding: 1rem;
-}
-.tech-logo {
-  width: 5rem;
-  height: 5rem;
-  float: right;
-  margin: 0 0 .5rem .5rem;
-}
-.tech-h3 {
-  font-size: 1.5rem;
-  margin: 0 0 2rem 0;
-}
-
 .options {
   text-align: center;
   margin: 15rem 0rem 1rem 0rem;
@@ -148,4 +123,98 @@ a {
 
 .entry-body {
   padding: 5rem 5rem 5rem 5rem;
+
+  .card-header {
+    background-color: #CCCCCC;
+  }
+
+  .card-block {
+    background-color: #f5f5f5;
+  }
+}
+
+/*
+* Sidebar
+*/
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+  list-style: none;
+  padding-left: 0px;
+  
+  .active {
+    li {
+      background-color: $primary-color;
+    }
+    
+  }
+}
+.nav-sidebar{
+  li {
+    a {
+      padding-right: 20px;
+      padding-left: 20px;
+      color: $secondary-color;
+    }
+  }
+  li:hover {
+    background-color: #ccc; 
+  }
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+}
+.nav-sidebar > .active > li,
+.nav-sidebar > .active > li:hover,
+.nav-sidebar > .active > li:focus {
+  background-color: $secondary-color;
 }

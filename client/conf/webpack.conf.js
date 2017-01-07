@@ -4,7 +4,6 @@ const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-
 module.exports = {
   module: {
     preLoaders: [
@@ -68,6 +67,12 @@ module.exports = {
         jQuery: 'jquery',
         $: 'jquery',
         jquery: 'jquery'
+    }), 
+    new webpack.DefinePlugin({
+      'process.env': {
+        'CONTENTFUL_SPACE': JSON.stringify(process.env.CONTENTFUL_SPACE),
+        'CONTENTFUL_TOKEN': JSON.stringify(process.env.CONTENTFUL_TOKEN)
+      }
     })
   ],
   postcss: () => [autoprefixer],
