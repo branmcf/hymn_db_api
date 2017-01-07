@@ -1,9 +1,16 @@
-DROP TABLE IF EXISTS user_questions_answer;
-DROP TABLE IF EXISTS user_questions_not_selected;
+SET FOREIGN_KEY_CHECKS=0;
+
+DROP TABLE IF EXISTS user_viewed_events;
+DROP TABLE IF EXISTS user_viewed_congs;
+DROP TABLE IF EXISTS user_viewed_resources;
+DROP TABLE IF EXISTS resource_favorites;
+DROP TABLE IF EXISTS cong_favorites;
+DROP TABLE IF EXISTS event_favorites;
 DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS quizes;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS Social_Media_Connections;
 DROP TABLE IF EXISTS tags;
 
 DROP TABLE IF EXISTS Event_Table;
@@ -16,7 +23,6 @@ DROP TABLE IF EXISTS Resource_Tags;
 DROP TABLE IF EXISTS Resource_Types;
 DROP TABLE IF EXISTS Authors;
 
-DROP TABLE IF EXISTS Social_Media_Connections;
 DROP TABLE IF EXISTS Ethnicities;
 DROP TABLE IF EXISTS Cong_Type;
 DROP TABLE IF EXISTS Worship_Types;
@@ -27,6 +33,7 @@ DROP TABLE IF EXISTS Event_Types;
 DROP TABLE IF EXISTS Parent_Org;
 
 
+SET FOREIGN_KEY_CHECKS=1;
 
 CREATE TABLE tags (
 	tag_id int unsigned not null auto_increment,
@@ -123,18 +130,9 @@ CREATE TABLE Ethnicities (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE Social_Media_Connections(
-	id int unsigned auto_increment,
-	name varchar(64),
-	PRIMARY KEY (id),
-	type varchar(32), 
-	link varchar(64)
-);
 
 
-
-
-CREATE TABLE Congregations (
+CREATE TABLE congregations (
 	cong_id int unsigned auto_increment,
 	PRIMARY KEY (cong_id),
 	cong_name varchar(64),
@@ -167,7 +165,7 @@ CREATE TABLE Congregations (
 	
 );
 
-CREATE TABLE Event_Table(
+CREATE TABLE event_table(
 	event_id int unsigned auto_increment,
 	PRIMARY KEY(event_id),
 	event_title varchar(128),
@@ -192,7 +190,7 @@ CREATE TABLE Event_Table(
 		
 );
 
-CREATE TABLE Resources (
+CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
 	title varchar(128),
@@ -230,12 +228,6 @@ CREATE TABLE Resources (
 /* now for users and quizes */
 
 
-CREATE TABLE quizes (
-	quiz_id int unsigned not null auto_increment,
-	quiz_title varchar(512),
-	is_active tinyint(1) default 1,
-	PRIMARY KEY (quiz_id)
-);
 
 CREATE TABLE users (
 	user_id int unsigned not null auto_increment,
@@ -246,12 +238,19 @@ CREATE TABLE users (
 	reg_date timestamp,
 	is_active tinyint(1) default 1,
 	high_level tinyint(1) default 0,
-	PRIMARY KEY (user_id),
-	social_media_connections_id int unsigned,
-	FOREIGN KEY (social_media_connections_id) REFERENCES Social_Media_Connections(id),
+	PRIMARY KEY (user_id)
     /* keep track of their quizes */
-    quiz_id int unsigned,
-    FOREIGN KEY (quiz_id) REFERENCES quizes(quiz_id)
+  
+);
+
+CREATE TABLE quizes (
+	quiz_id int unsigned not null auto_increment,
+	quiz_title varchar(512),
+	is_active tinyint(1) default 1,
+	PRIMARY KEY (quiz_id),
+	user_id int unsigned not null,
+	FOREIGN KEY (user_id) REFERENCES users (user_id)
+    /* create a quiz when a user is created! */
 );
 
 
@@ -282,6 +281,87 @@ CREATE TABLE choices (
 	text_field varchar(512) /*if 'other' is selected */
 );
 
+
+CREATE TABLE Social_Media_Connections(
+	id int unsigned auto_increment,
+	name varchar(64),
+	PRIMARY KEY (id),
+	type varchar(32), 
+	link varchar(64),
+    user_id int unsigned not null,
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    
+);
+
+/* for storing RESOURCES and CONGREGATIONS!!! */
+
+CREATE TABLE resource_favorites(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+	resource_id int unsigned not null,
+    time_favorited timestamp,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(resource_id) REFERENCES resources(id),
+    PRIMARY KEY(id) 
+
+);
+
+CREATE TABLE cong_favorites(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+	cong_id int unsigned not null,
+    time_favorited timestamp,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(cong_id) REFERENCES congregations(cong_id),
+    PRIMARY KEY(id) 
+);
+
+CREATE TABLE event_favorites(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+	event_id int unsigned not null,
+    time_favorited timestamp,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(event_id) REFERENCES event_table(event_id),
+    PRIMARY KEY(id) 
+);
+
+/* for storing what the user has viewed */
+
+CREATE TABLE user_viewed_resources(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+    resource_id int unsigned not null,
+    time_begin timestamp,
+    numViews int unsigned not null default 0,
+	FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(resource_id) REFERENCES resources(id),
+    PRIMARY KEY(id) 
+    
+);
+
+CREATE TABLE user_viewed_congs(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+    cong_id int unsigned not null,
+    time_begin timestamp,
+	numViews int unsigned not null default 0,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(cong_id) REFERENCES congregations(cong_id),
+    PRIMARY KEY(id) 
+
+);
+
+CREATE TABLE user_viewed_events(
+	id int unsigned not null auto_increment,
+    user_id int unsigned not null,
+    event_id int unsigned not null,
+    time_begin timestamp,
+	numViews int unsigned not null default 0,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(event_id) REFERENCES event_table(event_id),
+    PRIMARY KEY(id) 
+);
 
 /*
 CREATE TABLE user_questions_not_selected (
