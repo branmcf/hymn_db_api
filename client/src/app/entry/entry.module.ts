@@ -16,6 +16,7 @@ import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
 import { SubmitService } from '../services/submit.service';
+import { ContentfulService } from '../services/contentful.service';
 
 @NgModule({
   id: 'entry',
@@ -45,6 +46,7 @@ import { SubmitService } from '../services/submit.service';
   ],
   providers: [
     SubmitService,
+    ContentfulService
   ],
   exports: [
     RouterModule
