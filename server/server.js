@@ -9,16 +9,22 @@ var connection = mysql.createConnection({
   password : '123',
   database : 'testDb'
 });
+/*
 //mysql connection
 connection.connect();
 connection.query('SELECT * from users', function(err, rows, fields) {
   if (!err)
-    console.log('The solution is: ', rows);
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    console.log(rows);
   else
     console.log('Error while performing Query.');
+
+  
 });
 connection.end();
 
+*/
 //end myql connection
 
 //quotes
@@ -55,6 +61,7 @@ server.connection({
 //    kind of functionality.
 //
 var quoteController = {};
+var userController = {};
 
 quoteController.getConfig = {
   handler: function(req, reply) {
@@ -96,6 +103,46 @@ quoteController.deleteConfig = {
 };
 //end quoteController
 
+//test for userController===========================
+
+  //mysql===
+var users = []
+
+connection.connect();
+connection.query('SELECT * from users', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    setValue(rows);
+  }
+  else
+    console.log('Error while performing Query.');
+
+  
+});
+connection.end();
+
+function setValue(value) {
+  users = value;
+  console.log(users);
+}
+  //end mysql===
+
+userController.getConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+      if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
+      var actualId = Number(request.params.id) - 1;
+      return reply(users[actualId]);
+    }
+    //if above doesn't work
+    reply(users);
+  }
+};
+
+//end test===========================
+
 
 //
 // ROUTES
@@ -105,7 +152,8 @@ var routes = [
   { path: '/quote/{id?}', method: 'GET', config: quoteController.getConfig },
   { path: '/random', method: 'GET', config: quoteController.getRandomConfig },
   { path: '/quote', method: 'POST', config: quoteController.postConfig },
-  { path: '/quote/{id}', method: 'DELETE', config: quoteController.deleteConfig }
+  { path: '/quote/{id}', method: 'DELETE', config: quoteController.deleteConfig },
+  { path: '/user/{id?}', method: 'GET', config: userController.getConfig }
 ];
 
 
