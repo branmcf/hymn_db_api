@@ -15,7 +15,7 @@ import { EntryReviewComponent } from './entryReview/entryReview.component';
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
-import { SubmitService } from '../services/submit.service'
+import { SubmitService } from '../services/submit.service';
 
 @NgModule({
   id: 'entry',
@@ -43,7 +43,7 @@ import { SubmitService } from '../services/submit.service'
       { path: 'entry/events', component: EntryEventComponent }
     ])
   ],
-  providers:[
+  providers: [
     SubmitService,
   ],
   exports: [

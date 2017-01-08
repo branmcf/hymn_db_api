@@ -5,7 +5,5 @@ import {Component} from '@angular/core';
   template: require('./main.html')
 })
 export class MainComponent {
-  constructor() {
-    
-  }
+  constructor() {}
 }
