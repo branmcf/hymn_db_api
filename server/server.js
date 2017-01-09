@@ -60,8 +60,98 @@ server.connection({
 // Simulate an external module which is the correct way to expose this
 //    kind of functionality.
 //
+
+
+var users = []
+var resources = []
+var events = []
+var congs = []
+
+/* 
+===================================================
+- mysql -
+=================================================== 
+*/
+connection.connect();
+
+//get users from db
+connection.query('SELECT * from users', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    setValue(rows);
+  }
+  else
+    console.log('Error while performing USers Query.');
+
+});
+
+//get resources from db
+connection.query('SELECT * from resources', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    setValue(rows, resources);
+  }
+  else
+    console.log('Error while performing Resources Query.');
+
+});
+
+//get events from db
+connection.query('SELECT * from resources', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    setValue(rows, events);
+  }
+  else
+    console.log('Error while performing Events Query.');
+
+});
+
+//get congregations from db
+connection.query('SELECT * from congregations', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    setValue(rows, congs);
+  }
+  else
+    console.log('Error while performing Congregations Query.');
+
+});
+
+
+connection.end();
+
+/* 
+===================================================
+- END mysql -
+=================================================== 
+*/
+
+//function below for console logging queries above
+function setValue(value, whereToStore) {
+  whereToStore = value;
+  console.log(whereToStore);
+}
+
 var quoteController = {};
 var userController = {};
+var resourceController ={};
+var eventController = {};
+var congController ={};
+
+/* 
+===================================================
+- Quote Controllers -
+=================================================== 
+*/
 
 quoteController.getConfig = {
   handler: function(req, reply) {
@@ -101,34 +191,14 @@ quoteController.deleteConfig = {
     reply(true);
   }
 };
-//end quoteController
 
-//test for userController===========================
+/* 
+===================================================
+- USER Controllers -
+=================================================== 
+*/
 
-  //mysql===
-var users = []
-
-connection.connect();
-connection.query('SELECT * from users', function(err, rows, fields) {
-  if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
-    setValue(rows);
-  }
-  else
-    console.log('Error while performing Query.');
-
-  
-});
-connection.end();
-
-function setValue(value) {
-  users = value;
-  console.log(users);
-}
-  //end mysql===
-
+//USER GET REQUEST
 userController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
@@ -136,24 +206,105 @@ userController.getConfig = {
       var actualId = Number(request.params.id) - 1;
       return reply(users[actualId]);
     }
-    //if above doesn't work
+    //if no ID specified
     reply(users);
   }
 };
 
-//end test===========================
+
+//USER POST REQUEST
+userController.postConfig = {
+  handler: function(req, reply) {
+    var newUser = { 
+      email: req.payload.email, 
+      password: req.payload.password, 
+      first_name: req.payload.first_name,
+      last_name: req.payload.last_name
+    };
+
+    users.push(newUser);
+    reply(newUser);
+  },
+  validate: {
+    payload: {
+      email: Joi.string().required(),
+      password: Joi.string().required(),
+      first_name: Joi.string().required(),
+      last_name: Joi.string().required()
+    }
+  }
+
+};
+
+/* 
+===================================================
+- RESOURCE Controllers -
+=================================================== 
+*/
+
+//RESOURCE GET REQUEST
+resourceController.getConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+      if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+      var actualId = Number(request.params.id) - 1;
+      return reply(resources[actualId]);
+    }
+    //if no ID specified
+    reply(resources);
+  }
+};
+
+//RESOURCE POST REQUEST
+resourceController.postConfig = {
+  handler: function(req, reply) {
+    var newRes = { 
+      title: req.payload.title, 
+      link: req.payload.link, 
+      description: req.payload.description,
+      is_free: req.payload.is_free
+    };
+
+    resources.push(newRes);
+    reply(newRes);
+  },
+  validate: {
+    payload: {
+      title: Joi.string().required(),
+      link: Joi.string().required(),
+      description: Joi.string().required(),
+      is_free: Joi.string().required()
+    }
+  }
+
+};
+
+/* 
+===================================================
+- EVENT Controllers -
+=================================================== 
+*/
+
+/* 
+===================================================
+- CONGREGATION Controllers -
+=================================================== 
+*/
 
 
-//
-// ROUTES
-//
+/* 
+===================================================
+- ROUTES -
+=================================================== 
+*/
 var routes = [
   { path: '/', method: 'GET', config: quoteController.getConfig },
   { path: '/quote/{id?}', method: 'GET', config: quoteController.getConfig },
   { path: '/random', method: 'GET', config: quoteController.getRandomConfig },
   { path: '/quote', method: 'POST', config: quoteController.postConfig },
   { path: '/quote/{id}', method: 'DELETE', config: quoteController.deleteConfig },
-  { path: '/user/{id?}', method: 'GET', config: userController.getConfig }
+  { path: '/user/{id?}', method: 'GET', config: userController.getConfig },
+  { path: '/user', method: 'POST', config: userController.postConfig}
 ];
 
 
