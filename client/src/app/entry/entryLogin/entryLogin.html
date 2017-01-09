@@ -3,16 +3,16 @@
   <div class="entry-body row">
     <div class="col-md-6 offset-md-3">
       <div class="card">
+
         <div class="card-header">
           Please log in
         </div>
 
         <div class="card-block">
+
           <div class="form-group">
-            <label for="user_email">
-                                    Email
-                                    </label>
-            <input id="user_email" class="form-control" />
+            <label for="user_email">Email</label>
+            <input [(ngModel)] id="user_email" class="form-control" />
           </div>
 
           <div class="form-group">
@@ -23,19 +23,16 @@
           </div>
 
           <div class="col-md-12">
-            <a class="btn btn-block btn-info" 
-            (click)="next()">
+            <a class="btn btn-block btn-info" (click)="next()">
             Next
             </a>
-            
-            <a class="btn btn-block" 
-            routerLink="/">
+            <a class="btn btn-block" routerLink="/">
             Return to home
             </a>
           </div>
 
-        </div>
-      </div>
+        </div> <!--end card-block-->
+      </div> <!--end card-->
     </div>
   </div>
 </div>

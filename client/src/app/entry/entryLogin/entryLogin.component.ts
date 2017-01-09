@@ -12,10 +12,7 @@ export class EntryComponent {
 	user: any;
 
 	constructor (private route: ActivatedRoute,
-    private router: Router) {
-			this.user = {};
-			this.title = 'New Account';
-  }
+    private router: Router) {}
 
 	next() {
   	this.router.navigate(['entry/resources']);
