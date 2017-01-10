@@ -127,7 +127,6 @@ connection.query('SELECT * from congregations', function(err, rows, fields) {
 });
 
 
-connection.end();
 
 /* 
 ===================================================
@@ -215,6 +214,7 @@ userController.getConfig = {
 //USER POST REQUEST
 userController.postConfig = {
   handler: function(req, reply) {
+
     var newUser = { 
       email: req.payload.email, 
       password: req.payload.password, 
@@ -222,8 +222,28 @@ userController.postConfig = {
       last_name: req.payload.last_name
     };
 
-    users.push(newUser);
-    reply(newUser);
+// mysql
+    //connection.connect();
+    connection.query(
+      'INSERT INTO users SET ?', newUser,
+      function(err, rows) {
+        reply([{
+          statusCode: 200,
+          message: 'Inserted Successfully',
+        }]);
+        if(err) {
+          throw new Error(err)
+        }
+      }
+    );
+    //DELETE BELOW TO MAKE CONTINUOUS INSERTS
+    connection.end();
+
+//end mysql
+
+    //users.push(newUser);
+    //reply(newUser);
+
   },
   validate: {
     payload: {
@@ -304,7 +324,9 @@ var routes = [
   { path: '/quote', method: 'POST', config: quoteController.postConfig },
   { path: '/quote/{id}', method: 'DELETE', config: quoteController.deleteConfig },
   { path: '/user/{id?}', method: 'GET', config: userController.getConfig },
-  { path: '/user', method: 'POST', config: userController.postConfig}
+  { path: '/user', method: 'POST', config: userController.postConfig },
+  { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
+  { path: '/resource', method: 'POST', config: resourceController.postConfig }
 ];
 
 
