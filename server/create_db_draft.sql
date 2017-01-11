@@ -10,12 +10,13 @@ DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS quizes;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS Social_Media_Connections;
-DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS social_media_connections;
+DROP TABLE IF EXISTS Tags;
 
-DROP TABLE IF EXISTS Event_Table;
-DROP TABLE IF EXISTS Congregations;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS congregations;
 DROP TABLE IF EXISTS Resources;
+DROP TABLE IF EXISTS organizations;
 DROP TABLE IF EXISTS Ensembles;
 DROP TABLE IF EXISTS Topics;
 DROP TABLE IF EXISTS Languages;
@@ -32,10 +33,34 @@ DROP TABLE IF EXISTS Denominations;
 DROP TABLE IF EXISTS Event_Types;
 DROP TABLE IF EXISTS Parent_Org;
 
+DROP TABLE IF EXISTS cities;
+DROP TABLE IF EXISTS states;
+DROP TABLE IF EXISTS countries;
+
 
 SET FOREIGN_KEY_CHECKS=1;
 
-CREATE TABLE tags (
+
+
+CREATE TABLE cities(
+	id int unsigned not null auto_increment,
+	name varchar(64),
+	PRIMARY KEY (id)
+);
+CREATE TABLE states(
+	id int unsigned not null auto_increment,
+	name varchar(64),
+	PRIMARY KEY (id)
+);
+CREATE TABLE countries(
+	id int unsigned not null auto_increment,
+	name varchar(64),
+	PRIMARY KEY (id)
+);
+
+
+
+CREATE TABLE Tags (
 	tag_id int unsigned not null auto_increment,
 	tag_name varchar(128),
 	PRIMARY KEY (tag_id)
@@ -133,53 +158,68 @@ CREATE TABLE Ethnicities (
 
 
 CREATE TABLE congregations (
-	cong_id int unsigned auto_increment,
-	PRIMARY KEY (cong_id),
-	cong_name varchar(64),
+	id int unsigned auto_increment,
+	PRIMARY KEY (id),
+	name varchar(64),
 	website varchar(64),
-	cong_city varchar(64),
-	cong_state varchar(64),
-	cong_country varchar(64),
+	city_id int unsigned,
+	state_id int unsigned,
+	country_id int unsigned,
+	FOREIGN KEY (city_id)
+		REFERENCES cities (id),
+	FOREIGN KEY (state_id)
+		REFERENCES states (id),
+	FOREIGN KEY (country_id)
+		REFERENCES countries (id),
 	hymn_soc_members boolean default False,
 	priest_attire varchar(64),
 	avg_attendance float,
 	denomination_id int unsigned not null,
-	song_types_id int unsigned not null,
-	instrument_types_id int unsigned not null,
-	worship_types_id int unsigned not null,
+	song_type_id int unsigned not null,
+	instrument_type_id int unsigned not null,
+	worship_type_id int unsigned not null,
 	cong_type_id int unsigned not null,
-	ethnicity_types_id int unsigned not null,
+	ethnicity_type_id int unsigned not null,
+	description_of_worship_to_guests varchar(256),
+	size int(10) unsigned default 0,
 	FOREIGN KEY (denomination_id)
 		REFERENCES Denominations (id),
-	FOREIGN KEY (song_types_id)
+	FOREIGN KEY (song_type_id)
 		REFERENCES Song_Types(id),
-	FOREIGN KEY (instrument_types_id)
+	FOREIGN KEY (instrument_type_id)
 		REFERENCES Instrument_Types(id),
-	FOREIGN KEY (worship_types_id)
+	FOREIGN KEY (worship_type_id)
 		REFERENCES Worship_Types(id),
 	FOREIGN KEY (cong_type_id)
 		REFERENCES Cong_Type(id),
-	FOREIGN KEY (ethnicity_types_id)
+	FOREIGN KEY (ethnicity_type_id)
 		REFERENCES Ethnicities(id)
 	
 	
 );
 
-CREATE TABLE event_table(
-	event_id int unsigned auto_increment,
-	PRIMARY KEY(event_id),
+CREATE TABLE events(
+	id int unsigned auto_increment,
+	PRIMARY KEY(id),
 	event_title varchar(128),
 	website varchar(128),
-	theme_or_topic varchar(128),
+	meeting_frequency varchar(64),
+	theme varchar(128),
 	event_desc text(256),
 	event_start_date date,
 	event_start_time time,
 	event_end_date date,
 	event_end_time time,
 	registration_cost int unsigned default 0,
-	event_city varchar(64),
-	event_state varchar(32),
-	event_country text,
+	city_id int unsigned,
+	state_id int unsigned,
+	country_id int unsigned,
+	FOREIGN KEY (city_id)
+		REFERENCES cities (id),
+	FOREIGN KEY (state_id)
+		REFERENCES states (id),
+	FOREIGN KEY (country_id)
+		REFERENCES countries (id),
 	hymn_soc_member_involved boolean default False,
 	parent_org_id int unsigned,
 	FOREIGN KEY (parent_org_id)
@@ -194,10 +234,10 @@ CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
 	title varchar(128),
-	link varchar(128),
+	website varchar(128),
 	author_id int unsigned,
 	description text(512),
-	type_id int unsigned,
+	resource_type_id int unsigned,
 	tag_id int unsigned,
 	denomination_id int unsigned,
 	Resource_date timestamp,
@@ -205,16 +245,16 @@ CREATE TABLE resources (
 	views int unsigned,
 	parent_org_id int unsigned,
 	language_id int unsigned, 
-	is_free boolean,
 	instrument_type_id int unsigned,
 	topic_id int unsigned,
 	ensemble_id int unsigned,
 	ethnicity_id int unsigned,
 	hymn_soc_member_included boolean,
+	is_free boolean,
 	
 	FOREIGN KEY (author_id) REFERENCES Authors(id),
-	FOREIGN KEY (type_id) REFERENCES Resource_Types(id),
-	FOREIGN KEY (tag_id) REFERENCES tags(tag_id),
+	FOREIGN KEY (resource_type_id) REFERENCES Resource_Types(id),
+	FOREIGN KEY (tag_id) REFERENCES Tags(tag_id),
 	FOREIGN KEY (denomination_id) REFERENCES Denominations(id),
 	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id),
 	FOREIGN KEY (language_id) REFERENCES Languages(id),
@@ -223,6 +263,44 @@ CREATE TABLE resources (
 	FOREIGN KEY (ensemble_id) REFERENCES Ensembles(id),
 	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
 
+);
+
+CREATE TABLE organizations (
+	id int unsigned auto_increment,
+	PRIMARY KEY (id),
+	name varchar(64),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations(id),
+	website varchar(128),
+	parent_org_id int unsigned,
+	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id),
+	denomination_id int unsigned,
+	FOREIGN KEY (denomination_id) REFERENCES Denominations(id),
+	city_id int unsigned,
+	state_id int unsigned,
+	country_id int unsigned,
+	FOREIGN KEY (city_id)
+		REFERENCES cities (id),
+	FOREIGN KEY (state_id)
+		REFERENCES states (id),
+	FOREIGN KEY (country_id)
+		REFERENCES countries (id),
+	/* CHANGE BELOW TO ANOTHER TABLE LATER */
+	geographic_area_description varchar(128),
+	is_free tinyint(1) default 0,
+	offers_free_events tinyint(1) default 0,
+	charge decimal(6) default 0.00,
+	mission varchar(256),
+	promotions varchar(256),
+	song_type_id int unsigned,
+	FOREIGN KEY (song_type_id) REFERENCES Song_Types(id),
+	instrument_type_id int unsigned,
+	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types(id),
+	worship_type_id int unsigned,
+	FOREIGN KEY (worship_type_id) REFERENCES Worship_Types(id),
+	priest_attire varchar(64),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
 );
 
 /* now for users and quizes */
@@ -238,8 +316,21 @@ CREATE TABLE users (
 	reg_date timestamp,
 	is_active tinyint(1) default 1,
 	high_level tinyint(1) default 0,
-	PRIMARY KEY (user_id)
-    /* keep track of their quizes */
+	city_id int unsigned,
+	state_id int unsigned,
+	country_id int unsigned,
+	FOREIGN KEY (city_id)
+		REFERENCES cities (id),
+	FOREIGN KEY (state_id)
+		REFERENCES states (id),
+	FOREIGN KEY (country_id)
+		REFERENCES countries (id),
+	PRIMARY KEY (user_id),
+	website varchar(128),
+	hymn_soc_member boolean default False,
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
+
   
 );
 
@@ -277,12 +368,12 @@ CREATE TABLE choices (
 	is_selected tinyint(1) default 0,
 	tag_id int unsigned,
 	FOREIGN KEY (tag_id)
-		REFERENCES tags (tag_id),
+		REFERENCES Tags (tag_id),
 	text_field varchar(512) /*if 'other' is selected */
 );
 
 
-CREATE TABLE Social_Media_Connections(
+CREATE TABLE social_media_connections(
 	id int unsigned auto_increment,
 	name varchar(64),
 	PRIMARY KEY (id),
@@ -293,7 +384,7 @@ CREATE TABLE Social_Media_Connections(
     
 );
 
-/* for storing RESOURCES and CONGREGATIONS!!! */
+/* for storing RESOURCES and congregations!!! */
 
 CREATE TABLE resource_favorites(
 	id int unsigned not null auto_increment,
@@ -312,7 +403,7 @@ CREATE TABLE cong_favorites(
 	cong_id int unsigned not null,
     time_favorited timestamp,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY(cong_id) REFERENCES congregations(cong_id),
+    FOREIGN KEY(cong_id) REFERENCES congregations(id),
     PRIMARY KEY(id) 
 );
 
@@ -322,7 +413,7 @@ CREATE TABLE event_favorites(
 	event_id int unsigned not null,
     time_favorited timestamp,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY(event_id) REFERENCES event_table(event_id),
+    FOREIGN KEY(event_id) REFERENCES events(id),
     PRIMARY KEY(id) 
 );
 
@@ -347,7 +438,7 @@ CREATE TABLE user_viewed_congs(
     time_begin timestamp,
 	numViews int unsigned not null default 0,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY(cong_id) REFERENCES congregations(cong_id),
+    FOREIGN KEY(cong_id) REFERENCES congregations(id),
     PRIMARY KEY(id) 
 
 );
@@ -359,7 +450,7 @@ CREATE TABLE user_viewed_events(
     time_begin timestamp,
 	numViews int unsigned not null default 0,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY(event_id) REFERENCES event_table(event_id),
+    FOREIGN KEY(event_id) REFERENCES events(id),
     PRIMARY KEY(id) 
 );
 
