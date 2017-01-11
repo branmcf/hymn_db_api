@@ -201,7 +201,7 @@ quoteController.deleteConfig = {
 userController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
-      if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
+      //if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
       var actualId = Number(request.params.id) - 1;
       return reply(users[actualId]);
     }
@@ -241,7 +241,7 @@ userController.postConfig = {
 
 //end mysql
 
-    //users.push(newUser);
+    users.push(newUser);
     //reply(newUser);
 
   },
@@ -266,7 +266,7 @@ userController.postConfig = {
 resourceController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
-      if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+      //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
       var actualId = Number(request.params.id) - 1;
       return reply(resources[actualId]);
     }
@@ -285,8 +285,24 @@ resourceController.postConfig = {
       is_free: req.payload.is_free
     };
 
+    // mysql
+    //connection.connect();
+    connection.query(
+      'INSERT INTO resources SET ?', newRes,
+      function(err, rows) {
+        reply([{
+          statusCode: 200,
+          message: 'Inserted Successfully',
+        }]);
+        if(err) {
+          throw new Error(err)
+        }
+      }
+    );
+    //end mysql
+
     resources.push(newRes);
-    reply(newRes);
+    //reply(newRes);
   },
   validate: {
     payload: {
@@ -305,11 +321,122 @@ resourceController.postConfig = {
 =================================================== 
 */
 
+//EVENT GET REQUEST
+eventController.getConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      var actualId = Number(request.params.id) - 1;
+      return reply(events[actualId]);
+    }
+    //if no ID specified
+    reply(resources);
+  }
+};
+
+//EVENT POST REQUEST
+eventController.postConfig = {
+  handler: function(req, reply) {
+    var newRes = { 
+      event_title: req.payload.event_title, 
+      website: req.payload.website, 
+      event_desc: req.payload.event_desc,
+      theme_or_topic: req.payload.theme_or_topic
+    };
+
+    // mysql
+    //connection.connect();
+    connection.query(
+      'INSERT INTO event_table SET ?', newRes,
+      function(err, rows) {
+        reply([{
+          statusCode: 200,
+          message: 'Inserted Successfully',
+        }]);
+        if(err) {
+          throw new Error(err)
+        }
+      }
+    );
+    //end mysql
+
+    events.push(newRes);
+    //reply(newRes);
+  },
+  validate: {
+    payload: {
+      event_title: Joi.string().required(),
+      website: Joi.string().required(),
+      event_desc: Joi.string().required(),
+      theme_or_topic: Joi.string().required()
+    }
+  }
+
+};
+
 /* 
 ===================================================
 - CONGREGATION Controllers -
 =================================================== 
 */
+
+//CONG GET REQUEST
+eventController.getConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      var actualId = Number(request.params.id) - 1;
+      return reply(events[actualId]);
+    }
+    //if no ID specified
+    reply(resources);
+  }
+};
+
+//CONG POST REQUEST
+eventController.postConfig = {
+  handler: function(req, reply) {
+    var newCong = { 
+      cong_name: req.payload.cong_name, 
+      website: req.payload.website, 
+      cong_city: req.payload.cong_city,
+      cong_state: req.payload.cong_state,
+      cong_country: req.payload.cong_country,
+      priest_attire: req.payload.priest_attire
+    };
+
+    // mysql
+    //connection.connect();
+    connection.query(
+      'INSERT INTO congregations SET ?', newCong,
+      function(err, rows) {
+        reply([{
+          statusCode: 200,
+          message: 'Inserted Successfully',
+        }]);
+        if(err) {
+          throw new Error(err)
+        }
+      }
+    );
+    //end mysql
+
+    congs.push(newCong);
+    //reply(newRes);
+  },
+  validate: {
+    payload: {
+      cong_name: Joi.string().required(),
+      website: Joi.string().required(),
+      cong_city: Joi.string().required(),
+      cong_state: Joi.string().required(),
+      cong_country: Joi.string().required(),
+      priest_attire: Joi.string().required()
+
+    }
+  }
+
+};
 
 
 /* 
@@ -326,7 +453,9 @@ var routes = [
   { path: '/user/{id?}', method: 'GET', config: userController.getConfig },
   { path: '/user', method: 'POST', config: userController.postConfig },
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
-  { path: '/resource', method: 'POST', config: resourceController.postConfig }
+  { path: '/resource', method: 'POST', config: resourceController.postConfig },
+  { path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
+  { path: '/event', method: 'POST', config: eventController.postConfig }
 ];
 
 
