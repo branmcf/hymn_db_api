@@ -330,14 +330,14 @@ eventController.getConfig = {
       return reply(events[actualId]);
     }
     //if no ID specified
-    reply(resources);
+    reply(events);
   }
 };
 
 //EVENT POST REQUEST
 eventController.postConfig = {
   handler: function(req, reply) {
-    var newRes = { 
+    var newEvent = { 
       event_title: req.payload.event_title, 
       website: req.payload.website, 
       event_desc: req.payload.event_desc,
@@ -347,7 +347,7 @@ eventController.postConfig = {
     // mysql
     //connection.connect();
     connection.query(
-      'INSERT INTO event_table SET ?', newRes,
+      'INSERT INTO event_table SET ?', newEvent,
       function(err, rows) {
         reply([{
           statusCode: 200,
@@ -360,7 +360,7 @@ eventController.postConfig = {
     );
     //end mysql
 
-    events.push(newRes);
+    events.push(newEvent);
     //reply(newRes);
   },
   validate: {
@@ -381,20 +381,20 @@ eventController.postConfig = {
 */
 
 //CONG GET REQUEST
-eventController.getConfig = {
+congController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
       var actualId = Number(request.params.id) - 1;
-      return reply(events[actualId]);
+      return reply(congs[actualId]);
     }
     //if no ID specified
-    reply(resources);
+    reply(congs);
   }
 };
 
 //CONG POST REQUEST
-eventController.postConfig = {
+congController.postConfig = {
   handler: function(req, reply) {
     var newCong = { 
       cong_name: req.payload.cong_name, 
@@ -402,7 +402,13 @@ eventController.postConfig = {
       cong_city: req.payload.cong_city,
       cong_state: req.payload.cong_state,
       cong_country: req.payload.cong_country,
-      priest_attire: req.payload.priest_attire
+      priest_attire: req.payload.priest_attire,
+      denomination_id: req.payload.denomination_id,
+      song_types_id: req.payload.song_types_id,
+      instrument_types_id: req.payload.instrument_types_id,
+      worship_types_id: req.payload.worship_types_id,
+      ethnicity_types_id: req.payload.ethnicity_types_id,
+      cong_type_id: req.payload.cong_type_id
     };
 
     // mysql
@@ -431,7 +437,13 @@ eventController.postConfig = {
       cong_city: Joi.string().required(),
       cong_state: Joi.string().required(),
       cong_country: Joi.string().required(),
-      priest_attire: Joi.string().required()
+      priest_attire: Joi.string().required(),
+      denomination_id: Joi.number().required(),
+      song_types_id: Joi.number().required(),
+      instrument_types_id: Joi.number().required(),
+      worship_types_id: Joi.number().required(),
+      ethnicity_types_id: Joi.number().required(),
+      cong_type_id: Joi.number().required()
 
     }
   }
@@ -455,7 +467,9 @@ var routes = [
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
   { path: '/resource', method: 'POST', config: resourceController.postConfig },
   { path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
-  { path: '/event', method: 'POST', config: eventController.postConfig }
+  { path: '/event', method: 'POST', config: eventController.postConfig },
+  { path: '/cong/{id?}', method: 'GET', config: congController.getConfig },
+  { path: '/cong', method: 'POST', config: congController.postConfig }
 ];
 
 
