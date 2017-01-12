@@ -3,7 +3,7 @@ import { Http, Headers, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
-export class SubmitService { 
+export class SubmitService {
 
     private _apiUrl = 'app/submissions';
 

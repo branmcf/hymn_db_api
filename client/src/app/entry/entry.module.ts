@@ -54,5 +54,4 @@ import { ContentfulService } from '../services/contentful.service';
 })
 
 export class EntryModule {
-  constructor() {}
 }
