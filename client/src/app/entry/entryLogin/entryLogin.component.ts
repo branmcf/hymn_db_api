@@ -9,12 +9,26 @@ import { Routing, RootComponent } from './../../routes';
 
 export class EntryComponent {
   title : string;
-	user: any;
+
+  user: {
+    name: string;
+    password: string;
+  }
 
 	constructor (private route: ActivatedRoute,
-    private router: Router) {}
+    private router: Router) {
+			this.user = {
+      	name: '',
+     		password: '',
+    	}
+		}
 
-	next() {
-  	this.router.navigate(['entry/resources']);
+	login() {
+		  var navToProfile = (data) => {
+      if (data) {
+        this.user = data;
+  		this.router.navigate(['entry/resources']);
+			}
+		}
 	}
 }
