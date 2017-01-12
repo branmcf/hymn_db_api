@@ -6,6 +6,12 @@ DROP TABLE IF EXISTS user_viewed_resources;
 DROP TABLE IF EXISTS resource_favorites;
 DROP TABLE IF EXISTS cong_favorites;
 DROP TABLE IF EXISTS event_favorites;
+
+DROP TABLE IF EXISTS user_choices;
+DROP TABLE IF EXISTS user_questions;
+DROP TABLE IF EXISTS user_quizes;
+DROP TABLE IF EXISTS suggested_resources;
+
 DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS quizes;
@@ -40,7 +46,11 @@ DROP TABLE IF EXISTS countries;
 
 SET FOREIGN_KEY_CHECKS=1;
 
-
+/* 
+===================================================
+- ATTRIBUTE TABLES -
+=================================================== 
+*/
 
 CREATE TABLE cities(
 	id int unsigned not null auto_increment,
@@ -80,14 +90,6 @@ CREATE TABLE Resource_Types (
 	name varchar(128), 
 	PRIMARY KEY (id)
 );
-
-/*
-CREATE TABLE Resource_Tags (
-	id int unsigned auto_increment,
-	name varchar(128), 
-	PRIMARY KEY (id)
-);
-*/
 
 CREATE TABLE Languages (
 	id int unsigned auto_increment,
@@ -155,7 +157,11 @@ CREATE TABLE Ethnicities (
 	PRIMARY KEY (id)
 );
 
-
+/* 
+===================================================
+- USERS, ORGS, EVENTS, RESOURCES, CONGS -
+=================================================== 
+*/
 
 CREATE TABLE congregations (
 	id int unsigned auto_increment,
@@ -303,10 +309,6 @@ CREATE TABLE organizations (
 	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
 );
 
-/* now for users and quizes */
-
-
-
 CREATE TABLE users (
 	user_id int unsigned not null auto_increment,
 	email varchar(128) default null,
@@ -334,13 +336,17 @@ CREATE TABLE users (
   
 );
 
+/* 
+===================================================
+- QUIZ TEMPLATES -
+=================================================== 
+*/
+
 CREATE TABLE quizes (
 	quiz_id int unsigned not null auto_increment,
 	quiz_title varchar(512),
 	is_active tinyint(1) default 1,
 	PRIMARY KEY (quiz_id),
-	user_id int unsigned not null,
-	FOREIGN KEY (user_id) REFERENCES users (user_id)
     /* create a quiz when a user is created! */
 );
 
@@ -371,6 +377,91 @@ CREATE TABLE choices (
 		REFERENCES Tags (tag_id),
 	text_field varchar(512) /*if 'other' is selected */
 );
+
+/* 
+===================================================
+- USER SPECIFIC -
+=================================================== 
+*/
+
+CREATE TABLE user_quizes (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	quiz_id int unsigned,
+	FOREIGN KEY (quiz_id) REFERENCES quizes (quiz_id),
+	time_begin timestamp
+);
+CREATE TABLE user_questions (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_quiz_id int unsigned,
+	FOREIGN KEY (user_quiz_id) REFERENCES user_quizes (id),
+	question_id int unsigned,
+	FOREIGN KEY (question_id) REFERENCES questions (question_id)
+		
+);
+CREATE TABLE user_choices (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_question_id int unsigned,
+	FOREIGN KEY (user_question_id) REFERENCES user_questions (id),
+	choice_id int unsigned,
+	FOREIGN KEY (choice_id) REFERENCES choices (choice_id),
+	is_selected boolean default False
+);
+
+/* 
+===================================================
+- SUGGESTED -
+=================================================== 
+*/
+
+CREATE TABLE suggested_resources (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id)
+);
+
+CREATE TABLE suggested_organizations (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id)
+);
+
+CREATE TABLE suggested_events (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id)
+);
+
+CREATE TABLE suggested_congregations (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations (id)
+);
+
+
+
+
+/* 
+===================================================
+- FAVORITES, VIEWS and SOCIAL MEDIA -
+=================================================== 
+*/
 
 
 CREATE TABLE social_media_connections(
