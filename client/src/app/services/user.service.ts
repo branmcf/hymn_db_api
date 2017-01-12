@@ -3,43 +3,18 @@ import { Http, Headers, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
-export class UsersService {
-    private _apiUrl = 'index.php/api/users';
+export class UserService {
+    private _apiUrl = 'app/users';
 
     constructor(private http: Http){}
 
-    add(user) : Promise<any> {
-        return this.http
-            .post(this._apiUrl, user)
-            .toPromise()
-            .then(() => user)
-            .catch(x => alert(x.json().error));
-    }
-
-    logIn(user) : Promise<any> {
-        return this.http
-            .post(this._apiUrl + '/login', user)
-            .toPromise()
-            .then(this.extractData);
-    }
-
-    get() : Promise<any> {
-        return this.http
-            .get(`index.php/api/getuser/`)
-            .toPromise()
-            .then(x => x['_body'] as any);
-    }
-
-    logout() : Promise<any> {
-        return this.http
-            .post(this._apiUrl + '/logout', "logging out")
-            .toPromise()
-            .catch(x => alert(x.json().error));
-    }
-
-    private extractData(res: Response) {
-        let body = res['_body'];
-        return body || {};
+    public loginUser(user : any) : Promise<any> {
+		var pluck = x => (x && x.length) ? x[0] : undefined;
+		return this.http
+			.get(`${this._apiUrl}/?name=${user.name}`)
+			.toPromise()
+			.then(x => pluck(x.json().data))
+			.catch(x => alert(x.json().error));
     }
 }
 

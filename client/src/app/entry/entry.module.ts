@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { Routing, RootComponent } from './../routes';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
 import { EntryResourcesComponent } from './entryResources/entryResources.component';
@@ -16,6 +17,7 @@ import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
 import { SubmitService } from '../services/submit.service';
+import { UserService } from '../services/user.service';
 
 @NgModule({
   id: 'entry',
@@ -30,6 +32,7 @@ import { SubmitService } from '../services/submit.service';
   ],
   imports: [
     CommonModule,
+    BrowserModule,
     FormsModule,
     HttpModule,
     HeaderModule,
@@ -45,6 +48,7 @@ import { SubmitService } from '../services/submit.service';
   ],
   providers: [
     SubmitService,
+    UserService,
   ],
   exports: [
     RouterModule
