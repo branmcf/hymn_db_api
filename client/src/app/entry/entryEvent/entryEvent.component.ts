@@ -8,10 +8,83 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 })
 
 export class EntryEventComponent {
+  title: string;
+  occurance: any;
+  url: string;
+  parent: string;
+  topic: string;
+  desc: string;
+  date: string;
+  cost: any;
+  city: string;
+  state: string;
+  country: string;
+  isInvolved: any; 
+
+  submission: {
+    title: string;
+    occurance: any;
+    url: string;
+    parent: string;
+    topic: string;
+    desc: string;
+    date: string;
+    cost: any;
+    city: string;
+    state: string;
+    country: string;
+    isInvolved: any; 
+  }
   constructor (private route: ActivatedRoute,
     private router: Router) {
 
   }
+
+  ngOnInit() {
+    this.route.params.forEach(x => this.load(+x['user.id']));
+    this.title = '',
+    this.occurance = '',
+    this.url = '',
+    this.parent = '',
+    this.topic = '',
+    this.desc = '',
+    this.date = '',
+    this.cost = '',
+    this.city = '',
+    this.state = '',
+    this.country = '',
+    this.isInvolved = ''
+
+    this.submission = {
+      title: '',
+      occurance: '',
+      url: '',
+      parent: '',
+      topic: '',
+      desc: '',
+      date: '',
+      cost: '',
+      city: '',
+      state: '',
+      country: '',
+      isInvolved: ''
+    }
+  }
+
+  private load(id) {
+    if (!id) {
+      return;
+    }
+
+    var onload = (data) => {
+      if (data) {
+        this.submission = data;
+      } else {
+
+      }
+    };
+  }
+
 
 	next() {
   	this.router.navigate(['']);

@@ -10,36 +10,36 @@ import { SubmitService } from './../../services/submit.service'
 })
 
 export class EntryCongregationComponent {
-  title: string;
-  type: string;
+  name: string;
   url: string;
-  author: string;
-  parent: string;
-  desc: string;
-  category: any[];
-  topic: any[];
-  accompany: any[];
-  lang: any[];
-  ensemble: any[];
-  ethnicity: any;
-  isInvolved: any;
-  free: any;
+  city: string;
+  state: string;
+  country: any;
+  denom: any;
+  members: any;
+  type: any[];
+  instrument: any[];
+  shape: any;
+  attire: any;
+  location: any;
+  ethnicity: any[];
+  attendance: any;
 
   submission: {
-    title: string;
-    type: string;
+    name: string;
     url: string;
-    author: string;
-    parent: string;
-    desc: string;
-    category: any[];
-    topic: any[];
-    accompany: any[];
-    lang: any[];
-    ensemble: any[];
-    ethnicity: any;
-    isInvolved: any;
-    free: any;
+    city: string;
+    state: string;
+    country: any;
+    denom: any;
+    members: any;
+    type: any[];
+    instrument: any[];
+    shape: any;
+    attire: any;
+    location: any;
+    ethnicity: any[];
+    attendance: any;
   }
 
   constructor(private route: ActivatedRoute,
@@ -50,37 +50,36 @@ export class EntryCongregationComponent {
 
   ngOnInit() {
     this.route.params.forEach(x => this.load(+x['user.id']));
-
-    this.title = '';
-    this.type = '';
-    this.url = '';
-    this.author = '';
-    this.parent = '';
-    this.desc = '';
-    this.category = [];
-    this.topic = [];
-    this.accompany = [];
-    this.lang = [];
-    this.ensemble = [];
-    this.ethnicity = '';
-    this.isInvolved = '';
-    this.free = '';
+    this.name = '',
+    this.url = '',
+    this.city = '',
+    this.state = '',
+    this.country = '',
+    this.denom = '',
+    this.members = [],
+    this.type = [],
+    this.instrument = [],
+    this.shape = '',
+    this.attire = '',
+    this.location = '',
+    this.ethnicity = [],
+    this.attendance = '',
 
     this.submission = {
-      title: '',
-      type: '',
+      name: '',
       url: '',
-      author: '',
-      parent: '',
-      desc: '',
-      category: [],
-      topic: [],
-      accompany: [],
-      lang: [],
-      ensemble: [],
-      ethnicity: '',
-      isInvolved: '',
-      free: '',
+      city: '',
+      state: '',
+      country: '',
+      denom: '',
+      members: [],
+      type: [],
+      instrument: [],
+      shape: '',
+      attire: '',
+      location: '',
+      ethnicity: [],
+      attendance: '',
     }
   }
 

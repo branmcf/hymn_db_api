@@ -43,7 +43,8 @@ import { UserService } from '../services/user.service';
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
       { path: 'entry/orgs', component: EntryOrgsComponent },
-      { path: 'entry/events', component: EntryEventComponent }
+      { path: 'entry/events', component: EntryEventComponent },
+      { path: 'entry/review', component: EntryReviewComponent },
     ])
   ],
   providers: [

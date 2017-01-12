@@ -93,10 +93,7 @@ export class EntryResourcesComponent {
 
       }
     };
-
   }
-
-
 
   submit() {
     this.submission.title = this.title;
