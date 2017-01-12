@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/toPromise';
 import * as contentful from 'contentful';
 import * as util from 'util';
+import { Observable } from 'rxjs/Rx';
 
 declare var process: any;
 
@@ -46,17 +47,27 @@ export class ContentfulService {
     }
 
     getResourcesForm() {
-        return this.getEntry('73N7PxAbegmGu2gwSqa46o')
-        .then((form) => {
-            return form;
-        });
+        // return this.getEntry('73N7PxAbegmGu2gwSqa46o');
+        // return Observable.fromPromise(this.client.getEntry('73N7PxAbegmGu2gwSqa46o'));
+        // return Observable.of({fields: {title: 'hey', instructions: 'what up'}});
+        return Promise.resolve(this.client.getEntry('73N7PxAbegmGu2gwSqa46o')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
     }
 
     getOrgsForm() {
-        return this.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
-        .then((form) => {
-            return form;
-        });
+        // return this.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
+        // .then((form) => {
+        //     return form;
+        // });
+        return Promise.resolve(this.client.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
+
+        // return Promise.resolve(JSON.stringify({fields: {instructions: 'what', title: 'wut'}}));
+
     }
 
     getPersonForm() {

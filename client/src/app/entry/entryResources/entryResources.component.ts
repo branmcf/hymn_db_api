@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
 
@@ -9,23 +9,27 @@ import { ContentfulService } from './../../services/contentful.service';
   providers: [ContentfulService]
 })
 
-export class EntryResourcesComponent {
-  public title;
-  public instructions;
-
+export class EntryResourcesComponent implements OnInit {
+  public content;
+  private observer;
 	constructor (private route: ActivatedRoute,
     private router: Router,
     private contentful: ContentfulService) {
+      this.observer = {
+        next: x => {
+          console.log('Observer got a next value: ' + JSON.stringify(x));
+        },
+        error: err => console.error('Observer got an error: ' + err),
+        complete: () => console.log('Observer got a complete notification')
+      };
   }
-
   ngOnInit() {
-    this.contentful.getResourcesForm()
-      .then((content) => {
-        content = JSON.parse(content);
-        this.title = content.fields.title;
-        this.instructions = content.fields.instructions;
-        console.log(this.instructions);
-      });
+    // tslint:disable-next-line:no-string-literal
+    // this.content = this.route.snapshot.data['content'];
+    // this.contentful.getResourcesForm().subscribe(this.observer);
+    this.contentful.getResourcesForm().then((content) => {
+      this.content = JSON.parse(content);
+    });
   }
 
 	next() {
