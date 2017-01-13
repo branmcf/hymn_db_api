@@ -1,5 +1,30 @@
 SET FOREIGN_KEY_CHECKS=0;
 
+DROP TABLE IF EXISTS congregation_tags;
+DROP TABLE IF EXISTS congregation_denominations;
+DROP TABLE IF EXISTS congregation_song_types;
+DROP TABLE IF EXISTS congregation_instrument_types;
+DROP TABLE IF EXISTS congregation_worship_types;
+DROP TABLE IF EXISTS congregation_types;
+DROP TABLE IF EXISTS congregation_ethnicities;
+DROP TABLE IF EXISTS event_tags;
+DROP TABLE IF EXISTS event_types; 
+DROP TABLE IF EXISTS resource_tags; 
+DROP TABLE IF EXISTS resource_authors; 
+DROP TABLE IF EXISTS resource_types;
+DROP TABLE IF EXISTS resource_denominations;
+DROP TABLE IF EXISTS resource_instruments;
+DROP TABLE IF EXISTS resource_topics;
+DROP TABLE IF EXISTS resource_ensembles;
+DROP TABLE IF EXISTS resource_ethnicities; 
+DROP TABLE IF EXISTS organization_tags; 
+DROP TABLE IF EXISTS organization_song_types;
+DROP TABLE IF EXISTS organization_instrument_types;
+DROP TABLE IF EXISTS organization_worship_types;
+DROP TABLE IF EXISTS organization_ethnicities;
+DROP TABLE IF EXISTS organization_congregations;
+DROP TABLE IF EXISTS organization_denominations;
+
 DROP TABLE IF EXISTS user_viewed_events;
 DROP TABLE IF EXISTS user_viewed_congs;
 DROP TABLE IF EXISTS user_viewed_resources;
@@ -428,6 +453,15 @@ CREATE TABLE event_tags (
 	FOREIGN KEY (tag_id) REFERENCES Tags (id)
 );
 
+CREATE TABLE event_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	event_type_id int unsigned,
+	FOREIGN KEY (event_type_id) REFERENCES Event_Types (id)
+);
+
 /* 
 ===================================================
 - INTERMEDIATE TABLES FOR RESOURCES -
@@ -443,6 +477,69 @@ CREATE TABLE resource_tags (
 	FOREIGN KEY (tag_id) REFERENCES Tags (id)
 );
 
+CREATE TABLE resource_authors (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	author_id int unsigned,
+	FOREIGN KEY (author_id) REFERENCES Authors (id)
+);
+
+CREATE TABLE resource_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_type_id int unsigned,
+	FOREIGN KEY (resource_type_id) REFERENCES Resource_Types (id)
+);
+
+CREATE TABLE resource_denominations (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	denomination_id int unsigned,
+	FOREIGN KEY (denomination_id) REFERENCES Denominations (id)
+);
+
+CREATE TABLE resource_instruments (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	instrument_type_id int unsigned,
+	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types (id)
+);
+
+CREATE TABLE resource_topics (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	topic_id int unsigned,
+	FOREIGN KEY (topic_id) REFERENCES Topics (id)
+);
+
+CREATE TABLE resource_ensembles (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	ensemble_id int unsigned,
+	FOREIGN KEY (ensemble_id) REFERENCES Ensembles (id)
+);
+
+CREATE TABLE resource_ethnicities (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
+);
+
 /* 
 ===================================================
 - INTERMEDIATE TABLES FOR ORGANIZATIONS -
@@ -456,6 +553,60 @@ CREATE TABLE organization_tags (
 	FOREIGN KEY (organization_id) REFERENCES organizations (id),
 	tag_id int unsigned,
 	FOREIGN KEY (tag_id) REFERENCES Tags (id)
+);
+
+CREATE TABLE organization_song_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	song_type_id int unsigned,
+	FOREIGN KEY (song_type_id) REFERENCES Song_Types (id)
+);
+
+CREATE TABLE organization_instrument_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	instrument_type_id int unsigned,
+	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types (id)
+);
+
+CREATE TABLE organization_worship_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	worship_type_id int unsigned,
+	FOREIGN KEY (worship_type_id) REFERENCES Worship_Types (id)
+);
+
+CREATE TABLE organization_ethnicities (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
+);
+
+CREATE TABLE organization_congregations (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations (id)
+);
+
+CREATE TABLE organization_denominations (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	denomination_id int unsigned,
+	FOREIGN KEY (denomination_id) REFERENCES Denominations (id)
 );
 
 
