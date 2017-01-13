@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { Routing, RootComponent } from './../routes';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
 import { EntryResourcesComponent } from './entryResources/entryResources.component';
@@ -17,6 +18,7 @@ import { SharedModule } from './../shared/shared.module';
 
 import { SubmitService } from '../services/submit.service';
 import { ContentfulService } from '../services/contentful.service';
+import { UserService } from '../services/user.service';
 
 @NgModule({
   id: 'entry',
@@ -31,6 +33,7 @@ import { ContentfulService } from '../services/contentful.service';
   ],
   imports: [
     CommonModule,
+    BrowserModule,
     FormsModule,
     HttpModule,
     HeaderModule,
@@ -41,12 +44,14 @@ import { ContentfulService } from '../services/contentful.service';
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
       { path: 'entry/orgs', component: EntryOrgsComponent },
-      { path: 'entry/events', component: EntryEventComponent }
+      { path: 'entry/events', component: EntryEventComponent },
+      { path: 'entry/review', component: EntryReviewComponent },
     ])
   ],
   providers: [
     SubmitService,
-    ContentfulService
+    ContentfulService,
+    UserService,
   ],
   exports: [
     RouterModule

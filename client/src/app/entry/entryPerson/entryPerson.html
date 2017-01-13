@@ -13,47 +13,97 @@
                     <h4 class="card-title">Clinician/Consultant</h4>
 
                     <div class="form-group">
-                        <label for="person_fname">First Name</label>
-                        <input id="person_fname" class="form-control" />
+                        <label for="personFname">First Name</label>
+                        <input type="text"
+                        id="personFname" 
+                        class="form-control" 
+                        [(ngModel)]="submission.fname"
+                        name="personFname"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_lname">Last Name</label>
-                        <input id="person_lname" class="form-control" />
+                        <label for="personLname">Last Name</label>
+                        <input type="text"
+                        id="personLname" 
+                        class="form-control" 
+                        [(ngModel)]="submission.lname"
+                        name="personLname"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_email">Email</label>
-                        <input id="person_email" class="form-control" />
+                        <label for="personEmail">Email</label>
+                        <input type="text"
+                        id="personEmail" 
+                        class="form-control" 
+                        [(ngModel)]="submission.email"
+                        name="personEmail"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_city">City</label>
-                        <input id="person_city" class="form-control" />
+                        <label for="personCity">City</label>
+                        <input type="text"
+                        id="personCity" 
+                        class="form-control"
+                        [(ngModel)]="submission.city" 
+                        name="personCity"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_state_prov">State/Province</label>
-                        <input id="person_state_prov" class="form-control" />
+                        <label for="personState">State/Province</label>
+                        <input type="text"
+                        id="personState" 
+                        class="form-control" 
+                        [(ngModel)]="submission.state"
+                        name="personState"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_country">Country</label>
-                        <input id="person_country" class="form-control" />
+                        <label for="personCountry">Country</label>
+                        <input type="text"
+                        id="personCountry" 
+                        class="form-control" 
+                        [(ngModel)]="submission.country"
+                        name="personCountry"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_url">Personal/Professional Website</label>
-                        <input type="url" id="person_url" class="form-control" />
+                        <label for="personUrl">Personal/Professional Website</label>
+                        <input type="url" 
+                        id="personUrl" 
+                        class="form-control" 
+                        [(ngModel)]="submission.website"
+                        name="personUrl"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_social">Personal/Professional Website</label>
-                        <input type="url" id="person_social" class="form-control" />
+                        <label for="personSocial">Facebook, Twitter, and other Social Media Connections</label>
+                        <input type="url" 
+                        id="personSocial" 
+                        class="form-control" 
+                        [(ngModel)]="submission.social"
+                        name="personSocial"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_member">Are you a Hymn Society Member?</label>
+                        <label for="personEmphasis">Main Topic/Emphasis</label>
+                        <input type="text"
+                        id="personEmphasis" 
+                        class="form-control" 
+                        [(ngModel)]="submission.emphasis"
+                        name="personEmphasis"
+                        required/>
+                    </div>                    
+
+                    <div class="form-group">
+                        <label for="personMember">Are you a Hymn Society Member?</label>
                         <form action="" method="post">
                             <input type="radio" name="isMember" value="yes" /> Yes
                             <br>
@@ -62,7 +112,7 @@
                     </div>
  
                     <div class="form-group">
-                        <label for="person_categories">Which Topics/Situations Are You Comfortable Working With?</label>
+                        <label for="personTopics">Which Topics/Situations Are You Comfortable Working With?</label>
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox"> Contemporary Song/Band
@@ -101,7 +151,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="person_categories">Which ethnicities do you work with in at least 10% of your events??</label>
+                        <label for="personEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox"> White
@@ -143,10 +193,57 @@
                             </label>
                         </div>
                         <div class="form-group" [hidden]="!other">
-                            <input id="person_city" class="form-control" />
+                            <input type="text"
+                            id="personEthnicity"
+                            class="form-control" 
+                            [(ngModel)]="submission.ethnicities"
+                            name"personEthnicity"
+                            required/>
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="personCategories">What types of ensembles are you comfortable working with?</label>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Choir
+                        </label>
+                        </div>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Cantor
+                        </label>
+                        </div>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Song-Enlivener
+                        </label>
+                        </div>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Lead Singer from Band (Solo)
+                        </label>
+                        </div>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Lead Singer from Band with Other Vocalists
+                        </label>
+                        </div>
+                        <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox"> Other...
+                            <div class="form-group" [hidden]="!other">
+                                <input type="text"
+                                id="personCategories" 
+                                class="form-control" 
+                                [(ngModel)]="submission.catgories"
+                                name="personCategories"
+                                required/>
+                            </div>
+                        </label>
+                        </div>
+                    </div>
+          
                     <div>
                         <a class="btn btn-block btn-primary">Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
