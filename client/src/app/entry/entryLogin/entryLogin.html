@@ -29,6 +29,7 @@ SHOW WHICH USER SUBMITTIED WHAT
               class="form-control"               
               [(ngModel)]="user.email" 
               #userEmail="ngModel"
+              name="userEmail"
               required/>
 
             <div class="alert alert-danger" *ngIf="userEmail.errors && userEmail.touched">
@@ -51,8 +52,8 @@ SHOW WHICH USER SUBMITTIED WHAT
               class="form-control"
               [(ngModel)]="user.password" 
               #userPassword="ngModel"
+              name="userPassword"
               required/>
-         
 
             <div class="alert alert-danger" *ngIf="userPassword.errors && userPassword.touched">
                 <ul>

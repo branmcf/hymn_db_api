@@ -20,6 +20,7 @@ export class EntryPersonComponent {
   isMember: any;
   topics: any[];
   ethnicities: any[];
+  categories: any[];
 
   submission: {
     fname: string;
@@ -34,6 +35,7 @@ export class EntryPersonComponent {
     isMember: any;
     topics: any[];
     ethnicities: any[];
+    categories: any[];
   }
 
 
@@ -56,7 +58,8 @@ export class EntryPersonComponent {
     this.emphasis = '',
     this.isMember = '',
     this.topics = [],
-    this.ethnicities = []    
+    this.ethnicities = [],
+    this.categories = [];  
 
     this.submission = {
       fname: '',
@@ -70,7 +73,8 @@ export class EntryPersonComponent {
       emphasis: '',
       isMember: '',
       topics: [],
-      ethnicities: []
+      ethnicities: [],
+      categories: []
     }
   }
 
