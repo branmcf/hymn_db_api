@@ -101,20 +101,20 @@ export class EntryCongregationComponent {
 
 
   submit() {
-    this.submission.title = this.title;
-    this.submission.type = this.type;
-    this.submission.url = this.url;
-    this.submission.author = this.author;
-    this.submission.parent = this.parent;
-    this.submission.desc = this.desc;
-    this.submission.category = this.category;
-    this.submission.topic = this.topic;
-    this.submission.accompany = this.accompany;
-    this.submission.lang = this.lang;
-    this.submission.ensemble = this.ensemble;
-    this.submission.ethnicity = this.ethnicity;
-    this.submission.isInvolved = this.isInvolved;
-    this.submission.free = this.free
+    // this.submission.title = this.title;
+    // this.submission.type = this.type;
+    // this.submission.url = this.url;
+    // this.submission.author = this.author;
+    // this.submission.parent = this.parent;
+    // this.submission.desc = this.desc;
+    // this.submission.category = this.category;
+    // this.submission.topic = this.topic;
+    // this.submission.accompany = this.accompany;
+    // this.submission.lang = this.lang;
+    // this.submission.ensemble = this.ensemble;
+    // this.submission.ethnicity = this.ethnicity;
+    // this.submission.isInvolved = this.isInvolved;
+    // this.submission.free = this.free
   }
 
   next() {

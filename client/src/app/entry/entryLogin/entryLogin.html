@@ -1,3 +1,9 @@
+MAKE IT SO PEOPLE CAN CHOOSE WHAT THEY WANT TO SUBMIT IN THE FIRST PLACE
+CREATE PREVIEW PAGE BEFORE SUBMISSION
+ALLOW USER TO BACK AND EDIT DATA
+ALLOW USERS TO EMAIL BRIAN TO GET PASSWORD
+SHOW WHICH USER SUBMITTIED WHAT
+
 <div class="entry-container">
   <hymn-header></hymn-header>
   <div class="entry-body row">
@@ -24,7 +30,6 @@
               [(ngModel)]="user.email" 
               #userEmail="ngModel"
               required/>
-          
 
             <div class="alert alert-danger" *ngIf="userEmail.errors && userEmail.touched">
                 <ul>
