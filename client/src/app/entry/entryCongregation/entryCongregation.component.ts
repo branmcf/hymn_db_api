@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 
-import { SubmitService } from './../../services/submit.service'
+import { SubmitService } from './../../services/submit.service';
+import { ContentfulService } from './../../services/contentful.service';
+
 
 @Component({
   selector: 'hymn-entry-congregation',
@@ -10,6 +12,7 @@ import { SubmitService } from './../../services/submit.service'
 })
 
 export class EntryCongregationComponent {
+  content: JSON;
   name: string;
   url: string;
   city: string;
@@ -40,15 +43,20 @@ export class EntryCongregationComponent {
     location: any;
     ethnicity: any[];
     attendance: any;
-  }
+  };
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private submitService : SubmitService) {
+    private submitService : SubmitService,
+    private contentful: ContentfulService) {
 
   }
 
   ngOnInit() {
+    this.contentful.getCongregationForm().then((content) => {
+      this.content = JSON.parse(content);
+    });
+
     this.route.params.forEach(x => this.load(+x['user.id']));
     this.name = '',
     this.url = '',

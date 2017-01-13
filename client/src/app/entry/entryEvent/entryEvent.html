@@ -5,10 +5,10 @@
         <div class="col-md-8 offset-md-3">
             <div class="card">
                 <div class="card-header">
-                    Please submit your event information here. We will then include it in our database so that our users can be made aware of this opportunity to encourage, promote, and enliven their congregational song.
+                    {{content?.fields.instructions}}
                 </div>
                 <div class="card-block">
-                    <h4 class="card-title">Events</h4>
+                    <h4 class="card-title">{{content?.fields.title}}</h4>
 
                     <div class="form-group">
                         <label for="eventTitle">Event Title</label>

@@ -12,7 +12,7 @@ import { ContentfulService } from './../../services/contentful.service';
 export class EntryOrgsComponent implements OnInit {
   content: JSON;
   name: string;
-  url: string; 
+  url: string;
   parent: string;
   denoms: any[];
   city: string;
@@ -39,7 +39,7 @@ export class EntryOrgsComponent implements OnInit {
     membershipCharge: any;
     mission: string;
     method: string;
-  }
+  };
 
   constructor (private route: ActivatedRoute,
     private router: Router,

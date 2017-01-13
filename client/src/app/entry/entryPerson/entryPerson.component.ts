@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ContentfulService } from './../../services/contentful.service';
 
 @Component({
   selector: 'hymn-entry-person',
@@ -7,7 +8,8 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
   styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
-export class EntryPersonComponent {
+export class EntryPersonComponent implements OnInit {
+  content: JSON;
   fname: string;
   lname: string;
   email: string;
@@ -36,30 +38,31 @@ export class EntryPersonComponent {
     topics: any[];
     ethnicities: any[];
     categories: any[];
-  }
-
+  };
 
   constructor (private route: ActivatedRoute,
-  private router: Router) {
-
-
+    private router: Router,
+    private contentful: ContentfulService) {
   }
 
   ngOnInit() {
+    this.contentful.getPersonForm().then((content) => {
+      this.content = JSON.parse(content);
+    });
     this.route.params.forEach(x => this.load(+x['user.id']));
-    this.fname = '',
-    this.lname = '',
-    this.email = '',
-    this.city = '',
-    this.state = '',
-    this.country = '',
-    this.website = '',
-    this.social = '',
-    this.emphasis = '',
-    this.isMember = '',
-    this.topics = [],
-    this.ethnicities = [],
-    this.categories = [];  
+    this.fname = '';
+    this.lname = '';
+    this.email = '';
+    this.city = '';
+    this.state = '';
+    this.country = '';
+    this.website = '';
+    this.social = '';
+    this.emphasis = '';
+    this.isMember = '';
+    this.topics = [];
+    this.ethnicities = [];
+    this.categories = [];
 
     this.submission = {
       fname: '',
