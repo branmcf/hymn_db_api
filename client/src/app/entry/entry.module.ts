@@ -13,6 +13,7 @@ import { EntryCongregationComponent } from './entryCongregation/entryCongregatio
 import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
 import { EntryEventComponent } from './entryEvent/entryEvent.component';
 import { EntryReviewComponent } from './entryReview/entryReview.component';
+import { EntryLandingComponent } from './entryLanding/entryLanding.component';
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
@@ -25,6 +26,7 @@ import { UserService } from '../services/user.service';
   declarations: [
     EntryResourcesComponent,
     EntryComponent,
+    EntryLandingComponent,
     EntryPersonComponent,
     EntryCongregationComponent,
     EntryOrgsComponent,
@@ -40,6 +42,7 @@ import { UserService } from '../services/user.service';
     SharedModule,
     RouterModule.forRoot([
       { path: 'entry', component: EntryComponent },
+      { path: 'entry/welcome', component: EntryLandingComponent },
       { path: 'entry/resources', component: EntryResourcesComponent },
       { path: 'entry/person', component: EntryPersonComponent },
       { path: 'entry/congregations', component: EntryCongregationComponent },
