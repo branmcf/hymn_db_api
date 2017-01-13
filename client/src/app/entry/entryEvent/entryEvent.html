@@ -5,18 +5,23 @@
         <div class="col-md-8 offset-md-3">
             <div class="card">
                 <div class="card-header">
-                    Please submit your event information here. We will then include it in our database so that our users can be made aware of this opportunity to encourage, promote, and enliven their congregational song.
+                    {{content?.fields.instructions}}
                 </div>
                 <div class="card-block">
-                    <h4 class="card-title">Events</h4>
+                    <h4 class="card-title">{{content?.fields.title}}</h4>
 
                     <div class="form-group">
-                        <label for="event_title">Event Title</label>
-                        <input id="event_title" class="form-control" />
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text"
+                        id="eventTitle" 
+                        class="form-control" 
+                        [(ngModel)]="submission.title"
+                        name="eventTitle"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_occurance">Are you a Hymn Society Member?</label>
+                        <label for="eventOccurance">Is Your Event...</label>
                         <form action="" method="post">
                             <input type="radio" name="occurance" value="annual" /> Annual
                             <br>
@@ -26,68 +31,113 @@
                             <br>
                             <input type="radio" name="occurance" value="other" /> Other...
                             <div class="form-group" [hidden]="!other">
-                                <input id="person_city" class="form-control" />
+                                <input type="text"
+                                id="eventOccurance" 
+                                class="form-control" 
+                                [(ngModel)]="submission.occurance"
+                                name="eventOccurance"
+                                required/>
                             </div>
                         </form>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_url">Event Website</label>
-                        <input type="url" id="event_url" class="form-control" />
+                        <label for="eventUrl">Event Website</label>
+                        <input type="url" 
+                        id="eventUrl" 
+                        class="form-control" 
+                        [(ngModel)]="submission.url"
+                        name="eventUrl"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_parent">Parent or Sponsoring Organization(s)</label>
-                        <input id="event_parent" class="form-control" />
+                        <label for="eventParent">Parent or Sponsoring Organization(s)</label>
+                        <input type="text"
+                        id="eventParent" 
+                        class="form-control" 
+                        [(ngModel)]="submission.parent"
+                        name="eventParent"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_topic">Topic/Emphasis/Theme</label>
-                        <input id="event_topic" class="form-control" />
+                        <label for="eventTopic">Topic/Emphasis/Theme</label>
+                        <input type="text"
+                        id="eventTopic" 
+                        class="form-control" 
+                        [(ngModel)]="submission.topic"
+                        name="eventTopic"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_desc">Event Description</label>
-                        <input id="event_desc" class="form-control" />
+                        <label for="eventDesc">Event Description</label>
+                        <input type="text"
+                        id="eventDesc" 
+                        class="form-control" 
+                        [(ngModel)]="submission.desc"
+                        name="eventDesc"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_date">Event Start Date</label>
-                        <input type ="date" id="event_date" class="form-control" />
+                        <label for="eventDate">Event Start Date</label>
+                        <input type ="date" 
+                        id="eventDate" 
+                        class="form-control" 
+                        [(ngModel)]="submission.date"
+                        name="eventDate"
+                        rerquired/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_cost">Registration Cost</label>
+                        <label for="eventCost">Registration Cost</label>
                         <form action="" method="post">
                             <input type="radio" name="cost" value="free" /> Free
                             <br>
-                            <input type="radio" name="cost" value="under100" /> Under 100
+                            <input type="radio" name="cost" value="under100" /> Under $100
                             <br>
-                            <input type="radio" name="cost" value="100to200" /> Between 100 and 250
+                            <input type="radio" name="cost" value="100to200" /> Between $100 and $250
                             <br>
-                            <input type="radio" name="cost" value="250to500" /> Between 250 and 500
+                            <input type="radio" name="cost" value="250to500" /> Between $250 and $500
                             <br>
-                            <input type="radio" name="cost" value="over1000" /> Over 1000
+                            <input type="radio" name="cost" value="over1000" /> Over $1000
                         </form>
                     </div> 
 
                     <div class="form-group">
-                        <label for="event_city">Event City</label>
-                        <input id="event_cityt" class="form-control" />
+                        <label for="eventCity">Event City</label>
+                        <input type="text"
+                        id="eventCityt" 
+                        class="form-control" 
+                        [(ngModel)]="submission.city"
+                        name="eventCity"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_state">Event State</label>
-                        <input id="event_state" class="form-control" />
+                        <label for="eventState">Event State</label>
+                        <input type="text"
+                        id="eventState" 
+                        class="form-control" 
+                        [(ngModel)]="submission.state"
+                        name="eventState"
+                        required/>
                     </div>
                     
                     <div class="form-group">
-                        <label for="event_country">Event Country</label>
-                        <input id="event_country" class="form-control" />
+                        <label for="eventCountry">Event Country</label>
+                        <input type="text"
+                        id="eventCountry" 
+                        class="form-control" 
+                        [(ngModel)]="submission.country"
+                        name="eventCountry"
+                        required/>
                     </div>    
 
                     <div class="form-group">
-                        <label for="event_cost">Is a Hymn Society member involved?</label>
+                        <label for="eventCost">Is a Hymn Society member involved?</label>
                         <form action="" method="post">
                             <input type="radio" name="cost" value="yes" /> Yes
                             <br>

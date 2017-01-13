@@ -5,38 +5,53 @@
         <div class="col-md-8 offset-md-3">
             <div class="card">
                 <div class="card-header">
-                    Fill out this form to include your congregation in The Center for Congregational Song's database so that we can connect others to you who work in similar ministry contexts.
+                    {{content?.fields.instructions}}
                 </div>
                 <div class="card-block">
-                    <h4 class="card-title">Congregations</h4>
+                    <h4 class="card-title">{{content?.fields.title}}</h4>
 
                     <div class="form-group">
-                        <label for="congregation_name">Congregation Name</label>
-                        <input id="congregation_name" class="form-control" />
+                        <label for="congregationName">Congregation Name</label>
+                        <input type="text"
+                        id="congregationName" 
+                        class="form-control" 
+                        [(ngModel)]="submission.name"
+                        name="congregationName"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_url">Congregation Website</label>
-                        <input type="url" id="congregation_url" class="form-control" />
+                        <label for="congregationUrl">Congregation Website</label>
+                        <input type="url" 
+                        id="congregationUrl" 
+                        class="form-control" 
+                        [(ngModel)]="submission.url"
+                        name="congregationUrl"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_city">City</label>
-                        <input id="congregation_city" class="form-control" />
+                        <label for="congregationCity">City</label>
+                        <input type="text"
+                        id="congregationCity" 
+                        class="form-control" 
+                        [(ngModel)]="submission.city"
+                        name="congregationCity"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_city">City</label>
-                        <input id="congregation_city" class="form-control" />
+                        <label for="congregationState">State/Province</label>
+                        <input type+"text"
+                        id="congregationState" 
+                        class="form-control"
+                        [(ngModel)]="submission.state" 
+                        name="congregationState"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_state_prov">State/Province</label>
-                        <input id="congregation_state_prov" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_country">Country</label>
+                        <label for="congregationCountry">Country</label>
                         <form action="" method="post">
                             <input type="radio" name="country" value="usa" /> USA
                             <br>
@@ -44,13 +59,13 @@
                             <br>
                             <input type="radio" name="country" value="other" /> Other...
                             <div class="form-group" [hidden]="!other">
-                                <input id="congregation_country" class="form-control" />
+                                <input id="congregationCountry" class="form-control" />
                             </div>
                         </form>
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_denom_trad">Denomination/Tradition</label>
+                        <label for="congregationDenom">Denomination/Tradition</label>
                         <form action="" method="post">
                             <input type="radio" name="denomination" value="catholic" /> Roman Catholic
                             <br>
@@ -69,13 +84,13 @@
                             <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
                             <br>
                             <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                <input id="congregation_state_prov" class="form-control" />
+                                <input id="congregationState_prov" class="form-control" />
                             </div>
                         </form>
                     </div>
 
                      <div class="form-group">
-                        <label for="congregation_exist_member">Are there any Hymn Society members in your congregation or on your church staff?</label>
+                        <label for="congregationMember">Are there any Hymn Society members in your congregation or on your church staff?</label>
                         <form action="" method="post">
                             <input type="radio" name="memberExist" value="yes" /> Yes
                             <br>
@@ -84,7 +99,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_song_type">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+                        <label for="congregationSong">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox"> A hymn written prior to 1970
@@ -128,7 +143,7 @@
                     </div>                   
 
                     <div class="form-group">
-                        <label for="congregation_instrument">Which types of instruments does your congregation use during congregational singing?</label>
+                        <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox"> A Cappella
@@ -161,7 +176,7 @@
                         </div>     
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox">Obligato Instruments (flute, clarinet, trumpet, etc...)
+                                <input class="form-check-input" type="checkbox"> Obligato Instruments (flute, clarinet, trumpet, etc...)
                             </label>
                         </div>  
                         <div class="form-check">
@@ -170,12 +185,12 @@
                             </label>
                         </div>
                         <div class="form-group" [hidden]="!other">
-                            <input id="congregation_instrument" class="form-control" />
+                            <input id="congregationInstrument" class="form-control" />
                         </div>                                      
                     </div> 
 
                     <div class="form-group">
-                        <label for="congregation_shape">Which best describes the shape of your worship?</label>
+                        <label for="congregationShape">Which best describes the shape of your worship?</label>
                         <form action="" method="post">
                             <input type="radio" name="shape" value="5fold" /> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
                             <br>
@@ -185,13 +200,13 @@
                             <br>                            
                             <input type="radio" name="shape" value="other" /> Other...
                             <div class="form-group" [hidden]="!other">
-                                <input id="congregation_wordhip_shape" class="form-control" />
+                                <input id="congregation_wordhipShape" class="form-control" />
                             </div>
                         </form>
                     </div> 
 
                     <div class="form-group">
-                        <label for="congregation_attire">What does your pastor/priest wear when he/she preaches?</label>
+                        <label for="congregationAttire">What does your pastor/priest wear when he/she preaches?</label>
                         <form action="" method="post">
                             <input type="radio" name="attire" value="yes" /> Vestments
                             <br>
@@ -219,7 +234,7 @@
                     </div>     
 
                     <div class="form-group">
-                        <label for="congregation_ethnicity">Which ethnicities do you work with in at least 10% of your events??</label>
+                        <label for="congregationEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox"> White
@@ -261,12 +276,12 @@
                             </label>
                         </div>
                         <div class="form-group" [hidden]="!other">
-                            <input id="person_city" class="form-control" />
+                            <input id="personCity" class="form-control" />
                         </div>
                     </div>  
 
                     <div class="form-group">
-                        <label for="congregation_attendance">On average, how many people attend your weekly worship services?</label>
+                        <label for="congregationAttendance">On average, how many people attend your weekly worship services?</label>
                         <form action="" method="post">
                             <input type="radio" name="attendance" value="under100" /> Under 100
                             <br>

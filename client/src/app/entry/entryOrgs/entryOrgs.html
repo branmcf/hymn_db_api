@@ -5,28 +5,43 @@
         <div class="col-md-8 offset-md-3">
             <div class="card">
                 <div class="card-header">
-                    Please let us know about your organization so that we can connect people to you who might be interested in what you do or in need of resources that you provide.
+                    {{content?.fields.instructions}}
                 </div>
                 <div class="card-block">
-                    <h4 class="card-title">Organizations</h4>
+                    <h4 class="card-title">{{content?.fields.title}}</h4>
 
                     <div class="form-group">
-                        <label for="org_name">Organization Name</label>
-                        <input id="org_name" class="form-control" />
+                        <label for="orgName">Organization Name</label>
+                        <input rtpe="text"
+                        id="orgName" 
+                        class="form-control" 
+                        [(ngModel)]="submission.name"
+                        name="orgName"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="org_url">Organization Website</label>
-                        <input type="url" id="org_url" class="form-control" />
+                        <label for="orgUrl">Organization Website</label>
+                        <input type="url" 
+                        id="orgUrl" 
+                        class="form-control" 
+                        [(ngModel)]="submission.url"
+                        name="orgUrl"
+                        required/>
                     </div>   
 
                     <div class="form-group">
-                        <label for="org_parent">Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)</label>
-                        <input id="org_parent" class="form-control" />
+                        <label for="orgParent">Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)</label>
+                        <input type="text"
+                        id="orgParent" 
+                        class="form-control"
+                        [(ngModel)]="submission.parent"
+                        name="orgParent"
+                        required/>
                     </div>  
 
                     <div class="form-group">
-                        <label for="org_denomination">Are you related to or a part of a specific denomination or tradition?</label>
+                        <label for="orgDenomination">Are you related to or a part of a specific denomination or tradition?</label>
                         <form action="" method="post">
                             <input type="radio" name="denomination" value="multidom" /> Ecumenical/Multi-Denominational
                             <br>
@@ -47,36 +62,56 @@
                             <input type="radio" name="denomination" value="baptist" /> Pentecostal
                             <br>                            
                             <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                    <input id="congregation_state_prov" class="form-control" />
+                                    <input type="text"
+                                    id="orgDenomination" 
+                                    class="form-control" 
+                                    [(ngModel)]="submission.denoms"
+                                    name="orgDenomination"
+                                    required/>
                                 </div>
                         </form>
                     </div>                              
 
                     <div class="form-group">
-                        <label for="org_city">What city are you located/headquartered?</label>
-                        <input id="org_city" class="form-control" />
+                        <label for="orgCity">What city are you located/headquartered?</label>
+                        <input type="text"
+                        id="orgCity" 
+                        class="form-control" 
+                        [(ngModel)]="submission.city"
+                        name="orgCity"
+                        required/>
                     </div>   
 
                     <div class="form-group">
-                        <label for="org_state">What state are you located/headquartered?</label>
-                        <input id="org_state" class="form-control" />
+                        <label for="orgState">What state are you located/headquartered?</label>
+                        <input type="text"
+                        id="orgState" 
+                        class="form-control" 
+                        [(ngModel)]="submission.state"
+                        name="orgState"
+                        required/>
                     </div>
 
                     <div class="form-group">
-                        <label for="org_country">What country are you located/headquartered?</label>
+                        <label for="orgCountry">What country are you located/headquartered?</label>
                         <form action="" method="post">
-                            <input type="radio" name="country" value="yes" /> Yes
+                            <input type="radio" name="country" value="US" /> US
                             <br>
-                            <input type="radio" name="country" value="no" /> No
+                            <input type="radio" name="country" value="Canada" /> Canada
                             <br>
                             <input type="radio" name="country" value="other" /> Other...                <div class="form-group" [hidden]="!other">
-                                    <input id="country" class="form-control" />
+                                    <input type="text"
+                                    id="orgCountry" 
+                                    class="form-control" 
+                                    [(ngModel)]="submission.country"
+                                    name="orgCountry"
+                                    required/>
                                 </div>
                         </form>
                     </div>
 
                     <div class="form-group">
-                        <label for="org_geogrpahics">What geographic area(s) do you serve?</label>
+                        <label for="orgGeogrpahics">What geographic area(s) do you serve?</label>
                         <form action="" method="post">
                             <input type="radio" name="geographics" value="city" /> Our City Only
                             <br>
@@ -91,13 +126,18 @@
                             <input type="radio" name="geographics" value="worldwide" /> Worldwide
                             <br>
                             <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                    <input id="congregation_state_prov" class="form-control" />
+                                    <input type"text"
+                                    id="orgGeopgraphics" 
+                                    class="form-control" 
+                                    [(ngModel)]="submission.geo"
+                                    name=orgGeographics
+                                    required/>
                                 </div>
                         </form>
                     </div>                           
                     
                     <div class="form-group">
-                        <label for="org_resource">Are any of your resources free?</label>
+                        <label for="orgResource">Are any of your resources free?</label>
                         <form action="" method="post">
                             <input type="radio" name="resource" value="yes" /> Yes
                             <br>
@@ -109,7 +149,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="org_conference">Are any of your events/conferences free?</label>
+                        <label for="orgConference">Are any of your events/conferences free?</label>
                         <form action="" method="post">
                             <input type="radio" name="conference" value="yes" /> Yes
                             <br>
@@ -121,7 +161,7 @@
                     </div>      
 
                     <div class="form-group">
-                        <label for="org_membership">Do you charge for membership?</label>
+                        <label for="orgMembership">Do you charge for membership?</label>
                         <form action="" method="post">
                             <input type="radio" name="membership" value="yes" /> Yes
                             <br>
@@ -133,13 +173,23 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="org_mission">What is the mission of your organization?</label>
-                        <input id="org_mission" class="form-control" />
+                        <label for="orgMission">What is the mission of your organization?</label>
+                        <input type="text"
+                        id="orgMission" 
+                        class="form-control"
+                        [(ngModel)]="submission.mission"
+                        name="orgMission"
+                        required/>
                     </div>                                       
                     
                      <div class="form-group">
-                        <label for="org_method">How does your organization encourage, promote, or enliven congregational song?</label>
-                        <input id="org_method" class="form-control" />
+                        <label for="orgMethod">How does your organization encourage, promote, or enliven congregational song?</label>
+                        <input type="text"
+                        id="orgMethod" 
+                        class="form-control" 
+                        [(ngModel)]="submission.method"
+                        name="orgMethod"
+                        required/>
                     </div>  
 
                     <div>

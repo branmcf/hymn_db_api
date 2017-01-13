@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Routing, RootComponent } from './../../routes';
+import { FormsModule } from '@angular/forms';
+
+import { UserService } from './../../services/user.service'
 
 @Component({
   selector: 'hymn-entry-login',
@@ -8,16 +11,36 @@ import { Routing, RootComponent } from './../../routes';
 })
 
 export class EntryComponent {
-  title : string;
-	user: any;
-
-	constructor (private route: ActivatedRoute,
-    private router: Router) {
-			this.user = {};
-			this.title = 'New Account';
+  user: {
+		id: number;
+    email: string;
+    password: string;
   }
 
-	next() {
-  	this.router.navigate(['entry/resources']);
+
+
+
+	constructor (private route: ActivatedRoute,
+    private router: Router,
+		private loginService : UserService) {
+			this.user = {
+				id: 1,
+      	email: '',
+     		password: '',
+    	}
+		}
+
+	ngOnInit() {
+
 	}
+
+	login() {
+		  // var navToProfile = (data) => {
+      // if (data) {
+      //   this.user = data;
+  		this.router.navigate(['entry/resources']);
+			// }
+		}
+
+		// this.loginService.loginUser(this.user).then(navToProfile);
 }

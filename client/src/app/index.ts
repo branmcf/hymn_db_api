@@ -11,6 +11,9 @@ import { TitleComponent } from './title/title.component';
 import { FooterComponent } from './footer/footer.component';
 import { InMemoryWebApiModule, InMemoryBackendService } from 'angular-in-memory-web-api';
 
+import { ContentfulService } from './services/contentful.service';
+
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -29,6 +32,7 @@ import { InMemoryWebApiModule, InMemoryBackendService } from 'angular-in-memory-
     RootComponent
   ],
   providers: [
+    ContentfulService
   ]
 })
 
