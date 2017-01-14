@@ -42,51 +42,101 @@
 
                     <div class="form-group">
                         <label for="congregationState">State/Province</label>
-                        <input type+"text"
+                        <input type="text"
                         id="congregationState" 
                         class="form-control"
                         [(ngModel)]="submission.state" 
                         name="congregationState"
                         required/>
                     </div>
-
+<!--
                     <div class="form-group">
                         <label for="congregationCountry">Country</label>
                         <form action="" method="post">
-                            <input type="radio" name="country" value="usa" /> USA
+                            <input type="radio" 
+                                name="country" 
+                                value="usa" 
+                                id="countryUSA"
+                                [(ngModel)]="submission.selected"/> USA
                             <br>
-                            <input type="radio" name="country" value="canada" /> Canada
+                            <input type="radio" 
+                                name="country" 
+                                value="canada" 
+                                id="countryCanada"
+                                [(ngModel)]="submssion.country"/> Canada
                             <br>
-                            <input type="radio" name="country" value="other" /> Other...
+                            <input 
+                                type="radio" 
+                                name="country" 
+                                value="other" 
+                                id="other"/> Other...
                             <div class="form-group" [hidden]="!other">
                                 <input id="congregationCountry" class="form-control" />
                             </div>
                         </form>
                     </div>
+-->
+
+                    <div class="form-group">
+                        <label for="congregationCountry">Country</label>
+                        <br>
+                        <label [class.selected]="usa.checked">
+                            <input #usa
+                            type="radio" 
+                            value="USA"
+                            name="country" 
+                            [(ngModel)]="submission.country"
+                            > USA
+                        </label>    
+                        <br>
+                        <label [class.selected]="canada.checked">
+                            <input #canada 
+                            type="radio" 
+                            value="Canada"
+                            name="country" 
+                            [(ngModel)]="submission.country"
+                            > Canada
+                        </label>
+                        <br>
+                        <label [class.selected]="other.checked">
+                            <input #other
+                            type="radio"
+                            name="country"
+                            > Other...
+                        </label>
+                        <div [hidden]="!other.checked">
+                            <input type="text" 
+                            name="country"
+                            [(ngModel)]="submission.country"
+                            />
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label for="congregationDenom">Denomination/Tradition</label>
-                        <form action="" method="post">
-                            <input type="radio" name="denomination" value="catholic" /> Roman Catholic
-                            <br>
-                            <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
-                            <br>
-                            <input type="radio" name="denomination" value="lutheran" /> Lutheran
-                            <br>
-                            <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
-                            <br>
-                            <input type="radio" name="denomination" value="pentecostal" /> Pentecostal
-                            <br>
-                            <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
-                            <br>
-                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                <input id="congregationState_prov" class="form-control" />
-                            </div>
-                        </form>
+                        <br>
+                        <input #catholic
+                            type="radio" 
+                            name="denomination" 
+                            value="Roman Catholic" /> Roman Catholic
+                        <br>
+                        <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
+                        <br>
+                        <input type="radio" name="denomination" value="lutheran" /> Lutheran
+                        <br>
+                        <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
+                        <br>
+                        <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
+                        <br>
+                        <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
+                        <br>
+                        <input type="radio" name="denomination" value="pentecostal" /> Pentecostal
+                        <br>
+                        <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
+                        <br>
+                        <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
+                        <input id="congregationState_prov" class="form-control" />
+                        </div>
                     </div>
 
                      <div class="form-group">
