@@ -20,7 +20,7 @@ import { ContentfulService } from './services/contentful.service';
     HeaderModule,
     Routing,
     EntryModule,
-    FormsModule
+    FormsModule,
   ],
   declarations: [
     RootComponent,
