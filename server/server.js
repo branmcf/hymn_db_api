@@ -7,11 +7,16 @@ const Boom = require('boom');
 const glob = require('glob');
 const path = require('path');
 const secret = require('./config');
+
 //bcrypt for salting/hashing passwords
 const bcrypt = require('bcrypt');
-var async = require('async');
 
-var hashDone = false;
+//authentication
+const basic = require('hapi-auth-basic');
+
+//const cookieAuth = require('hapi-auth-cookie');
+
+
 //
 // Create a server with a host and port
 //
@@ -21,37 +26,19 @@ server.connection({
     port: 8000 
 });
 
+/* 
+===================================================
+- LOGIN -
+=================================================== 
+*/
 
-//
-//Bcrypt testing
-//
-var SALT_WORK_FACTOR = 10;
-//var pass = '123456789';
 
-function saltAndHash(pass) {
 
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-    if(err) { return console.error(err); }
-
-    bcrypt.hash(pass, salt, function(err, hash) {
-      if(err) { return console.error(err); }
-
-      console.log(hash);
-
-      //save new password
-      var newPass = hash;
-
-      bcrypt.compare(pass, hash, function(err, isMatch) {
-        if(err) { return console.error(err); }
-
-        console.log('do they match?', isMatch);
-
-        return newPass;
-      });
-
-    });
-  });
-}
+/* 
+===================================================
+- Hashing -
+=================================================== 
+*/
 
 function hashAndStoreSync(user) {
   var salt = bcrypt.genSaltSync(10);
@@ -85,6 +72,7 @@ function hashAndStoreAsync(user) {
     });
   }); 
 }
+
 //
 // Another hash algorithm
 //
@@ -120,8 +108,9 @@ const onRequest = function (request, reply) {
 server.ext('onRequest', onRequest);
 */
 
+/*
 //
-// hashing test
+// authentication with jwt test
 //
 server.register(require('hapi-auth-jwt'), (err) => {
 
@@ -135,13 +124,94 @@ server.register(require('hapi-auth-jwt'), (err) => {
   // Look through the routes in
   // all the subdirectories of API
   // and create a new route for each
-  glob.sync('api/**/routes/*.js', {
+  glob.sync('api.js', {
     root: __dirname
   }).forEach(file => {
     const route = require(path.join(__dirname, file));
     server.route(route);
   });
 });
+*/
+
+/* 
+===================================================
+- authentication with hapi-auth-basic test -
+=================================================== 
+*/
+
+/*
+const testUsers = {
+  john: {
+    id: 357,
+    email: 'John@gmail.com',
+    password: '$2a$10$iqJSHD.BGr0E2IxQwYgJmeP3NvhPrXAeLSaGCj6IR/XU5QtjVu5Tm', // 'secret'
+    first_name: 'john',
+    last_name: 'Doe'
+
+  }
+};
+
+const validate = function (request, first_name, password, callback) {
+  const testUser = testUsers[first_name];
+  if(!testUser) { 
+    console.log("error, user or password incorrect...");
+    return callback(null, false); 
+  }
+
+  bcrypt.compare(password, testUser.password, (err, isValid) => {
+    console.log(password, " then ", testUser.password);
+    callback(err, isValid, {id: testUser.id, first_name: testUser.first_name})
+  });
+};
+
+server.register(require('hapi-auth-basic'), (err)=> {
+  server.auth.strategy('simple', 'basic', { validateFunc: validate });
+  server.route({
+    method: 'GET',
+    path: '/auth',
+    config: {
+      auth: 'simple',
+      handler: function (req, reply) {
+        reply('hello, '+ req.auth.credentials.first_name);
+      }
+    }
+  });
+});
+*/
+
+/* 
+===================================================
+- authentication method 2 with hapi-auth-basic and cookie test -
+=================================================== 
+*/
+
+/*
+server.register(cookieAuth, function(err) {
+  server.auth.strategy('session', 'cookie', options)
+  // Start the server
+  server.start((err) => {
+
+    if (err) {
+      throw err;
+    }
+    else {
+      console.log('Server running at:', server.info.uri);
+    }
+  });
+});
+
+server.route({
+  method: 'GET',
+  path: '/auth',
+  config: {
+    auth: 'session',
+    handler: function (request, reply) {
+      reply('Authentication message');
+    }
+  }
+});
+*/
+
 
 //
 // MYSQL Connection
@@ -152,43 +222,7 @@ var connection = mysql.createConnection({
   password : '123',
   database : 'testDb'
 });
-/*
-//mysql connection
-connection.connect();
-connection.query('SELECT * from users', function(err, rows, fields) {
-  if (!err)
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    console.log(rows);
-  else
-    console.log('Error while performing Query.');
-
-  
-});
-connection.end();
-
-*/
 //end myql connection
-
-//quotes
-var quotes = [
-  {
-    author: 'Audrey Hepburn'
-  , text: 'Nothing is impossible, the word itself says \'I\'m possible\'!'
-  }
-, {
-    author: 'Walt Disney'
-  , text: 'You may not realize it when it happens, but a kick in the teeth may be the best thing in the world for you'
-  }
-, {
-    author: 'Unknown'
-  , text: 'Even the greatest was once a beginner. Don\'t be afraid to take that first step.'
-  }
-, {
-    author: 'Neale Donald Walsch'
-  , text: 'You are afraid to die, and you\'re afraid to live. What a way to exist.'
-  }
-];
 
 //
 //
@@ -211,34 +245,76 @@ var congs = []
 connection.connect();
 
 //get users from db
-connection.query('SELECT * from users', function(err, rows, fields) {
+connection.query(`SELECT 
+  id, 
+  email, 
+  first_name, 
+  last_name, 
+  reg_date, 
+  is_active, 
+  high_level, 
+  city_id, 
+  state_id, 
+  country_id, 
+  website, 
+  hymn_soc_member 
+  from users`, function(err, rows, fields) {
+
   if (!err) {
     //console.log('The solution is: ', rows);
     //console.log(rows[0].first_name, rows[0].last_name);
     //console.log(rows);
     //console.log(JSON.stringify(rows));
     //console.log(rows.rawDataPacket);
+  /*
+    var str = JSON.stringify(rows);
+    var finalData = str.replace(/\\/g, "");
+  */
 
-    addToLocalArray(users, rows);
+    users.push(rows);
 
-    
+    console.log("selected users...");
 
-    //setValue(toReturn, users);
   }
   else
-    console.log('Error while performing USers Query.');
+    console.log('Error while performing Users Query.');
 
 });
 
 //get resources from db
-connection.query('SELECT * from resources', function(err, rows, fields) {
+connection.query(`SELECT 
+        id, 
+        title,
+        website,
+        hymn_soc_member,
+        is_free,
+        description,
+        resource_date,
+        high_level,
+        city_id,
+        state_id,
+        country_id,
+        parent_org_id
+        from resources`, function(err, rows, fields) {
   if (!err) {
     //console.log('The solution is: ', rows);
     //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
     
-    addToLocalArray(resources, rows);
+    //console.log("rows[0].id ", rows[0].id);
+  
 
+    //var str = JSON.stringify(rows);
+    //var finalData = str.replace(/\\/g, "");
+
+    //console.log("final data: ", finalData);
+
+
+    resources.push(rows);
+
+    //resources.push(JSON.stringify(rows));
+
+    //resources.push(rows);
+    //console.log("selected resources...");
   }
   else
     console.log('Error while performing Resources Query.');
@@ -251,7 +327,15 @@ connection.query('SELECT * from events', function(err, rows, fields) {
     //console.log('The solution is: ', rows);
     //console.log(rows[0].first_name, rows[0].last_name);
     //console.log(rows);
-    addToLocalArray(events, rows);
+    
+    //events.push(rows);
+/*
+    var str = JSON.stringify(rows);
+    var finalData = str.replace(/\\/g, "");
+*/
+    events.push(rows);
+
+    console.log("selected events...");
   }
   else
     console.log('Error while performing Events Query.');
@@ -264,7 +348,16 @@ connection.query('SELECT * from congregations', function(err, rows, fields) {
     //console.log('The solution is: ', rows);
     //console.log(rows[0].first_name, rows[0].last_name);
     //console.log(rows);
-    addToLocalArray(congs, rows);
+    
+    //congs.push(rows);
+/*
+    var str = JSON.stringify(rows);
+    var finalData = str.replace(/\\/g, "");
+*/
+    congs.push(rows);
+
+    console.log("selected congregations...");
+
   }
   else
     console.log('Error while performing Congregations Query.');
@@ -277,16 +370,6 @@ connection.query('SELECT * from congregations', function(err, rows, fields) {
 =================================================== 
 */
 
-//function below for storing database content in local arrays
-function addToLocalArray(localArray, theRows) {
-
-  for (var i = 0; i < theRows.length; i++) {
-    var toReturn = JSON.stringify(theRows[i]);
-    localArray.push(toReturn);
-  }
-
-
-}
 
 var quoteController = {};
 var userController = {};
@@ -297,51 +380,6 @@ var congController ={};
 
 /* 
 ===================================================
-- Quote Controllers -
-=================================================== 
-*/
-
-quoteController.getConfig = {
-  handler: function(req, reply) {
-    if (req.params.id) {
-      if (quotes.length <= req.params.id) return reply('No quote found.').code(404);
-      return reply(quotes[req.params.id]);
-    }
-    reply(quotes);
-  }
-};
-
-quoteController.getRandomConfig = {
-  handler: function(req, reply) {
-    var id = Math.floor(Math.random() * quotes.length);
-    reply(quotes[id]);
-  }
-};
-
-quoteController.postConfig = {
-  handler: function(req, reply) {
-    var newQuote = { author: req.payload.author, text: req.payload.text };
-    quotes.push(newQuote);
-    reply(newQuote);
-  },
-  validate: {
-    payload: {
-      author: Joi.string().required(),
-      text: Joi.string().required()
-    }
-  }
-};
-
-quoteController.deleteConfig = {
-  handler: function(req, reply) {
-    if (quotes.length <= req.params.id) return reply('No quote found.').code(404);
-    quotes.splice(req.params.id, 1);
-    reply(true);
-  }
-};
-
-/* 
-===================================================
 - USER Controllers -
 =================================================== 
 */
@@ -349,10 +387,38 @@ quoteController.deleteConfig = {
 //USER GET REQUEST
 userController.getConfig = {
   handler: function (request, reply) {
+
+    //don't return the salt here...
+    //
+
     if (request.params.id) {
       //if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
-      var actualId = Number(request.params.id) - 1;
-      return reply(users[actualId]);
+      var actualIndex = Number(request.params.id) - 1;
+
+      //now convert to valid JSON
+      var userData = {};
+      userData = {
+        url:              "/users/"+ Number(request.params.id),
+        id:               users[0][actualIndex].id, 
+        email:            users[0][actualIndex].email,
+        first_name:       users[0][actualIndex].first_name,
+        hymn_soc_member:  users[0][actualIndex].hymn_soc_member,
+        last_name:        users[0][actualIndex].last_name,
+        is_active:        users[0][actualIndex].is_active,
+        reg_date:         users[0][actualIndex].reg_date,
+        high_level:       users[0][actualIndex].high_level,
+        city_id:          users[0][actualIndex].city_id,
+        state_id:         users[0][actualIndex].state_id,
+        country_id:       users[0][actualIndex].country_id,
+        website:          users[0][actualIndex].website
+
+      };
+
+      var str = JSON.stringify(userData);
+
+      return reply(str);
+
+      
     }
     //if no ID specified
     reply(users);
@@ -433,8 +499,40 @@ resourceController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-      var actualId = Number(request.params.id) - 1;
-      return reply(resources[actualId]);
+      var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+            
+      //create new object, convert to json
+      var resourceData = {};
+
+      resourceData = {
+        id:             resources[0][actualIndex].id, 
+        title:          resources[0][actualIndex].title,
+        url:            resources[0][actualIndex].website,
+        hymn_soc_member:resources[0][actualIndex].hymn_soc_member,
+        is_free:        resources[0][actualIndex].is_free,
+        description:    resources[0][actualIndex].description,
+        resource_date:  resources[0][actualIndex].resource_date,
+        high_level:     resources[0][actualIndex].high_level,
+        city_id:        resources[0][actualIndex].city_id,
+        state_id:       resources[0][actualIndex].state_id,
+        country_id:     resources[0][actualIndex].country_id,
+        parent_org_id:  resources[0][actualIndex].parent_org_id
+
+      };
+
+      var theUrl = "/resource/" + String(request.params.id);
+
+      var finalObj = {
+        url: theUrl,
+        data: resourceData
+      };
+
+      var str = JSON.stringify(finalObj);
+
+      return reply(str);
+
+
+      //return reply(resources[actualId]);
     }
     //if no ID specified
     reply(resources);
@@ -646,17 +744,31 @@ userController_2.postConfig = {
   }
 };
 
+
+/* 
+===================================================
+- AUTHENTICATION TESTING ONLY -
+=================================================== 
+*/
+/*
+var authController = {};
+
+authController.getConfig = {
+  handler: (req, res) => {
+
+    auth= 'simple';
+    reply('hello ', + request.auth.credentials.first_name);
+  }
+};
+*/
+
 /* 
 ===================================================
 - ROUTES -
 =================================================== 
 */
 var routes = [
-  { path: '/', method: 'GET', config: quoteController.getConfig },
-  { path: '/quote/{id?}', method: 'GET', config: quoteController.getConfig },
-  { path: '/random', method: 'GET', config: quoteController.getRandomConfig },
-  { path: '/quote', method: 'POST', config: quoteController.postConfig },
-  { path: '/quote/{id}', method: 'DELETE', config: quoteController.deleteConfig },
+  { path: '/', method: 'GET', config: userController.getConfig },
   { path: '/user/{id?}', method: 'GET', config: userController.getConfig },
   { path: '/user', method: 'POST', config: userController.postConfig },
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
@@ -667,10 +779,13 @@ var routes = [
   { path: '/cong', method: 'POST', config: congController.postConfig },
   { path: '/api/user/{id?}', method: 'GET', config: userController_2.postConfig },
   { path: '/api/user', method: 'POST', config: userController_2.postConfig }
+
+  //{ path: '/auth', method: 'GET', config: authController.getConfig}
 ];
 
 
 server.route(routes);
+
 
 // Start the server
 server.start((err) => {
