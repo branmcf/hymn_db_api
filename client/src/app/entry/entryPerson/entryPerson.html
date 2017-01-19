@@ -1,6 +1,7 @@
 <div class="entry-container">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
             <div class="card">
@@ -111,85 +112,40 @@
  
                     <div class="form-group">
                         <label for="personTopics">Which Topics/Situations Are You Comfortable Working With?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Contemporary Song/Band
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Traditional Hymnody
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Musician/Pastor RelationshipSong/Band
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Cantoring
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Song Enlivening
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Keyboards (piano/organ)
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Worship Planning
-                            </label>
-                        </div>          
+                        
+                            <input type="checkbox"> Contemporary Song/Band<br>
+                    
+                            <input type="checkbox"> Traditional Hymnody<br>
+                    
+                            <input type="checkbox"> Musician/Pastor RelationshipSong/Band<br>
+                    
+                            <input type="checkbox"> Cantoring<br>     
+                    
+                            <input type="checkbox"> Song Enlivening<br>        
+                    
+                            <input type="checkbox"> Keyboards (piano/organ)<br>     
+                    
+                            <input type="checkbox"> Worship Planning<br>          
                     </div>
 
                     <div class="form-group">
                         <label for="personEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> White
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Black
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Asian
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> African
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Middle-Eastern
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="other"> Other...
-                            </label>
-                        </div>
+                        
+                            <input type="checkbox"> White<br>
+                    
+                            <input type="checkbox"> Black<br>
+                    
+                            <input type="checkbox"> Hispanic/Latin-American/Caribbean<br>
+                    
+                            <input type="checkbox"> Native American/Indigenous Peoples<br>     
+                    
+                            <input type="checkbox"> Asian<br>        
+                    
+                            <input type="checkbox"> African<br>     
+                    
+                            <input type="checkbox"> Middle-Eastern<br>  
+                    
+                            <input type="checkbox" name="other"> Other...<br>
                         <div class="form-group" [hidden]="!other">
                             <input type="text"
                             id="personEthnicity"
@@ -202,34 +158,17 @@
 
                     <div class="form-group">
                         <label for="personCategories">What types of ensembles are you comfortable working with?</label>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Choir
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Cantor
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Song-Enlivener
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Lead Singer from Band (Solo)
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Lead Singer from Band with Other Vocalists
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox"> Other...
+                            <input type="checkbox"> Choir<br>
+
+                            <input type="checkbox"> Cantor<br>
+                        
+                            <input type="checkbox"> Song-Enlivener<br>
+                        
+                            <input type="checkbox"> Lead Singer from Band (Solo)<br>
+                        
+                            <input type="checkbox"> Lead Singer from Band with Other Vocalists<br>
+                        
+                            <input type="checkbox"> Other...
                             <div class="form-group" [hidden]="!other">
                                 <input type="text"
                                 id="personCategories" 
@@ -238,8 +177,6 @@
                                 name="personCategories"
                                 required/>
                             </div>
-                        </label>
-                        </div>
                     </div>
           
                     <div>

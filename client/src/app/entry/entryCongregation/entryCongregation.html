@@ -1,9 +1,9 @@
 <div class="entry-container">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
-            <entry-nav-modal></entry-nav-modal>
             <div class="card">
                 <div class="card-header">
                     {{content?.fields.instructions}}
@@ -151,90 +151,42 @@
 
                     <div class="form-group">
                         <label for="congregationSong">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> A hymn written prior to 1970
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Newly composed hymn (within the last 10 years)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Praise and Worship Song (CCM)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Psalm Setting
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned")
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Song from another country (or "World Song")
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Secular Song
-                            </label>
-                        </div>                                      
+                            <input type="checkbox"> A hymn written prior to 1970<br>
+
+                            <input type="checkbox"> Newly composed hymn (within the last 10 years)<br>
+
+                            <input type="checkbox"> Praise and Worship Song (CCM)<br>
+
+                            <input type="checkbox"> Psalm Setting<br>
+     
+                            <input type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)<br>
+        
+                            <input type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned")<br>
+     
+                            <input type="checkbox"> Song from another country (or "World Song")<br>
+  
+                            <input type="checkbox"> Secular Song<br>
+                                      
                     </div>                   
 
                     <div class="form-group">
                         <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Acappella
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Organ
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Piano
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Guitar (not full band)
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Band (guitar, bass, drums, etc...)
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Handbells
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Obligato Instruments (flute, clarinet, trumpet, etc...)
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Other...
-                            </label>
-                        </div>
+                            <input type="checkbox"> Acappella<br>
+
+                            <input type="checkbox"> Organ<br>
+
+                            <input type="checkbox"> Piano<br>
+
+                            <input type="checkbox"> Guitar (not full band)<br>
+     
+                            <input type="checkbox"> Band (guitar, bass, drums, etc...)<br>
+        
+                            <input type="checkbox"> Handbells<br>
+     
+                            <input type="checkbox"> Obligato Instruments (flute, clarinet, trumpet, etc...)<br>
+  
+                            <input type="checkbox"> Other...<br>
+
                         <div class="form-group" [hidden]="!other">
                             <input id="congregationInstrument" class="form-control" />
                         </div>                                      
@@ -286,46 +238,14 @@
 
                     <div class="form-group">
                         <label for="congregationEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> White
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Black
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Asian
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> African
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Middle-Eastern
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="other"> Other...
-                            </label>
-                        </div>
+                                <input type="checkbox"> White<br>
+                                <input type="checkbox"> Black<br>
+                                <input type="checkbox"> Hispanic/Latin-American/Caribbean<br>
+                                <input type="checkbox"> Native American/Indigenous Peoples<br>     
+                                <input type="checkbox"> Asian<br>        
+                                <input type="checkbox"> African<br>     
+                                <input type="checkbox"> Middle-Eastern<br>  
+                                <input type="checkbox" name="other"> Other...<br>
                         <div class="form-group" [hidden]="!other">
                             <input id="personCity" class="form-control" />
                         </div>
