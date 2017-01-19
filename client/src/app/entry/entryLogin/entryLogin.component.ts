@@ -11,36 +11,24 @@ import { UserService } from './../../services/user.service'
 })
 
 export class EntryComponent {
-  user: {
-		id: number;
-    email: string;
-    password: string;
-  }
-
-
-
+  user: any;
+  incorrect: boolean;
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
 		private loginService : UserService) {
-			this.user = {
-				id: 1,
-      	email: '',
-     		password: '',
-    	}
+    	
 		}
 
 	ngOnInit() {
-
+		this.user = {}
+		this.incorrect = false;
 	}
 
-	login() {
-		  // var navToProfile = (data) => {
-      // if (data) {
-      //   this.user = data;
-  		this.router.navigate(['entry/resources']);
-			// }
-		}
-
-		// this.loginService.loginUser(this.user).then(navToProfile);
+    login() {
+        this.loginService.login(this.user).then(x => {
+						document.cookie = "isLoggedIn=true";
+            this.router.navigateByUrl('entry/select');
+        });
+    }
 }

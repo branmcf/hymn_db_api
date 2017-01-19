@@ -58,20 +58,20 @@ export class EntryCongregationComponent {
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
-    this.name = '',
-    this.url = '',
-    this.city = '',
-    this.state = '',
-    this.country = '',
-    this.denom = '',
-    this.members = [],
-    this.type = [],
-    this.instrument = [],
-    this.shape = '',
-    this.attire = '',
-    this.location = '',
-    this.ethnicity = [],
-    this.attendance = '',
+    this.name = '';
+    this.url = '';
+    this.city = '';
+    this.state = '';
+    this.country = '';
+    this.denom = '';
+    this.members = [];
+    this.type = [];
+    this.instrument = [];
+    this.shape = '';
+    this.attire = '';
+    this.location = '';
+    this.ethnicity = [];
+    this.attendance = '';
 
     this.submission = {
       name: '',

@@ -9,7 +9,7 @@
                 </div>
                 <div class="card-block">
                     <h4 class="card-title">{{content?.fields.title}}</h4>
-
+                    
                     <div class="form-group">
                         <label for="congregationName">Congregation Name</label>
                         <input type="text"
@@ -49,33 +49,6 @@
                         name="congregationState"
                         required/>
                     </div>
-<!--
-                    <div class="form-group">
-                        <label for="congregationCountry">Country</label>
-                        <form action="" method="post">
-                            <input type="radio" 
-                                name="country" 
-                                value="usa" 
-                                id="countryUSA"
-                                [(ngModel)]="submission.selected"/> USA
-                            <br>
-                            <input type="radio" 
-                                name="country" 
-                                value="canada" 
-                                id="countryCanada"
-                                [(ngModel)]="submssion.country"/> Canada
-                            <br>
-                            <input 
-                                type="radio" 
-                                name="country" 
-                                value="other" 
-                                id="other"/> Other...
-                            <div class="form-group" [hidden]="!other">
-                                <input id="congregationCountry" class="form-control" />
-                            </div>
-                        </form>
-                    </div>
--->
 
                     <div class="form-group">
                         <label for="congregationCountry">Country</label>
@@ -85,8 +58,7 @@
                             type="radio" 
                             value="USA"
                             name="country" 
-                            [(ngModel)]="submission.country"
-                            > USA
+                            [(ngModel)]="submission.country"/> USA
                         </label>    
                         <br>
                         <label [class.selected]="canada.checked">
@@ -94,150 +66,271 @@
                             type="radio" 
                             value="Canada"
                             name="country" 
-                            [(ngModel)]="submission.country"
-                            > Canada
+                            [(ngModel)]="submission.country"/> Canada
                         </label>
                         <br>
-                        <label [class.selected]="other.checked">
-                            <input #other
+                        <label [class.selected]="otherCountry.checked">
+                            <input #otherCountry
                             type="radio"
                             name="country"
-                            > Other...
+                            [(ngModel)]="submission.country"/> Other...
                         </label>
-                        <div [hidden]="!other.checked">
+                        <div [hidden]="!otherCountry.checked">
                             <input type="text" 
                             name="country"
-                            [(ngModel)]="submission.country"
-                            />
+                            [(ngModel)]="submission.country"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="congregationDenom">Denomination/Tradition</label>
                         <br>
-                        <input #catholic
+                        <label [class.selected]="catholic.checked">
+                            <input #catholic
                             type="radio" 
                             name="denomination" 
-                            value="Roman Catholic" /> Roman Catholic
+                            value="Roman Catholic" 
+                            [(ngModel)]="submission.denom"/> Roman Catholic
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
+                        <label [class.selected]="anglican.checked">
+                            <input #anglican
+                            type="radio" 
+                            name="denomination"
+                            value="Anglican" 
+                            [(ngModel)]="submission.denom"/> Anglican/Episcopal
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="lutheran" /> Lutheran
+                        <label [class.selected]="lutheran.checked">
+                            <input #lutheran
+                            type="radio" 
+                            name="denomination" 
+                            value="Lutheran" 
+                            [(ngModel)]="submission.denom"/> Lutheran
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
+                        <label [class.selected]="wesleyan.checked">
+                            <input #wesleyan
+                            type="radio" 
+                            name="denomination" 
+                            value="wesleyan" 
+                            [(ngModel)]="submission.denom"/> Wesleyan (United Methodist, AME, etc...)
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
+                        <label [class.selected]="reformed.checked">
+                            <input #reformed
+                            type="radio" 
+                            name="denomination" 
+                            value="reformed" 
+                            [(ngModel)]="submission.denom"/> Reformed (Presbyterian, RCA, etc...)
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
+                        <label [class.selected]="baptist.checked">
+                            <input #baptist
+                            type="radio" 
+                            name="denomination" 
+                            value="baptist" 
+                            [(ngModel)]="submission.denom"/> Baptist/Free-Church
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="pentecostal" /> Pentecostal
+                        <label [class.selected]="pentecostal.checked">
+                            <input #pentecostal
+                            type="radio" 
+                            name="denomination" 
+                            value="pentecostal" 
+                            [(ngModel)]="submission.denom"/> Pentecostal
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
+                        <label [class.selected]="nonDenom.checked">
+                            <input #nonDenom
+                            type="radio" 
+                            name="denomination" 
+                            value="nonDenom" 
+                            [(ngModel)]="submission.denom"/> Non-Denominational
+                        </label>
                         <br>
-                        <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                        <input id="congregationState_prov" class="form-control" />
+                        <label [class.selected]="otherDenom.checked">
+                            <input #otherDenom
+                            type="radio" 
+                            name="denomination"
+                            [(ngModel)]="submission.denom"/> Other...  
+                        </label>         
+                        <div [hidden]="!otherDenom.checked">
+                            <input type="text" 
+                             name="denomination"
+                            [(ngModel)]="submission.denom"/>
                         </div>
                     </div>
 
-                     <div class="form-group">
-                        <label for="congregationMember">Are there any Hymn Society members in your congregation or on your church staff?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="memberExist" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="memberExist" value="no" /> No
-                        </form>
+                    <div class="form-group">
+                        <label for="congregationMembers">Are there any Hymn Society members in your congregation or on your church staff?</label>
+                        <br>
+                        <label [class.selected]="yes.checked">
+                            <input #yes
+                            type="radio" 
+                            value="Yes"
+                            name="member" 
+                            [(ngModel)]="submission.member"/> Yes
+                        </label>    
+                        <br>
+                        <label [class.selected]="no.checked">
+                            <input #no
+                            type="radio" 
+                            value="No"
+                            name="member" 
+                            [(ngModel)]="submission.member"/> No
+                        </label>
                     </div>
 
                     <div class="form-group">
                         <label for="congregationSong">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
-                        <div class="form-check">
+                        <div class="form-group">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> A hymn written prior to 1970
+                                <input
+                                value="A hymn written prior to 1970"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> A hymn written prior to 1970
                             </label>
-                        </div>
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Newly composed hymn (within the last 10 years)
+                                <input
+                                value="Newly composed hymn (within the last 10 years)"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Newly composed hymn (within the last 10 years)
                             </label>
-                        </div>
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Praise and Worship Song (CCM)
+                                <input
+                                value="Praise and Worship Song (CCM)" 
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Praise and Worship Song (CCM)
                             </label>
-                        </div>
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Psalm Setting
+                                <input
+                                value="Psalm Setting"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Psalm Setting
                             </label>
-                        </div>     
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)
+                                <input
+                                value="Chant (Gregorian, Anglican, Pointed or Taize)" 
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Chant (Gregorian, Anglican, Pointed or Taize)
                             </label>
-                        </div>        
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned")
+                                <input
+                                value="Older hymn text set to a new contemporary tune (or 're-tuned')"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Older hymn text set to a new contemporary tune (or 're-tuned')
                             </label>
-                        </div>     
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Song from another country (or "World Song")
+                                <input
+                                value="Song from another country (or 'World Song')"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Song from another country (or 'World Song')
                             </label>
-                        </div>  
-                        <div class="form-check">
+
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Secular Song
+                                <input
+                                value="Secular Song"
+                                class="form-check-input" 
+                                type="checkbox"
+                                [(ngModel)]="submission.type"> Secular Song
                             </label>
                         </div>                                      
                     </div>                   
 
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
                         <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> A Cappella
+                            <label class="form-check-label" [class.selected]="cb1.checked">
+                                <input #cb1
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="A capella"
+                                name="cb1"
+                                [(ngModel)]="submission.instrument"> A Cappella
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb2.checked">
+                                <input #cb2
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Organ"
+                                name="cb2"
+                                [(ngModel)]="submission.instrument"> Organ
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb3.checked">
+                                <input #cb3
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Piano"
+                                name="cb3"
+                                [(ngModel)]="submission.instrument"> Piano
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb4.checked">
+                                <input #cb4
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Guitar (not full band)"
+                                name="cb4"
+                                [(ngModel)]="submission.instrument"> Guitar (not full band)
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb5.checked">
+                                <input #cb5
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Band (guitar, bass, drums, etc...)"
+                                name="cb5"
+                                [(ngModel)]="submission.instrument"> Band (guitar, bass, drums, etc...)
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb6.checked">
+                                <input #cb6
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Handbells"
+                                name="cb6"
+                                [(ngModel)]="submission.instrument"> Handbells
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="cb7.checked">
+                                <input #cb7
+                                class="form-check-input" 
+                                type="checkbox"
+                                value="Obligato Instruments (flute, clarinet, trumpet, etc...)"
+                                name="cb7"
+                                [(ngModel)]="submission.instrument"> Obligato Instruments (flute, clarinet, trumpet, etc...)
+                            </label>
+                            <br>
+                            <label class="form-check-label" [class.selected]="otherInstrument.checked">
+                                <input #otherInstrument
+                                class="form-check-input" 
+                                type="checkbox"
+                                name="cb8"
+                                [(ngModel)]="submission.instrument"> Other...
                             </label>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Organ
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Piano
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Guitar (not full band)
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Band (guitar, bass, drums, etc...)
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Handbells
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Obligato Instruments (flute, clarinet, trumpet, etc...)
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Other...
-                            </label>
-                        </div>
-                        <div class="form-group" [hidden]="!other">
-                            <input id="congregationInstrument" class="form-control" />
-                        </div>                                      
-                    </div> 
+                        <div [hidden]="!otherInstrument.checked">
+                            <input type="text" 
+                            name="cb8"
+                            [(ngModel)]="submission.instrument"/>
+                        </div>                                     
+                    </div> -->
 
                     <div class="form-group">
                         <label for="congregationShape">Which best describes the shape of your worship?</label>
@@ -346,9 +439,11 @@
                     </div> 
 
                     <div>
-                        <a class="btn btn-block btn-primary" >Submit</a>
+                        <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-                    </div>                                              
+                    </div> 
+
+                                                             
                     
                 </div> <!-- end class card-block-->
             </div> <!-- end class card -->
