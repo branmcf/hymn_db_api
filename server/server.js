@@ -235,6 +235,7 @@ var users = []
 var resources = []
 var events = []
 var congs = []
+var orgs = []
 
 /* 
 ===================================================
@@ -364,19 +365,39 @@ connection.query('SELECT * from congregations', function(err, rows, fields) {
 
 });
 
+//get orgs from db
+connection.query('SELECT * from organizations', function(err, rows, fields) {
+  if (!err) {
+    //console.log('The solution is: ', rows);
+    //console.log(rows[0].first_name, rows[0].last_name);
+    //console.log(rows);
+    
+    //events.push(rows);
+/*
+    var str = JSON.stringify(rows);
+    var finalData = str.replace(/\\/g, "");
+*/
+    orgs.push(rows);
+
+    console.log("selected events...");
+  }
+  else
+    console.log('Error while performing Events Query.');
+
+});
+
 /* 
 ===================================================
 - END mysql -
 =================================================== 
 */
 
-
-var quoteController = {};
 var userController = {};
 var userController_2 = {};
-var resourceController ={};
+var resourceController = {};
 var eventController = {};
-var congController ={};
+var congController = {};
+var orgController = {};
 
 /* 
 ===================================================
@@ -593,8 +614,43 @@ eventController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-      var actualId = Number(request.params.id) - 1;
-      return reply(events[actualId]);
+      var actualIndex = Number(request.params.id) - 1;
+      //
+      //create new object, convert to json
+      var eventData = {};
+
+      eventData = {
+        id:             events[0][actualIndex].id, 
+        title:          events[0][actualIndex].title,
+        url:            events[0][actualIndex].website,
+        hymn_soc_member:events[0][actualIndex].hymn_soc_member,
+        frequency:      events[0][actualIndex].frequency,
+        //topic:          events[0][actualIndex].topic,
+        description:    events[0][actualIndex].description,
+        event_date:     events[0][actualIndex].event_date,
+        high_level:     events[0][actualIndex].high_level,
+        city_id:        events[0][actualIndex].city_id,
+        state_id:       events[0][actualIndex].state_id,
+        country_id:     events[0][actualIndex].country_id,
+        parent:         events[0][actualIndex].parent_org_id,
+        cost:           events[0][actualIndex].cost,
+        //tag_id:         events[0][actualIndex].tag_id,
+        is_active:      events[0][actualIndex].is_active
+
+      };
+
+      var theUrl = "/event/" + String(request.params.id);
+
+      var finalObj = {
+        url: theUrl,
+        data: eventData
+      };
+
+      var str = JSON.stringify(finalObj);
+
+      return reply(str);
+
+      //return reply(events[actualId]);
     }
     //if no ID specified
     reply(events);
@@ -654,9 +710,44 @@ eventController.postConfig = {
 congController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
-      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-      var actualId = Number(request.params.id) - 1;
-      return reply(congs[actualId]);
+      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
+      var actualIndex = Number(request.params.id) - 1;
+      //create new object, convert to json
+      var congData = {};
+
+      congData = {
+        id:             events[0][actualIndex].id, 
+        title:          events[0][actualIndex].name,
+        url:            events[0][actualIndex].website,
+        hymn_soc_member:events[0][actualIndex].hymn_soc_member,
+        //topic:          events[0][actualIndex].topic,
+        priest_attire:    events[0][actualIndex].priest_attire,
+        city_id:        events[0][actualIndex].city_id,
+        state_id:       events[0][actualIndex].state_id,
+        country_id:     events[0][actualIndex].country_id,
+        parent:         events[0][actualIndex].parent_org_id,
+        cost:           events[0][actualIndex].cost,
+        //tag_id:         events[0][actualIndex].tag_id,
+        is_active:      events[0][actualIndex].is_active,
+        desc:           events[0][actualIndex].description_of_worship_to_guests,
+        size:           events[0][actualIndex].size,
+        mission:        events[0][actualIndex].mission,
+        is_free:        events[0][actualIndex].is_free,
+        events_free:    events[0][actualIndex].events_free,
+        high_level:     events[0][actualIndex].high_level
+
+      };
+
+      var theUrl = "/event/" + String(request.params.id);
+
+      var finalObj = {
+        url: theUrl,
+        data: congData
+      };
+
+      var str = JSON.stringify(finalObj);
+
+      return reply(str);
     }
     //if no ID specified
     reply(congs);
@@ -725,23 +816,112 @@ congController.postConfig = {
 
 /* 
 ===================================================
-- TESTING SALTING -
+- ORGANIZATINS -
 =================================================== 
 */
-//USER GET REQUEST
-userController_2.getConfig = {
-  handler: (req, res) => {
-    reply("hello");   
+//CONG GET REQUEST
+orgController.getConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
+      var actualIndex = Number(request.params.id) - 1;
+      //create new object, convert to json
+      var orgData = {};
+
+      orgData = {
+        id:             events[0][actualIndex].id, 
+        title:          events[0][actualIndex].name,
+        url:            events[0][actualIndex].website,
+        //topic:          events[0][actualIndex].topic,
+        priest_attire:    events[0][actualIndex].priest_attire,
+        city_id:        events[0][actualIndex].city_id,
+        state_id:       events[0][actualIndex].state_id,
+        country_id:     events[0][actualIndex].country_id,
+        parent:         events[0][actualIndex].parent_org_id,
+        clothing:           events[0][actualIndex].clothing,
+        //tag_id:         events[0][actualIndex].tag_id,
+        is_active:      events[0][actualIndex].is_active,
+        shape:           events[0][actualIndex].shape,
+        attendance:           events[0][actualIndex].attendance,
+        is_active:        events[0][actualIndex].is_active,
+        high_level:     events[0][actualIndex].high_level
+
+      };
+
+      var theUrl = "/event/" + String(request.params.id);
+
+      var finalObj = {
+        url: theUrl,
+        data: orgData
+      };
+
+      var str = JSON.stringify(finalObj);
+
+      return reply(str);
+    }
+    //if no ID specified
+    reply(orgs);
   }
-  
 };
 
+//CONG POST REQUEST
+orgController.postConfig = {
+  handler: function(req, reply) {
+    var newCong = { 
+      cong_name: req.payload.cong_name, 
+      website: req.payload.website, 
+      cong_city: req.payload.cong_city,
+      cong_state: req.payload.cong_state,
+      cong_country: req.payload.cong_country,
+      priest_attire: req.payload.priest_attire,
+      denomination_id: req.payload.denomination_id,
+      song_types_id: req.payload.song_types_id,
+      instrument_types_id: req.payload.instrument_types_id,
+      worship_types_id: req.payload.worship_types_id,
+      ethnicity_types_id: req.payload.ethnicity_types_id,
+      cong_type_id: req.payload.cong_type_id
+    };
 
-//USER POST REQUEST
-userController_2.postConfig = {
-  handler: (req, res) => {
-    reply("hello");   
+    // mysql
+    //connection.connect();
+    connection.query(
+      'INSERT INTO congregations SET ?', newCong,
+      function(err, rows) {
+        if(err) {
+          throw new Error(err);
+          return;
+        }
+
+        reply([{
+          statusCode: 200,
+          message: 'Inserted Successfully',
+        }]);
+        
+      }
+    );
+    //end mysql
+
+    congs.push(newCong);
+    //reply(newRes);
+  },
+  validate: {
+    payload: {
+      cong_name: Joi.string().required(),
+      website: Joi.string().required(),
+      cong_city: Joi.string().required(),
+      cong_state: Joi.string().required(),
+      cong_country: Joi.string().required(),
+      priest_attire: Joi.string().required(),
+      denomination_id: Joi.number().required(),
+      song_types_id: Joi.number().required(),
+      instrument_types_id: Joi.number().required(),
+      worship_types_id: Joi.number().required(),
+      ethnicity_types_id: Joi.number().required(),
+      cong_type_id: Joi.number().required()
+
+    }
   }
+
 };
 
 
@@ -775,10 +955,10 @@ var routes = [
   { path: '/resource', method: 'POST', config: resourceController.postConfig },
   { path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
   { path: '/event', method: 'POST', config: eventController.postConfig },
-  { path: '/cong/{id?}', method: 'GET', config: congController.getConfig },
-  { path: '/cong', method: 'POST', config: congController.postConfig },
-  { path: '/api/user/{id?}', method: 'GET', config: userController_2.postConfig },
-  { path: '/api/user', method: 'POST', config: userController_2.postConfig }
+  { path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
+  { path: '/congregation', method: 'POST', config: congController.postConfig },
+  { path: '/organization/{id?}', method: 'GET', config: orgController.getConfig},
+  { path: '/organization/', method: 'POST', config: orgController.postConfig}
 
   //{ path: '/auth', method: 'GET', config: authController.getConfig}
 ];

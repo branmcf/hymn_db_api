@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS=0;
 
+DROP TABLE IF EXISTS event_table;
+DROP TABLE IF EXISTS Event_Table;
+
 DROP TABLE IF EXISTS congregation_tags;
 DROP TABLE IF EXISTS congregation_denominations;
 DROP TABLE IF EXISTS congregation_song_types;
@@ -207,11 +210,22 @@ CREATE TABLE congregations (
 	FOREIGN KEY (city_id) REFERENCES cities (id),
 	FOREIGN KEY (state_id) REFERENCES states (id),
 	FOREIGN KEY (country_id) REFERENCES countries (id),
-	hymn_soc_members boolean default False,
+	hymn_soc_member boolean default False,
 	priest_attire varchar(64),
 	avg_attendance float,
+    
 	description_of_worship_to_guests varchar(256),
-	size int(10) unsigned default 0
+	size int(10) unsigned default 0,
+    is_active boolean default False,
+    mission varchar(256), 
+    geogrpahic_area varchar(128),
+    is_free boolean default False,
+    events_free boolean default False,
+    process varchar(128),
+    high_level boolean default False
+    
+    
+    
 	/*
 	denomination_id int unsigned,
 	song_type_id int unsigned,
@@ -327,13 +341,21 @@ CREATE TABLE organizations (
 	parent_org_id int unsigned,
 	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id),
 	/* CHANGE BELOW TO ANOTHER TABLE LATER */
-	geographic_area_description varchar(128),
+	geography varchar(128),
 	is_free boolean default False,
 	offers_free_events boolean default False,
 	charge decimal(6) default 0.00,
 	mission varchar(256),
 	promotions varchar(256),
-	priest_attire varchar(64)
+	priest_attire varchar(64),
+    hymn_soc_member boolean default False,
+    shape varchar(128),
+    clothing varchar(128),
+    attendance varchar(64),
+    is_active boolean default False,
+    high_level boolean default False
+    
+    
 	/*
 	congregation_id int unsigned,
 	FOREIGN KEY (congregation_id) REFERENCES congregations(id),
