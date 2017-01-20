@@ -145,12 +145,14 @@ connection.query(`SELECT
             var JSObj = rowsToJS(rows);
               
             eth.push(JSObj);
+            printEthnicities();
 
           
         });
       }
       
       console.log(`selected ${numUsers} users...`);
+      
 
     }
     else
@@ -426,7 +428,7 @@ function formatResource(actualIndex) {
     //topics
     //accompaniment
     //tags
-    is_active:      resources[0][actualIndex]
+    is_active:      resources[0][actualIndex].is_active,
     high_level:     resources[0][actualIndex].high_level,
     city_id:        resources[0][actualIndex].city_id,
     state_id:       resources[0][actualIndex].state_id,
@@ -920,6 +922,13 @@ authController.getConfig = {
   }
 };
 */
+
+//misc print func's
+
+function printEthnicities() {
+  console.log(eth);
+}
+
 
 /* 
 ===================================================
