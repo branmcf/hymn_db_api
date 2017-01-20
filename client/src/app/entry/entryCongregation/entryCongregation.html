@@ -194,7 +194,8 @@
                            name="typeOptions"
                            value="{{ typesOption }}"
                            [checked]="typesOptions.indexOf(typesOption) >= 0"
-                           (change)="updateCheckedOptions(typesOption, $event)"/> {{ typesOption }}
+                           (change)="updateCheckedOptions(typesOption, $event)"
+                           unchecked/> {{ typesOption }}
                 </label>
             </div>
         </div>
