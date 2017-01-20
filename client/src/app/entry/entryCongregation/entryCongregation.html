@@ -10,7 +10,7 @@
                 <div class="card-block">
                     <h4 class="card-title">{{content?.fields.title}}</h4>
 
-                    <div onload="initOptionsMap()"></div>
+                    <!--<div onload="initOptionsMap()"></div>-->
                     
                     <div class="form-group">
                         <label for="congregationName">Congregation Name</label>
@@ -115,7 +115,7 @@
                             <input #wesleyan
                             type="radio" 
                             name="denomination" 
-                            value="wesleyan" 
+                            value="Wesleyan (United Methodist, AME, etc...)" 
                             [(ngModel)]="submission.denom"/> Wesleyan (United Methodist, AME, etc...)
                         </label>
                         <br>
@@ -123,7 +123,7 @@
                             <input #reformed
                             type="radio" 
                             name="denomination" 
-                            value="reformed" 
+                            value="Reformed (Presbyterian, RCA, etc...)" 
                             [(ngModel)]="submission.denom"/> Reformed (Presbyterian, RCA, etc...)
                         </label>
                         <br>
@@ -131,7 +131,7 @@
                             <input #baptist
                             type="radio" 
                             name="denomination" 
-                            value="baptist" 
+                            value="Baptist/Free-Church" 
                             [(ngModel)]="submission.denom"/> Baptist/Free-Church
                         </label>
                         <br>
@@ -139,7 +139,7 @@
                             <input #pentecostal
                             type="radio" 
                             name="denomination" 
-                            value="pentecostal" 
+                            value="Pentecostal" 
                             [(ngModel)]="submission.denom"/> Pentecostal
                         </label>
                         <br>
@@ -147,7 +147,7 @@
                             <input #nonDenom
                             type="radio" 
                             name="denomination" 
-                            value="nonDenom" 
+                            value="Non-Denominational" 
                             [(ngModel)]="submission.denom"/> Non-Denominational
                         </label>
                         <br>
@@ -156,7 +156,8 @@
                             type="radio" 
                             name="denomination"
                             [(ngModel)]="submission.denom"/> Other...  
-                        </label>         
+                        </label>
+                        <br>
                         <div [hidden]="!otherDenom.checked">
                             <input type="text" 
                              name="denomination"
@@ -195,7 +196,8 @@
                            value="{{ typesOption }}"
                            [checked]="typesOptions.indexOf(typesOption) >= 0"
                            (change)="updateCheckedOptions(typesOption, $event)"
-                           unchecked/> {{ typesOption }}
+                           unchecked
+                           onload /> {{ typesOption }}
                 </label>
             </div>
         </div>
@@ -274,15 +276,7 @@
                     </div>                   -->
 
 
-
-
-
-
-
-
-
-
-                    <!--<div class="form-group">
+                    <div class="form-group">
                         <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
                         <div class="form-check">
                             <label class="form-check-label" [class.selected]="cb1.checked">
@@ -361,50 +355,126 @@
                             name="cb8"
                             [(ngModel)]="submission.instrument"/>
                         </div>                                     
-                    </div> -->
+                    </div> 
 
                     <div class="form-group">
                         <label for="congregationShape">Which best describes the shape of your worship?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="shape" value="5fold" /> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
-                            <br>
-                            <input type="radio" name="shape" value="4fold" /> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly
-                            <br>
-                            <input type="radio" name="shape" value="2fold" /> 2-Fold Pattern (Praise & Teaching)
-                            <br>                            
-                            <input type="radio" name="shape" value="other" /> Other...
-                            <div class="form-group" [hidden]="!other">
-                                <input id="congregation_wordhipShape" class="form-control" />
-                            </div>
-                        </form>
+                        <br>
+                        <label [class.selected]="fiveFold.checked">
+                            <input #fiveFold
+                            type="radio" 
+                            name="shape" 
+                            value="5-Fold Pattern (Gathering, Word, Response, Table, Sending)" 
+                            [(ngModel)]="submission.shape"/> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
+                        </label>
+                        <br>
+                        <label [class.selected]="fourFold.checked">
+                            <input #fourFold
+                            type="radio"
+                            name="shape" 
+                            value="4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly" 
+                            [(ngModel)]="submission.shape"/> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly
+                        </label>
+                        <br>
+                        <label [class.selected]="twoFold.checked">
+                            <input #twoFold
+                            type="radio" 
+                            name="shape" 
+                            value="2-Fold Pattern (Praise & Teaching)" 
+                            [(ngModel)]="submission.shape"/> 2-Fold Pattern (Praise & Teaching)
+                        </label>
+                        <br>
+                        <label [class.selected]="otherShape.checked">
+                            <input #otherShape
+                            type="radio"
+                            name="shape"
+                            [(ngModel)]="submission.shape"/> Other...
+                        </label>
+                        <div [hidden]="!otherShape.checked">                            
+                            <input type="text" 
+                            name="shape"
+                            [(ngModel)]="submission.shape"/>
+                        </div>
                     </div> 
 
                     <div class="form-group">
                         <label for="congregationAttire">What does your pastor/priest wear when he/she preaches?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="attire" value="yes" /> Vestments
-                            <br>
-                            <input type="radio" name="attire" value="no" /> Robes, with or without stoles
-                            <br>
-                            <input type="radio" name="attire" value="other" /> Business Attire
-                            <br>
-                            <input type="radio" name="attire" value="other" /> Casual
-                        </form>
+                        <br>
+                        <label [class.selected]="vestements.checked">
+                            <input #vestements
+                            type="radio" 
+                            name="attire" 
+                            value="Vestments" 
+                            [(ngModel)]="submission.attire"/> Vestments
+                        </label>
+                        <br>
+                        <label [class.selected]="robes.checked">
+                            <input #robes
+                            type="radio" 
+                            name="attire" 
+                            value="Robes, with or without stoles" 
+                            [(ngModel)]="submission.attire"/> Robes, with or without stoles
+                        </label>
+                        <br>
+                        <label [class.selected]="business.checked">
+                            <input #business
+                            type="radio" 
+                            name="attire" 
+                            value="Business Attire" 
+                            [(ngModel)]="submission.attire"/> Business Attire
+                        </label>    
+                        <br>
+                        <label [class.selected]="casual.checked">
+                            <input #casual
+                            type="radio" 
+                            name="attire" 
+                            value="Casual" 
+                            [(ngModel)]="submission.attire"/> Casual
+                        </label>
                     </div>       
                     
                      <div class="form-group">
                         <label for="congregation_location">Is your congregation...</label>
-                        <form action="" method="post">
-                            <input type="radio" name="location" value="yes" /> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
-                            <br>
-                            <input type="radio" name="location" value="no" /> Urban (downtown churches in a large metropolitan area)
-                            <br>
-                            <input type="radio" name="location" value="other" /> Suburban
-                            <br>
-                            <input type="radio" name="location" value="other" /> Rural - In a small city
-                            <br>
-                            <input type="radio" name="location" value="other" /> Rural - Not in a city
-                        </form>
+                        <br>
+                        <label [class.selected]="regional.checked">
+                            <input #regional
+                            type="radio" 
+                            name="location" 
+                            value="Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)" 
+                            [(ngModel)]="submission.location"/> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
+                        </label>
+                        <br>
+                        <label [class.selected]="urban.checked">
+                            <input #urban
+                            type="radio"
+                            name="location" 
+                            value="Urban (downtown churches in a large metropolitan area)" 
+                            [(ngModel)]="submission.location"/> Urban (downtown churches in a large metropolitan area)
+                        </label>
+                        <br>
+                        <label [class.selected]="suburban.checked">
+                            <input #suburban
+                            type="radio" 
+                            name="location" 
+                            value="Suburban" 
+                            [(ngModel)]="submission.location"/> Suburban
+                        </label>    
+                        <br>
+                        <label [class.selected]="ruralSmallCity.checked">
+                            <input #ruralSmallCity
+                            type="radio" 
+                            name="location" 
+                            value="Rural - In a small city" 
+                            [(ngModel)]="submission.location"/> Rural - In a small city
+                        </label>    
+                        <br>
+                        <label [class.selected]="ruralNoCity.checked">
+                            <input #ruralNoCity
+                            type="radio" 
+                            name="location" 
+                            value="Rural - Not in a city" 
+                            [(ngModel)]="submission.location"/> Rural - Not in a city
+                        </label>
                     </div>     
 
                     <div class="form-group">
@@ -456,18 +526,47 @@
 
                     <div class="form-group">
                         <label for="congregationAttendance">On average, how many people attend your weekly worship services?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="attendance" value="under100" /> Under 100
-                            <br>
-                            <input type="radio" name="attendance" value="100to200" /> Between 100 and 250
-                            <br>
-                            <input type="radio" name="attendance" value="250to500" /> Between 250 and 500
-                            <br>
-                            <input type="radio" name="attendance" value="500to1000" /> Between 500 and 1000
-                            <br>
-                            <input type="radio" name="attendance" value="over1000" /> Over 1000
-                        </form>
-                    </div> 
+                        <br>
+                        <label [class.selected]="underHund.checked">
+                            <input #underHund
+                            type="radio" 
+                            name="attendance" 
+                            value="Under 100" 
+                            [(ngModel)]="submission.attendance"/> Under 100
+                        </label>
+                        <br>
+                        <label [class.selected]="HundToTwoFifty.checked">
+                            <input #HundToTwoFifty
+                            type="radio" 
+                            name="attendance" 
+                            value="Between 100 and 250" 
+                            [(ngModel)]="submission.attendance"/> Between 100 and 250
+                        </label>
+                        <br>
+                        <label [class.selected]="twoFiftyToFiveHund.checked">
+                            <input #twoFiftyToFiveHund
+                            type="radio" 
+                            name="attendance" 
+                            value="Between 250 and 500" 
+                            [(ngModel)]="submission.attendance"/> Between 250 and 500
+                        </label>
+                        <br>
+                        <label [class.selected]="fiveHundToThousand.checked">
+                            <input #fiveHundToThousand
+                            type="radio" 
+                            name="attendance" 
+                            value="Between 500 and 1000" 
+                            [(ngModel)]="submission.attendance"/> Between 500 and 1000
+                        </label>
+                        <br>
+                        <label [class.selected]="overThousand.checked">
+                            <input #overThousand
+                            type="radio" #overThousand
+                            name="attendance" 
+                            value="Over 1000" 
+                            [(ngModel)]="submission.attendance"/> Over 1000
+                        </label>
+                    </div>
 
                     <div>
                         <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
