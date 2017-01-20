@@ -83,6 +83,9 @@ var connection = mysql.createConnection({
 
 
 var users = []
+var eth = []
+var numUsers = 0
+
 var resources = []
 var events = []
 var congs = []
@@ -112,56 +115,76 @@ connection.query(`SELECT
   hymn_soc_member 
   from users`, function(err, rows, fields) {
 
-  if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
-    //console.log(JSON.stringify(rows));
-    //console.log(rows.rawDataPacket);
-  /*
-    var str = JSON.stringify(rows);
-    var finalData = str.replace(/\\/g, "");
-  */
+    if (!err) {
+      //console.log('The solution is: ', rows);
+      //console.log(rows[0].first_name, rows[0].last_name);
+      //console.log(rows);
+      //console.log(JSON.stringify(rows));
+      //console.log(rows.rawDataPacket);
+    /*
+      var str = JSON.stringify(rows);
+      var finalData = str.replace(/\\/g, "");
+    */
+      
+      var JSObj = rowsToJS(rows);       
+      users.push(JSObj);
 
-    users.push(rows);
+      //console.log(users[0].length);
+      numUsers = users[0].length;
 
-    console.log("selected users...");
+      //now for ethnicities
+      for(var varI = 1; varI <= numUsers; varI++) {
+        connection.query(`
+          SELECT e.name
+          FROM Ethnicities e
+          INNER JOIN user_ethnicities ue ON ue.ethnicity_id = e.id
+          INNER JOIN users u on ue.user_id = u.id
+          WHERE u.id = ${varI}`, function(err, rows, fields) {
+            if(err) { throw err; }
+            
+            var JSObj = rowsToJS(rows);
+              
+            eth.push(JSObj);
 
-  }
-  else
-    console.log('Error while performing Users Query.');
+          
+        });
+      }
+      
+      console.log(`selected ${numUsers} users...`);
+
+    }
+    else
+      console.log('Error while performing Users Query.');
 
 });
 
-//get resources from db
+
+
+//console.log(users[0].length);
+
+
+//get RESOURCES from db
 connection.query(`SELECT 
         id, 
         title,
         website,
-        hymn_soc_member,
-        is_free,
-        description,
         resource_date,
+        description,
+        is_active,
         high_level,
         city_id,
         state_id,
         country_id,
-        parent_org_id
+        hymn_soc_member,        
+        parent_org_id,
+        is_free
         from resources`, function(err, rows, fields) {
+          //need type, topics, accompaniment, tags, ethnicities
   if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    
-    //console.log("rows[0].id ", rows[0].id);
-  
-
-    //var str = JSON.stringify(rows);
-    //var finalData = str.replace(/\\/g, "");
-
-    //console.log("final data: ", finalData);
 
 
-    resources.push(rows);
+    var JSObj = rowsToJS(rows);       
+    resources.push(JSObj);
 
     //resources.push(JSON.stringify(rows));
 
@@ -185,7 +208,8 @@ connection.query('SELECT * from events', function(err, rows, fields) {
     var str = JSON.stringify(rows);
     var finalData = str.replace(/\\/g, "");
 */
-    events.push(rows);
+    var JSObj = rowsToJS(rows);       
+    events.push(JSObj);
 
     console.log("selected events...");
   }
@@ -206,8 +230,8 @@ connection.query('SELECT * from congregations', function(err, rows, fields) {
     var str = JSON.stringify(rows);
     var finalData = str.replace(/\\/g, "");
 */
-    congs.push(rows);
-
+      var JSObj = rowsToJS(rows);       
+      congs.push(JSObj);
     console.log("selected congregations...");
 
   }
@@ -228,7 +252,8 @@ connection.query('SELECT * from organizations', function(err, rows, fields) {
     var str = JSON.stringify(rows);
     var finalData = str.replace(/\\/g, "");
 */
-    orgs.push(rows);
+    var JSObj = rowsToJS(rows);       
+    orgs.push(JSObj);
 
     console.log("selected events...");
   }
@@ -243,6 +268,13 @@ connection.query('SELECT * from organizations', function(err, rows, fields) {
 =================================================== 
 */
 
+function rowsToJS(theArray) {
+  var temp = JSON.stringify(theArray);
+  temp = JSON.parse(temp);
+  //console.log(temp);
+  return temp;
+}
+
 var userController = {};
 var userController_2 = {};
 var resourceController = {};
@@ -256,6 +288,28 @@ var orgController = {};
 =================================================== 
 */
 
+function formatUser(actualIndex) {
+  var userData = {};
+  userData = {
+    url:              "/users/"+ String(actualIndex + 1),
+    id:               users[0][actualIndex].id, 
+    email:            users[0][actualIndex].email,
+    first_name:       users[0][actualIndex].first_name,
+    hymn_soc_member:  users[0][actualIndex].hymn_soc_member,
+    last_name:        users[0][actualIndex].last_name,
+    is_active:        users[0][actualIndex].is_active,
+    reg_date:         users[0][actualIndex].reg_date,
+    high_level:       users[0][actualIndex].high_level,
+    city_id:          users[0][actualIndex].city_id,
+    state_id:         users[0][actualIndex].state_id,
+    country_id:       users[0][actualIndex].country_id,
+    website:          users[0][actualIndex].website
+
+  };
+
+  return userData;
+}
+
 //USER GET REQUEST
 userController.getConfig = {
   handler: function (request, reply) {
@@ -267,34 +321,25 @@ userController.getConfig = {
       //if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
       var actualIndex = Number(request.params.id) - 1;
 
-      //now convert to valid JSON
-      var userData = {};
-      userData = {
-        url:              "/users/"+ Number(request.params.id),
-        id:               users[0][actualIndex].id, 
-        email:            users[0][actualIndex].email,
-        first_name:       users[0][actualIndex].first_name,
-        hymn_soc_member:  users[0][actualIndex].hymn_soc_member,
-        last_name:        users[0][actualIndex].last_name,
-        is_active:        users[0][actualIndex].is_active,
-        reg_date:         users[0][actualIndex].reg_date,
-        high_level:       users[0][actualIndex].high_level,
-        city_id:          users[0][actualIndex].city_id,
-        state_id:         users[0][actualIndex].state_id,
-        country_id:       users[0][actualIndex].country_id,
-        website:          users[0][actualIndex].website
+      var userData = formatUser(actualIndex);
 
-      };
+      //var str = JSON.stringify(userData);
 
-      var str = JSON.stringify(userData);
-
-      return reply(str);
+      return reply(userData);
 
       
     }
     //if no ID specified
+    var objToReturn = [];
 
-    reply(JSON.stringify(users[0]));
+    for(var i=0; i < users[0].length; i++) {
+      var bob = formatUser(i);
+      objToReturn.push(bob);
+    }
+
+    console.log(objToReturn);
+    
+    reply(objToReturn);
   }
 };
 
@@ -367,6 +412,46 @@ userController.postConfig = {
 =================================================== 
 */
 
+function formatResource(actualIndex) {
+  var resourceData = {};
+  
+  resourceData = {
+    id:             resources[0][actualIndex].id, 
+    title:          resources[0][actualIndex].title,
+    //type(s)
+    url:            resources[0][actualIndex].website,
+    resource_date:  resources[0][actualIndex].resource_date,
+    description:    resources[0][actualIndex].description,
+    parent_org_id:  resources[0][actualIndex].parent_org_id,
+    //topics
+    //accompaniment
+    //tags
+    is_active:      resources[0][actualIndex]
+    high_level:     resources[0][actualIndex].high_level,
+    city_id:        resources[0][actualIndex].city_id,
+    state_id:       resources[0][actualIndex].state_id,
+    country_id:     resources[0][actualIndex].country_id,
+    hymn_soc_member:resources[0][actualIndex].hymn_soc_member,
+    //ethnicities
+    //eth id
+    is_free:        resources[0][actualIndex].is_free
+
+  };
+
+  var theUrl = "/resource/" + String(actualIndex+1);
+
+  var finalObj = {
+    url: theUrl,
+    data: resourceData
+  };
+
+  //var str = JSON.stringify(finalObj);
+
+  return finalObj;
+
+
+}
+
 //RESOURCE GET REQUEST
 resourceController.getConfig = {
   handler: function (request, reply) {
@@ -375,40 +460,31 @@ resourceController.getConfig = {
       var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
             
       //create new object, convert to json
-      var resourceData = {};
+      var str = formatResource(actualIndex);
+      
 
-      resourceData = {
-        id:             resources[0][actualIndex].id, 
-        title:          resources[0][actualIndex].title,
-        url:            resources[0][actualIndex].website,
-        hymn_soc_member:resources[0][actualIndex].hymn_soc_member,
-        is_free:        resources[0][actualIndex].is_free,
-        description:    resources[0][actualIndex].description,
-        resource_date:  resources[0][actualIndex].resource_date,
-        high_level:     resources[0][actualIndex].high_level,
-        city_id:        resources[0][actualIndex].city_id,
-        state_id:       resources[0][actualIndex].state_id,
-        country_id:     resources[0][actualIndex].country_id,
-        parent_org_id:  resources[0][actualIndex].parent_org_id
-
-      };
-
-      var theUrl = "/resource/" + String(request.params.id);
-
-      var finalObj = {
-        url: theUrl,
-        data: resourceData
-      };
-
-      var str = JSON.stringify(finalObj);
-
+  
       return reply(str);
 
 
       //return reply(resources[actualId]);
     }
+    //
     //if no ID specified
-    reply(JSON.stringify(resources[0]));
+    //
+
+    //reply(JSON.stringify(resources[0]));
+      
+    var objToReturn = [];
+
+    for(var i=0; i < resources[0].length; i++) {
+      var bob = formatResource(i);
+      objToReturn.push(bob);
+    }
+
+    console.log(objToReturn);
+    
+    reply(objToReturn);
   }
 };
 
@@ -461,6 +537,40 @@ resourceController.postConfig = {
 =================================================== 
 */
 
+function formatEvent(actualIndex) {
+  var eventData = {};
+
+  eventData = {
+    id:             events[0][actualIndex].id, 
+    title:          events[0][actualIndex].title,
+    frequency:      events[0][actualIndex].frequency,
+    url:            events[0][actualIndex].website,
+    parent:         events[0][actualIndex].parent_org_id,
+    //topic(s)
+    description:    events[0][actualIndex].description,
+    event_date:     events[0][actualIndex].event_date,
+    cost:           events[0][actualIndex].cost,
+    //tag id's
+    city_id:        events[0][actualIndex].city_id,
+    state_id:       events[0][actualIndex].state_id,
+    country_id:     events[0][actualIndex].country_id,
+    hymn_soc_member:events[0][actualIndex].hymn_soc_member,    
+    is_active:      events[0][actualIndex].is_active,
+    high_level:     events[0][actualIndex].high_level
+
+
+  };
+
+  var theUrl = "/event/" + Number(actualIndex+1);
+
+  var finalObj = {
+    url: theUrl,
+    data: eventData
+  };
+
+  return finalObj;
+}
+
 //EVENT GET REQUEST
 eventController.getConfig = {
   handler: function (request, reply) {
@@ -469,43 +579,23 @@ eventController.getConfig = {
       var actualIndex = Number(request.params.id) - 1;
       //
       //create new object, convert to json
-      var eventData = {};
+      var finalObj = formatEvent(actualIndex);
 
-      eventData = {
-        id:             events[0][actualIndex].id, 
-        title:          events[0][actualIndex].title,
-        url:            events[0][actualIndex].website,
-        hymn_soc_member:events[0][actualIndex].hymn_soc_member,
-        frequency:      events[0][actualIndex].frequency,
-        //topic:          events[0][actualIndex].topic,
-        description:    events[0][actualIndex].description,
-        event_date:     events[0][actualIndex].event_date,
-        high_level:     events[0][actualIndex].high_level,
-        city_id:        events[0][actualIndex].city_id,
-        state_id:       events[0][actualIndex].state_id,
-        country_id:     events[0][actualIndex].country_id,
-        parent:         events[0][actualIndex].parent_org_id,
-        cost:           events[0][actualIndex].cost,
-        //tag_id:         events[0][actualIndex].tag_id,
-        is_active:      events[0][actualIndex].is_active
-
-      };
-
-      var theUrl = "/event/" + String(request.params.id);
-
-      var finalObj = {
-        url: theUrl,
-        data: eventData
-      };
-
-      var str = JSON.stringify(finalObj);
-
-      return reply(str);
+      return reply(finalObj);
 
       //return reply(events[actualId]);
     }
     //if no ID specified
-    reply(JSON.stringify(events[0]));
+    //reply(JSON.stringify(events[0]));
+
+    var objToReturn = [];
+
+    for(var i=0; i < events[0].length; i++) {
+      var bob = formatEvent(i);
+      objToReturn.push(bob);
+    }
+    
+    reply(objToReturn);
   }
 };
 
@@ -558,6 +648,40 @@ eventController.postConfig = {
 =================================================== 
 */
 
+function formatCongregation(actualIndex) {
+  var congData = {};
+
+  congData = {
+    id:             congs[0][actualIndex].id, 
+    name:          congs[0][actualIndex].name,
+    url:            congs[0][actualIndex].website,
+    //denominations
+    city_id:        congs[0][actualIndex].city_id,
+    state_id:       congs[0][actualIndex].state_id,
+    country_id:     congs[0][actualIndex].country_id,
+    hymn_soc_member:congs[0][actualIndex].hymn_soc_member,
+    //categories
+    //instruments
+    shape:          congs[0][actualIndex].shape,
+    clothing:       congs[0][actualIndex].clothing,
+    geography:      congs[0][actualIndex].geographic_area,
+    //ethnicities
+    //tags
+    is_active:      congs[0][actualIndex].is_active,
+    high_level:     congs[0][actualIndex].high_level
+
+  };
+
+  var theUrl = "/congregation/" + String(actualIndex+1);
+
+  var finalObj = {
+    url: theUrl,
+    data: congData
+  };
+
+  return finalObj;
+}
+
 //CONG GET REQUEST
 congController.getConfig = {
   handler: function (request, reply) {
@@ -565,44 +689,21 @@ congController.getConfig = {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-      var congData = {};
+      var finalObj = formatCongregation(actualIndex);
 
-      congData = {
-        id:             events[0][actualIndex].id, 
-        title:          events[0][actualIndex].name,
-        url:            events[0][actualIndex].website,
-        hymn_soc_member:events[0][actualIndex].hymn_soc_member,
-        //topic:          events[0][actualIndex].topic,
-        priest_attire:    events[0][actualIndex].priest_attire,
-        city_id:        events[0][actualIndex].city_id,
-        state_id:       events[0][actualIndex].state_id,
-        country_id:     events[0][actualIndex].country_id,
-        parent:         events[0][actualIndex].parent_org_id,
-        cost:           events[0][actualIndex].cost,
-        //tag_id:         events[0][actualIndex].tag_id,
-        is_active:      events[0][actualIndex].is_active,
-        desc:           events[0][actualIndex].description_of_worship_to_guests,
-        size:           events[0][actualIndex].size,
-        mission:        events[0][actualIndex].mission,
-        is_free:        events[0][actualIndex].is_free,
-        events_free:    events[0][actualIndex].events_free,
-        high_level:     events[0][actualIndex].high_level
-
-      };
-
-      var theUrl = "/event/" + String(request.params.id);
-
-      var finalObj = {
-        url: theUrl,
-        data: congData
-      };
-
-      var str = JSON.stringify(finalObj);
-
-      return reply(str);
+      return reply(finalObj);
     }
     //if no ID specified
-    reply(JSON.stringify(congs[0]));
+    //reply(JSON.stringify(congs[0]));
+
+    var objToReturn = [];
+
+    for(var i=0; i < congs[0].length; i++) {
+      var bob = formatCongregation(i);
+      objToReturn.push(bob);
+    }
+    
+    reply(objToReturn);
   }
 };
 
@@ -671,6 +772,53 @@ congController.postConfig = {
 - ORGANIZATINS -
 =================================================== 
 */
+
+function formatOrg(actualIndex) {
+  var orgData = {};
+
+  orgData = {
+    id:             orgs[0][actualIndex].id, 
+    name:          orgs[0][actualIndex].name,
+    url:            orgs[0][actualIndex].website,
+    parent:         orgs[0][actualIndex].parent_org_id,
+    //denomination(s)         
+    city_id:        orgs[0][actualIndex].city_id,
+    state_id:       orgs[0][actualIndex].state_id,
+    country_id:     orgs[0][actualIndex].country_id,
+    geographic_area:orgs[0][actualIndex].geography,
+    is_org_free:    orgs[0][actualIndex].is_free,
+    events_free:    orgs[0][actualIndex].offers_free_events,
+    membership_free:orgs[0][actualIndex].membership_free,
+    mission:        orgs[0][actualIndex].mission,   
+    process:        orgs[0][actualIndex].the_process,
+    //tags
+    hymn_soc_member:orgs[0][actualIndex].hymn_soc_member,
+    is_active:      orgs[0][actualIndex].is_active,  
+    high_level:     orgs[0][actualIndex].high_level
+
+    /*
+    priest_attire:  orgs[0][actualIndex].priest_attire,    
+    clothing:           orgs[0][actualIndex].clothing,
+    //tag_id:         events[0][actualIndex].tag_id,
+    
+    shape:           orgs[0][actualIndex].shape,
+    attendance:           orgs[0][actualIndex].attendance,
+    */
+
+  };
+
+  var theUrl = "/organization/" + String(actualIndex+1);
+
+  var finalObj = {
+    url: theUrl,
+    data: orgData
+  };
+
+  //var str = JSON.stringify(finalObj);
+
+  return finalObj;
+}
+
 //CONG GET REQUEST
 orgController.getConfig = {
   handler: function (request, reply) {
@@ -678,41 +826,20 @@ orgController.getConfig = {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-      var orgData = {};
-
-      orgData = {
-        id:             events[0][actualIndex].id, 
-        title:          events[0][actualIndex].name,
-        url:            events[0][actualIndex].website,
-        //topic:          events[0][actualIndex].topic,
-        priest_attire:    events[0][actualIndex].priest_attire,
-        city_id:        events[0][actualIndex].city_id,
-        state_id:       events[0][actualIndex].state_id,
-        country_id:     events[0][actualIndex].country_id,
-        parent:         events[0][actualIndex].parent_org_id,
-        clothing:           events[0][actualIndex].clothing,
-        //tag_id:         events[0][actualIndex].tag_id,
-        is_active:      events[0][actualIndex].is_active,
-        shape:           events[0][actualIndex].shape,
-        attendance:           events[0][actualIndex].attendance,
-        is_active:        events[0][actualIndex].is_active,
-        high_level:     events[0][actualIndex].high_level
-
-      };
-
-      var theUrl = "/event/" + String(request.params.id);
-
-      var finalObj = {
-        url: theUrl,
-        data: orgData
-      };
-
-      var str = JSON.stringify(finalObj);
-
-      return reply(str);
+      
+      finalObj = formatOrg(actualIndex);
+      
+      return reply(finalObj);
     }
-    //if no ID specified
-    reply(orgs);
+
+    var objToReturn = [];
+
+    for(var i=0; i < orgs[0].length; i++) {
+      var bob = formatCongregation(i);
+      objToReturn.push(bob);
+    }
+    
+    reply(objToReturn);
   }
 };
 
@@ -799,6 +926,8 @@ authController.getConfig = {
 - ROUTES -
 =================================================== 
 */
+
+
 module.exports = [
   { path: '/', method: 'GET', config: userController.getConfig },
   { path: '/user/{id?}', method: 'GET', config: userController.getConfig },

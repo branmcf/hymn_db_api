@@ -28,6 +28,8 @@ DROP TABLE IF EXISTS organization_ethnicities;
 DROP TABLE IF EXISTS organization_congregations;
 DROP TABLE IF EXISTS organization_denominations;
 
+DROP TABLE IF EXISTS user_ethnicities;
+
 DROP TABLE IF EXISTS user_viewed_events;
 DROP TABLE IF EXISTS user_viewed_congs;
 DROP TABLE IF EXISTS user_viewed_resources;
@@ -217,13 +219,14 @@ CREATE TABLE congregations (
 	description_of_worship_to_guests varchar(256),
 	size int(10) unsigned default 0,
     is_active boolean default False,
-    mission varchar(256), 
+    /*mission varchar(256), */
     geogrpahic_area varchar(128),
     is_free boolean default False,
     events_free boolean default False,
     process varchar(128),
-    high_level boolean default False
-    
+    high_level boolean default False,
+    shape varchar(256),
+    clothing varchar(128)
     
     
 	/*
@@ -298,6 +301,7 @@ CREATE TABLE resources (
 	resource_date timestamp,
 	
 	high_level boolean default False,
+    is_active boolean default True,
 
 	city_id int unsigned,
 	state_id int unsigned,
@@ -353,7 +357,9 @@ CREATE TABLE organizations (
     clothing varchar(128),
     attendance varchar(64),
     is_active boolean default False,
-    high_level boolean default False
+    high_level boolean default False,
+    the_process varchar(256),
+    membership_free boolean default False
     
     
 	/*
@@ -396,6 +402,16 @@ CREATE TABLE users (
 	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
 	*/
   
+);
+
+CREATE TABLE user_ethnicities(
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	user_id int unsigned,
+	FOREIGN KEY (user_id) REFERENCES users(id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
+
 );
 
 /* 
