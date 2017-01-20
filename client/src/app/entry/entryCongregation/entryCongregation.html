@@ -9,6 +9,8 @@
                 </div>
                 <div class="card-block">
                     <h4 class="card-title">{{content?.fields.title}}</h4>
+
+                    <div onload="initOptionsMap()"></div>
                     
                     <div class="form-group">
                         <label for="congregationName">Congregation Name</label>
@@ -182,7 +184,26 @@
                         </label>
                     </div>
 
-                    <div class="form-group">
+
+
+        <div class="form-group">
+            <label for="typeOptions">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+            <div *ngFor="let typesOption of typesOptions; let i = index">
+                <label>
+                    <input type="checkbox"
+                           name="typeOptions"
+                           value="{{ typesOption }}"
+                           [checked]="typesOptions.indexOf(typesOption) >= 0"
+                           (change)="updateCheckedOptions(typesOption, $event)"/> {{ typesOption }}
+                </label>
+            </div>
+        </div>
+
+
+
+
+
+                    <!--<div class="form-group">
                         <label for="congregationSong">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
                         <div class="form-group">
                             <label class="form-check-label">
@@ -249,7 +270,16 @@
                                 [(ngModel)]="submission.type"> Secular Song
                             </label>
                         </div>                                      
-                    </div>                   
+                    </div>                   -->
+
+
+
+
+
+
+
+
+
 
                     <!--<div class="form-group">
                         <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
