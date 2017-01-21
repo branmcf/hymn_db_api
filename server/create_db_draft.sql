@@ -129,6 +129,7 @@ CREATE TABLE Resource_Types (
 	PRIMARY KEY (id)
 );
 
+
 CREATE TABLE Languages (
 	id int unsigned auto_increment,
 	name varchar(128), 
@@ -321,7 +322,7 @@ CREATE TABLE resources (
 	ensemble_id int unsigned,
 	ethnicity_id int unsigned,
 	FOREIGN KEY (author_id) REFERENCES Authors(id),
-	FOREIGN KEY (resource_type_id) REFERENCES Resource_Types(id),
+	FOREIGN KEY (resource_type_id) REFERENCES Types(id),
 	FOREIGN KEY (denomination_id) REFERENCES Denominations(id),
 	FOREIGN KEY (language_id) REFERENCES Languages(id),
 	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types(id),
@@ -524,8 +525,8 @@ CREATE TABLE resource_tags (
 CREATE TABLE resource_authors (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	author_id int unsigned,
 	FOREIGN KEY (author_id) REFERENCES Authors (id)
 );
@@ -533,8 +534,8 @@ CREATE TABLE resource_authors (
 CREATE TABLE resource_resource_types (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	resource_type_id int unsigned,
 	FOREIGN KEY (resource_type_id) REFERENCES Resource_Types (id)
 );
@@ -542,8 +543,8 @@ CREATE TABLE resource_resource_types (
 CREATE TABLE resource_denominations (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	denomination_id int unsigned,
 	FOREIGN KEY (denomination_id) REFERENCES Denominations (id)
 );
@@ -551,8 +552,8 @@ CREATE TABLE resource_denominations (
 CREATE TABLE resource_instruments (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	instrument_type_id int unsigned,
 	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types (id)
 );
@@ -560,8 +561,8 @@ CREATE TABLE resource_instruments (
 CREATE TABLE resource_topics (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	topic_id int unsigned,
 	FOREIGN KEY (topic_id) REFERENCES Topics (id)
 );
@@ -569,8 +570,8 @@ CREATE TABLE resource_topics (
 CREATE TABLE resource_ensembles (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	ensemble_id int unsigned,
 	FOREIGN KEY (ensemble_id) REFERENCES Ensembles (id)
 );
@@ -578,8 +579,8 @@ CREATE TABLE resource_ensembles (
 CREATE TABLE resource_ethnicities (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	event_id int unsigned,
-	FOREIGN KEY (event_id) REFERENCES events (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
 	ethnicity_id int unsigned,
 	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
 );
