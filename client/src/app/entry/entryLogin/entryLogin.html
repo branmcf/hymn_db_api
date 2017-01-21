@@ -1,29 +1,31 @@
-MAKE IT SO PEOPLE CAN CHOOSE WHAT THEY WANT TO SUBMIT IN THE FIRST PLACE
+<!--MAKE IT SO PEOPLE CAN CHOOSE WHAT THEY WANT TO SUBMIT IN THE FIRST PLACE
 CREATE PREVIEW PAGE BEFORE SUBMISSION
 ALLOW USER TO BACK AND EDIT DATA
 ALLOW USERS TO EMAIL BRIAN TO GET PASSWORD
-SHOW WHICH USER SUBMITTIED WHAT
+SHOW WHICH USER SUBMITTIED WHAT-->
 
 <div class="entry-container">
   <hymn-header></hymn-header>
   <div class="entry-body row">
     <div class="col-md-6 offset-md-3">
-      <div class="card">
+      <md-card>
 
-        <div class="card-header">
+        <md-card-header>
           Please log in
-        </div>
+        </md-card-header>
 
-        <div class="card-block">
+        <md-card-content>
 
           <form name="loginForm"
             (ngSubmit)="login()"
             #loginForm="ngForm"
             *ngIf="user">
 
-          <div class="form-group label-floating">
-            <label for="userEmail">Email</label>
-            <input type="text" 
+          <div class="form-group">
+            <!--<label for="userEmail">Email</label>-->
+            <md-input-container class="full-width">
+            <input md-input mdInput type="text" 
+              placeholder="Email"
               name="email" 
               id="userEmail" 
               class="form-control"               
@@ -31,6 +33,8 @@ SHOW WHICH USER SUBMITTIED WHAT
               #userEmail="ngModel"
               name="userEmail"
               required/>
+            </md-input-container>        
+
 
             <div class="alert alert-danger" *ngIf="userEmail.errors && userEmail.touched">
                 <ul>
@@ -42,46 +46,46 @@ SHOW WHICH USER SUBMITTIED WHAT
                     </li>
                 </ul>
                 </div>
-            </div>          
-
+            </div>  
           <div class="form-group">
-            <label for="userPassword">Password</label>
-            <input type="password"
-              name= "password" 
-              id="userPassword" 
-              class="form-control"
-              [(ngModel)]="user.password" 
-              #userPassword="ngModel"
-              name="userPassword"
-              required/>
+              <!--<label for="userPassword">Password</label>-->
+              <md-input-container class="full-width">
+              <input md-input mdInput type="password"
+                name= "password" 
+                id="userPassword" 
+                placeholder="Password"
+                class="form-control"
+                [(ngModel)]="user.password" 
+                #userPassword="ngModel"
+                name="userPassword"
+                required/>
+              </md-input-container>
 
-            <div class="alert alert-danger" *ngIf="userPassword.errors && userPassword.touched">
-                <ul>
-                    <li [hidden]="!userPassword.errors.required">
-                        Password is required
-                    </li>
-                    <li [hidden]="!userPassword.errors.pattern">
-                        Password is not valid
-                    </li>
-                </ul>
-            </div>   
+              <div class="alert alert-danger" *ngIf="userPassword.errors && userPassword.touched">
+                  <ul>
+                      <li [hidden]="!userPassword.errors.required">
+                          Password is required
+                      </li>
+                      <li [hidden]="!userPassword.errors.pattern">
+                          Password is not valid
+                      </li>
+                  </ul>
+              </div>   
             </div>       
-
-          <div class="col-md-12">
-            <button type="submit"
-             class="btn btn-block btn-info" 
-             [disabled]="loginForm.invalid">
-            Next
-            </button>
-            <button class="btn btn-block" routerLink="/">
-            Return to home
-            </button>
-          </div>
+            <md-card-actions>
+              <button md-raised-button color="primary" type="submit" 
+              [disabled]="loginForm.invalid">
+              Next
+              </button>
+              <button md-button routerLink="/">
+              Return to home
+              </button>
+          </md-card-actions>
 
           </form>
 
-        </div> <!--end card-block-->
-      </div> <!--end card-->
+        </md-card-content> <!--end card-block-->
+      </md-card> <!--end card-->
     </div>
   </div>
 </div>

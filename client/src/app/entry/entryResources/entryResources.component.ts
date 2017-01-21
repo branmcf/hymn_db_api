@@ -5,7 +5,6 @@ import { ContentfulService } from './../../services/contentful.service';
 @Component({
   selector: 'hymn-entry-resources',
   template: require('./entryResources.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css'],
   providers: [ContentfulService]
 })
 
