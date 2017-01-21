@@ -1,11 +1,12 @@
 <div class="entry-container">
   <entry-nav class="left"></entry-nav>
   <hymn-header></hymn-header>
+  <entry-nav-modal></entry-nav-modal>
   <div class="entry-body row">
     <div class="col-md-8 offset-md-3">
       <md-card>
         <md-card-content>
-            <md-card-subtitle>
+            <md-card-subtitle class="entry-card-header">
                 {{content?.fields.instructions}} 
             </md-card-subtitle>
             <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>

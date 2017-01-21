@@ -3,9 +3,23 @@
 /*@import url('../node_modules/bootstrap-material-design/dist/css/bootstrap-material-design.css');
 @import url('../node_modules/bootstrap-material-design/dist/css/ripples.min.css');*/
 
-@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
+/*@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';*/
 
-$primary-color: #337ab7;
+@import '~@angular/material/core/theming/all-theme';
+
+@include md-core();
+
+$hymn-app-primary: md-palette($md-blue, 800);
+$hymn-app-accent:  md-palette($md-light-blue, 600, A100, A400);
+
+$hymn-app-warn:    md-palette($md-red);
+
+$hymn-app-theme: md-light-theme($hymn-app-primary, $hymn-app-accent, $hymn-app-warn);
+
+@include angular-material-theme($hymn-app-theme);
+
+
+$primary-color: #1565C0;
 $secondary-color: #3988CC;
 
 html {
@@ -104,14 +118,6 @@ a {
   margin: .5rem;
 }
 
-.footer {
-  padding: 0.5rem;
-  font-size: 1rem;
-  background-color: #1f1f1f;
-  text-align: center;
-  color: white;
-}
-
 .options {
   text-align: center;
   margin: 15rem 0rem 1rem 0rem;
@@ -120,12 +126,12 @@ a {
 .entry-body {
   padding: 5rem 5rem 5rem 5rem;
 
-  .card-header {
-    background-color: #CCCCCC;
+  .entry-card-header {
+    background-color: #f5f5f5;
   }
 
   .card-block {
-    background-color: #f5f5f5;
+    background-color: #CCC;
   }
 
 }
