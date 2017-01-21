@@ -6,7 +6,6 @@ import { ContentfulService } from './../../services/contentful.service';
 @Component({
   selector: 'hymn-entry-orgs',
   template: require('./entryOrgs.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
 export class EntryOrgsComponent implements OnInit {

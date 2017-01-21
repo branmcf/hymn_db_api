@@ -3,380 +3,222 @@
   <hymn-header></hymn-header>
   <div class="entry-body row">
     <div class="col-md-8 offset-md-3">
-      <div class="card">
-        <div class="card-header">
-          {{content?.fields.instructions}} 
-        </div>
-        <div class="card-block">
-          <h4 class="card-title">{{content?.fields.title}}</h4>
+      <md-card>
+        <md-card-content>
+            <md-card-subtitle>
+                {{content?.fields.instructions}} 
+            </md-card-subtitle>
+            <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
 
-          <div class="form-group">
-            <label for="resourceTitle">Resource Title</label>
-            <input type="text"
-            id="resourceTitle" 
-            class="form-control" 
-            [(ngModel)]="submission.title"
-            name="resourceTitle"
-            required/>
-          </div>
+            <div class="form-group">
+                <!--<label for="resourceTitle">Resource Title</label>-->
+                <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    placeholder="Resource Title"
+                    id="resourceTitle" 
+                    class="form-control" 
+                    [(ngModel)]="submission.title"
+                    name="resourceTitle"
+                    required/>
+                </md-input-container>
+            </div>
 
-          <div class="form-group">
-              <label for="resourceType">Resource Type</label>
-              <form action="" method="post">
-                  <input type="radio" name="type" value="book" /> Book
-                  <br>
-                  <input type="radio" name="type" value="blog" /> Blog
-                  <br>
-                  <input type="radio" name="type" value="podcast" /> Podcast
-                  <br>
-                  <input type="radio" name="type" value="news" /> Newsletter/E-News
-                  <br>
-                  <input type="radio" name="type" value="forum" /> Forum
-                  <br>
-                  <input type="radio" name="type" value="audio" /> Audio Track(s)
-                  <br>
-                  <input type="radio" name="type" value="video" /> Video/Visual(s)
-                  <br>
-                  <input type="radio" name="type" value="other" /> Other...
-                  <div class="form-group" [hidden]="!other">
-                      <input id="personCity" class="form-control" />
-                  </div>
-              </form>
-          </div>
+            <div class="form-group">
+                <label for="resourceType">Resource Type</label>
+                <form action="" method="post">
+                    <md-radio-button class="block-input" name="type" value="book"> Book</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="blog"> Blog</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="podcast"> Podcast</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="news"> Newsletter/E-News</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="forum"> Forum</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="audio"> Audio Track(s)</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="video"> Video/Visual(s)</md-radio-button>
+                    <md-radio-button class="block-input" name="type" value="other"> Other...</md-radio-button>
+                    <div class="form-group" [hidden]="!other">
+                        <input id="personCity" class="form-control"/>
+                    </div>
+                </form>
+            </div>
 
-          <div class="form-group">
-            <label for="resourceUrl">Website URL</label>
-            <input type="url" 
-            id="resourceUrl" 
-            class="form-control" 
-            [(ngModel)]="submission.url"
-            name="resourceUrl"
-            required/>
-          </div>
+            <div class="form-group">
+                <!--<label for="resourceUrl">Website URL</label>-->
+                <md-input-container class="full-width">
+                    <input md-input mdInput type="url" 
+                    placeholder="Website URL"
+                    id="resourceUrl" 
+                    class="form-control" 
+                    [(ngModel)]="submission.url"
+                    name="resourceUrl"
+                    required/>
+                </md-input-container>
+            </div>
 
-          <div class="form-group">
-            <label for="resourceAuthor">Author/Creator</label>
-            <input type="text"
-            id="resourceAuthor" 
-            class="form-control" 
-            [(ngModel)]="submission.author"
-            name="resourceAuthor"
-            required/>
-          </div>
+            <div class="form-group">
+                <!--<label for="resourceAuthor">Author/Creator</label>-->
+                <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    placeholder="Author/Creator"
+                    id="resourceAuthor" 
+                    class="form-control" 
+                    [(ngModel)]="submission.author"
+                    name="resourceAuthor"
+                    required/>
+                </md-input-container>
+            </div>
 
-          <div class="form-group">
-            <label for="resourceParent">Parent Organization or Source</label>
-            <input type="text"
-            id="resourceParent" 
-            class="form-control" 
-            [(ngModel)]="submission.parent"
-            name="reourceParent"
-            required/>
-          </div>
+            <div class="form-group">
+                <!--<label for="resourceParent">Parent Organization or Source</label>-->
+                <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    placeholder="Parent Organization or Source"
+                    id="resourceParent" 
+                    class="form-control" 
+                    [(ngModel)]="submission.parent"
+                    name="reourceParent"
+                    required/>
+                </md-input-container>
+            </div>
 
-          <div class="form-group">
-            <label for="resourceDescription">Resource Description</label>
-            <textarea rows="3"
-            type="text"
-            id="resourceDescription" 
-            class="form-control" 
-            [(ngModel)]="submission.desc"
-            name="resourceDescription"
-            required></textarea>
-          </div>
+            <div class="form-group">
+                <!--<label for="resourceDescription">Resource Description</label>-->
+                <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    placeholder="Resource Description"
+                    id="resourceDescription" 
+                    class="form-control" 
+                    [(ngModel)]="submission.desc"
+                    name="resourceDescription"
+                    required/>
+                </md-input-container>
+            </div>
 
-          <div class="form-group">
-            <label for="resourceCategories">What categories does this resource
-              fit into or relate to?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> A Hymn written prior to 1970
-              </label>
+            <div class="form-group">
+                <label for="resourceCategories">What categories does this resource
+                fit into or relate to?
+                </label>
+                    <md-checkbox class="block-input">A Hymn written prior to 1970</md-checkbox>
+                    <md-checkbox class="block-input">Newly Composed Hymn (within the last 10 years)</md-checkbox>
+                    <md-checkbox class="block-input">A song written by a local church musician - not widely distributed</md-checkbox>
+                    <md-checkbox class="block-input">Praise and Worship Song (CCM)</md-checkbox>
+                    <md-checkbox class="block-input">Psalm Setting</md-checkbox>
+                    <md-checkbox class="block-input">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                    <md-checkbox class="block-input">Older hymn text set to a new contemporary tune (or "re-tuned" hymn)</md-checkbox>
+                    <md-checkbox class="block-input">Song from another country (or "World Song")</md-checkbox>
+                    <md-checkbox class="block-input">Other...</md-checkbox>
+                <div class="form-group" [hidden]="!other">
+                    <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    id="resourceCategories" 
+                    class="form-control" 
+                    [(ngModel)]="submission.category"
+                    name="resourceCategories"
+                    required/>
+                    </md-input-container>
+                </div>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Newly Composed Hymn (within the last 10 years)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> A song written by a local church musician - not widely distributed
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Praise and Worship Song (CCM)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Psalm Setting
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned" hymn)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Song from another country (or "World Song")
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Other...
-              </label>
-              <div class="form-group" [hidden]="!other">
-                <input type="text"
-                id="resourceCategories" 
-                class="form-control" 
-                [(ngModel)]="submission.category"
-                name="resourceCategories"
-                required/>
-              </div>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceTopic">Does this resource address any of these specific topics/concerns?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Psalm Setting
-              </label>
+            <div class="form-group">
+                <label for="resourceTopic">Does this resource address any of these specific topics/concerns?</label>
+                    <md-checkbox class="block-input">Psalm Setting</md-checkbox>
+                    <md-checkbox class="block-input">Lectionary Based</md-checkbox>
+                    <md-checkbox class="block-input">Social Justice</md-checkbox>
+                    <md-checkbox class="block-input">Other...</md-checkbox>
+                <div class="form-group" [hidden]="!other">
+                    <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    id="resourceTopic" 
+                    class="form-control" 
+                    [(ngModel)]="submission.topic"
+                    name="resourceTopic"
+                    required/>
+                    </md-input-container>
+                </div>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Lectionary Based
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Social Justice
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Other...
-              </label>
-              <div class="form-group" [hidden]="!other">
-                <input type="text"
-                id="resourceTopic" 
-                class="form-control" 
-                [(ngModel)]="submission.topic"
-                name="resourceTopic"
-                required/>
-              </div>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceAccompany">What kind of accompaniment does this resource address or lend itself toward?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Acapella
-              </label>
+            <div class="form-group">
+                <label for="resourceAccompany">What kind of accompaniment does this resource address or lend itself toward?</label>
+                    <md-checkbox class="block-input">Acapella</md-checkbox>
+                    <md-checkbox class="block-input">Organ</md-checkbox>
+                    <md-checkbox class="block-input">Piano</md-checkbox>
+                    <md-checkbox class="block-input">Guitar (no band)</md-checkbox>
+                    <md-checkbox class="block-input">Guitar (with band)</md-checkbox>
+                    <md-checkbox class="block-input">Orchestra/Wind Ensemble</md-checkbox>
+                    <md-checkbox class="block-input">Handbells</md-checkbox>
+                    <md-checkbox class="block-input">Single/Obligato Instrument (non-organ/piano/guitar)</md-checkbox>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Organ
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Piano
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Guitar (no band)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Guitar (with band)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Orchestra/Wind Ensemble
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Handbells
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Single/Obligato Instrument (non-organ/piano/guitar)
-              </label>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceLang">What languages are represented in this resource?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> English
-              </label>
+            <div class="form-group">
+                <label for="resourceLang">What languages are represented in this resource?</label>
+                    <md-checkbox class="block-input">English</md-checkbox>
+                    <md-checkbox class="block-input">Spanish</md-checkbox>
+                    <md-checkbox class="block-input">French</md-checkbox>
+                    <md-checkbox class="block-input">Other...</md-checkbox>
+                <div class="form-group" [hidden]="!other">
+                    <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    id="resourceLang" 
+                    class="form-control" 
+                    [(ngModel)]="submission.lang"
+                    name="resourceLang"
+                    required/>
+                    </md-input-container>
+                </div>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Spanish
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> French
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Other...
-              </label>
-              <div class="form-group" [hidden]="!other">
-                <input type="text"
-                id="resourceLang" 
-                class="form-control" 
-                [(ngModel)]="submission.lang"
-                name="resourceLang"
-                required/>
-              </div>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceEnsemble">What types of ensembles are addressed in this resource?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Choir
-              </label>
+            <div class="form-group">
+                <label for="resourceEnsemble">What types of ensembles are addressed in this resource?</label>
+                    <md-checkbox class="block-input">Choir</md-checkbox>
+                    <md-checkbox class="block-input">Cantor</md-checkbox>
+                    <md-checkbox class="block-input">Song-Enlivener</md-checkbox>
+                    <md-checkbox class="block-input">Lead Singer from Band (Solo)</md-checkbox>
+                    <md-checkbox class="block-input">Lead Singer from Band with Other Vocalists</md-checkbox>
+                    <md-checkbox class="block-input">Other...</md-checkbox>
+                <div class="form-group" [hidden]="!other">
+                    <md-input-container class="full-width">
+                    <input md-input mdInput type="text"
+                    id="resourceEnsemble" 
+                    class="form-control" 
+                    [(ngModel)]="submission.ensemble"
+                    name="resourceEnsemble"
+                    required/>
+                    </md-input-container>
+                </div>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Cantor
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Song-Enlivener
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Lead Singer from Band (Solo)
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Lead Singer from Band with Other Vocalists
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox"> Other...
-              </label>
-              <div class="form-group" [hidden]="!other">
-                <input type="text"
-                id="resourceEnsemble" 
-                class="form-control" 
-                [(ngModel)]="submission.ensemble"
-                name="resourceEnsemble"
-                required/>
-              </div>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceEthnicity">What ethnicities does this resource represent?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> White
-              </label>
+            <div class="form-group">
+                <label for="resourceEthnicity">What ethnicities does this resource represent?</label>
+                    <md-checkbox class="block-input" name="ethnicities">White</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">Black</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">Hispanic/Latinx/Caribbean</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">Native American/Indigenous Peoples</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">Asian</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">African</md-checkbox>
+                    <md-checkbox class="block-input" name="ethnicities">Middle Eastern</md-checkbox>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> Black
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> Hispanic/Latinx/Caribbean
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> Native American/Indigenous Peoples
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> Asian
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> African
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="ethnicities"> Middle Eastern
-              </label>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceIsInvolved">Is a Hymn Society member involved?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isHymnInvolved"> Yes
-              </label>
+            <div class="form-group">
+                <label for="resourceIsInvolved">Is a Hymn Society member involved?</label>
+                <form action="">
+                    <md-radio-button class="block-input" name="isHymnInvolved"> Yes</md-radio-button>
+                    <md-radio-button class="block-input" name="isHymnInvolved"> No</md-radio-button>
+                    <md-radio-button class="block-input" name="isHymnInvolved"> Unknown</md-radio-button>
+                </form>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isHymnInvolved"> No
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isHymnInvolved"> Unknown
-              </label>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="resourceFree">Is this resource free?</label>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isFree"> Yes
-              </label>
+            <div class="form-group">
+                <label for="resourceFree">Is this resource free?</label>
+                    <md-radio-button class="block-input" name="isFree"> Yes</md-radio-button>
+                    <md-radio-button class="block-input" name="isFree"> Partially with paywall</md-radio-button>
+                    <md-radio-button class="block-input" name="isFree"> No</md-radio-button>
             </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isFree"> Partially with paywall
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="isFree"> No
-              </label>
-            </div>
-          </div>
 
-          <div>
-              <a class="btn btn-block btn-primary" >Submit</a>
-              <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-          </div>  
+            <div>
+                <a class="btn btn-block btn-primary" >Submit</a>
+                <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
+            </div>  
           
-        </div>
-      </div>
+        </md-card-content>
+      </md-card>
     </div>
   </div>
 </div>

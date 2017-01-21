@@ -5,7 +5,6 @@ import { ContentfulService } from './../../services/contentful.service';
 @Component({
   selector: 'hymn-entry-person',
   template: require('./entryPerson.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
 export class EntryPersonComponent implements OnInit {
