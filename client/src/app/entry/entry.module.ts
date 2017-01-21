@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 import { Routing, RootComponent } from './../routes';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
@@ -40,6 +40,7 @@ import { UserService } from '../services/user.service';
     CommonModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HeaderModule,
     MaterialModule.forRoot(),

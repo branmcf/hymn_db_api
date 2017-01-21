@@ -10,8 +10,6 @@
                 </div>
                 <div class="card-block">
                     <h4 class="card-title">{{content?.fields.title}}</h4>
-
-                    <!--<div onload="initOptionsMap()"></div>-->
                     
                     <div class="form-group">
                         <label for="congregationName">Congregation Name</label>
@@ -188,23 +186,115 @@
 
 
 
-        <div class="form-group">
+        <!--<div class="form-group">
             <label for="typeOptions">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
             <div *ngFor="let typesOption of typesOptions; let i = index">
                 <label>
-                    <input type="checkbox"
+                    <md-checkbox
                            name="typeOptions"
-                           value="{{ typesOption }}"
-                           [checked]="typesOptions.indexOf(typesOption) >= 0"
-                           (change)="updateCheckedOptions(typesOption, $event)"
-                           unchecked
-                           onload /> {{ typesOption }}
+                           ng-true-value="true"
+                           nf-false-vaue="false"
+                           (change)="updateCheckedOptions(typesOption, $event)"> {{ typesOption }} 
+                    </md-checkbox>
                 </label>
             </div>
-        </div>
+        </div>-->
 
+                    <div class="form-group" >
+                        <label for="congregatoinTypes">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.A_hymn_written_prior_to_1970"
+                                >A hymn written prior to 1970</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Psalm_Setting">Psalm Setting</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.Secular_Song">Secular Song</md-checkbox>
+                    </div>
 
-
+                    <!--<div class="form-group" >
+                        <label for="congregatoinTypes">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                value="A hymn written prior to 1970" 
+                                [(ngModel)]="submission.type.congType1">
+                                A hymn written prior to 1970</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Newly composed hymn (within the last 10 years)" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType2">
+                                Newly composed hymn (within the last 10 years)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Praise and Worship Song (CCM)" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType3">
+                                Praise and Worship Song (CCM)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Psalm Setting" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType4">
+                                Psalm Setting</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Chant (Gregorian, Anglican, Pointed or Taize)" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType5">
+                                Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Older hymn text set to a new contemporary tune (or 're-tuned')" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType6">
+                                Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Song from another country (or 'World Song')" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType7">
+                                Song from another country (or 'World Song')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="Secular Song" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.type.congType8">
+                                Secular Song</md-checkbox>
+                    </div>-->
 
 
                     <!--<div class="form-group">

@@ -60,6 +60,7 @@ export class EntryCongregationComponent {
     this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
       this.submission = {};
+      this.submission.type = {};
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
@@ -86,7 +87,24 @@ export class EntryCongregationComponent {
       country: '',
       denom: '',
       members: [],
-      type: [],
+      type: {
+        A_hymn_written_prior_to_1970: false,
+        Newly_composed_hymn_within_the_last_10_years: false,
+        Praise_and_Worship_Song_CCM: false,
+        Psalm_Setting: false,
+        Chant_Gregorian_Anglican_Pointed_or_Taize: false,
+        Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
+        Song_from_another_country_or_World_Song: false,
+        Secular_Song: false,
+        // congType1: '',
+        // congType2: '',
+        // congType3: '',
+        // congType4: '',
+        // congType5: '',
+        // congType6: '',
+        // congType7: '',
+        // congType8: '',
+      },
       instrument: [],
       shape: '',
       attire: '',
@@ -107,37 +125,6 @@ export class EntryCongregationComponent {
     "Song from another country (or 'World Song')",
     "Secular Song"
   ]
-  typesOptionsMap = {
-    "A hymn written prior to 1970" : false,
-    "Newly composed hymn (within the last 10 years)" : false,
-    "Praise and Worship Song (CCM)" : false,
-    "Psalm Setting" : false,
-    "Chant (Gregorian, Anglican, Pointed or Taize)" : false,
-    "Older hymn text set to a new contemporary tune (or 're-tuned')" : false,
-    "Song from another country (or 'World Song')" : false,
-    "Secular Song" : false
-  };
-  typesOptionsChecked = [];
-
-  initTypesOptionsMap() {
-      for (var x = 0; x < this.typesOptions.length; x++) {
-      this.typesOptionsMap[this.typesOptions[x]] = false;
-    }
-  }
-
-  updateCheckedOptions(option, event) {
-   this.typesOptionsMap[option] = event.target.checked;
-  }
-
-  updateOptions() {
-    for(var x in this.typesOptionsMap) {
-        if(this.typesOptionsMap[x]) {
-            this.typesOptionsChecked.push(x);
-        }
-    }
-    this.typesOptions = this.typesOptionsChecked;
-    this.typesOptionsChecked = [];
-  }
 
   private load(id) {
     if (!id) {
