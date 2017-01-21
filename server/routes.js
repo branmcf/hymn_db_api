@@ -81,8 +81,7 @@ var connection = mysql.createConnection({
 //    kind of functionality.
 //
 
-
-var users = []
+var users = [];
 var eth = []
 var numUsers = 0
 
@@ -99,171 +98,205 @@ var orgs = []
 
 connection.connect();
 
+getUsers();
+getResources();
+getEvents();
+getCongregations();
+getOrganizations();
+
 //get users from db
-connection.query(`SELECT 
-  id, 
-  email, 
-  first_name, 
-  last_name, 
-  reg_date, 
-  is_active, 
-  high_level, 
-  city_id, 
-  state_id, 
-  country_id, 
-  website, 
-  hymn_soc_member 
-  from users`, function(err, rows, fields) {
+function getUsers() {
 
-    if (!err) {
-      //console.log('The solution is: ', rows);
-      //console.log(rows[0].first_name, rows[0].last_name);
-      //console.log(rows);
-      //console.log(JSON.stringify(rows));
-      //console.log(rows.rawDataPacket);
-    /*
-      var str = JSON.stringify(rows);
-      var finalData = str.replace(/\\/g, "");
-    */
-      
-      var JSObj = rowsToJS(rows);       
-      users.push(JSObj);
+  console.log("aaa_1");
 
-      //console.log(users[0].length);
-      numUsers = users[0].length;
+  connection.query(`SELECT 
+    id, 
+    email, 
+    first_name, 
+    last_name, 
+    reg_date, 
+    is_active, 
+    high_level, 
+    city_id, 
+    state_id, 
+    country_id, 
+    website, 
+    hymn_soc_member 
+    from users`, function(err, rows, fields) {
 
-      //now for ethnicities
-      for(var varI = 1; varI <= numUsers; varI++) {
-        connection.query(`
-          SELECT e.name
-          FROM Ethnicities e
-          INNER JOIN user_ethnicities ue ON ue.ethnicity_id = e.id
-          INNER JOIN users u on ue.user_id = u.id
-          WHERE u.id = ${varI}`, function(err, rows, fields) {
-            if(err) { throw err; }
-            
-            var JSObj = rowsToJS(rows);
+      if (!err) {
+        console.log("aaa_2");
+
+        //console.log('The solution is: ', rows);
+        //console.log(rows[0].first_name, rows[0].last_name);
+        //console.log(rows);
+        //console.log(JSON.stringify(rows));
+        //console.log(rows.rawDataPacket);
+      /*
+        var str = JSON.stringify(rows);
+        var finalData = str.replace(/\\/g, "");
+      */
+        
+
+        var JSObj = rowsToJS(rows);
+
+        addToUSersArray(JSObj);
+
+        //below works
+        //console.log("after query: ", users);
+
+        //console.log(users[0].length);
+        numUsers = users[0].length;
+
+        //now for ethnicities
+        for(var varI = 1; varI <= numUsers; varI++) {
+          connection.query(`
+            SELECT e.name
+            FROM Ethnicities e
+            INNER JOIN user_ethnicities ue ON ue.ethnicity_id = e.id
+            INNER JOIN users u on ue.user_id = u.id
+            WHERE u.id = ${varI}`, function(err, rows, fields) {
+              if(err) { throw err; }
               
-            eth.push(JSObj);
-            printEthnicities();
+              var JSObj = rowsToJS(rows);
+              
+              eth.push(JSObj);
 
+            
+          });
           
-        });
-      }
-      
-      console.log(`selected ${numUsers} users...`);
-      
+        }//end for loop
 
-    }
-    else
-      console.log('Error while performing Users Query.');
+        console.log("aaa_3");
+        
+        console.log(`selected ${numUsers} users...`);
+        
 
-});
+      }//end if statement
+      else
+        console.log('Error while performing Users Query.');
 
+  }); //end connection.connect
+
+  console.log("aaa_4");
+
+  console.log("end of method: ", users);
+
+};
+
+function addToUSersArray(toAdd) {
+  users.push(toAdd);
+}
 
 
 //console.log(users[0].length);
 
+function getResources() {
+  //get RESOURCES from db
+  connection.query(`SELECT 
+          id, 
+          title,
+          website,
+          resource_date,
+          description,
+          is_active,
+          high_level,
+          city_id,
+          state_id,
+          country_id,
+          hymn_soc_member,        
+          parent_org_id,
+          is_free
+          from resources`, function(err, rows, fields) {
+            //need type, topics, accompaniment, tags, ethnicities
+    if (!err) {
 
-//get RESOURCES from db
-connection.query(`SELECT 
-        id, 
-        title,
-        website,
-        resource_date,
-        description,
-        is_active,
-        high_level,
-        city_id,
-        state_id,
-        country_id,
-        hymn_soc_member,        
-        parent_org_id,
-        is_free
-        from resources`, function(err, rows, fields) {
-          //need type, topics, accompaniment, tags, ethnicities
-  if (!err) {
 
-
-    var JSObj = rowsToJS(rows);       
-    resources.push(JSObj);
-
-    //resources.push(JSON.stringify(rows));
-
-    //resources.push(rows);
-    //console.log("selected resources...");
-  }
-  else
-    console.log('Error while performing Resources Query.');
-
-});
-
-//get events from db
-connection.query('SELECT * from events', function(err, rows, fields) {
-  if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
-    
-    //events.push(rows);
-/*
-    var str = JSON.stringify(rows);
-    var finalData = str.replace(/\\/g, "");
-*/
-    var JSObj = rowsToJS(rows);       
-    events.push(JSObj);
-
-    console.log("selected events...");
-  }
-  else
-    console.log('Error while performing Events Query.');
-
-});
-
-//get congregations from db
-connection.query('SELECT * from congregations', function(err, rows, fields) {
-  if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
-    
-    //congs.push(rows);
-/*
-    var str = JSON.stringify(rows);
-    var finalData = str.replace(/\\/g, "");
-*/
       var JSObj = rowsToJS(rows);       
-      congs.push(JSObj);
-    console.log("selected congregations...");
+      resources.push(JSObj);
 
-  }
-  else
-    console.log('Error while performing Congregations Query.');
+      //resources.push(JSON.stringify(rows));
 
-});
+      //resources.push(rows);
+      //console.log("selected resources...");
+    }
+    else
+      console.log('Error while performing Resources Query.');
 
-//get orgs from db
-connection.query('SELECT * from organizations', function(err, rows, fields) {
-  if (!err) {
-    //console.log('The solution is: ', rows);
-    //console.log(rows[0].first_name, rows[0].last_name);
-    //console.log(rows);
-    
-    //events.push(rows);
-/*
-    var str = JSON.stringify(rows);
-    var finalData = str.replace(/\\/g, "");
-*/
-    var JSObj = rowsToJS(rows);       
-    orgs.push(JSObj);
+  });
+}
 
-    console.log("selected events...");
-  }
-  else
-    console.log('Error while performing Events Query.');
+function getEvents() {
+  //get events from db
+  connection.query('SELECT * from events', function(err, rows, fields) {
+    if (!err) {
+      //console.log('The solution is: ', rows);
+      //console.log(rows[0].first_name, rows[0].last_name);
+      //console.log(rows);
+      
+      //events.push(rows);
+  /*
+      var str = JSON.stringify(rows);
+      var finalData = str.replace(/\\/g, "");
+  */
+      var JSObj = rowsToJS(rows);       
+      events.push(JSObj);
 
-});
+      console.log("selected events...");
+    }
+    else
+      console.log('Error while performing Events Query.');
 
+  });
+}
+
+function getCongregations() {
+  //get congregations from db
+  connection.query('SELECT * from congregations', function(err, rows, fields) {
+    if (!err) {
+      //console.log('The solution is: ', rows);
+      //console.log(rows[0].first_name, rows[0].last_name);
+      //console.log(rows);
+      
+      //congs.push(rows);
+  /*
+      var str = JSON.stringify(rows);
+      var finalData = str.replace(/\\/g, "");
+  */
+        var JSObj = rowsToJS(rows);       
+        congs.push(JSObj);
+      console.log("selected congregations...");
+
+    }
+    else
+      console.log('Error while performing Congregations Query.');
+
+  });
+}
+
+function getOrganizations() {
+  //get orgs from db
+  connection.query('SELECT * from organizations', function(err, rows, fields) {
+    if (!err) {
+      //console.log('The solution is: ', rows);
+      //console.log(rows[0].first_name, rows[0].last_name);
+      //console.log(rows);
+      
+      //events.push(rows);
+  /*
+      var str = JSON.stringify(rows);
+      var finalData = str.replace(/\\/g, "");
+  */
+      var JSObj = rowsToJS(rows);       
+      orgs.push(JSObj);
+
+      console.log("selected events...");
+    }
+    else
+      console.log('Error while performing Events Query.');
+
+  });
+}
 /* 
 ===================================================
 - END MYSQL -
@@ -278,7 +311,6 @@ function rowsToJS(theArray) {
 }
 
 var userController = {};
-var userController_2 = {};
 var resourceController = {};
 var eventController = {};
 var congController = {};
@@ -292,6 +324,7 @@ var orgController = {};
 
 function formatUser(actualIndex) {
   var userData = {};
+
   userData = {
     url:              "/users/"+ String(actualIndex + 1),
     id:               users[0][actualIndex].id, 
@@ -305,9 +338,12 @@ function formatUser(actualIndex) {
     city_id:          users[0][actualIndex].city_id,
     state_id:         users[0][actualIndex].state_id,
     country_id:       users[0][actualIndex].country_id,
-    website:          users[0][actualIndex].website
+    website:          users[0][actualIndex].website,
+    ethnicity_name:   eth[0]
 
   };
+
+  console.log(userData);
 
   return userData;
 }
@@ -315,9 +351,9 @@ function formatUser(actualIndex) {
 //USER GET REQUEST
 userController.getConfig = {
   handler: function (request, reply) {
+    //console.log("eth[x]: ", eth[Number(request.params.id-1)]);
 
-    //don't return the salt here...
-    //
+    getUsers();
 
     if (request.params.id) {
       //if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
@@ -456,7 +492,13 @@ function formatResource(actualIndex) {
 
 //RESOURCE GET REQUEST
 resourceController.getConfig = {
+
+  
+
   handler: function (request, reply) {
+
+    getResources();
+
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
       var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
@@ -821,7 +863,7 @@ function formatOrg(actualIndex) {
   return finalObj;
 }
 
-//CONG GET REQUEST
+//ORG GET REQUEST
 orgController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
@@ -837,7 +879,7 @@ orgController.getConfig = {
     var objToReturn = [];
 
     for(var i=0; i < orgs[0].length; i++) {
-      var bob = formatCongregation(i);
+      var bob = formatOrg(i);
       objToReturn.push(bob);
     }
     
@@ -925,9 +967,7 @@ authController.getConfig = {
 
 //misc print func's
 
-function printEthnicities() {
-  console.log(eth);
-}
+
 
 
 /* 
