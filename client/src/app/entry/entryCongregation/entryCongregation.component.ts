@@ -93,10 +93,11 @@ export class EntryCongregationComponent {
       location: '',
       ethnicity: [],
       attendance: '',
+      temp: '',
     }
   }
 
-    typesOptions = [
+  typesOptions = [
     "A hymn written prior to 1970",
     "Newly composed hymn (within the last 10 years)",
     "Praise and Worship Song (CCM)",
@@ -154,7 +155,8 @@ export class EntryCongregationComponent {
   }
 
   submit() {
-    
+    // this.submitService.submitCongregation(this.submission);
+    console.log(this.submission);
   }
 
   next() {
