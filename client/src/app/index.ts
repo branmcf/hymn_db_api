@@ -5,6 +5,7 @@ import { Routing, RootComponent } from './routes';
 import { HeaderModule } from './header/header.module';
 import { EntryModule } from './entry/entry.module';
 import { FormsModule } from '@angular/forms';
+import { MaterialModule } from '@angular/material';
 
 import { MainComponent } from './main.component';
 import { TitleComponent } from './title/title.component';
@@ -21,6 +22,7 @@ import { ContentfulService } from './services/contentful.service';
     Routing,
     EntryModule,
     FormsModule,
+    MaterialModule.forRoot()
   ],
   declarations: [
     RootComponent,
