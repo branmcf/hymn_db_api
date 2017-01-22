@@ -10,35 +10,7 @@ import { ContentfulService } from './../../services/contentful.service';
 
 export class EntryOrgsComponent implements OnInit {
   content: JSON;
-  name: string;
-  url: string;
-  parent: string;
-  denoms: any[];
-  city: string;
-  state: string;
-  country: any;
-  geo: any[];
-  resourceFree: any;
-  eventFree: any;
-  membershipCharge: any;
-  mission: string;
-  method: string;
-
-  submission: {
-    name: string;
-    url: string; 
-    parent: string;
-    denoms: any[];
-    city: string;
-    state: string;
-    country: any;
-    geo: any[];
-    resourceFree: any;
-    eventFree: any;
-    membershipCharge: any;
-    mission: string;
-    method: string;
-  };
+  submission: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
@@ -51,33 +23,25 @@ export class EntryOrgsComponent implements OnInit {
       this.content = JSON.parse(content);
     });
     this.route.params.forEach(x => this.load(+x['user.id']));
-    this.name = '';
-    this.url = '';
-    this.parent = '';
-    this.denoms = [];
-    this.city = '';
-    this.state = '';
-    this.country = '';
-    this.geo = [];
-    this.resourceFree = '';
-    this.eventFree = '';
-    this.membershipCharge = '';
-    this.mission = '';
-    this.method = '';
+
     this.submission = {
-      name: '',
-      url: '',
-      parent: '',
-      denoms: [],
-      city: '',
-      state: '',
-      country: '',
-      geo: [],
-      resourceFree: '',
-      eventFree: '',
-      membershipCharge: '',
-      mission: '',
-      method: ''
+      type: 'Organization',
+      
+      data: {
+        name: '',
+        url: '',
+        parent: '',
+        denomination: '',
+        city: '',
+        state: '',
+        country: '',
+        geographic_area: '',
+        resource_free: '',
+        event_free: '',
+        membership_free: '',
+        mission: '',
+        method: ''
+        }
     };
   }
 
@@ -93,6 +57,11 @@ export class EntryOrgsComponent implements OnInit {
 
       }
     };
+  }
+
+  submit() {
+     // this.submitService.submitCongregation(this.submission);
+    console.log(JSON.stringify(this.submission));
   }
 
 }

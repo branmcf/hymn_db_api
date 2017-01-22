@@ -56,7 +56,7 @@ export class EntryCongregationComponent {
           Secular_Song: false,
         },
         instruments: {
-          A_Cappella: false,
+          Acappella: false,
           Organ: false,
           Piano: false,
           Guitar_not_full_band: false,
@@ -81,7 +81,7 @@ export class EntryCongregationComponent {
         attendance: '',
         temp: '',
       }
-    }
+    };
   }
 
   typesOptions = [
