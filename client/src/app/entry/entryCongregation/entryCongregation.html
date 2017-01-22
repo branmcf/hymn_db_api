@@ -16,7 +16,7 @@
                         <input type="text"
                         id="congregationName" 
                         class="form-control" 
-                        [(ngModel)]="submission.name"
+                        [(ngModel)]="data.name"
                         name="congregationName"
                         required/>
                     </div>
@@ -26,7 +26,7 @@
                         <input type="url" 
                         id="congregationUrl" 
                         class="form-control" 
-                        [(ngModel)]="submission.url"
+                        [(ngModel)]="data.url"
                         name="congregationUrl"
                         required/>
                     </div>
@@ -36,7 +36,7 @@
                         <input type="text"
                         id="congregationCity" 
                         class="form-control" 
-                        [(ngModel)]="submission.city"
+                        [(ngModel)]="data.city"
                         name="congregationCity"
                         required/>
                     </div>
@@ -46,7 +46,7 @@
                         <input type="text"
                         id="congregationState" 
                         class="form-control"
-                        [(ngModel)]="submission.state" 
+                        [(ngModel)]="data.state" 
                         name="congregationState"
                         required/>
                     </div>
@@ -59,7 +59,7 @@
                             type="radio" 
                             value="USA"
                             name="country" 
-                            [(ngModel)]="submission.country"/> USA
+                            [(ngModel)]="data.country"/> USA
                         </label>    
                         <br>
                         <label [class.selected]="canada.checked">
@@ -67,19 +67,19 @@
                             type="radio" 
                             value="Canada"
                             name="country" 
-                            [(ngModel)]="submission.country"/> Canada
+                            [(ngModel)]="data.country"/> Canada
                         </label>
                         <br>
                         <label [class.selected]="otherCountry.checked">
                             <input #otherCountry
                             type="radio"
                             name="country"
-                            [(ngModel)]="submission.country"/> Other...
+                            [(ngModel)]="data.country"/> Other...
                         </label>
                         <div [hidden]="!otherCountry.checked">
                             <input type="text" 
                             name="country"
-                            [(ngModel)]="submission.country"/>
+                            [(ngModel)]="data.country"/>
                         </div>
                     </div>
 
@@ -91,7 +91,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Roman Catholic" 
-                            [(ngModel)]="submission.denom"/> Roman Catholic
+                            [(ngModel)]="data.denom"/> Roman Catholic
                         </label>
                         <br>
                         <label [class.selected]="anglican.checked">
@@ -99,7 +99,7 @@
                             type="radio" 
                             name="denomination"
                             value="Anglican" 
-                            [(ngModel)]="submission.denom"/> Anglican/Episcopal
+                            [(ngModel)]="data.denom"/> Anglican/Episcopal
                         </label>
                         <br>
                         <label [class.selected]="lutheran.checked">
@@ -107,7 +107,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Lutheran" 
-                            [(ngModel)]="submission.denom"/> Lutheran
+                            [(ngModel)]="data.denom"/> Lutheran
                         </label>
                         <br>
                         <label [class.selected]="wesleyan.checked">
@@ -115,7 +115,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Wesleyan (United Methodist, AME, etc...)" 
-                            [(ngModel)]="submission.denom"/> Wesleyan (United Methodist, AME, etc...)
+                            [(ngModel)]="data.denom"/> Wesleyan (United Methodist, AME, etc...)
                         </label>
                         <br>
                         <label [class.selected]="reformed.checked">
@@ -123,7 +123,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Reformed (Presbyterian, RCA, etc...)" 
-                            [(ngModel)]="submission.denom"/> Reformed (Presbyterian, RCA, etc...)
+                            [(ngModel)]="data.denom"/> Reformed (Presbyterian, RCA, etc...)
                         </label>
                         <br>
                         <label [class.selected]="baptist.checked">
@@ -131,7 +131,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Baptist/Free-Church" 
-                            [(ngModel)]="submission.denom"/> Baptist/Free-Church
+                            [(ngModel)]="data.denom"/> Baptist/Free-Church
                         </label>
                         <br>
                         <label [class.selected]="pentecostal.checked">
@@ -139,7 +139,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Pentecostal" 
-                            [(ngModel)]="submission.denom"/> Pentecostal
+                            [(ngModel)]="data.denom"/> Pentecostal
                         </label>
                         <br>
                         <label [class.selected]="nonDenom.checked">
@@ -147,20 +147,20 @@
                             type="radio" 
                             name="denomination" 
                             value="Non-Denominational" 
-                            [(ngModel)]="submission.denom"/> Non-Denominational
+                            [(ngModel)]="data.denom"/> Non-Denominational
                         </label>
                         <br>
                         <label [class.selected]="otherDenom.checked">
                             <input #otherDenom
                             type="radio" 
                             name="denomination"
-                            [(ngModel)]="submission.denom"/> Other...  
+                            [(ngModel)]="data.denom"/> Other...  
                         </label>
                         <br>
                         <div [hidden]="!otherDenom.checked">
                             <input type="text" 
                              name="denomination"
-                            [(ngModel)]="submission.denom"/>
+                            [(ngModel)]="data.denom"/>
                         </div>
                     </div>
 
@@ -172,7 +172,7 @@
                             type="radio" 
                             value="Yes"
                             name="member" 
-                            [(ngModel)]="submission.member"/> Yes
+                            [(ngModel)]="data.member"/> Yes
                         </label>    
                         <br>
                         <label [class.selected]="no.checked">
@@ -180,7 +180,7 @@
                             type="radio" 
                             value="No"
                             name="member" 
-                            [(ngModel)]="submission.member"/> No
+                            [(ngModel)]="data.member"/> No
                         </label>
                     </div>
 
@@ -201,48 +201,48 @@
         </div>-->
 
                     <div class="form-group" >
-                        <label for="congregatoinTypes">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+                        <label for="congregationTypes">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
                         
                             <md-checkbox class="block-input" 
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.A_hymn_written_prior_to_1970"
+                                [(ngModel)]="data.type.A_hymn_written_prior_to_1970"
                                 >A hymn written prior to 1970</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
+                                [(ngModel)]="data.type.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
+                                [(ngModel)]="data.type.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Psalm_Setting">Psalm Setting</md-checkbox>
+                                [(ngModel)]="data.type.Psalm_Setting">Psalm Setting</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                                [(ngModel)]="data.type.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
+                                [(ngModel)]="data.type.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
+                                [(ngModel)]="data.type.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.Secular_Song">Secular Song</md-checkbox>
+                                [(ngModel)]="data.type.Secular_Song">Secular Song</md-checkbox>
                     </div>
 
                     <!--<div class="form-group" >
@@ -250,203 +250,109 @@
                         
                             <md-checkbox class="block-input" 
                                 value="A hymn written prior to 1970" 
-                                [(ngModel)]="submission.type.congType1">
+                                [(ngModel)]="data.type.congType1">
                                 A hymn written prior to 1970</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Newly composed hymn (within the last 10 years)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType2">
+                                [(ngModel)]="data.type.congType2">
                                 Newly composed hymn (within the last 10 years)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Praise and Worship Song (CCM)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType3">
+                                [(ngModel)]="data.type.congType3">
                                 Praise and Worship Song (CCM)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Psalm Setting" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType4">
+                                [(ngModel)]="data.type.congType4">
                                 Psalm Setting</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Chant (Gregorian, Anglican, Pointed or Taize)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType5">
+                                [(ngModel)]="data.type.congType5">
                                 Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Older hymn text set to a new contemporary tune (or 're-tuned')" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType6">
+                                [(ngModel)]="data.type.congType6">
                                 Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Song from another country (or 'World Song')" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType7">
+                                [(ngModel)]="data.type.congType7">
                                 Song from another country (or 'World Song')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Secular Song" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.type.congType8">
+                                [(ngModel)]="data.type.congType8">
                                 Secular Song</md-checkbox>
                     </div>-->
 
+                    <div class="form-group" >
+                        <label for="congregationInstruments">Which types of instruments does your congregation use during congregational singing?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.A_Cappella">
+                                A Cappella</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Organ">
+                                Organ</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Piano">
+                                Piano</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Guitar_not_full_band">
+                                Guitar (not full band)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Band_guitar_bass_drums_etc">
+                                Band (guitar, bass, drums, etc...)</md-checkbox>
 
-                    <!--<div class="form-group">
-                        <label for="congregationSong">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
-                        <div class="form-group">
-                            <label class="form-check-label">
-                                <input
-                                value="A hymn written prior to 1970"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> A hymn written prior to 1970
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Newly composed hymn (within the last 10 years)"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Newly composed hymn (within the last 10 years)
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Praise and Worship Song (CCM)" 
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Praise and Worship Song (CCM)
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Psalm Setting"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Psalm Setting
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Chant (Gregorian, Anglican, Pointed or Taize)" 
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Chant (Gregorian, Anglican, Pointed or Taize)
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Older hymn text set to a new contemporary tune (or 're-tuned')"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Older hymn text set to a new contemporary tune (or 're-tuned')
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Song from another country (or 'World Song')"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Song from another country (or 'World Song')
-                            </label>
-
-                            <label class="form-check-label">
-                                <input
-                                value="Secular Song"
-                                class="form-check-input" 
-                                type="checkbox"
-                                [(ngModel)]="submission.type"> Secular Song
-                            </label>
-                        </div>                                      
-                    </div>                   -->
-
-
-                    <div class="form-group">
-                        <label for="congregationInstrument">Which types of instruments does your congregation use during congregational singing?</label>
-                        <div class="form-check">
-                            <label class="form-check-label" [class.selected]="cb1.checked">
-                                <input #cb1
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="A capella"
-                                name="cb1"
-                                [(ngModel)]="submission.instrument"> A Cappella
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb2.checked">
-                                <input #cb2
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Organ"
-                                name="cb2"
-                                [(ngModel)]="submission.instrument"> Organ
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb3.checked">
-                                <input #cb3
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Piano"
-                                name="cb3"
-                                [(ngModel)]="submission.instrument"> Piano
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb4.checked">
-                                <input #cb4
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Guitar (not full band)"
-                                name="cb4"
-                                [(ngModel)]="submission.instrument"> Guitar (not full band)
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb5.checked">
-                                <input #cb5
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Band (guitar, bass, drums, etc...)"
-                                name="cb5"
-                                [(ngModel)]="submission.instrument"> Band (guitar, bass, drums, etc...)
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb6.checked">
-                                <input #cb6
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Handbells"
-                                name="cb6"
-                                [(ngModel)]="submission.instrument"> Handbells
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="cb7.checked">
-                                <input #cb7
-                                class="form-check-input" 
-                                type="checkbox"
-                                value="Obligato Instruments (flute, clarinet, trumpet, etc...)"
-                                name="cb7"
-                                [(ngModel)]="submission.instrument"> Obligato Instruments (flute, clarinet, trumpet, etc...)
-                            </label>
-                            <br>
-                            <label class="form-check-label" [class.selected]="otherInstrument.checked">
-                                <input #otherInstrument
-                                class="form-check-input" 
-                                type="checkbox"
-                                name="cb8"
-                                [(ngModel)]="submission.instrument"> Other...
-                            </label>
-                        </div>
-                        <div [hidden]="!otherInstrument.checked">
-                            <input type="text" 
-                            name="cb8"
-                            [(ngModel)]="submission.instrument"/>
-                        </div>                                     
-                    </div> 
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Orchestra_Wind_Ensemble">
+                                Orchestra/Wind Ensemble</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.Handbells">
+                                Handbells</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="Obligato_instruments_flute_clarinet_trumpet_etc">
+                                Obligato Instruments (flute, clarinet, trumpet, etc...)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.instruments.congInstruOther">
+                                Other...</md-checkbox>
+                    </div>
 
                     <div class="form-group">
                         <label for="congregationShape">Which best describes the shape of your worship?</label>
@@ -456,7 +362,7 @@
                             type="radio" 
                             name="shape" 
                             value="5-Fold Pattern (Gathering, Word, Response, Table, Sending)" 
-                            [(ngModel)]="submission.shape"/> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
+                            [(ngModel)]="data.shape"/> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
                         </label>
                         <br>
                         <label [class.selected]="fourFold.checked">
@@ -464,7 +370,7 @@
                             type="radio"
                             name="shape" 
                             value="4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly" 
-                            [(ngModel)]="submission.shape"/> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly
+                            [(ngModel)]="data.shape"/> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly
                         </label>
                         <br>
                         <label [class.selected]="twoFold.checked">
@@ -472,19 +378,19 @@
                             type="radio" 
                             name="shape" 
                             value="2-Fold Pattern (Praise & Teaching)" 
-                            [(ngModel)]="submission.shape"/> 2-Fold Pattern (Praise & Teaching)
+                            [(ngModel)]="data.shape"/> 2-Fold Pattern (Praise & Teaching)
                         </label>
                         <br>
                         <label [class.selected]="otherShape.checked">
                             <input #otherShape
                             type="radio"
                             name="shape"
-                            [(ngModel)]="submission.shape"/> Other...
+                            [(ngModel)]="data.shape"/> Other...
                         </label>
                         <div [hidden]="!otherShape.checked">                            
                             <input type="text" 
                             name="shape"
-                            [(ngModel)]="submission.shape"/>
+                            [(ngModel)]="data.shape"/>
                         </div>
                     </div> 
 
@@ -496,7 +402,7 @@
                             type="radio" 
                             name="attire" 
                             value="Vestments" 
-                            [(ngModel)]="submission.attire"/> Vestments
+                            [(ngModel)]="data.attire"/> Vestments
                         </label>
                         <br>
                         <label [class.selected]="robes.checked">
@@ -504,7 +410,7 @@
                             type="radio" 
                             name="attire" 
                             value="Robes, with or without stoles" 
-                            [(ngModel)]="submission.attire"/> Robes, with or without stoles
+                            [(ngModel)]="data.attire"/> Robes, with or without stoles
                         </label>
                         <br>
                         <label [class.selected]="business.checked">
@@ -512,7 +418,7 @@
                             type="radio" 
                             name="attire" 
                             value="Business Attire" 
-                            [(ngModel)]="submission.attire"/> Business Attire
+                            [(ngModel)]="data.attire"/> Business Attire
                         </label>    
                         <br>
                         <label [class.selected]="casual.checked">
@@ -520,7 +426,7 @@
                             type="radio" 
                             name="attire" 
                             value="Casual" 
-                            [(ngModel)]="submission.attire"/> Casual
+                            [(ngModel)]="data.attire"/> Casual
                         </label>
                     </div>       
                     
@@ -532,7 +438,7 @@
                             type="radio" 
                             name="location" 
                             value="Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)" 
-                            [(ngModel)]="submission.location"/> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
+                            [(ngModel)]="data.location"/> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
                         </label>
                         <br>
                         <label [class.selected]="urban.checked">
@@ -540,7 +446,7 @@
                             type="radio"
                             name="location" 
                             value="Urban (downtown churches in a large metropolitan area)" 
-                            [(ngModel)]="submission.location"/> Urban (downtown churches in a large metropolitan area)
+                            [(ngModel)]="data.location"/> Urban (downtown churches in a large metropolitan area)
                         </label>
                         <br>
                         <label [class.selected]="suburban.checked">
@@ -548,7 +454,7 @@
                             type="radio" 
                             name="location" 
                             value="Suburban" 
-                            [(ngModel)]="submission.location"/> Suburban
+                            [(ngModel)]="data.location"/> Suburban
                         </label>    
                         <br>
                         <label [class.selected]="ruralSmallCity.checked">
@@ -556,7 +462,7 @@
                             type="radio" 
                             name="location" 
                             value="Rural - In a small city" 
-                            [(ngModel)]="submission.location"/> Rural - In a small city
+                            [(ngModel)]="data.location"/> Rural - In a small city
                         </label>    
                         <br>
                         <label [class.selected]="ruralNoCity.checked">
@@ -564,55 +470,60 @@
                             type="radio" 
                             name="location" 
                             value="Rural - Not in a city" 
-                            [(ngModel)]="submission.location"/> Rural - Not in a city
+                            [(ngModel)]="data.location"/> Rural - Not in a city
                         </label>
                     </div>     
 
-                    <div class="form-group">
-                        <label for="congregationEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> White
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Black
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Asian
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> African
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Middle-Eastern
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="other"> Other...
-                            </label>
-                        </div>
-                        <div class="form-group" [hidden]="!other">
-                            <input id="personCity" class="form-control" />
-                        </div>
+                    <div class="form-group" >
+                        <label for="congregationInstruments">Which ethnicities make up at least 10% of your congregation?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.White">
+                                White</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.Black">
+                                Black</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.Hispanic_Latin_American_Caribbean">
+                                Hispanic/Latin-American/Caribbean</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.Native_American_Indigenous_Peoples">
+                                Native American/Indigenous Peoples</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.Asian">
+                                Asian</md-checkbox>
+
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.African">
+                                African</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.Middle_Eastern">
+                                Middle-Eastern</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="data.ethnicities.congEthOther">
+                                Other...</md-checkbox>
                     </div>  
 
                     <div class="form-group">
@@ -623,7 +534,7 @@
                             type="radio" 
                             name="attendance" 
                             value="Under 100" 
-                            [(ngModel)]="submission.attendance"/> Under 100
+                            [(ngModel)]="data.attendance"/> Under 100
                         </label>
                         <br>
                         <label [class.selected]="HundToTwoFifty.checked">
@@ -631,7 +542,7 @@
                             type="radio" 
                             name="attendance" 
                             value="Between 100 and 250" 
-                            [(ngModel)]="submission.attendance"/> Between 100 and 250
+                            [(ngModel)]="data.attendance"/> Between 100 and 250
                         </label>
                         <br>
                         <label [class.selected]="twoFiftyToFiveHund.checked">
@@ -639,7 +550,7 @@
                             type="radio" 
                             name="attendance" 
                             value="Between 250 and 500" 
-                            [(ngModel)]="submission.attendance"/> Between 250 and 500
+                            [(ngModel)]="data.attendance"/> Between 250 and 500
                         </label>
                         <br>
                         <label [class.selected]="fiveHundToThousand.checked">
@@ -647,7 +558,7 @@
                             type="radio" 
                             name="attendance" 
                             value="Between 500 and 1000" 
-                            [(ngModel)]="submission.attendance"/> Between 500 and 1000
+                            [(ngModel)]="data.attendance"/> Between 500 and 1000
                         </label>
                         <br>
                         <label [class.selected]="overThousand.checked">
@@ -655,7 +566,7 @@
                             type="radio" #overThousand
                             name="attendance" 
                             value="Over 1000" 
-                            [(ngModel)]="submission.attendance"/> Over 1000
+                            [(ngModel)]="data.attendance"/> Over 1000
                         </label>
                     </div>
 

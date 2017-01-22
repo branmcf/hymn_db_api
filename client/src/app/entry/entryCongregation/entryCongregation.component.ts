@@ -13,41 +13,7 @@ import { ContentfulService } from './../../services/contentful.service';
 
 export class EntryCongregationComponent {
   content: JSON;
-  // name: string;
-  // url: string;
-  // city: string;
-  // state: string;
-  // country: any;
-  // denom: any;
-  // members: any;
-  // type: any[];
-  // instrument: any[];
-  // shape: any;
-  // attire: any;
-  // location: any;
-  // ethnicity: any[];
-  // attendance: any;
-
-  submission: any;
-
-  // submission: {
-  //   name: string;
-  //   url: string;
-  //   city: string;
-  //   state: string;
-  //   country: any;
-  //   denom: any;
-  //   members: any;
-  //   type: any[];
-  //   instrument: any[];
-  //   shape: any;
-  //   attire: any;
-  //   location: any;
-  //   ethnicity: any[];
-  //   attendance: any;
-  // };
-
-
+  data: any;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -59,27 +25,15 @@ export class EntryCongregationComponent {
   ngOnInit() {
     this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
-      this.submission = {};
-      this.submission.type = {};
+      this.data = {};
+      this.data.type = {};
+      this.data.instruments = {};
+      this.data.ethnicities = {};
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
-    // this.name = '';
-    // this.url = '';
-    // this.city = '';
-    // this.state = '';
-    // this.country = '';
-    // this.denom = '';
-    // this.members = [];
-    // this.type = [];
-    // this.instrument = [];
-    // this.shape = '';
-    // this.attire = '';
-    // this.location = '';
-    // this.ethnicity = [];
-    // this.attendance = '';
 
-    this.submission = {
+    this.data = {
       name: '',
       url: '',
       city: '',
@@ -96,20 +50,30 @@ export class EntryCongregationComponent {
         Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
         Song_from_another_country_or_World_Song: false,
         Secular_Song: false,
-        // congType1: '',
-        // congType2: '',
-        // congType3: '',
-        // congType4: '',
-        // congType5: '',
-        // congType6: '',
-        // congType7: '',
-        // congType8: '',
       },
-      instrument: [],
+      instruments: {
+        A_Cappella: false,
+        Organ: false,
+        Piano: false,
+        Guitar_not_full_band: false,
+        Band_guitar_bass_drums_etc: false,
+        Orchestra_Wind_Ensemble: false,
+        Handbells: false,
+        Obligato_instruments_flute_clarinet_trumpet_etc: false,
+        congInstruOther: ''
+      },
       shape: '',
       attire: '',
       location: '',
-      ethnicity: [],
+      ethnicities: {
+        White: false,
+        Black: false,
+        Hispanic_Latin_American_Caribbean: false,
+        Native_American_Indigenous_Peoples: false,
+        Asian: false,
+        Middle_Eastern: false,
+        congEthOther: ''
+      },
       attendance: '',
       temp: '',
     }
@@ -133,7 +97,7 @@ export class EntryCongregationComponent {
 
     var onload = (data) => {
       if (data) {
-        this.submission = data;
+        this.data = data;
       }
       else {
 
@@ -142,8 +106,8 @@ export class EntryCongregationComponent {
   }
 
   submit() {
-    // this.submitService.submitCongregation(this.submission);
-    console.log(this.submission);
+    // this.submitService.submitCongregation(this.data);
+    console.log(this.data);
   }
 
   next() {
