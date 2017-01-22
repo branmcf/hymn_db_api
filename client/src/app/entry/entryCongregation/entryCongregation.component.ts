@@ -14,6 +14,7 @@ import { ContentfulService } from './../../services/contentful.service';
 export class EntryCongregationComponent {
   content: JSON;
   data: any;
+  submission: any;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -25,57 +26,60 @@ export class EntryCongregationComponent {
   ngOnInit() {
     this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
-      this.data = {};
-      this.data.type = {};
-      this.data.instruments = {};
-      this.data.ethnicities = {};
+      this.submission = {}
+      this.submission.data = {};
+      this.submission.data.type = {};
+      this.submission.data.instruments = {};
+      this.submission.data.ethnicities = {};
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
 
-    this.data = {
-      name: '',
-      url: '',
-      city: '',
-      state: '',
-      country: '',
-      denom: '',
-      members: [],
-      type: {
-        A_hymn_written_prior_to_1970: false,
-        Newly_composed_hymn_within_the_last_10_years: false,
-        Praise_and_Worship_Song_CCM: false,
-        Psalm_Setting: false,
-        Chant_Gregorian_Anglican_Pointed_or_Taize: false,
-        Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
-        Song_from_another_country_or_World_Song: false,
-        Secular_Song: false,
-      },
-      instruments: {
-        A_Cappella: false,
-        Organ: false,
-        Piano: false,
-        Guitar_not_full_band: false,
-        Band_guitar_bass_drums_etc: false,
-        Orchestra_Wind_Ensemble: false,
-        Handbells: false,
-        Obligato_instruments_flute_clarinet_trumpet_etc: false,
-        congInstruOther: ''
-      },
-      shape: '',
-      attire: '',
-      location: '',
-      ethnicities: {
-        White: false,
-        Black: false,
-        Hispanic_Latin_American_Caribbean: false,
-        Native_American_Indigenous_Peoples: false,
-        Asian: false,
-        Middle_Eastern: false,
-        congEthOther: ''
-      },
-      attendance: '',
-      temp: '',
+    this.submission = {
+      data: {
+        name: '',
+        url: '',
+        city: '',
+        state: '',
+        country: '',
+        denom: '',
+        members: [],
+        type: {
+          A_hymn_written_prior_to_1970: false,
+          Newly_composed_hymn_within_the_last_10_years: false,
+          Praise_and_Worship_Song_CCM: false,
+          Psalm_Setting: false,
+          Chant_Gregorian_Anglican_Pointed_or_Taize: false,
+          Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
+          Song_from_another_country_or_World_Song: false,
+          Secular_Song: false,
+        },
+        instruments: {
+          A_Cappella: false,
+          Organ: false,
+          Piano: false,
+          Guitar_not_full_band: false,
+          Band_guitar_bass_drums_etc: false,
+          Orchestra_Wind_Ensemble: false,
+          Handbells: false,
+          Obligato_instruments_flute_clarinet_trumpet_etc: false,
+          congInstruOther: ''
+        },
+        shape: '',
+        attire: '',
+        location: '',
+        ethnicities: {
+          White: false,
+          Black: false,
+          Hispanic_Latin_American_Caribbean: false,
+          Native_American_Indigenous_Peoples: false,
+          Asian: false,
+          Middle_Eastern: false,
+          congEthOther: ''
+        },
+        attendance: '',
+        temp: '',
+      }
     }
   }
 
@@ -106,8 +110,8 @@ export class EntryCongregationComponent {
   }
 
   submit() {
-    // this.submitService.submitCongregation(this.data);
-    console.log(this.data);
+    // this.submitService.submitCongregation(this.submission);
+    console.log(this.submission);
   }
 
   next() {
