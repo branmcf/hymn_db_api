@@ -9,10 +9,10 @@ const path = require('path');
 const secret = require('./config');
 
 //bcrypt for salting/hashing passwords
-const bcrypt = require('bcrypt');
+const Bcrypt = require('bcrypt');
 
 //authentication
-const basic = require('hapi-auth-basic');
+const BasicAuth = require('hapi-auth-basic');
 
 //const cookieAuth = require('hapi-auth-cookie');
 
@@ -28,12 +28,72 @@ server.connection({
 
 /* 
 ===================================================
-- LOGIN -
+- BASIC AUTH -
 =================================================== 
 */
 
+var testUsers = {
+  future: {
+    id: '1',
+    username: 'future',
+    password: '$2a$04$YPy8WdAtWswed8b9MfKixebJkVUhEZxQCrExQaxzhcdR2xMmpSJiG'  // 'studio'
+  }
+}
+
+var basicValidation = function (request, username, password, callback) {
+    var user = testUsers[username]
+
+    if(!user) { return callback(null, false)}
+
+    Bcrypt.compare(password, user.password, function(err, isValid) {
+      callback(err, isValid, {id: user.id, username: user.username })
+    })
 
 
+}
+
+server.register(BasicAuth, function (err) {
+    
+    server.auth.strategy('simple', 'basic', { validateFunc: basicValidation })
+
+    var routes = require('./routes/routes.js');
+
+    server.route(routes);
+
+    // for auth...
+    server.route({method: 'GET', path: '/private',
+        config: {
+            auth: 'simple',
+            handler: function(request, reply) {
+              reply('Yeah! This message only avaliable to auth users!')
+            }
+        }
+    })
+    // end for auth...
+
+
+    // Start the server
+    server.start((err) => {
+
+        if (err) {
+          throw err;
+        }
+        else {
+          console.log('Server running at:', server.info.uri);
+        }
+    });
+
+});
+
+
+
+
+
+/* 
+===================================================
+- END BASIC AUTH -
+=================================================== 
+*/
 
 
 //
@@ -156,23 +216,3 @@ server.route({
 });
 */
 
-
-
-
-
-
-var routes = require('./routes/routes.js');
-
-server.route(routes);
-
-
-// Start the server
-server.start((err) => {
-
-    if (err) {
-      throw err;
-    }
-    else {
-      console.log('Server running at:', server.info.uri);
-    }
-});
