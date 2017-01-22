@@ -7,47 +7,13 @@ import { ContentfulService } from './../../services/contentful.service';
 
 @Component({
   selector: 'hymn-entry-congregation',
-  template: require('./entryCongregation.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
+  template: require('./entryCongregation.html')
 })
 
 export class EntryCongregationComponent {
   content: JSON;
-  // name: string;
-  // url: string;
-  // city: string;
-  // state: string;
-  // country: any;
-  // denom: any;
-  // members: any;
-  // type: any[];
-  // instrument: any[];
-  // shape: any;
-  // attire: any;
-  // location: any;
-  // ethnicity: any[];
-  // attendance: any;
-
+  data: any;
   submission: any;
-
-  // submission: {
-  //   name: string;
-  //   url: string;
-  //   city: string;
-  //   state: string;
-  //   country: any;
-  //   denom: any;
-  //   members: any;
-  //   type: any[];
-  //   instrument: any[];
-  //   shape: any;
-  //   attire: any;
-  //   location: any;
-  //   ethnicity: any[];
-  //   attendance: any;
-  // };
-
-
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -59,41 +25,62 @@ export class EntryCongregationComponent {
   ngOnInit() {
     this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
-      this.submission = {};
+      this.submission = {}
+      this.submission.data = {};
+      this.submission.data.type = {};
+      this.submission.data.instruments = {};
+      this.submission.data.ethnicities = {};
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
-    // this.name = '';
-    // this.url = '';
-    // this.city = '';
-    // this.state = '';
-    // this.country = '';
-    // this.denom = '';
-    // this.members = [];
-    // this.type = [];
-    // this.instrument = [];
-    // this.shape = '';
-    // this.attire = '';
-    // this.location = '';
-    // this.ethnicity = [];
-    // this.attendance = '';
 
     this.submission = {
-      name: '',
-      url: '',
-      city: '',
-      state: '',
-      country: '',
-      denom: '',
-      members: [],
-      type: [],
-      instrument: [],
-      shape: '',
-      attire: '',
-      location: '',
-      ethnicity: [],
-      attendance: '',
-      temp: '',
+      type: "Congregation",
+
+      data: {
+        name: '',
+        url: '',
+        city: '',
+        state: '',
+        country: '',
+        denom: '',
+        members: [],
+        type: {
+          A_hymn_written_prior_to_1970: false,
+          Newly_composed_hymn_within_the_last_10_years: false,
+          Praise_and_Worship_Song_CCM: false,
+          Psalm_Setting: false,
+          Chant_Gregorian_Anglican_Pointed_or_Taize: false,
+          Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
+          Song_from_another_country_or_World_Song: false,
+          Secular_Song: false,
+        },
+        instruments: {
+          A_Cappella: false,
+          Organ: false,
+          Piano: false,
+          Guitar_not_full_band: false,
+          Band_guitar_bass_drums_etc: false,
+          Orchestra_Wind_Ensemble: false,
+          Handbells: false,
+          Obligato_instruments_flute_clarinet_trumpet_etc: false,
+          congInstruOther: ''
+        },
+        shape: '',
+        attire: '',
+        location: '',
+        ethnicities: {
+          White: false,
+          Black: false,
+          Hispanic_Latin_American_Caribbean: false,
+          Native_American_Indigenous_Peoples: false,
+          Asian: false,
+          Middle_Eastern: false,
+          congEthOther: ''
+        },
+        attendance: '',
+        temp: '',
+      }
     }
   }
 
@@ -107,37 +94,6 @@ export class EntryCongregationComponent {
     "Song from another country (or 'World Song')",
     "Secular Song"
   ]
-  typesOptionsMap = {
-    "A hymn written prior to 1970" : false,
-    "Newly composed hymn (within the last 10 years)" : false,
-    "Praise and Worship Song (CCM)" : false,
-    "Psalm Setting" : false,
-    "Chant (Gregorian, Anglican, Pointed or Taize)" : false,
-    "Older hymn text set to a new contemporary tune (or 're-tuned')" : false,
-    "Song from another country (or 'World Song')" : false,
-    "Secular Song" : false
-  };
-  typesOptionsChecked = [];
-
-  initTypesOptionsMap() {
-      for (var x = 0; x < this.typesOptions.length; x++) {
-      this.typesOptionsMap[this.typesOptions[x]] = false;
-    }
-  }
-
-  updateCheckedOptions(option, event) {
-   this.typesOptionsMap[option] = event.target.checked;
-  }
-
-  updateOptions() {
-    for(var x in this.typesOptionsMap) {
-        if(this.typesOptionsMap[x]) {
-            this.typesOptionsChecked.push(x);
-        }
-    }
-    this.typesOptions = this.typesOptionsChecked;
-    this.typesOptionsChecked = [];
-  }
 
   private load(id) {
     if (!id) {
@@ -146,7 +102,7 @@ export class EntryCongregationComponent {
 
     var onload = (data) => {
       if (data) {
-        this.submission = data;
+        this.data = data;
       }
       else {
 

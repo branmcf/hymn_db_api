@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 import { Routing, RootComponent } from './../routes';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
@@ -15,7 +15,6 @@ import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
 import { EntryEventComponent } from './entryEvent/entryEvent.component';
 import { EntryReviewComponent } from './entryReview/entryReview.component';
 import { EntryLandingComponent } from './entryLanding/entryLanding.component';
-import { EntrySelectComponent } from './entrySelect/entrySelect.component'
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
@@ -34,12 +33,12 @@ import { UserService } from '../services/user.service';
     EntryOrgsComponent,
     EntryEventComponent,
     EntryReviewComponent,
-    EntrySelectComponent,
   ],
   imports: [
     CommonModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HeaderModule,
     MaterialModule.forRoot(),
@@ -53,7 +52,6 @@ import { UserService } from '../services/user.service';
       { path: 'entry/orgs', component: EntryOrgsComponent },
       { path: 'entry/events', component: EntryEventComponent },
       { path: 'entry/review', component: EntryReviewComponent },
-      { path: 'entry/select', component: EntrySelectComponent },
     ])
   ],
   providers: [
