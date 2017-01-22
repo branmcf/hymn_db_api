@@ -7,8 +7,7 @@ import { ContentfulService } from './../../services/contentful.service';
 
 @Component({
   selector: 'hymn-entry-congregation',
-  template: require('./entryCongregation.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
+  template: require('./entryCongregation.html')
 })
 
 export class EntryCongregationComponent {
@@ -36,6 +35,8 @@ export class EntryCongregationComponent {
     this.route.params.forEach(x => this.load(+x['user.id']));
 
     this.submission = {
+      type: "Congregation",
+
       data: {
         name: '',
         url: '',

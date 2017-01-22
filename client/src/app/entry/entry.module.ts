@@ -15,7 +15,6 @@ import { EntryOrgsComponent } from './entryOrgs/entryOrgs.component';
 import { EntryEventComponent } from './entryEvent/entryEvent.component';
 import { EntryReviewComponent } from './entryReview/entryReview.component';
 import { EntryLandingComponent } from './entryLanding/entryLanding.component';
-import { EntrySelectComponent } from './entrySelect/entrySelect.component'
 import { HeaderModule } from '../header/header.module';
 import { SharedModule } from './../shared/shared.module';
 
@@ -34,7 +33,6 @@ import { UserService } from '../services/user.service';
     EntryOrgsComponent,
     EntryEventComponent,
     EntryReviewComponent,
-    EntrySelectComponent,
   ],
   imports: [
     CommonModule,
@@ -54,7 +52,6 @@ import { UserService } from '../services/user.service';
       { path: 'entry/orgs', component: EntryOrgsComponent },
       { path: 'entry/events', component: EntryEventComponent },
       { path: 'entry/review', component: EntryReviewComponent },
-      { path: 'entry/select', component: EntrySelectComponent },
     ])
   ],
   providers: [

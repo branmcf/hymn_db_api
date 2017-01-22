@@ -27,7 +27,7 @@ export class EntryComponent {
     login() {
         this.loginService.login(this.user).then(x => {
 						document.cookie = "isLoggedIn=true";
-            this.router.navigateByUrl('entry/select');
+            this.router.navigateByUrl('entry/welcome');
         });
     }
 }
