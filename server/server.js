@@ -161,7 +161,7 @@ server.route({
 
 
 
-var routes = require('./routes');
+var routes = require('./routes/routes.js');
 
 server.route(routes);
 
