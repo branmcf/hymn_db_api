@@ -6,7 +6,7 @@
         <div class="col-md-8 offset-md-3">
             <md-card>
                 <md-card-content>
-                    <md-card-subtitle>
+                    <md-card-subtitle class="entry-card-header">
                         {{content?.fields.instructions}}
                     </md-card-subtitle>
                     <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
@@ -18,7 +18,7 @@
                             placeholder="First Name"
                             id="personFname" 
                             class="form-control" 
-                            [(ngModel)]="submission.fname"
+                            [(ngModel)]="submission.data.first_name"
                             name="personFname"
                             required/>
                         </md-input-container>
@@ -31,7 +31,7 @@
                             placeholder="Last Name"
                             id="personLname" 
                             class="form-control" 
-                            [(ngModel)]="submission.lname"
+                            [(ngModel)]="submission.data.last_name"
                             name="personLname"
                             required/>
                         </md-input-container>
@@ -45,7 +45,7 @@
                             placeholder="Email"
                             id="personEmail" 
                             class="form-control" 
-                            [(ngModel)]="submission.email"
+                            [(ngModel)]="submission.data.email"
                             name="personEmail"
                             required/>
                         </md-input-container>
@@ -58,7 +58,7 @@
                             placeholder="City"
                             id="personCity" 
                             class="form-control"
-                            [(ngModel)]="submission.city" 
+                            [(ngModel)]="submission.data.city" 
                             name="personCity"
                             required/>
                         </md-input-container>
@@ -71,7 +71,7 @@
                             placeholder="State/Province"
                             id="personState" 
                             class="form-control" 
-                            [(ngModel)]="submission.state"
+                            [(ngModel)]="submission.data.state"
                             name="personState"
                             required/>
                         </md-input-container>
@@ -84,7 +84,7 @@
                             placeholder="Country"
                             id="personCountry" 
                             class="form-control" 
-                            [(ngModel)]="submission.country"
+                            [(ngModel)]="submission.data.country"
                             name="personCountry"
                             required/>
                         </md-input-container>
@@ -97,7 +97,7 @@
                             placeholder="Personal/Professional Website"
                             id="personUrl" 
                             class="form-control" 
-                            [(ngModel)]="submission.website"
+                            [(ngModel)]="submission.data.website"
                             name="personUrl"
                             required/>
                         </md-input-container>
@@ -110,7 +110,7 @@
                             placeholder="Facebook, Twitter, and other Social Media Connections"
                             id="personSocial" 
                             class="form-control" 
-                            [(ngModel)]="submission.social"
+                            [(ngModel)]="submission.data.social"
                             name="personSocial"
                             required/>
                         </md-input-container>
@@ -123,7 +123,7 @@
                             placeholder="Main Topic/Emphasiss"
                             id="personEmphasis" 
                             class="form-control" 
-                            [(ngModel)]="submission.emphasis"
+                            [(ngModel)]="submission.data.emphasis"
                             name="personEmphasis"
                             required/>
                         </md-input-container>
@@ -131,53 +131,108 @@
 
                     <div class="form-group">
                         <label for="personMember">Are you a Hymn Society Member?</label>
-                        <form action="" method="post">
+                        <md-radio-group [(ngModel)]="submission.data.hymn_soc_member">
                             <md-radio-button class="block-input" name="isMember" value="yes">Yes</md-radio-button>
                             <md-radio-button class="block-input"  name="isMember" value="no">No</md-radio-button>
-                        </form>
+                        </md-radio-group>
                     </div>
  
                     <div class="form-group">
                         <label for="personTopics">Which Topics/Situations Are You Comfortable Working With?</label>
-                        
-                            <md-checkbox class="block-input">Contemporary Song/Band</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Traditional Hymnody</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Musician/Pastor RelationshipSong/Band</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Cantoring</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Song Enlivening</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Keyboards (piano/organ)</md-checkbox>
-                    
-                            <md-checkbox class="block-input">Worship Planning</md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Contemporary_Song_Band">
+                            Contemporary Song/Band
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Traditional_Hymnody">
+                            Traditional Hymnody
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Musician_Pastor_Relationship_Song_Band">
+                            Musician/Pastor Relationship Song/Band
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Cantoring">
+                            Cantoring
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Song_Enlivening">
+                            Song Enlivening
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Keyboards">
+                            Keyboards (piano/organ)
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.topics.Worship_Planning">
+                            Worship Planning
+                            </md-checkbox>
                     </div>
 
                     <div class="form-group">
                         <label for="personEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
-                        
-                            <md-checkbox class="block-input"> White</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> Black</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> Hispanic/Latin-American/Caribbean</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> Native American/Indigenous Peoples</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> Asian</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> African</md-checkbox>
-                    
-                            <md-checkbox class="block-input"> Middle-Eastern</md-checkbox>
-                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.White"> 
+                            White
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.Black"> 
+                            Black
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.Hispanic_Latin_American_Caribbean"> 
+                            Hispanic/Latin-American/Caribbean
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.Native_American_Indigenous_Peoples"> 
+                            Native American/Indigenous Peoples
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.Asian"> 
+                            Asian
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.African"> 
+                            African
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.ethnicities.Middle_Eastern"> 
+                            Middle-Eastern
+                            </md-checkbox>
                             <md-checkbox class="block-input" name="other"> Other...</md-checkbox>
                         <div class="form-group" [hidden]="!other">
                             <input type="text"
                             id="personEthnicity"
                             class="form-control" 
-                            [(ngModel)]="submission.ethnicities"
+                            [(ngModel)]="submission.data.ethnicities.other"
                             name"personEthnicity"
                             required/>
                         </div>
@@ -185,29 +240,48 @@
 
                     <div class="form-group">
                         <label for="personCategories">What types of ensembles are you comfortable working with?</label>
-                            <md-checkbox class="block-input"> Choir</md-checkbox>
-
-                            <md-checkbox class="block-input"> Cantor</md-checkbox>
-                        
-                            <md-checkbox class="block-input"> Song-Enlivener</md-checkbox>
-                        
-                            <md-checkbox class="block-input"> Lead Singer from Band (Solo)</md-checkbox>
-                        
-                            <md-checkbox class="block-input"> Lead Singer from Band with Other Vocalists</md-checkbox>
-                        
-                            <md-checkbox class="block-input"> Other...</md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.Choir">
+                            Choir
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.Cantor">
+                            Cantor
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.Song_Enlivener">
+                            Song-Enlivener
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.Solo">
+                            Lead Singer from Band (Solo)
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.Lead_Singer_from_Band_with_Other_Vocalists">
+                            Lead Singer from Band with Other Vocalists</md-checkbox>
+                            <md-checkbox class="block-input" name="other">Other ...</md-checkbox>
                             <div class="form-group" [hidden]="!other">
                                 <input type="text"
                                 id="personCategories" 
                                 class="form-control" 
-                                [(ngModel)]="submission.catgories"
+                                [(ngModel)]="submission.data.categories.other"
                                 name="personCategories"
                                 required/>
                             </div>
                     </div>
           
                     <div>
-                        <a class="btn btn-block btn-primary">Submit</a>
+                        <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
                     </div>  
                     

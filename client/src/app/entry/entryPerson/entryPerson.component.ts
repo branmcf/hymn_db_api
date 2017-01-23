@@ -9,35 +9,8 @@ import { ContentfulService } from './../../services/contentful.service';
 
 export class EntryPersonComponent implements OnInit {
   content: JSON;
-  fname: string;
-  lname: string;
-  email: string;
-  city: string;
-  state: string;
-  country: string;
-  website: string;
-  social: string;
-  emphasis: string;
-  isMember: any;
-  topics: any[];
-  ethnicities: any[];
-  categories: any[];
 
-  submission: {
-    fname: string;
-    lname: string;
-    email: string;
-    city: string;
-    state: string;
-    country: string;
-    website: string;
-    social: string;
-    emphasis: string;
-    isMember: any;
-    topics: any[];
-    ethnicities: any[];
-    categories: any[];
-  };
+  submission: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
@@ -49,35 +22,51 @@ export class EntryPersonComponent implements OnInit {
       this.content = JSON.parse(content);
     });
     this.route.params.forEach(x => this.load(+x['user.id']));
-    this.fname = '';
-    this.lname = '';
-    this.email = '';
-    this.city = '';
-    this.state = '';
-    this.country = '';
-    this.website = '';
-    this.social = '';
-    this.emphasis = '';
-    this.isMember = '';
-    this.topics = [];
-    this.ethnicities = [];
-    this.categories = [];
 
     this.submission = {
-      fname: '',
-      lname: '',
-      email: '',
-      city: '',
-      state: '',
-      country: '',
-      website: '',
-      social: '',
-      emphasis: '',
-      isMember: '',
-      topics: [],
-      ethnicities: [],
-      categories: []
-    }
+      type: 'Person',
+      data: {
+        first_name: '',
+        last_name: '',
+        email: '',
+        city: '',
+        state: '',
+        country: '',
+        website: '',
+        social: '',
+        emphasis: '',
+        hymn_soc_member: '',
+        topics: {
+          Contemporary_Song_Band: false,
+          Traditional_Hymnody: false,
+          Musician_Pastor_Relationship_Song_Band: false,
+          Cantoring: false,
+          Song_Enlivening: false,
+          Keyboards: false,
+          Worship_Planning: false
+        },
+        ethnicities: {
+          White: false,
+          Black: false,
+          Hispanic_Latin_American_Caribbean: false,
+          Native_American_Indigenous_Peoples: false,
+          Asian: false,
+          Middle_Eastern: false,
+          other: ''
+        },
+        categories: {
+
+          Choir: false,
+          Cantor: false,
+          Song_Enlivener: false,
+          Solo: false,
+          Lead_Singer_from_Band_with_Other_Vocalists: false,
+          other: ''
+
+        }
+      }
+    };
+
   }
 
     private load(id) {
@@ -94,7 +83,10 @@ export class EntryPersonComponent implements OnInit {
     };
   }
 
-	next() {
-  	this.router.navigate(['entry/congregations']);
-	}
+  submit() {
+    // this.submitService.submitCongregation(this.submission);
+    console.log(JSON.stringify(this.submission));
+  }
+
+	
 }
