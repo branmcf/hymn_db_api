@@ -1,12 +1,23 @@
 var Hapi = require('hapi')
 var Good = require('good')
 var Vision = require('vision')
+var Bcrypt = require('bcrypt')
 var Users = require('./users-db')
 var Handlebars = require('handlebars')
+var BasicAuth = require('hapi-auth-basic')
 var CookieAuth = require('hapi-auth-cookie')
 
+var Boom = require('boom')
+var Users = require('./users-db')
+
+var Joi = require('joi')
+var mysql = require('mysql')
+
+
+
 // create new server instance
-var server = new Hapi.Server()
+var server = new Hapi.Server();
+
 
 // add server’s connection information
 server.connection({
@@ -15,10 +26,7 @@ server.connection({
 })
 
 // register plugins to server instance
-server.register([
-  {
-    register: Vision
-  },
+server.register([ Vision, BasicAuth, CookieAuth,
   {
     register: Good,
     options: {
@@ -39,9 +47,6 @@ server.register([
         ]
       }
     }
-  },
-  {
-    register: CookieAuth
   }
 ], function (err) {
   if (err) {
@@ -64,8 +69,25 @@ server.register([
   })
   server.log('info', 'View configuration completed')
 
+  // validation function used for hapi-auth-basic
+  var basicValidation = function (request, username, password, callback) {
+    var user = Users[ username ]
+
+    if (!user) {
+      return callback(null, false)
+    }
+
+    Bcrypt.compare(password, user.password, function (err, isValid) {
+      server.log('info', 'user authentication successful')
+      callback(err, isValid, { id: user.id, name: user.name })
+    })
+  }
+
+  server.auth.strategy('simple', 'basic', { validateFunc: basicValidation })
+  server.log('info', 'Registered auth strategy: basic auth')
+
   // validation function used for hapi-auth-cookie: optional and checks if the user is still existing
-  var validation = function (request, session, callback) {
+  var cookieValidation = function (request, session, callback) {
     var username = session.username
     var user = Users[ username ]
 
@@ -77,18 +99,45 @@ server.register([
     callback(err, true, user)
   }
 
-  server.auth.strategy('session', 'cookie', true, {
+  server.auth.strategy('session', 'cookie', {
     password: 'm!*"2/),p4:xDs%KEgVr7;e#85Ah^WYC',
     cookie: 'future-studio-hapi-tutorials-cookie-auth-example',
-    redirectTo: '/',
+    redirectTo: false,
     isSecure: false,
-    validateFunc: validation
+    validateFunc: cookieValidation
   })
-
   server.log('info', 'Registered auth strategy: cookie auth')
 
-  var routes = require('./cookie-routes')
-  server.route(routes)
+  // default auth strategy avoids server crash for routes that doesn’t specify auth config
+  server.auth.default('simple')
+
+//
+  var routesArray = []
+
+  var routes = require('./routes.js')
+  routesArray.push(routes)
+
+  routes = require('./routes/congregations/congregation-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/events/event-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/organizations/organization-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/resources/resource-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/users/user-routes')
+  routesArray.push(routes)
+
+  for(var i=0; i < routesArray.length; i++) {
+    server.route(routesArray[i])
+  }
+  
+  //
+  //server.route(routes)
   server.log('info', 'Routes registered')
 
   // start your server after plugin registration

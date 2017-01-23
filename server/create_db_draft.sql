@@ -1,7 +1,9 @@
 SET FOREIGN_KEY_CHECKS=0;
 
+/*
 DROP TABLE IF EXISTS event_table;
 DROP TABLE IF EXISTS Event_Table;
+*/
 
 DROP TABLE IF EXISTS congregation_tags;
 DROP TABLE IF EXISTS congregation_denominations;
@@ -10,8 +12,10 @@ DROP TABLE IF EXISTS congregation_instrument_types;
 DROP TABLE IF EXISTS congregation_worship_types;
 DROP TABLE IF EXISTS congregation_types;
 DROP TABLE IF EXISTS congregation_ethnicities;
+
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types; 
+
 DROP TABLE IF EXISTS resource_tags; 
 DROP TABLE IF EXISTS resource_authors; 
 DROP TABLE IF EXISTS resource_resource_types;
@@ -20,6 +24,7 @@ DROP TABLE IF EXISTS resource_instruments;
 DROP TABLE IF EXISTS resource_topics;
 DROP TABLE IF EXISTS resource_ensembles;
 DROP TABLE IF EXISTS resource_ethnicities; 
+
 DROP TABLE IF EXISTS organization_tags; 
 DROP TABLE IF EXISTS organization_song_types;
 DROP TABLE IF EXISTS organization_instrument_types;
@@ -110,7 +115,7 @@ CREATE TABLE countries(
 
 CREATE TABLE Tags (
 	id int unsigned not null auto_increment,
-	tag_name varchar(128),
+	name varchar(128),
 	PRIMARY KEY (id)
 	/* maybe link to other tables like congregation types? */
 );
