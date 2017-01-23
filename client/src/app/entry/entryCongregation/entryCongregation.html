@@ -91,7 +91,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Roman Catholic" 
-                            [(ngModel)]="submission.data.denom"/> Roman Catholic
+                            [(ngModel)]="submission.data.denomination"/> Roman Catholic
                         </label>
                         <br>
                         <label [class.selected]="anglican.checked">
@@ -99,7 +99,7 @@
                             type="radio" 
                             name="denomination"
                             value="Anglican" 
-                            [(ngModel)]="submission.data.denom"/> Anglican/Episcopal
+                            [(ngModel)]="submission.data.denomination"/> Anglican/Episcopal
                         </label>
                         <br>
                         <label [class.selected]="lutheran.checked">
@@ -107,7 +107,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Lutheran" 
-                            [(ngModel)]="submission.data.denom"/> Lutheran
+                            [(ngModel)]="submission.data.denomination"/> Lutheran
                         </label>
                         <br>
                         <label [class.selected]="wesleyan.checked">
@@ -115,7 +115,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Wesleyan (United Methodist, AME, etc...)" 
-                            [(ngModel)]="submission.data.denom"/> Wesleyan (United Methodist, AME, etc...)
+                            [(ngModel)]="submission.data.denomination"/> Wesleyan (United Methodist, AME, etc...)
                         </label>
                         <br>
                         <label [class.selected]="reformed.checked">
@@ -123,7 +123,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Reformed (Presbyterian, RCA, etc...)" 
-                            [(ngModel)]="submission.data.denom"/> Reformed (Presbyterian, RCA, etc...)
+                            [(ngModel)]="submission.data.denomination"/> Reformed (Presbyterian, RCA, etc...)
                         </label>
                         <br>
                         <label [class.selected]="baptist.checked">
@@ -131,7 +131,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Baptist/Free-Church" 
-                            [(ngModel)]="submission.data.denom"/> Baptist/Free-Church
+                            [(ngModel)]="submission.data.denomination"/> Baptist/Free-Church
                         </label>
                         <br>
                         <label [class.selected]="pentecostal.checked">
@@ -139,7 +139,7 @@
                             type="radio" 
                             name="denomination" 
                             value="Pentecostal" 
-                            [(ngModel)]="submission.data.denom"/> Pentecostal
+                            [(ngModel)]="submission.data.denomination"/> Pentecostal
                         </label>
                         <br>
                         <label [class.selected]="nonDenom.checked">
@@ -147,20 +147,20 @@
                             type="radio" 
                             name="denomination" 
                             value="Non-Denominational" 
-                            [(ngModel)]="submission.data.denom"/> Non-Denominational
+                            [(ngModel)]="submission.data.denomination"/> Non-Denominational
                         </label>
                         <br>
                         <label [class.selected]="otherDenom.checked">
                             <input #otherDenom
                             type="radio" 
                             name="denomination"
-                            [(ngModel)]="submission.data.denom"/> Other...  
+                            [(ngModel)]="submission.data.denomination"/> Other...  
                         </label>
                         <br>
                         <div [hidden]="!otherDenom.checked">
                             <input type="text" 
                              name="denomination"
-                            [(ngModel)]="submission.data.denom"/>
+                            [(ngModel)]="submission.data.denomination"/>
                         </div>
                     </div>
 
@@ -170,17 +170,17 @@
                         <label [class.selected]="yes.checked">
                             <input #yes
                             type="radio" 
-                            value="Yes"
+                            value="1"
                             name="member" 
-                            [(ngModel)]="submission.data.member"/> Yes
+                            [(ngModel)]="submission.data.hymn_soc_member"/> Yes
                         </label>    
                         <br>
                         <label [class.selected]="no.checked">
                             <input #no
                             type="radio" 
-                            value="No"
+                            value="0"
                             name="member" 
-                            [(ngModel)]="submission.data.member"/> No
+                            [(ngModel)]="submission.data.hymn_soc_member"/> No
                         </label>
                     </div>
 
@@ -206,43 +206,43 @@
                             <md-checkbox class="block-input" 
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.A_hymn_written_prior_to_1970"
+                                [(ngModel)]="submission.data.categories.A_hymn_written_prior_to_1970"
                                 >A hymn written prior to 1970</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Psalm_Setting">Psalm Setting</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Psalm_Setting">Psalm Setting</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.Secular_Song">Secular Song</md-checkbox>
+                                [(ngModel)]="submission.data.categories.Secular_Song">Secular Song</md-checkbox>
                     </div>
 
                     <!--<div class="form-group" >
@@ -250,49 +250,49 @@
                         
                             <md-checkbox class="block-input" 
                                 value="A hymn written prior to 1970" 
-                                [(ngModel)]="submission.data.type.congType1">
+                                [(ngModel)]="submission.data.categories.congType1">
                                 A hymn written prior to 1970</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Newly composed hymn (within the last 10 years)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType2">
+                                [(ngModel)]="submission.data.categories.congType2">
                                 Newly composed hymn (within the last 10 years)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Praise and Worship Song (CCM)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType3">
+                                [(ngModel)]="submission.data.categories.congType3">
                                 Praise and Worship Song (CCM)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Psalm Setting" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType4">
+                                [(ngModel)]="submission.data.categories.congType4">
                                 Psalm Setting</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Chant (Gregorian, Anglican, Pointed or Taize)" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType5">
+                                [(ngModel)]="submission.data.categories.congType5">
                                 Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Older hymn text set to a new contemporary tune (or 're-tuned')" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType6">
+                                [(ngModel)]="submission.data.categories.congType6">
                                 Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Song from another country (or 'World Song')" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType7">
+                                [(ngModel)]="submission.data.categories.congType7">
                                 Song from another country (or 'World Song')</md-checkbox>
                     
                             <md-checkbox class="block-input"
                                 ng-true-value="Secular Song" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.type.congType8">
+                                [(ngModel)]="submission.data.categories.congType8">
                                 Secular Song</md-checkbox>
                     </div>-->
 
@@ -402,7 +402,7 @@
                             type="radio" 
                             name="attire" 
                             value="Vestments" 
-                            [(ngModel)]="submission.data.attire"/> Vestments
+                            [(ngModel)]="submission.data.clothing"/> Vestments
                         </label>
                         <br>
                         <label [class.selected]="robes.checked">
@@ -410,7 +410,7 @@
                             type="radio" 
                             name="attire" 
                             value="Robes, with or without stoles" 
-                            [(ngModel)]="submission.data.attire"/> Robes, with or without stoles
+                            [(ngModel)]="submission.data.clothing"/> Robes, with or without stoles
                         </label>
                         <br>
                         <label [class.selected]="business.checked">
@@ -418,7 +418,7 @@
                             type="radio" 
                             name="attire" 
                             value="Business Attire" 
-                            [(ngModel)]="submission.data.attire"/> Business Attire
+                            [(ngModel)]="submission.data.clothing"/> Business Attire
                         </label>    
                         <br>
                         <label [class.selected]="casual.checked">
@@ -426,7 +426,7 @@
                             type="radio" 
                             name="attire" 
                             value="Casual" 
-                            [(ngModel)]="submission.data.attire"/> Casual
+                            [(ngModel)]="submission.data.clothing"/> Casual
                         </label>
                     </div>       
                     
@@ -438,7 +438,7 @@
                             type="radio" 
                             name="location" 
                             value="Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)" 
-                            [(ngModel)]="submission.data.location"/> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
+                            [(ngModel)]="submission.data.geography"/> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
                         </label>
                         <br>
                         <label [class.selected]="urban.checked">
@@ -446,7 +446,7 @@
                             type="radio"
                             name="location" 
                             value="Urban (downtown churches in a large metropolitan area)" 
-                            [(ngModel)]="submission.data.location"/> Urban (downtown churches in a large metropolitan area)
+                            [(ngModel)]="submission.data.geography"/> Urban (downtown churches in a large metropolitan area)
                         </label>
                         <br>
                         <label [class.selected]="suburban.checked">
@@ -454,7 +454,7 @@
                             type="radio" 
                             name="location" 
                             value="Suburban" 
-                            [(ngModel)]="submission.data.location"/> Suburban
+                            [(ngModel)]="submission.data.geography"/> Suburban
                         </label>    
                         <br>
                         <label [class.selected]="ruralSmallCity.checked">
@@ -462,7 +462,7 @@
                             type="radio" 
                             name="location" 
                             value="Rural - In a small city" 
-                            [(ngModel)]="submission.data.location"/> Rural - In a small city
+                            [(ngModel)]="submission.data.geography"/> Rural - In a small city
                         </label>    
                         <br>
                         <label [class.selected]="ruralNoCity.checked">
@@ -470,7 +470,7 @@
                             type="radio" 
                             name="location" 
                             value="Rural - Not in a city" 
-                            [(ngModel)]="submission.data.location"/> Rural - Not in a city
+                            [(ngModel)]="submission.data.geography"/> Rural - Not in a city
                         </label>
                     </div>     
 

@@ -23,11 +23,12 @@ export class EntryCongregationComponent {
   }
 
   ngOnInit() {
-    this.contentful.getCongregationForm().then((content) => {
+      this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
+
       this.submission = {}
       this.submission.data = {};
-      this.submission.data.type = {};
+      this.submission.data.categories = {};
       this.submission.data.instruments = {};
       this.submission.data.ethnicities = {};
     });
@@ -35,17 +36,18 @@ export class EntryCongregationComponent {
     this.route.params.forEach(x => this.load(+x['user.id']));
 
     this.submission = {
-      type: "Congregation",
-
+      type: '',
+      user: '',
+      uid: '',
       data: {
         name: '',
         url: '',
+        denomination: '',
         city: '',
         state: '',
         country: '',
-        denom: '',
-        members: [],
-        type: {
+        hymn_soc_member: '',
+        categories: {
           A_hymn_written_prior_to_1970: false,
           Newly_composed_hymn_within_the_last_10_years: false,
           Praise_and_Worship_Song_CCM: false,
@@ -67,8 +69,8 @@ export class EntryCongregationComponent {
           congInstruOther: ''
         },
         shape: '',
-        attire: '',
-        location: '',
+        clothing: '',
+        geography: '',
         ethnicities: {
           White: false,
           Black: false,
@@ -78,8 +80,7 @@ export class EntryCongregationComponent {
           Middle_Eastern: false,
           congEthOther: ''
         },
-        attendance: '',
-        temp: '',
+        attendance: ''
       }
     }
   }
@@ -94,6 +95,10 @@ export class EntryCongregationComponent {
     "Song from another country (or 'World Song')",
     "Secular Song"
   ]
+
+  private getUser() {
+
+  }
 
   private load(id) {
     if (!id) {
@@ -112,6 +117,12 @@ export class EntryCongregationComponent {
 
   submit() {
     // this.submitService.submitCongregation(this.submission);
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.type = "Congregation";
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
     console.log(this.submission);
   }
 

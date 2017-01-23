@@ -15,18 +15,19 @@ export class EntryComponent {
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
-		private loginService : UserService) {
+		private userService : UserService) {
     	
 		}
 
-	ngOnInit() {
+  ngOnInit() {
 		this.user = {}
-		this.incorrect = false;
 	}
 
-    login() {
-        this.loginService.login(this.user).then(x => {
-						document.cookie = "isLoggedIn=true";
+  login() {
+      this.userService.login(this.user).then(x => {
+            var responseInfo = JSON.parse(x);
+            console.log(responseInfo);
+            sessionStorage.setItem('userInfo', JSON.stringify(responseInfo));
             this.router.navigateByUrl('entry/welcome');
         });
     }

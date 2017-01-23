@@ -8,6 +8,13 @@ export class UserService {
 
     constructor(private http: Http){}
 
+    get(user_id : number) : Promise<any> {
+		return this.http
+			.get(`${this._apiUrl}/user/${user_id}`)
+			.toPromise()
+			.then(x => x['_body'] as any);
+    }
+
     login(user) : Promise<any> {
         return this.http
             .post(this._apiUrl + '/login', user)
@@ -17,7 +24,6 @@ export class UserService {
 
     private extractData(res: Response) {
         let body = res['_body'];
-        console.log("SUCCESS: ", res)
         return body || {};
     }
 }
