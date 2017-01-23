@@ -1,12 +1,14 @@
 var Joi = require('joi')
 var mysql = require('mysql')
 
+var options = require('../../config/config.js');
+
 //mysql connection
 var connection = mysql.createConnection({
   host     : 'localhost',
-  user     : 'root',
-  password : '123',
-  database : 'testDb'
+  user     : options.user,
+  password : options.password,
+  database : options.database
 });
 
 eventController = {};

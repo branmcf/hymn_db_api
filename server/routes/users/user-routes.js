@@ -1,12 +1,14 @@
 var Joi = require('joi')
 var mysql = require('mysql')
 
+var options = require('../../config/config.js');
+
 //mysql connection
 var connection = mysql.createConnection({
   host     : 'localhost',
-  user     : 'root',
-  password : '123',
-  database : 'testDb'
+  user     : options.user,
+  password : options.password,
+  database : options.database
 });
 
 //user-routes.js
@@ -28,6 +30,8 @@ function rowsToJS(theArray) {
 //get users from db
 function getUsers() {
 
+  console.log(">>>>>getUsers()");
+
   connection.query(`SELECT 
     id, 
     email, 
@@ -44,6 +48,8 @@ function getUsers() {
     from users`, function(err, rows, fields) {
 
       if (!err) {
+
+        console.log(">>>>>select from db");
         
         var JSObj = rowsToJS(rows);
 
@@ -54,7 +60,7 @@ function getUsers() {
 
         getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
         
-        console.log(`selected ${numUsers} users...`);
+        console.log(`selected ${numUsers} users from db`);
         
 
       }//end if statement
@@ -63,10 +69,14 @@ function getUsers() {
 
   }); //end connection.connect
 
+  console.log("end getUsers()");
+
 };//end get users from db
 
 //test: Method for querying intermediate tables:
 function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
+
+    console.log(`>>>>>getInter()`);
 
     for(var varI = 1; varI <= numLoops; varI++) {
         connection.query(`
@@ -75,16 +85,24 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
           INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
           INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
           WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) { throw err; }
+            if(err) { 
+              console.log(`ERROR IN INTERMEDIATE TABLE for leftTable: ${leftTable}, middle: ${middleTable}, right: ${rightTable}`);
+              throw err; 
+            }
+
+            console.log(`>>>>>select id= ${varI} out of ${numLoops} from ${leftTable} from db`);
             
             var JSObj = rowsToJS(rows);
             
             arrayToUse.push(JSObj);
 
-          
+            console.log(`done selecting ${varI} from ${leftTable}`);
         });
         
     }//end for loop
+
+    console.log(`end getInter()`);
+
 }//end function
 
 /* 
@@ -94,6 +112,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 */
 
 function formatUser(actualIndex) {
+  console.log(`>>>>>formatUser()`);
   var userData = {};
 
   userData = {
@@ -114,7 +133,7 @@ function formatUser(actualIndex) {
 
   };
 
-  console.log(userData);
+  console.log(`end getInter()`);
 
   return userData;
 }
@@ -126,8 +145,12 @@ userController.getConfig = {
 
     getUsers();
 
+    console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+
     if (request.params.id) {
-      //if (users.length <= request.params.id - 1) return reply('Not enough users in the database for your request').code(404);
+      if (numUsers <= request.params.id - 1) 
+        return reply('Not enough users in the database for your request').code(404);
+
       var actualIndex = Number(request.params.id) - 1;
 
       var userData = formatUser(actualIndex);
@@ -155,6 +178,8 @@ userController.getConfig = {
 //USER POST REQUEST
 userController.postConfig = {
   handler: function(req, reply) {
+
+    console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     var newUser = { 
       email: req.payload.email,  

@@ -2,13 +2,13 @@ var Hapi = require('hapi')
 var Good = require('good')
 var Vision = require('vision')
 var Bcrypt = require('bcrypt')
-var Users = require('./users-db')
+//var Users = require('./users-db')
 var Handlebars = require('handlebars')
 var BasicAuth = require('hapi-auth-basic')
 var CookieAuth = require('hapi-auth-cookie')
 
 var Boom = require('boom')
-var Users = require('./users-db')
+var users_db = require('./users-db')
 
 var Joi = require('joi')
 var mysql = require('mysql')
@@ -71,7 +71,7 @@ server.register([ Vision, BasicAuth, CookieAuth,
 
   // validation function used for hapi-auth-basic
   var basicValidation = function (request, username, password, callback) {
-    var user = Users[ username ]
+    var user = users_db[ username ]
 
     if (!user) {
       return callback(null, false)
@@ -89,7 +89,7 @@ server.register([ Vision, BasicAuth, CookieAuth,
   // validation function used for hapi-auth-cookie: optional and checks if the user is still existing
   var cookieValidation = function (request, session, callback) {
     var username = session.username
-    var user = Users[ username ]
+    var user = users_db[ username ]
 
     if (!user) {
       return callback(null, false)
