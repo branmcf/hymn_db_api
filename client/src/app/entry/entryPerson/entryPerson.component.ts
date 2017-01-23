@@ -43,7 +43,7 @@ export class EntryPersonComponent implements OnInit {
           Cantoring: false,
           Song_Enlivening: false,
           Keyboards: false,
-          Worship_planning: false
+          Worship_Planning: false
         },
         ethnicities: {
           White: false,
@@ -85,7 +85,7 @@ export class EntryPersonComponent implements OnInit {
 
   submit() {
     // this.submitService.submitCongregation(this.submission);
-    console.log(this.submission);
+    console.log(JSON.stringify(this.submission));
   }
 
 	

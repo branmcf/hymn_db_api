@@ -142,7 +142,7 @@
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.topics.Comtemporary_Song_Band">
+                                [(ngModel)]="submission.data.topics.Contemporary_Song_Band">
                             Contemporary Song/Band
                             </md-checkbox>
                             <md-checkbox class="block-input"
@@ -154,7 +154,7 @@
                             <md-checkbox class="block-input"
                                 ng-true-value="true" 
                                 ng-false-value="false"
-                                [(ngModel)]="submission.data.topics.Relationship_Song_Band">
+                                [(ngModel)]="submission.data.topics.Musician_Pastor_Relationship_Song_Band">
                             Musician/Pastor Relationship Song/Band
                             </md-checkbox>
                             <md-checkbox class="block-input"
@@ -274,14 +274,14 @@
                                 <input type="text"
                                 id="personCategories" 
                                 class="form-control" 
-                                [(ngModel)]="submission.data.catgories.other"
+                                [(ngModel)]="submission.data.categories.other"
                                 name="personCategories"
                                 required/>
                             </div>
                     </div>
           
                     <div>
-                        <a class="btn btn-block btn-primary">Submit</a>
+                        <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
                     </div>  
                     
