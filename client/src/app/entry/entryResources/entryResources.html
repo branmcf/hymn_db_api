@@ -11,6 +11,11 @@
             </md-card-subtitle>
             <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
 
+            <!--<form name="resourceForm"
+            (ngSubmit)="submit()"
+            #resourceForm="ngForm"
+            *ngIf="submission">-->
+
             <div class="form-group">
                 <!--<label for="resourceTitle">Resource Title</label>-->
                 <md-input-container class="full-width">
@@ -34,11 +39,19 @@
                     <md-radio-button class="block-input" name="type" value="forum"> Forum</md-radio-button>
                     <md-radio-button class="block-input" name="type" value="audio"> Audio Track(s)</md-radio-button>
                     <md-radio-button class="block-input" name="type" value="video"> Video/Visual(s)</md-radio-button>
-                    <md-radio-button class="block-input" name="type" value="other"> Other...</md-radio-button>
+                    <md-radio-button class="block-input" name="type">                                         
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        placeholder="Custom resource type"
+                        id="resourceTitle" 
+                        class="form-control" 
+                        [(ngModel)]="resourceTypeOther"
+                        name="resourceTitle"
+                        required/>
+                        </md-input-container> 
+                     </md-radio-button>
                 </md-radio-group>
-                    <div class="form-group" [hidden]="!other">
-                        <input id="personCity" class="form-control"/>
-                    </div>
+
             </div>
 
             <div class="form-group">
@@ -151,17 +164,17 @@
                         [(ngModel)]="submission.data.categories.Secular_Song">
                         Secular Song
                     </md-checkbox>
-                    <md-checkbox class="block-input">Other...</md-checkbox>
-                <div class="form-group" [hidden]="!other">
-                    <md-input-container class="full-width">
-                    <input md-input mdInput type="text"
-                    id="resourceCategories" 
-                    class="form-control" 
-                    [(ngModel)]="submission.data.categories.other"
-                    name="resourceCategories"
-                    required/>
-                    </md-input-container>
-                </div>
+                    <md-checkbox class="block-input">                        
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceCategories" 
+                        class="form-control" 
+                        [(ngModel)]="submission.data.categories.Other"
+                        name="resourceCategories"
+                        placeholder="Custom Category"
+                        required/>
+                        </md-input-container>
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -184,17 +197,17 @@
                         [(ngModel)]="submission.data.topic.Social_Justice">
                         Social Justice
                     </md-checkbox>
-                    <md-checkbox class="block-input">Other...</md-checkbox>
-                <div class="form-group" [hidden]="!other">
-                    <md-input-container class="full-width">
-                    <input md-input mdInput type="text"
-                    id="resourceTopic" 
-                    class="form-control" 
-                    [(ngModel)]="submission.data.topic.other"
-                    name="resourceTopic"
-                    required/>
-                    </md-input-container>
-                </div>
+                    <md-checkbox class="block-input">                    
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceTopic" 
+                        class="form-control" 
+                        [(ngModel)]="submission.data.topic.Other"
+                        name="resourceTopic"
+                        required
+                        placeholder="Custom Topic"/>
+                        </md-input-container>
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -247,13 +260,17 @@
                         [(ngModel)]="submission.data.accompaniment.Obligato">
                         Single/Obligato Instrument (non-organ/piano/guitar)
                     </md-checkbox>
-                    <md-checkbox class="block-input" name="other"> Other...</md-checkbox>
-                    <div class="form-group" [hidden]="!other">
-                        <input type="text"
+                    <md-checkbox class="block-input" name="other">                       
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceAccompaniment" 
                         class="form-control" 
-                        [(ngModel)]="submission.data.accompaniment.other"
-                        required/>
-                    </div>
+                        [(ngModel)]="submission.data.accompaniment.Other"
+                        name="resourceAccompaniment"
+                        required
+                        placeholder="Custom Accompaniment"/>
+                        </md-input-container>
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -276,17 +293,17 @@
                         [(ngModel)]="submission.data.languages.French">
                         French
                     </md-checkbox>
-                    <md-checkbox class="block-input">Other...</md-checkbox>
-                <div class="form-group" [hidden]="!other">
-                    <md-input-container class="full-width">
-                    <input md-input mdInput type="text"
-                    id="resourceLang" 
-                    class="form-control" 
-                    [(ngModel)]="submission.data.languages.other"
-                    name="resourceLang"
-                    required/>
-                    </md-input-container>
-                </div>
+                    <md-checkbox class="block-input">
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceLang" 
+                        class="form-control" 
+                        [(ngModel)]="submission.data.languages.Other"
+                        name="resourceLang"
+                        required
+                        placeholder="Custom Language"/>
+                        </md-input-container>
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -321,17 +338,17 @@
                         [(ngModel)]="submission.data.ensembles.Lead_Singer_from_Band_with_Other_Vocalists">
                         Lead Singer from Band with Other Vocalists
                     </md-checkbox>
-                    <md-checkbox class="block-input">Other...</md-checkbox>
-                <div class="form-group" [hidden]="!other">
-                    <md-input-container class="full-width">
-                    <input md-input mdInput type="text"
-                    id="resourceEnsemble" 
-                    class="form-control" 
-                    [(ngModel)]="submission.data.ensembles.other"
-                    name="resourceEnsemble"
-                    required/>
-                    </md-input-container>
-                </div>
+                    <md-checkbox class="block-input">
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceEnsemble" 
+                        class="form-control" 
+                        [(ngModel)]="submission.data.ensembles.Other"
+                        name="resourceEnsemble"
+                        required
+                        placeholder="Custom Ensemble"/>
+                        </md-input-container>    
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -375,19 +392,19 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
-                        [(ngModel)]="submission.data.ethnicities.MIddle_Eastern">
+                        [(ngModel)]="submission.data.ethnicities.Middle_Eastern">
                         Middle Eastern
                     </md-checkbox>
-                    <md-checkbox class="block-input">Other...</md-checkbox>
-                <div class="form-group" [hidden]="!other">
-                    <md-input-container class="full-width">
-                    <input md-input mdInput type="text"
-                    id="resourceEnsemble" 
-                    class="form-control" 
-                    [(ngModel)]="submission.data.ethnicities.other"
-                    required/>
-                    </md-input-container>
-                </div>
+                    <md-checkbox class="block-input">
+                        <md-input-container class="full-width">
+                        <input md-input mdInput type="text"
+                        id="resourceEnsemble" 
+                        class="form-control" 
+                        [(ngModel)]="submission.data.ethnicities.Other"
+                        required
+                        placeholder="Custom Ethnicity"/>
+                        </md-input-container>
+                    </md-checkbox>
             </div>
 
             <div class="form-group">
@@ -408,10 +425,21 @@
                 </md-radio-group>
             </div>
 
+
             <div>
-                <a class="btn btn-block btn-primary" (click)=submit() >Submit</a>
+                <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                 <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
             </div>  
+            <!--<md-card-actions>
+              <button md-raised-button color="primary" type="submit" 
+              [disabled]="loginForm.invalid">
+              Submit
+              </button>
+              <button md-button routerLink="/">
+              Return to home
+              </button>
+          </md-card-actions>
+          </form>-->
           
         </md-card-content>
       </md-card>
