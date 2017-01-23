@@ -5,43 +5,12 @@ import { ContentfulService } from './../../services/contentful.service';
 @Component({
   selector: 'hymn-entry-resources',
   template: require('./entryResources.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css'],
   providers: [ContentfulService]
 })
 
 export class EntryResourcesComponent implements OnInit {
   content: JSON;
-  title: string;
-  type: string;
-  url: string;
-  author: string;
-  parent: string;
-  desc: string;
-  category: any[];
-  topic: any[];
-  accompany: any[];
-  lang: any[];
-  ensemble: any[];
-  ethnicity: any;
-  isInvolved: any;
-  free: any;
-
-  submission: {
-    title: string;
-    type: string;
-    url: string;
-    author: string;
-    parent: string;
-    desc: string;
-    category: any[];
-    topic: any[];
-    accompany: any[];
-    lang: any[];
-    ensemble: any[];
-    ethnicity: any;
-    isInvolved: any;
-    free: any;
-  };
+  submission: any;
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
@@ -55,37 +24,72 @@ export class EntryResourcesComponent implements OnInit {
 
     this.route.params.forEach(x => this.load(+x['user.id']));
 
-    this.title = '';
-    this.type = '';
-    this.url = '';
-    this.author = '';
-    this.parent = '';
-    this.desc = '';
-    this.category = [];
-    this.topic = [];
-    this.accompany = [];
-    this.lang = [];
-    this.ensemble = [];
-    this.ethnicity = '';
-    this.isInvolved = '';
-    this.free = '';
-
     this.submission = {
-      title: '',
-      type: '',
-      url: '',
-      author: '',
-      parent: '',
-      desc: '',
-      category: [],
-      topic: [],
-      accompany: [],
-      lang: [],
-      ensemble: [],
-      ethnicity: '',
-      isInvolved: '',
-      free: '',
-    }
+      type: 'Resource',
+      data: {
+        title: '',
+        type: '',
+        url: '',
+        author: '',
+        parent: '',
+        description: '',
+        categories: {
+          A_hymn_written_prior_to_1970: false,
+          Newly_composed_hymn_within_the_last_10_years: false,
+          Song_by_local_church_musicians: false,
+          Praise_and_Worship_Song_CCM: false,
+          Psalm_Setting: false,
+          Chant_Gregorian_Anglican_Pointed_or_Taize: false,
+          Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
+          Song_from_another_country_or_World_Song: false,
+          Secular_Song: false,
+          other: ''
+        },
+        topic: {
+          Psalm_Setting: false,
+          Lectionary_Based: false,
+          Social_Justice: false,
+          other: ''
+        },
+        accompaniment: {
+          Acappella: false,
+          Organ: false,
+          Piano: false,
+          Guitar_no_band: false,
+          Guitar_with_band: false,
+          Orchestra: false,
+          Handbells: false,
+          Obligato: false,
+          other: ''
+        },
+        languages: {
+          English: false,
+          Spanish: false,
+          French: false,
+          other: ''
+        },
+        ensembles: {
+          Choir: false,
+          Cantor: false,
+          Song_Enlivener: false,
+          Solo: false,
+          Lead_Singer_from_Band_with_Other_Vocalists: false,
+          other: ''
+        },
+        ethnicities: {
+          White: false,
+          Black: false,
+          Hispanic_Latinx_Caribbean: false,
+          Native_American_Indigenous_Peoples: false,
+          Asian: false,
+          African: false,
+          Middle_Eastern: false,
+          other: ''
+        },
+        hymn_soc_member: '',
+        is_free: ''
+      }
+    };
   }
 
   private load(id) {
@@ -103,20 +107,8 @@ export class EntryResourcesComponent implements OnInit {
   }
 
   submit() {
-    this.submission.title = this.title;
-    this.submission.type = this.type;
-    this.submission.url = this.url;
-    this.submission.author = this.author;
-    this.submission.parent = this.parent;
-    this.submission.desc = this.desc;
-    this.submission.category = this.category;
-    this.submission.topic = this.topic;
-    this.submission.accompany = this.accompany;
-    this.submission.lang = this.lang;
-    this.submission.ensemble = this.ensemble;
-    this.submission.ethnicity = this.ethnicity;
-    this.submission.isInvolved = this.isInvolved;
-    this.submission.free = this.free;
+    // this.submitService.submitCongregation(this.submission);
+    console.log(JSON.stringify(this.submission));
   }
 
 	next() {

@@ -4,17 +4,21 @@ import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class UserService {
-    private _apiUrl = 'app/users';
+    private _apiUrl = 'https://private-91abd-node46.apiary-mock.com';
 
     constructor(private http: Http){}
 
-    public loginUser(user : any) : Promise<any> {
-		var pluck = x => (x && x.length) ? x[0] : undefined;
-		return this.http
-			.get(`${this._apiUrl}/?name=${user.name}`)
-			.toPromise()
-			.then(x => pluck(x.json().data))
-			.catch(x => alert(x.json().error));
+    login(user) : Promise<any> {
+        return this.http
+            .post(this._apiUrl + '/login', user)
+            .toPromise()
+            .then(this.extractData);
+    }
+
+    private extractData(res: Response) {
+        let body = res['_body'];
+        console.log("SUCCESS: ", res)
+        return body || {};
     }
 }
 

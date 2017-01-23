@@ -1,204 +1,210 @@
 <div class="entry-container">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
-            <div class="card">
-                <div class="card-header">
-                    {{content?.fields.instructions}}
-                </div>
-                <div class="card-block">
-                    <h4 class="card-title">{{content?.fields.title}}</h4>
+            <md-card>
+                <md-card-content>
+                    <md-card-subtitle class="entry-card-header">
+                        {{content?.fields.instructions}}
+                    </md-card-subtitle>
+                    <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
 
                     <div class="form-group">
-                        <label for="orgName">Organization Name</label>
-                        <input rtpe="text"
-                        id="orgName" 
-                        class="form-control" 
-                        [(ngModel)]="submission.name"
-                        name="orgName"
-                        required/>
+                        <!--<label for="orgName">Organization Name</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Organization Name"
+                            id="orgName" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.name"
+                            name="orgName"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
-                        <label for="orgUrl">Organization Website</label>
-                        <input type="url" 
-                        id="orgUrl" 
-                        class="form-control" 
-                        [(ngModel)]="submission.url"
-                        name="orgUrl"
-                        required/>
+                        <!--<label for="orgUrl">Organization Website</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="url" 
+                            placeholder="Organization Website"
+                            id="orgUrl" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.url"
+                            name="orgUrl"
+                            required/>
+                        </md-input-container>
                     </div>   
 
                     <div class="form-group">
-                        <label for="orgParent">Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)</label>
-                        <input type="text"
-                        id="orgParent" 
-                        class="form-control"
-                        [(ngModel)]="submission.parent"
-                        name="orgParent"
-                        required/>
+                        <!--<label for="orgParent">Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Do you have a parent organization? (Are you officially housed or sponsored by a denomination, school, or other larger organization?)"
+                            id="orgParent" 
+                            class="form-control"
+                            [(ngModel)]="submission.data.parent"
+                            name="orgParent"
+                            required/>
+                        </md-input-container>
+                        
                     </div>  
 
                     <div class="form-group">
                         <label for="orgDenomination">Are you related to or a part of a specific denomination or tradition?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="denomination" value="multidom" /> Ecumenical/Multi-Denominational
-                            <br>
-                            <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
-                            <br>
-                            <input type="radio" name="denomination" value="catholic" /> Roman Catholic
-                            <br>
-                            <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
-                            <br>
-                            <input type="radio" name="denomination" value="lutheran" /> Lutheran
-                            <br>
-                            <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
-                            <br>
-                            <input type="radio" name="denomination" value="baptist" /> Pentecostal
-                            <br>                            
-                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                    <input type="text"
+                            <md-radio-group [(ngModel)]="submission.data.denomination" >
+                                <md-radio-button class="block-input" name="denomination" value="multidom">Ecumenical/Multi-Denominational</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="nondenom">Non-Denominational</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="catholic">Roman Catholic</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="anglican">Anglican/Episcopal</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="lutheran">Lutheran</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="wesleyan">Wesleyan (United Methodist, AME, etc...)</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="reformed">Reformed (Presbyterian, RCA, etc...)</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="baptist">Baptist/Free-Church</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="baptist">Pentecostal</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="other">Other...</md-radio-button>
+                            </md-radio-group>
+                            <div class="form-group" [hidden]="!other">
+                                <md-input-container class="full-width">
+                                    <input md-input mdInput type="text"
                                     id="orgDenomination" 
                                     class="form-control" 
-                                    [(ngModel)]="submission.denoms"
+                                    [(ngModel)]="submission.data.denoms"
                                     name="orgDenomination"
                                     required/>
-                                </div>
-                        </form>
+                                </md-input-container>
+                            </div>
                     </div>                              
 
                     <div class="form-group">
-                        <label for="orgCity">What city are you located/headquartered?</label>
-                        <input type="text"
-                        id="orgCity" 
-                        class="form-control" 
-                        [(ngModel)]="submission.city"
-                        name="orgCity"
-                        required/>
+                        <!--<label for="orgCity">What city are you located/headquartered?</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="What city are you located/headquartered?"
+                            id="orgCity" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.city"
+                            name="orgCity"
+                            required/>
+                        </md-input-container>
                     </div>   
 
                     <div class="form-group">
-                        <label for="orgState">What state are you located/headquartered?</label>
-                        <input type="text"
-                        id="orgState" 
-                        class="form-control" 
-                        [(ngModel)]="submission.state"
-                        name="orgState"
-                        required/>
+                        <!--<label for="orgState">What state are you located/headquartered?</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="What state are you located/headquartered?"
+                            id="orgState" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.state"
+                            name="orgState"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
                         <label for="orgCountry">What country are you located/headquartered?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="country" value="US" /> US
-                            <br>
-                            <input type="radio" name="country" value="Canada" /> Canada
-                            <br>
-                            <input type="radio" name="country" value="other" /> Other...                <div class="form-group" [hidden]="!other">
-                                    <input type="text"
-                                    id="orgCountry" 
-                                    class="form-control" 
-                                    [(ngModel)]="submission.country"
-                                    name="orgCountry"
-                                    required/>
-                                </div>
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.country">
+                                <md-radio-button class="block-input" name="country" value="US">US</md-radio-button>
+                                <md-radio-button class="block-input" name="country" value="Canada">Canada</md-radio-button>
+                                <md-radio-button class="block-input" name="country" value="other">Other...</md-radio-button>  
+                            </md-radio-group>  
+                            <div class="form-group" [hidden]="!other">
+                                    <md-input-container class="full-width">
+                                        <input md-input mdInput type="text"
+                                        id="orgCountry" 
+                                        class="form-control" 
+                                        [(ngModel)]="submission.data.country"
+                                        name="orgCountry"
+                                        required/>
+                                    </md-input-container>
+                            </div>
                     </div>
 
                     <div class="form-group">
                         <label for="orgGeogrpahics">What geographic area(s) do you serve?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="geographics" value="city" /> Our City Only
-                            <br>
-                            <input type="radio" name="geographics" value="state" /> Our State Only
-                            <br>
-                            <input type="radio" name="geographics" value="region" /> Our Region Only
-                            <br>
-                            <input type="radio" name="geographics" value="us" /> U.S. Only
-                            <br>
-                            <input type="radio" name="geographics" value="canada" /> Canada Only
-                            <br>
-                            <input type="radio" name="geographics" value="worldwide" /> Worldwide
-                            <br>
-                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                    <input type"text"
+                            <md-radio-group [(ngModel)]="submission.data.geographic_area">
+                                <md-radio-button class="block-input" name="geographics" value="city">Our City Only</md-radio-button>
+                                <md-radio-button class="block-input" name="geographics" value="state">Our State Only</md-radio-button>
+                                <md-radio-button class="block-input" name="geographics" value="region">Our Region Only</md-radio-button>
+                                <md-radio-button class="block-input" name="geographics" value="us">U.S. Only</md-radio-button>
+                                <md-radio-button class="block-input" name="geographics" value="canada">Canada Only</md-radio-button>
+                                <md-radio-button class="block-input" name="geographics" value="worldwide">Worldwide</md-radio-button>
+                                <md-radio-button class="block-input" name="denomination" value="other">Other...</md-radio-button>       
+                            </md-radio-group>
+                            <div class="form-group" [hidden]="!other">
+                                <md-input-container class="full-width">
+                                    <input md-input mdInput type="text"
                                     id="orgGeopgraphics" 
                                     class="form-control" 
-                                    [(ngModel)]="submission.geo"
+                                    [(ngModel)]="submission.data.geo"
                                     name=orgGeographics
                                     required/>
-                                </div>
-                        </form>
+                                </md-input-container>
+                            </div>
                     </div>                           
                     
                     <div class="form-group">
                         <label for="orgResource">Are any of your resources free?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="resource" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="resource" value="no" /> No
-                            <br>
-                            <input type="radio" name="resource" value="noresource" /> We don't offer resources
-                            <br>
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.resource_free">
+                                <md-radio-button class="block-input" name="resource" value="yes">Yes</md-radio-button>
+                                <md-radio-button class="block-input" name="resource" value="no">No</md-radio-button>
+                                <md-radio-button class="block-input" name="resource" value="noresource">We don't offer resources</md-radio-button>
+                            </md-radio-group>
                     </div>
 
                     <div class="form-group">
                         <label for="orgConference">Are any of your events/conferences free?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="conference" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="conference" value="no" /> No
-                            <br>
-                            <input type="radio" name="conference" value="noconference" /> We don't offer events/conferences
-                            <br>
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.event_free">
+                                <md-radio-button class="block-input" name="conference" value="yes">Yes</md-radio-button>
+                                <md-radio-button class="block-input" name="conference" value="no">No</md-radio-button>
+                                <md-radio-button class="block-input" name="conference" value="noconference">We don't offer events/conferences</md-radio-button>
+                            </md-radio-group>
                     </div>      
 
                     <div class="form-group">
                         <label for="orgMembership">Do you charge for membership?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="membership" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="membership" value="no" /> No
-                            <br>
-                            <input type="radio" name="membership" value="nomembership" /> We don't offer memberships
-                            <br>
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.membership_free">
+                                <md-radio-button class="block-input" name="membership" value="yes">Yes</md-radio-button>
+                                <md-radio-button class="block-input" name="membership" value="no">No</md-radio-button>
+                                <md-radio-button class="block-input" name="membership" value="nomembership">We don't offer memberships</md-radio-button>
+                            </md-radio-group>
                     </div>
 
                     <div class="form-group">
-                        <label for="orgMission">What is the mission of your organization?</label>
-                        <input type="text"
-                        id="orgMission" 
-                        class="form-control"
-                        [(ngModel)]="submission.mission"
-                        name="orgMission"
-                        required/>
+                        <!--<label for="orgMission">What is the mission of your organization?</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="What is the mission of your organization?"
+                            id="orgMission" 
+                            class="form-control"
+                            [(ngModel)]="submission.data.mission"
+                            name="orgMission"
+                            required/>
+                        </md-input-container>
                     </div>                                       
                     
                      <div class="form-group">
-                        <label for="orgMethod">How does your organization encourage, promote, or enliven congregational song?</label>
-                        <input type="text"
-                        id="orgMethod" 
-                        class="form-control" 
-                        [(ngModel)]="submission.method"
-                        name="orgMethod"
-                        required/>
+                        <!--<label for="orgMethod">How does your organization encourage, promote, or enliven congregational song?</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="How does your organization encourage, promote, or enliven congregational song?"
+                            id="orgMethod" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.method"
+                            name="orgMethod"
+                            required/>
+                        </md-input-container>
                     </div>  
 
                     <div>
-                        <a class="btn btn-block btn-primary" >Submit</a>
+                        <a class="btn btn-block btn-primary" (click)=submit() >Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
                     </div>  
 
-                </div> <!-- end class card-block-->
-            </div> <!-- end class card -->
+                </md-card-content> <!-- end class card-block-->
+            </md-card> <!-- end class card -->
         </div> <!-- end class col-md-8 offset-md-2 -->
     </div> <!-- end entry-body row -->
 </div>

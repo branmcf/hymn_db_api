@@ -1,157 +1,177 @@
 <div class="entry-container right">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
-            <div class="card">
-                <div class="card-header">
-                    {{content?.fields.instructions}}
-                </div>
-                <div class="card-block">
-                    <h4 class="card-title">{{content?.fields.title}}</h4>
+            <md-card>
+                <md-card-subtitle>{{content?.fields.instructions}}</md-card-subtitle>
+                <md-card-title><h4>{{content?.fields.title}}</h4></md-card-title>
+                <md-card-content>
+                    
 
                     <div class="form-group">
-                        <label for="eventTitle">Event Title</label>
-                        <input type="text"
-                        id="eventTitle" 
-                        class="form-control" 
-                        [(ngModel)]="submission.title"
-                        name="eventTitle"
-                        required/>
+                        <md-input-container class="full-width">
+                            <!--<label for="eventTitle">Event Title</label>-->
+                            <input md-input mdInput type="text"
+                            id="eventTitle" 
+                            placeholder="Event Title"
+                            class="form-control" 
+                            [(ngModel)]="submission.data.title"
+                            name="eventTitle"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
                         <label for="eventOccurance">Is Your Event...</label>
-                        <form action="" method="post">
-                            <input type="radio" name="occurance" value="annual" /> Annual
-                            <br>
-                            <input type="radio" name="occurance" value="every2yrs" /> Every-Other-Year (once every 2 years)
-                            <br>
-                            <input type="radio" name="occurance" value="once" /> One Time Only
-                            <br>
-                            <input type="radio" name="occurance" value="other" /> Other...
+                            <md-radio-group [(ngModel)]="submission.data.occurance">
+                                <md-radio-button class="block-input" name="occurance" value="annual">Annual</md-radio-button>
+                                <md-radio-button class="block-input" name="occurance" value="every2yrs">Every-Other-Year (once every 2 years)</md-radio-button>
+                                <md-radio-button class="block-input" name="occurance" value="once">One Time Only</md-radio-button>
+                                <md-radio-button class="block-input" name="occurance" value="other">Other...</md-radio-button>
+                            </md-radio-group>
                             <div class="form-group" [hidden]="!other">
                                 <input type="text"
                                 id="eventOccurance" 
                                 class="form-control" 
-                                [(ngModel)]="submission.occurance"
+                                [(ngModel)]="submission.data.occurance"
                                 name="eventOccurance"
                                 required/>
                             </div>
-                        </form>
                     </div>
 
                     <div class="form-group">
-                        <label for="eventUrl">Event Website</label>
-                        <input type="url" 
-                        id="eventUrl" 
-                        class="form-control" 
-                        [(ngModel)]="submission.url"
-                        name="eventUrl"
-                        required/>
+                        <!--<label for="eventUrl">Event Website</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="url" 
+                            placeholder="Event Website"
+                            id="eventUrl" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.url"
+                            name="eventUrl"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
-                        <label for="eventParent">Parent or Sponsoring Organization(s)</label>
-                        <input type="text"
-                        id="eventParent" 
-                        class="form-control" 
-                        [(ngModel)]="submission.parent"
-                        name="eventParent"
-                        required/>
+                        <!--<label for="eventParent">Parent or Sponsoring Organization(s)</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Parent or Sponsoring Organization(s)"
+                            id="eventParent" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.parent"
+                            name="eventParent"
+                            required/>
+                        </md-input-container>
+                        
                     </div>
 
                     <div class="form-group">
-                        <label for="eventTopic">Topic/Emphasis/Theme</label>
-                        <input type="text"
-                        id="eventTopic" 
-                        class="form-control" 
-                        [(ngModel)]="submission.topic"
-                        name="eventTopic"
-                        required/>
+                        <!--<label for="eventTopic">Topic/Emphasis/Theme</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Topic/Emphasis/Theme"
+                            id="eventTopic" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.topic"
+                            name="eventTopic"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
-                        <label for="eventDesc">Event Description</label>
-                        <input type="text"
-                        id="eventDesc" 
-                        class="form-control" 
-                        [(ngModel)]="submission.desc"
-                        name="eventDesc"
-                        required/>
+                        <!--<label for="eventDesc">Event Description</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Event Description"
+                            id="eventDesc" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.description"
+                            name="eventDesc"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
-                        <label for="eventDate">Event Start Date</label>
-                        <input type ="date" 
-                        id="eventDate" 
-                        class="form-control" 
-                        [(ngModel)]="submission.date"
-                        name="eventDate"
-                        rerquired/>
+                        <!--<label for="eventDate">Event Start Date</label>-->
+                        <md-input-container>
+                            <input md-input mdInput type="date" 
+                            placeholder="Event Date"
+                            id="eventDate" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.eventDate"
+                            name="eventDate"
+                            rerquired/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
                         <label for="eventCost">Registration Cost</label>
-                        <form action="" method="post">
-                            <input type="radio" name="cost" value="free" /> Free
-                            <br>
-                            <input type="radio" name="cost" value="under100" /> Under $100
-                            <br>
-                            <input type="radio" name="cost" value="100to200" /> Between $100 and $250
-                            <br>
-                            <input type="radio" name="cost" value="250to500" /> Between $250 and $500
-                            <br>
-                            <input type="radio" name="cost" value="over1000" /> Over $1000
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.cost">
+                                <md-radio-button class="block-input" name="cost" value="free">Free</md-radio-button>
+                                <md-radio-button class="block-input" name="cost" value="under100">Under $100</md-radio-button>
+                                <md-radio-button class="block-input" name="cost" value="100to200">Between $100 and $250</md-radio-button>
+                                <md-radio-button class="block-input" name="cost" value="250to500">Between $250 and $500</md-radio-button>
+                                <md-radio-button class="block-input" name="cost" value="over1000">Over $1000</md-radio-button>
+                            </md-radio-group>
                     </div> 
 
                     <div class="form-group">
-                        <label for="eventCity">Event City</label>
-                        <input type="text"
-                        id="eventCityt" 
-                        class="form-control" 
-                        [(ngModel)]="submission.city"
-                        name="eventCity"
-                        required/>
+                        <!--<label for="eventCity">Event City</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Event City"
+                            id="eventCity" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.city"
+                            name="eventCity"
+                            required/>
+                        </md-input-container>
                     </div>
 
                     <div class="form-group">
-                        <label for="eventState">Event State</label>
-                        <input type="text"
-                        id="eventState" 
-                        class="form-control" 
-                        [(ngModel)]="submission.state"
-                        name="eventState"
-                        required/>
+                        <!--<label for="eventState">Event State</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Event State"
+                            id="eventState" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.state"
+                            name="eventState"
+                            required/>
+                        </md-input-container>
                     </div>
                     
                     <div class="form-group">
-                        <label for="eventCountry">Event Country</label>
-                        <input type="text"
-                        id="eventCountry" 
-                        class="form-control" 
-                        [(ngModel)]="submission.country"
-                        name="eventCountry"
-                        required/>
+                        <!--<label for="eventCountry">Event Country</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Event Country"
+                            id="eventCountry" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.country"
+                            name="eventCountry"
+                            required/>
+                        </md-input-container>
                     </div>    
 
                     <div class="form-group">
                         <label for="eventCost">Is a Hymn Society member involved?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="cost" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="cost" value="no" /> No
-                        </form>
+                            <md-radio-group [(ngModel)]="submission.data.hymn_soc_member">
+                                <md-radio-button class="block-input" name="hymn_soc_member" value="yes">Yes</md-radio-button>
+                                <md-radio-button class="block-input" name="hymn_soc_member" value="no">No</md-radio-button>
+                            </md-radio-group>
                     </div>   
 
                     <div>
-                        <a class="btn btn-block btn-primary" >Submit</a>
+                        <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                         <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
                     </div>              
 
-                </div> <!-- end class card-block-->
-            </div> <!-- end class card -->
+                </md-card-content> <!-- end class card-block-->
+            </md-card> <!-- end class card -->
         </div> <!-- end class col-md-8 offset-md-2 -->
     </div> <!-- end entry-body row -->
 </div>
