@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
 
 @Component({
   selector: 'hymn-entry-resources',
@@ -15,7 +16,8 @@ export class EntryResourcesComponent implements OnInit {
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 }
 
   ngOnInit() {
@@ -110,7 +112,6 @@ export class EntryResourcesComponent implements OnInit {
   }
 
   submit() {
-    // this.submitService.submitCongregation(this.submission);
     var userInfo = sessionStorage.getItem('userInfo');
     var obj = (JSON.parse(userInfo));
 
@@ -119,6 +120,8 @@ export class EntryResourcesComponent implements OnInit {
     this.submission.uid = obj.user_id;
     this.submission.data.type = this.resourceTypeOther;
     console.log((this.submission));
+  
+    this.submitService.submitResource(this.submission);
   }
 
 	next() {

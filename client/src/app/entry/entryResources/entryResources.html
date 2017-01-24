@@ -11,10 +11,10 @@
             </md-card-subtitle>
             <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
 
-            <!--<form name="resourceForm"
+            <form name="resourceForm"
             (ngSubmit)="submit()"
             #resourceForm="ngForm"
-            *ngIf="submission">-->
+            *ngIf="submission">
 
             <div class="form-group">
                 <!--<label for="resourceTitle">Resource Title</label>-->
@@ -24,15 +24,23 @@
                     id="resourceTitle" 
                     class="form-control" 
                     [(ngModel)]="submission.data.title"
+                    #resourceTitle="ngModel"
                     name="resourceTitle"
                     required/>
                 </md-input-container>
+                <div class="alert alert-danger" *ngIf="resourceTitle.errors && resourceTitle.touched">
+                  <ul>
+                      <li [hidden]="!resourceTitle.errors.required">
+                          Title is required
+                      </li>
+                  </ul>
+                </div> 
             </div>
 
             <div class="form-group">
                 <label for="resourceType">Resource Type</label>
-                <md-radio-group [(ngModel)]="submission.data.type">
-                    <md-radio-button class="block-input" name="type" value="book"> Book</md-radio-button>
+                <md-radio-group [(ngModel)]="submission.data.type" name="radioType">
+                    <md-radio-button class="block-input" name="type" value="book" required> Book</md-radio-button>
                     <md-radio-button class="block-input" name="type" value="blog"> Blog</md-radio-button>
                     <md-radio-button class="block-input" name="type" value="podcast"> Podcast</md-radio-button>
                     <md-radio-button class="block-input" name="type" value="news"> Newsletter/E-News</md-radio-button>
@@ -46,8 +54,7 @@
                         id="resourceTitle" 
                         class="form-control" 
                         [(ngModel)]="resourceTypeOther"
-                        name="resourceTitle"
-                        required/>
+                        name="resourceTitle"/>
                         </md-input-container> 
                      </md-radio-button>
                 </md-radio-group>
@@ -63,8 +70,16 @@
                     class="form-control" 
                     [(ngModel)]="submission.data.url"
                     name="resourceUrl"
+                    #resourceUrl="ngModel"
                     required/>
-                </md-input-container>
+                </md-input-container>                
+                <div class="alert alert-danger" *ngIf="resourceUrl.errors && resourceUrl.touched">
+                  <ul>
+                      <li [hidden]="!resourceUrl.errors.required">
+                          URL is required
+                      </li>
+                  </ul>
+                </div> 
             </div>
 
             <div class="form-group">
@@ -113,54 +128,63 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesOne"
                         [(ngModel)]="submission.data.categories.A_hymn_written_prior_to_1970">
                         A Hymn written prior to 1970
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesTwo"
                         [(ngModel)]="submission.data.categories.Newly_composed_hymn_within_the_last_10_years">
                         Newly Composed Hymn (within the last 10 years)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesThree"
                         [(ngModel)]="submission.data.categories.Song_by_local_church_musicians">
                         A song written by a local church musician - not widely distributed
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesFour"
                         [(ngModel)]="submission.data.categories.Praise_and_Worship_Song_CCM">
                         Praise and Worship Song (CCM)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesFive"
                         [(ngModel)]="submission.data.categories.Psalm_Setting">
                         Psalm Setting
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesSix"
                         [(ngModel)]="submission.data.categories.Chant_Gregorian_Anglican_Pointed_or_Taize">
                         Chant (Gregorian, Anglican, Pointed or Taize)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesSeven"
                         [(ngModel)]="submission.data.categories.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">
                         Older hymn text set to a new contemporary tune (or "re-tuned" hymn)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesEight"
                         [(ngModel)]="submission.data.categories.Song_from_another_country_or_World_Song">
                         Song from another country (or "World Song")
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceCategoriesNine"
                         [(ngModel)]="submission.data.categories.Secular_Song">
                         Secular Song
                     </md-checkbox>
@@ -170,9 +194,8 @@
                         id="resourceCategories" 
                         class="form-control" 
                         [(ngModel)]="submission.data.categories.Other"
-                        name="resourceCategories"
-                        placeholder="Custom Category"
-                        required/>
+                        name="resourceCategoriesTen"
+                        placeholder="Custom Category"/>
                         </md-input-container>
                     </md-checkbox>
             </div>
@@ -182,18 +205,21 @@
                     <md-checkbox class="block-input"
                         ng-true-value = "true"
                         ng-false-value = "false"
+                        name="resourceTopicOne"
                         [(ngModel)]="submission.data.topic.Psalm_Setting">
                         Psalm Setting
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value = "true"
                         ng-false-value = "false"
+                        name="resourceTopicTwo"
                         [(ngModel)]="submission.data.topic.Lectionary_Based">
                         Lectionary Based
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value = "true"
                         ng-false-value = "false"
+                        name="resourceTopicThree"
                         [(ngModel)]="submission.data.topic.Social_Justice">
                         Social Justice
                     </md-checkbox>
@@ -203,8 +229,7 @@
                         id="resourceTopic" 
                         class="form-control" 
                         [(ngModel)]="submission.data.topic.Other"
-                        name="resourceTopic"
-                        required
+                        name="resourceTopicFour"
                         placeholder="Custom Topic"/>
                         </md-input-container>
                     </md-checkbox>
@@ -215,48 +240,56 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyOne"
                         [(ngModel)]="submission.data.accompaniment.Acapella">
                         Acapella
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyTwo"
                         [(ngModel)]="submission.data.accompaniment.Organ">
                         Organ
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyThree"
                         [(ngModel)]="submission.data.accompaniment.Piano">
                         Piano
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyFour"
                         [(ngModel)]="submission.data.accompaniment.Guitar_no_band">
                         Guitar (no band)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyFive"
                         [(ngModel)]="submission.data.accompaniment.Guitar_with_band">
                         Guitar (with band)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanySix"
                         [(ngModel)]="submission.data.accompaniment.Orchestra">
                         Orchestra/Wind Ensemble
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanySeven"
                         [(ngModel)]="submission.data.accompaniment.Handbells">
                         Handbells
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceAccompanyEight"
                         [(ngModel)]="submission.data.accompaniment.Obligato">
                         Single/Obligato Instrument (non-organ/piano/guitar)
                     </md-checkbox>
@@ -266,8 +299,7 @@
                         id="resourceAccompaniment" 
                         class="form-control" 
                         [(ngModel)]="submission.data.accompaniment.Other"
-                        name="resourceAccompaniment"
-                        required
+                        name="resourceAccompanimentNine"
                         placeholder="Custom Accompaniment"/>
                         </md-input-container>
                     </md-checkbox>
@@ -278,29 +310,31 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceLangOne"
                         [(ngModel)]="submission.data.languages.English">
                         English
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceLangTwo"
                         [(ngModel)]="submission.data.languages.Spanish">
                         Spanish
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true" 
                         ng-false-value="false"
+                        name="resourceLangThree"
                         [(ngModel)]="submission.data.languages.French">
                         French
                     </md-checkbox>
                     <md-checkbox class="block-input">
                         <md-input-container class="full-width">
                         <input md-input mdInput type="text"
-                        id="resourceLang" 
+                        id="resourceLangFour" 
                         class="form-control" 
                         [(ngModel)]="submission.data.languages.Other"
                         name="resourceLang"
-                        required
                         placeholder="Custom Language"/>
                         </md-input-container>
                     </md-checkbox>
@@ -311,30 +345,35 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true"    
                         ng-false-value="false"
+                        name="resourceEnsembleOne"
                         [(ngModel)]="submission.data.ensembles.Choir">
                         Choir
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"    
                         ng-false-value="false"
+                        name="resourceEnsembleTwo"
                         [(ngModel)]="submission.data.ensembles.Cantor">
                         Cantor
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"    
                         ng-false-value="false"
+                        name="resourceEnsembleThree"
                         [(ngModel)]="submission.data.ensembles.Song_Enlivener">
                         Song-Enlivener
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"    
                         ng-false-value="false"
+                        name="resourceEnsembleFour"
                         [(ngModel)]="submission.data.ensembles.Solo">
                         Lead Singer from Band (Solo)
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"    
                         ng-false-value="false"
+                        name="resourceEnsembleFive"
                         [(ngModel)]="submission.data.ensembles.Lead_Singer_from_Band_with_Other_Vocalists">
                         Lead Singer from Band with Other Vocalists
                     </md-checkbox>
@@ -344,8 +383,7 @@
                         id="resourceEnsemble" 
                         class="form-control" 
                         [(ngModel)]="submission.data.ensembles.Other"
-                        name="resourceEnsemble"
-                        required
+                        name="resourceEnsembleSix"
                         placeholder="Custom Ensemble"/>
                         </md-input-container>    
                     </md-checkbox>
@@ -356,42 +394,49 @@
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicityOne"
                         [(ngModel)]="submission.data.ethnicities.White">
                         White
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicityTwo"
                         [(ngModel)]="submission.data.ethnicities.Black">
                         Black
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicityThree"
                         [(ngModel)]="submission.data.ethnicities.Hispanic_Latinx_Caribbean">
                         Hispanic/Latinx/Caribbean
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicityFour"
                         [(ngModel)]="submission.data.ethnicities.Native_American_Indigenous_Peoples">
                         Native American/Indigenous Peoples
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicityFive"
                         [(ngModel)]="submission.data.ethnicities.Asian">
                         Asian
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicitySix"
                         [(ngModel)]="submission.data.ethnicities.African">
                         African
                     </md-checkbox>
                     <md-checkbox class="block-input"
                         ng-true-value="true"
                         ng-false-value="false"
+                        name="resourceEthnicitySeven"
                         [(ngModel)]="submission.data.ethnicities.Middle_Eastern">
                         Middle Eastern
                     </md-checkbox>
@@ -400,8 +445,8 @@
                         <input md-input mdInput type="text"
                         id="resourceEnsemble" 
                         class="form-control" 
+                        name="resourceEthnicityEight"
                         [(ngModel)]="submission.data.ethnicities.Other"
-                        required
                         placeholder="Custom Ethnicity"/>
                         </md-input-container>
                     </md-checkbox>
@@ -409,8 +454,8 @@
 
             <div class="form-group">
                 <label for="resourceIsInvolved">Is a Hymn Society member involved?</label>
-                <md-radio-group [(ngModel)]="hymn_soc_member" >
-                    <md-radio-button class="block-input" value="yes"> Yes</md-radio-button>
+                <md-radio-group name="resourceIsInvolved" [(ngModel)]="submission.data.hymn_soc_member" >
+                    <md-radio-button class="block-input" value="yes" required> Yes</md-radio-button>
                     <md-radio-button class="block-input" value="no"> No</md-radio-button>
                     <md-radio-button class="block-input" value="unknown"> Unknown</md-radio-button>
                 </md-radio-group>
@@ -418,28 +463,29 @@
 
             <div class="form-group">
                 <label for="resourceFree">Is this resource free?</label>
-                <md-radio-group [(ngModel)]="submission.data.is_free" >
-                    <md-radio-button class="block-input" value="yes"> Yes</md-radio-button>
+                <md-radio-group name="resourceFree" [(ngModel)]="submission.data.is_free" aria-required="">
+                    <md-radio-button class="block-input" value="yes" required> Yes</md-radio-button>
                     <md-radio-button class="block-input" value="partially"> Partially with paywall</md-radio-button>
                     <md-radio-button class="block-input" value="no"> No</md-radio-button>
                 </md-radio-group>
             </div>
 
 
-            <div>
+            <!--<div>
                 <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
                 <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-            </div>  
-            <!--<md-card-actions>
+            </div>-->
+
+            <md-card-actions>
               <button md-raised-button color="primary" type="submit" 
-              [disabled]="loginForm.invalid">
+              [disabled]="resourceForm.invalid">
               Submit
               </button>
               <button md-button routerLink="/">
               Return to home
               </button>
           </md-card-actions>
-          </form>-->
+          </form>
           
         </md-card-content>
       </md-card>
