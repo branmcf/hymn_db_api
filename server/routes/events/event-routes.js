@@ -11,6 +11,8 @@ var connection = mysql.createConnection({
   database : options.database
 });
 
+connection.connect();
+
 eventController = {};
 var events = [];
   var numEvents = 0;
@@ -46,7 +48,8 @@ function getEvents() {
 
       getInter("Event_Types", "events", "event_event_types", "event_type_id", "event_id", eventTypes, numEvents );
       getInter("Tags", "events", "event_tags", "tag_id", "event_id", eventTags, numEvents );
-      
+
+
     }
     else
       console.log('Error while performing Events Query.');
@@ -92,15 +95,15 @@ function formatEvent(actualIndex) {
     url:            events[0][actualIndex].website,
     parent:         events[0][actualIndex].parent_org_id,
     //topic(s)
-    topics:         eventTypes[actualIndex],
+    topic:         eventTypes[actualIndex],
     description:    events[0][actualIndex].description,
     event_date:     events[0][actualIndex].event_date,
     cost:           events[0][actualIndex].cost,
     //tag id's
     tags:           eventTags[actualIndex],
-    city_id:        events[0][actualIndex].city_id,
-    state_id:       events[0][actualIndex].state_id,
-    country_id:     events[0][actualIndex].country_id,
+    city:        	events[0][actualIndex].city,
+    state:       	events[0][actualIndex].state,
+    country:     	events[0][actualIndex].country,
     hymn_soc_member:events[0][actualIndex].hymn_soc_member,    
     is_active:      events[0][actualIndex].is_active,
     high_level:     events[0][actualIndex].high_level
@@ -148,23 +151,40 @@ eventController.getConfig = {
 
 //EVENT POST REQUEST
 eventController.postConfig = {
+	auth: {
+  		mode: 'try'
+  	},
   handler: function(req, reply) {
+
     var newEvent = { 
-      event_title: req.payload.event_title, 
-      website: req.payload.website, 
-      event_desc: req.payload.event_desc,
-      theme_or_topic: req.payload.theme_or_topic
+      title: 		req.payload.event_title, 
+      website: 		req.payload.website, 
+      description: 	req.payload.description,
+      theme: 		req.payload.theme,
+      parent: 		req.payload.parent_org_id,
+      topic: 		req.payload.topic,
+      cost: 		req.payload.cost,
+      city: 		req.payload.city,
+      state: 		req.payload.state,
+      country: 		req.payload.country,
+      hymn_soc_member:req.payload.hymn_soc_member,
+      is_active: 	req.payload.is_active,
+      high_level: 	req.payload.high_level
+
+
     };
 
     // mysql
     //connection.connect();
     connection.query(
-      'INSERT INTO event_table SET ?', newEvent,
+      'INSERT INTO events SET ?', newEvent,
       function(err, rows) {
         if(err) {
           throw new Error(err);
           return;
         }
+
+        events[0].push(newEvent);
 
         reply([{
           statusCode: 200,
@@ -175,15 +195,15 @@ eventController.postConfig = {
     );
     //end mysql
 
-    events.push(newEvent);
+    
     //reply(newRes);
   },
   validate: {
     payload: {
-      event_title: Joi.string().required(),
+      title: Joi.string().required(),
       website: Joi.string().required(),
-      event_desc: Joi.string().required(),
-      theme_or_topic: Joi.string().required()
+      description: Joi.string().required(),
+      theme: Joi.string().required()
     }
   }
 

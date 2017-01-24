@@ -11,6 +11,8 @@ var connection = mysql.createConnection({
   database : options.database
 });
 
+connection.connect();
+
 resourceController = {};
 var resources = [];
   var numRes = 0;
@@ -190,10 +192,14 @@ resourceController.getConfig = {
 
 //RESOURCE POST REQUEST
 resourceController.postConfig = {
+	auth: {
+  		mode: 'try'
+  	},
+
   handler: function(req, reply) {
     var newRes = { 
       title: req.payload.title, 
-      link: req.payload.link, 
+      website: req.payload.website, 
       description: req.payload.description,
       is_free: req.payload.is_free
     };
@@ -208,6 +214,10 @@ resourceController.postConfig = {
           return;
         }
 
+        resources[0].push(newRes);
+
+        //getResources();
+
         reply([{
           statusCode: 200,
           message: 'Inserted Successfully',
@@ -217,15 +227,15 @@ resourceController.postConfig = {
     );
     //end mysql
 
-    resources.push(newRes);
+    
     //reply(newRes);
   },
   validate: {
     payload: {
       title: Joi.string().required(),
-      link: Joi.string().required(),
-      description: Joi.string().required(),
-      is_free: Joi.string().required()
+      website: Joi.string().required(),
+      description: Joi.string().required()
+      //is_free: Joi.string().required()
     }
   }
 

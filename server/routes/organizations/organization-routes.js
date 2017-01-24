@@ -11,6 +11,8 @@ var connection = mysql.createConnection({
   database : options.database
 });
 
+connection.connect();
+
 orgController = {};
 var orgs = [];
   var numOrgs = 0;
@@ -99,9 +101,9 @@ function formatOrg(actualIndex) {
     parent:         orgs[0][actualIndex].parent_org_id,
     //denomination(s)   
     denomination:   orgDen[actualIndex],      
-    city_id:        orgs[0][actualIndex].city_id,
-    state_id:       orgs[0][actualIndex].state_id,
-    country_id:     orgs[0][actualIndex].country_id,
+    city:        	orgs[0][actualIndex].city,
+    state:       	orgs[0][actualIndex].state,
+    country:     	orgs[0][actualIndex].country,
     geographic_area:orgs[0][actualIndex].geography,
     is_org_free:    orgs[0][actualIndex].is_free,
     events_free:    orgs[0][actualIndex].offers_free_events,
@@ -165,31 +167,44 @@ orgController.getConfig = {
 
 //CONG POST REQUEST
 orgController.postConfig = {
+	auth: {
+  		mode: 'try'
+  	},
   handler: function(req, reply) {
-    var newCong = { 
-      cong_name: req.payload.cong_name, 
-      website: req.payload.website, 
-      cong_city: req.payload.cong_city,
-      cong_state: req.payload.cong_state,
-      cong_country: req.payload.cong_country,
-      priest_attire: req.payload.priest_attire,
-      denomination_id: req.payload.denomination_id,
-      song_types_id: req.payload.song_types_id,
-      instrument_types_id: req.payload.instrument_types_id,
-      worship_types_id: req.payload.worship_types_id,
-      ethnicity_types_id: req.payload.ethnicity_types_id,
-      cong_type_id: req.payload.cong_type_id
+    var newOrg = { 
+      name: req.payload.name, 
+      url: req.payload.website, 
+      //
+      parent_org_id: req.payload.parent,
+
+      //denomination: req.payload.denomination_id,
+      city: req.payload.city,
+      state: req.payload.state,
+      country: req.payload.country,
+      geography: req.payload.geographic_area,
+      is_free: req.payload.is_org_free,
+      offers_free_events: req.payload.events_free,
+      membership_free: req.payload.membership_free,
+      mission: req.payload.mission,
+      process: req.payload.process,
+      tag_id: req.payload.tag_id,
+      hymn_soc_member: req.payload.hymn_soc_member,
+      is_active: req.payload.is_active,
+      high_level: req.payload.high_level
+
     };
 
     // mysql
     //connection.connect();
     connection.query(
-      'INSERT INTO congregations SET ?', newCong,
+      'INSERT INTO organizations SET ?', newOrg,
       function(err, rows) {
         if(err) {
           throw new Error(err);
           return;
         }
+
+        orgs[0].push(newOrg);
 
         reply([{
           statusCode: 200,
@@ -200,7 +215,7 @@ orgController.postConfig = {
     );
     //end mysql
 
-    congs.push(newCong);
+    
     //reply(newRes);
   },
   validate: {

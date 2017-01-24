@@ -52,7 +52,7 @@ var routes = [
       },
       handler: function (request, reply) {
         if (request.auth.isAuthenticated) {
-          console.log("return the fucking profile");
+          console.log("return the profile");
 
           return reply.view('Profile')
         }

@@ -25,6 +25,8 @@ server.connection({
   port: 3000
 })
 
+
+
 // register plugins to server instance
 server.register([ Vision, BasicAuth, CookieAuth,
   {
@@ -135,8 +137,9 @@ server.register([ Vision, BasicAuth, CookieAuth,
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i])
   }
+// 
+
   
-  //
   //server.route(routes)
   server.log('info', 'Routes registered')
 
@@ -151,7 +154,8 @@ server.register([ Vision, BasicAuth, CookieAuth,
 
     server.log('info', 'Server running at: ' + server.info.uri)
   })
-})
+});
+
 
 
 //EARLIEST VERSION:

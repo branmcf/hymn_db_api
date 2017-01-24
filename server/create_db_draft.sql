@@ -95,21 +95,7 @@ SET FOREIGN_KEY_CHECKS=1;
 =================================================== 
 */
 
-CREATE TABLE cities(
-	id int unsigned not null auto_increment,
-	name varchar(64),
-	PRIMARY KEY (id)
-);
-CREATE TABLE states(
-	id int unsigned not null auto_increment,
-	name varchar(64),
-	PRIMARY KEY (id)
-);
-CREATE TABLE countries(
-	id int unsigned not null auto_increment,
-	name varchar(64),
-	PRIMARY KEY (id)
-);
+
 
 
 
@@ -212,12 +198,9 @@ CREATE TABLE congregations (
 	PRIMARY KEY (id),
 	name varchar(64),
 	website varchar(64),
-	city_id int unsigned,
-	state_id int unsigned,
-	country_id int unsigned,
-	FOREIGN KEY (city_id) REFERENCES cities (id),
-	FOREIGN KEY (state_id) REFERENCES states (id),
-	FOREIGN KEY (country_id) REFERENCES countries (id),
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
 	hymn_soc_member boolean default False,
 	priest_attire varchar(64),
 	avg_attendance float,
@@ -225,40 +208,16 @@ CREATE TABLE congregations (
 	description_of_worship_to_guests varchar(256),
 	size int(10) unsigned default 0,
     is_active boolean default False,
-    /*mission varchar(256), */
     geogrpahic_area varchar(128),
     is_free boolean default False,
     events_free boolean default False,
     process varchar(128),
     high_level boolean default False,
     shape varchar(256),
-    clothing varchar(128)
+    clothing varchar(128),
+
+    approved boolean default False
     
-    
-	/*
-	denomination_id int unsigned,
-	song_type_id int unsigned,
-	instrument_type_id int unsigned,
-	worship_type_id int unsigned,
-	cong_type_id int unsigned,
-	ethnicity_type_id int unsigned,
-	parent_org_id int unsigned,
-	FOREIGN KEY (denomination_id)
-		REFERENCES Denominations (id),
-	FOREIGN KEY (song_type_id)
-		REFERENCES Song_Types(id),
-	FOREIGN KEY (instrument_type_id)
-		REFERENCES Instrument_Types(id),
-	FOREIGN KEY (worship_type_id)
-		REFERENCES Worship_Types(id),
-	FOREIGN KEY (cong_type_id)
-		REFERENCES Cong_Type(id),
-	FOREIGN KEY (ethnicity_type_id)
-		REFERENCES Ethnicities(id),
-	FOREIGN KEY (parent_org_id)
-		REFERENCES Parent_Org(id)
-	*/
-	
 );
 
 CREATE TABLE events(
@@ -276,22 +235,15 @@ CREATE TABLE events(
 	event_end_time time,
 	cost int unsigned default 0,
 	hymn_soc_member boolean default False,
-	city_id int unsigned,
-	state_id int unsigned,
-	country_id int unsigned,
-	FOREIGN KEY (city_id) REFERENCES cities (id),
-	FOREIGN KEY (state_id) REFERENCES states (id),
-	FOREIGN KEY (country_id) REFERENCES countries (id),
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
 	parent_org_id int unsigned,
 	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org (id),
 	is_active boolean default False,
-	high_level boolean default False
+	high_level boolean default False,
 	
-	/*
-	event_type_id int unsigned,
-	FOREIGN KEY (event_type_id)
-		REFERENCES Event_Types(id)
-	*/	
+	approved boolean default False
 );
 
 CREATE TABLE resources (
@@ -309,32 +261,13 @@ CREATE TABLE resources (
 	high_level boolean default False,
     is_active boolean default True,
 
-	city_id int unsigned,
-	state_id int unsigned,
-	country_id int unsigned,
-	FOREIGN KEY (city_id) REFERENCES cities(id),
-	FOREIGN KEY (state_id) REFERENCES states(id),
-	FOREIGN KEY (country_id) REFERENCES countries(id),
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
 	parent_org_id int unsigned,
-	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id)
-	/*
-	author_id int unsigned,
-	resource_type_id int unsigned,
-	denomination_id int unsigned,	
-	language_id int unsigned, 
-	instrument_type_id int unsigned,
-	topic_id int unsigned,
-	ensemble_id int unsigned,
-	ethnicity_id int unsigned,
-	FOREIGN KEY (author_id) REFERENCES Authors(id),
-	FOREIGN KEY (resource_type_id) REFERENCES Types(id),
-	FOREIGN KEY (denomination_id) REFERENCES Denominations(id),
-	FOREIGN KEY (language_id) REFERENCES Languages(id),
-	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types(id),
-	FOREIGN KEY (topic_id) REFERENCES Topics(id),
-	FOREIGN KEY (ensemble_id) REFERENCES Ensembles(id),
-	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
-	*/
+	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id),
+	
+	approved boolean default False
 );
 
 CREATE TABLE organizations (
@@ -342,12 +275,9 @@ CREATE TABLE organizations (
 	PRIMARY KEY (id),
 	name varchar(64),
 	website varchar(128),
-	city_id int unsigned,
-	state_id int unsigned,
-	country_id int unsigned,
-	FOREIGN KEY (city_id) REFERENCES cities (id),
-	FOREIGN KEY (state_id) REFERENCES states (id),
-	FOREIGN KEY (country_id) REFERENCES countries (id),
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
 	parent_org_id int unsigned,
 	FOREIGN KEY (parent_org_id) REFERENCES Parent_Org(id),
 	/* CHANGE BELOW TO ANOTHER TABLE LATER */
@@ -365,23 +295,11 @@ CREATE TABLE organizations (
     is_active boolean default False,
     high_level boolean default False,
     the_process varchar(256),
-    membership_free boolean default False
+    membership_free boolean default False,
+
+    approved boolean default False
     
-    
-	/*
-	congregation_id int unsigned,
-	FOREIGN KEY (congregation_id) REFERENCES congregations(id),
-	denomination_id int unsigned,
-	FOREIGN KEY (denomination_id) REFERENCES Denominations(id),
-	song_type_id int unsigned,
-	FOREIGN KEY (song_type_id) REFERENCES Song_Types(id),
-	instrument_type_id int unsigned,
-	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types(id),
-	worship_type_id int unsigned,
-	FOREIGN KEY (worship_type_id) REFERENCES Worship_Types(id),
-	ethnicity_id int unsigned,
-	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
-	*/
+
 );
 
 CREATE TABLE users (
@@ -395,18 +313,13 @@ CREATE TABLE users (
 	reg_date timestamp,
 	is_active boolean default True,
 	high_level boolean default False,
-	city_id int unsigned,
-	state_id int unsigned,
-	country_id int unsigned,
-	FOREIGN KEY (city_id) REFERENCES cities (id),
-	FOREIGN KEY (state_id) REFERENCES states (id),
-	FOREIGN KEY (country_id) REFERENCES countries (id),
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
 	website varchar(128),
-	hymn_soc_member boolean default False
-	/*
-	ethnicity_id int unsigned,
-	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities(id)
-	*/
+	hymn_soc_member boolean default False,
+
+	approved boolean default False
   
 );
 

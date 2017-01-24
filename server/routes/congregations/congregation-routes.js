@@ -11,6 +11,8 @@ var connection = mysql.createConnection({
   database : options.database
 });
 
+connection.connect();
+
 congController = {};
 var congs = [];
   var numCongs = 0;
@@ -150,6 +152,9 @@ congController.getConfig = {
 
 //CONG POST REQUEST
 congController.postConfig = {
+	auth: {
+  		mode: 'try'
+  	},
   handler: function(req, reply) {
     var newCong = { 
       cong_name: req.payload.cong_name, 
@@ -176,6 +181,8 @@ congController.postConfig = {
           return;
         }
 
+        congs[0].push(newCong);
+
         reply([{
           statusCode: 200,
           message: 'Inserted Successfully',
@@ -185,7 +192,7 @@ congController.postConfig = {
     );
     //end mysql
 
-    congs.push(newCong);
+    
     //reply(newRes);
   },
   validate: {

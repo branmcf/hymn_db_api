@@ -11,6 +11,8 @@ var connection = mysql.createConnection({
   database : options.database
 });
 
+connection.connect();
+
 //user-routes.js
 
 var userController = {};
@@ -30,7 +32,7 @@ function rowsToJS(theArray) {
 //get users from db
 function getUsers() {
 
-  console.log(">>>>>getUsers()");
+  //console.log(">>>>>getUsers()");
 
   connection.query(`SELECT 
     id, 
@@ -49,7 +51,7 @@ function getUsers() {
 
       if (!err) {
 
-        console.log(">>>>>select from db");
+        //console.log(">>>>>select from db");
         
         var JSObj = rowsToJS(rows);
 
@@ -60,7 +62,7 @@ function getUsers() {
 
         getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
         
-        console.log(`selected ${numUsers} users from db`);
+        //console.log(`selected ${numUsers} users from db`);
         
 
       }//end if statement
@@ -76,7 +78,7 @@ function getUsers() {
 //test: Method for querying intermediate tables:
 function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
 
-    console.log(`>>>>>getInter()`);
+    //console.log(`>>>>>getInter()`);
 
     for(var varI = 1; varI <= numLoops; varI++) {
         connection.query(`
@@ -90,18 +92,18 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
               throw err; 
             }
 
-            console.log(`>>>>>select id= ${varI} out of ${numLoops} from ${leftTable} from db`);
+            //console.log(`>>>>>select id= ${varI} out of ${numLoops} from ${leftTable} from db`);
             
             var JSObj = rowsToJS(rows);
             
             arrayToUse.push(JSObj);
 
-            console.log(`done selecting ${varI} from ${leftTable}`);
+            //console.log(`done selecting ${varI} from ${leftTable}`);
         });
         
     }//end for loop
 
-    console.log(`end getInter()`);
+    //console.log(`end getInter()`);
 
 }//end function
 
@@ -112,7 +114,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 */
 
 function formatUser(actualIndex) {
-  console.log(`>>>>>formatUser()`);
+  //console.log(`>>>>>formatUser()`);
   var userData = {};
 
   userData = {
@@ -133,7 +135,7 @@ function formatUser(actualIndex) {
 
   };
 
-  console.log(`end getInter()`);
+  //console.log(`end getInter()`);
 
   return userData;
 }
@@ -145,7 +147,7 @@ userController.getConfig = {
 
     getUsers();
 
-    console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     if (request.params.id) {
       if (numUsers <= request.params.id - 1) 
@@ -177,17 +179,22 @@ userController.getConfig = {
 
 //USER POST REQUEST
 userController.postConfig = {
+  
+  auth: {
+      mode: 'try'
+  },
+
   handler: function(req, reply) {
 
-    console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     var newUser = { 
       email: req.payload.email,  
       password: req.payload.password,
       first_name: req.payload.first_name,
       last_name: req.payload.last_name,
-      salt: null,
-      high_level: req.payload.high_level,
+      //salt: null,
+      //high_level: req.payload.high_level,
       /*
       city_name: req.payload.city_name,
       state_name: req.payload.state_name,
@@ -195,8 +202,20 @@ userController.postConfig = {
       website: req.payload.website,
       hymn_soc_member: req.payload.hymn_soc_member
       */
+      is_active:        req.payload.is_active,
+      reg_date:         req.payload.reg_date,
+      high_level:       req.payload.high_level,
+      city_id:          req.payload.city_id,
+      state_id:         req.payload.state_id,
+      country_id:       req.payload.country_id,
+      website:          req.payload.website,
+      ethnicity_name:   req.payload.ethnicity_name,
+      ethnicity_name2:  req.payload.ethnicity_name2,
+      ethnicity_name3:  req.payload.ethnicity_name3,
+      ethnicity_name4:  req.payload.ethnicity_name4,
     };
 
+    /*
     var returnedUser = hashAndStoreSync(newUser);
 
     //below line for testing
@@ -211,14 +230,24 @@ userController.postConfig = {
       console.log("error with hash function, new password will default to \"password123\". ");
       newUser.password = "password123";
     }
-    
+    */
     
 
 // mysql
-    //connection.connect();
+
+    users[0].push(newUser);
+    console.log(users[0]);
+
+    //bottom necessary?
+    getUsers();
+
     connection.query(
       'INSERT INTO users SET ?', newUser,
       function(err, rows) {
+
+        console.log("inserted into db");
+        
+
         if(err) {
           throw new Error(err);
           return;
@@ -230,18 +259,23 @@ userController.postConfig = {
         }]);
         
       }
-    );
+    )
+
+    console.log("out of connection func...");
 
 //end mysql
 
-    users.push(newUser);
+    //console.log("\n\nINSERTED!\n\n");
+    
     //reply(newUser);
+
+    
 
   },
   validate: {
     payload: {
       email: Joi.string().required(),
-      password: Joi.string().required(),
+      password: Joi.string().min(6).max(64).required(),
       first_name: Joi.string().required(),
       last_name: Joi.string().required()
     }
@@ -255,4 +289,5 @@ userController.postConfig = {
 module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
 	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig }
+  
 ];
