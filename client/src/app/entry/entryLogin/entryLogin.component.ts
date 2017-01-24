@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Routing, RootComponent } from './../../routes';
 import { FormsModule } from '@angular/forms';
 
 import { UserService } from './../../services/user.service'
@@ -11,36 +10,25 @@ import { UserService } from './../../services/user.service'
 })
 
 export class EntryComponent {
-  user: {
-		id: number;
-    email: string;
-    password: string;
-  }
-
-
-
+  user: any;
+  incorrect: boolean;
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
-		private loginService : UserService) {
-			this.user = {
-				id: 1,
-      	email: '',
-     		password: '',
-    	}
+		private userService : UserService) {
+    	
 		}
 
-	ngOnInit() {
-
+  ngOnInit() {
+		this.user = {}
 	}
 
-	login() {
-		  // var navToProfile = (data) => {
-      // if (data) {
-      //   this.user = data;
-  		this.router.navigate(['entry/resources']);
-			// }
-		}
-
-		// this.loginService.loginUser(this.user).then(navToProfile);
+  login() {
+      this.userService.login(this.user).then(x => {
+            var responseInfo = JSON.parse(x);
+            console.log(responseInfo);
+            sessionStorage.setItem('userInfo', JSON.stringify(responseInfo));
+            this.router.navigateByUrl('entry/welcome');
+        });
+    }
 }

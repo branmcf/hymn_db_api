@@ -1,49 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
 
 
 @Component({
   selector: 'hymn-entry-orgs',
   template: require('./entryOrgs.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
 })
 
 export class EntryOrgsComponent implements OnInit {
   content: JSON;
-  name: string;
-  url: string;
-  parent: string;
-  denoms: any[];
-  city: string;
-  state: string;
-  country: any;
-  geo: any[];
-  resourceFree: any;
-  eventFree: any;
-  membershipCharge: any;
-  mission: string;
-  method: string;
-
-  submission: {
-    name: string;
-    url: string; 
-    parent: string;
-    denoms: any[];
-    city: string;
-    state: string;
-    country: any;
-    geo: any[];
-    resourceFree: any;
-    eventFree: any;
-    membershipCharge: any;
-    mission: string;
-    method: string;
-  };
+  submission: any;
+  countryOther: any;
+  denomOther: any;
+  geoOther: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 
   }
 
@@ -52,33 +28,24 @@ export class EntryOrgsComponent implements OnInit {
       this.content = JSON.parse(content);
     });
     this.route.params.forEach(x => this.load(+x['user.id']));
-    this.name = '';
-    this.url = '';
-    this.parent = '';
-    this.denoms = [];
-    this.city = '';
-    this.state = '';
-    this.country = '';
-    this.geo = [];
-    this.resourceFree = '';
-    this.eventFree = '';
-    this.membershipCharge = '';
-    this.mission = '';
-    this.method = '';
+
     this.submission = {
-      name: '',
-      url: '',
-      parent: '',
-      denoms: [],
-      city: '',
-      state: '',
-      country: '',
-      geo: [],
-      resourceFree: '',
-      eventFree: '',
-      membershipCharge: '',
-      mission: '',
-      method: ''
+      type: 'Organization',
+      data: {
+        name: '',
+        url: '',
+        parent: '',
+        denomination: '',
+        city: '',
+        state: '',
+        country: '',
+        geographic_area: '',
+        resource_free: '',
+        event_free: '',
+        membership_free: '',
+        mission: '',
+        method: ''
+        }
     };
   }
 
@@ -94,6 +61,27 @@ export class EntryOrgsComponent implements OnInit {
 
       }
     };
+  }
+
+  submit() {
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+
+    console.log(JSON.stringify(this.submission));
+    if (this.countryOther) {
+      this.submission.data.country = this.countryOther;
+    }
+    if (this.denomOther) {
+      this.submission.data.denomination = this.denomOther;
+    }
+    if (this.geoOther) {
+      this.submission.data.geographic_area = this.geoOther;
+    }
+
+    this.submitService.submitOrgs(this.submission);
   }
 
 }
