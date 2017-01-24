@@ -227,15 +227,17 @@
                                 [(ngModel)]="submission.data.ethnicities.Middle_Eastern"> 
                             Middle-Eastern
                             </md-checkbox>
-                            <md-checkbox class="block-input" name="other"> Other...</md-checkbox>
-                        <div class="form-group" [hidden]="!other">
-                            <input type="text"
-                            id="personEthnicity"
-                            class="form-control" 
-                            [(ngModel)]="submission.data.ethnicities.other"
-                            name"personEthnicity"
-                            required/>
-                        </div>
+                            <md-checkbox class="block-input" name="other">
+                                <md-input-container class="full-width">
+                                    <input md-input mdInput type="text"
+                                    id="resourceTopic" 
+                                    class="form-control" 
+                                    [(ngModel)]="submission.data.ethnicities.Other"
+                                    name="resourceTopic"
+                                    required
+                                    placeholder="Other Ethnicities"/>
+                                </md-input-container>
+                        </md-checkbox>
                     </div>
 
                     <div class="form-group">
@@ -269,15 +271,17 @@
                                 ng-false-value="false"
                                 [(ngModel)]="submission.data.categories.Lead_Singer_from_Band_with_Other_Vocalists">
                             Lead Singer from Band with Other Vocalists</md-checkbox>
-                            <md-checkbox class="block-input" name="other">Other ...</md-checkbox>
-                            <div class="form-group" [hidden]="!other">
-                                <input type="text"
-                                id="personCategories" 
+                            <md-checkbox class="block-input" name="other">
+                                <md-input-container class="full-width">
+                                <input md-input mdInput type="text"
+                                id="resourceTopic" 
                                 class="form-control" 
-                                [(ngModel)]="submission.data.categories.other"
-                                name="personCategories"
-                                required/>
-                            </div>
+                                [(ngModel)]="submission.data.categories.Other"
+                                name="resourceTopic"
+                                required
+                                placeholder="Other Ensemble"/>
+                                </md-input-container>
+                            </md-checkbox>
                     </div>
           
                     <div>

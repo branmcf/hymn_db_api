@@ -11,6 +11,9 @@ import { ContentfulService } from './../../services/contentful.service';
 export class EntryOrgsComponent implements OnInit {
   content: JSON;
   submission: any;
+  countryOther: any;
+  denomOther: any;
+  geoOther: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
@@ -26,7 +29,6 @@ export class EntryOrgsComponent implements OnInit {
 
     this.submission = {
       type: 'Organization',
-      
       data: {
         name: '',
         url: '',
@@ -60,8 +62,23 @@ export class EntryOrgsComponent implements OnInit {
   }
 
   submit() {
-     // this.submitService.submitCongregation(this.submission);
+    // this.submitService.submitOrgs(this.submission);
+    // var userInfo = sessionStorage.getItem('userInfo');
+    // var obj = (JSON.parse(userInfo));
+
+    // this.submission.user = obj.first_name + ' ' + obj.last_name;
+    // this.submission.uid = obj.user_id;
+
     console.log(JSON.stringify(this.submission));
+    if (this.countryOther) {
+      this.submission.data.country = this.countryOther;
+    }
+    if (this.denomOther) {
+      this.submission.data.denomination = this.denomOther;
+    }
+    if (this.geoOther) {
+      this.submission.data.geographic_area = this.geoOther;
+    }
   }
 
 }

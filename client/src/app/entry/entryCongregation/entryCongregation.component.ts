@@ -14,6 +14,9 @@ export class EntryCongregationComponent {
   content: JSON;
   data: any;
   submission: any;
+  countryOtherText: string;
+  denomOther: string;
+  shapeOther: string;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -25,18 +28,12 @@ export class EntryCongregationComponent {
   ngOnInit() {
       this.contentful.getCongregationForm().then((content) => {
       this.content = JSON.parse(content);
-
-      this.submission = {}
-      this.submission.data = {};
-      this.submission.data.categories = {};
-      this.submission.data.instruments = {};
-      this.submission.data.ethnicities = {};
     });
 
     this.route.params.forEach(x => this.load(+x['user.id']));
 
     this.submission = {
-      type: '',
+      type: 'Congregation',
       user: '',
       uid: '',
       data: {
@@ -117,12 +114,21 @@ export class EntryCongregationComponent {
 
   submit() {
     // this.submitService.submitCongregation(this.submission);
-    var userInfo = sessionStorage.getItem('userInfo');
-    var obj = (JSON.parse(userInfo));
+    // var userInfo = sessionStorage.getItem('userInfo');
+    // var obj = (JSON.parse(userInfo));
 
-    this.submission.type = "Congregation";
-    this.submission.user = obj.first_name + ' ' + obj.last_name;
-    this.submission.uid = obj.user_id;
+    // this.submission.user = obj.first_name + ' ' + obj.last_name;
+    // this.submission.uid = obj.user_id;
+
+    if (this.countryOtherText) {
+      this.submission.data.country = this.countryOtherText;
+    }
+    if (this.denomOther) {
+      this.submission.data.denomination = this.denomOther;
+    }
+    if (this.shapeOther) {
+      this.submission.data.shape = this.shapeOther;
+    }
     console.log(this.submission);
   }
 

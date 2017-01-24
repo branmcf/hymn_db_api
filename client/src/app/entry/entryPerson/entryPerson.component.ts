@@ -52,7 +52,7 @@ export class EntryPersonComponent implements OnInit {
           Native_American_Indigenous_Peoples: false,
           Asian: false,
           Middle_Eastern: false,
-          other: ''
+          Other: ''
         },
         categories: {
 
@@ -61,7 +61,7 @@ export class EntryPersonComponent implements OnInit {
           Song_Enlivener: false,
           Solo: false,
           Lead_Singer_from_Band_with_Other_Vocalists: false,
-          other: ''
+          Other: ''
 
         }
       }

@@ -29,7 +29,17 @@
                                 <md-radio-button class="block-input" name="occurance" value="annual">Annual</md-radio-button>
                                 <md-radio-button class="block-input" name="occurance" value="every2yrs">Every-Other-Year (once every 2 years)</md-radio-button>
                                 <md-radio-button class="block-input" name="occurance" value="once">One Time Only</md-radio-button>
-                                <md-radio-button class="block-input" name="occurance" value="other">Other...</md-radio-button>
+                                <md-radio-button class="block-input" name="occurance" value="other">
+                                    <md-input-container class="full-width">
+                                        <input md-input mdInput type="text"
+                                        placeholder="Other occurance"
+                                        id="eventOccurance" 
+                                        class="form-control" 
+                                        [(ngModel)]="eventOccurance"
+                                        name="eventOccurance"
+                                        required/>
+                                    </md-input-container> 
+                                </md-radio-button>
                             </md-radio-group>
                             <div class="form-group" [hidden]="!other">
                                 <input type="text"

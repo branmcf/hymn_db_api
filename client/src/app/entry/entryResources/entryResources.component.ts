@@ -26,7 +26,7 @@ export class EntryResourcesComponent implements OnInit {
     this.route.params.forEach(x => this.load(+x['user.id']));
 
     this.submission = {
-      type: '',
+      type: 'Resource',
       user: '',
       uid: '',
       data: {
@@ -114,11 +114,12 @@ export class EntryResourcesComponent implements OnInit {
     var userInfo = sessionStorage.getItem('userInfo');
     var obj = (JSON.parse(userInfo));
 
-    this.submission.type = "Resource";
-    this.submission.user = obj.first_name + ' ' + obj.last_name;
-    this.submission.uid = obj.user_id;
-    this.submission.data.type = this.resourceTypeOther;
+    // this.submission.user = obj.first_name + ' ' + obj.last_name;
+    // this.submission.uid = obj.user_id;
+    if (this.resourceTypeOther)
+      this.submission.data.type = this.resourceTypeOther;
     console.log((this.submission));
+    // location.reload();
   }
 
 	next() {

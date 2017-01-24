@@ -9,8 +9,8 @@ import { ContentfulService } from './../../services/contentful.service';
 
 export class EntryEventComponent implements OnInit {
   content: JSON;
-  data: any;
   submission: any;
+  eventOccurance: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
@@ -62,6 +62,8 @@ export class EntryEventComponent implements OnInit {
 	submit() {
   	// this.router.navigate(['']);
     // this.submitService.submitCongregation(this.submission);
+    if(this.eventOccurance)
+      this.submission.data.occurance = this.eventOccurance;
     console.log(JSON.stringify(this.submission));
 	}
 }
