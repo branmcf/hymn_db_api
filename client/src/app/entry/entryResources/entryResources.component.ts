@@ -115,8 +115,8 @@ export class EntryResourcesComponent implements OnInit {
     var userInfo = sessionStorage.getItem('userInfo');
     var obj = (JSON.parse(userInfo));
 
-    // this.submission.user = obj.first_name + ' ' + obj.last_name;
-    // this.submission.uid = obj.user_id;
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
     if (this.resourceTypeOther) {
       this.submission.data.type = this.resourceTypeOther;
     }

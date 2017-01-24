@@ -114,11 +114,11 @@ export class EntryCongregationComponent {
 
   submit() {
     // this.submitService.submitCongregation(this.submission);
-    // var userInfo = sessionStorage.getItem('userInfo');
-    // var obj = (JSON.parse(userInfo));
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
 
-    // this.submission.user = obj.first_name + ' ' + obj.last_name;
-    // this.submission.uid = obj.user_id;
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
 
     if (this.countryOtherText) {
       this.submission.data.country = this.countryOtherText;
@@ -130,6 +130,7 @@ export class EntryCongregationComponent {
       this.submission.data.shape = this.shapeOther;
     }
     console.log(this.submission);
+    this.submitService.submitCongregation(this.submission);
   }
 
   next() {

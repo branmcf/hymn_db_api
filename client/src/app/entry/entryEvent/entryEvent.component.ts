@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
+
 
 @Component({
   selector: 'hymn-entry-event',
@@ -14,7 +16,8 @@ export class EntryEventComponent implements OnInit {
 
   constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 
   }
 
@@ -60,10 +63,18 @@ export class EntryEventComponent implements OnInit {
 
 
 	submit() {
-  	// this.router.navigate(['']);
-    // this.submitService.submitCongregation(this.submission);
-    if(this.eventOccurance)
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+
+    if(this.eventOccurance) {
       this.submission.data.occurance = this.eventOccurance;
-    console.log(JSON.stringify(this.submission));
+    }
+    console.log(this.submission);
+
+    this.submitService.submitEvent(this.submission);
+
 	}
 }

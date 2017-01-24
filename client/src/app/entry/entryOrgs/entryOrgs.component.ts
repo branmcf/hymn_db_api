@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
 
 
 @Component({
@@ -17,7 +18,8 @@ export class EntryOrgsComponent implements OnInit {
 
   constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 
   }
 
@@ -62,12 +64,11 @@ export class EntryOrgsComponent implements OnInit {
   }
 
   submit() {
-    // this.submitService.submitOrgs(this.submission);
-    // var userInfo = sessionStorage.getItem('userInfo');
-    // var obj = (JSON.parse(userInfo));
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
 
-    // this.submission.user = obj.first_name + ' ' + obj.last_name;
-    // this.submission.uid = obj.user_id;
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
 
     console.log(JSON.stringify(this.submission));
     if (this.countryOther) {
@@ -79,6 +80,8 @@ export class EntryOrgsComponent implements OnInit {
     if (this.geoOther) {
       this.submission.data.geographic_area = this.geoOther;
     }
+
+    this.submitService.submitOrgs(this.submission);
   }
 
 }
