@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS resource_instruments;
 DROP TABLE IF EXISTS resource_topics;
 DROP TABLE IF EXISTS resource_ensembles;
 DROP TABLE IF EXISTS resource_ethnicities; 
+DROP TABLE IF EXISTS resource_Accompaniment;
 
 DROP TABLE IF EXISTS organization_tags; 
 DROP TABLE IF EXISTS organization_song_types;
@@ -73,6 +74,8 @@ DROP TABLE IF EXISTS Languages;
 DROP TABLE IF EXISTS Resource_Types;
 DROP TABLE IF EXISTS Authors;
 
+DROP TABLE IF EXISTS Accompaniment;
+
 DROP TABLE IF EXISTS Ethnicities;
 DROP TABLE IF EXISTS Cong_Types;
 DROP TABLE IF EXISTS Worship_Types;
@@ -96,7 +99,11 @@ SET FOREIGN_KEY_CHECKS=1;
 */
 
 
-
+CREATE TABLE Accompaniment (
+	id int unsigned not null auto_increment,
+	name varchar(128),
+	PRIMARY KEY (id) 
+);
 
 
 CREATE TABLE Tags (
@@ -430,6 +437,15 @@ CREATE TABLE event_event_types (
 - INTERMEDIATE TABLES FOR RESOURCES -
 =================================================== 
 */
+
+CREATE TABLE resource_accompaniment (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
+	accompaniment_id int unsigned,
+	FOREIGN KEY (accompaniment_id) REFERENCES Accompaniment (id)
+);
 
 CREATE TABLE resource_tags (
 	id int unsigned not null auto_increment,

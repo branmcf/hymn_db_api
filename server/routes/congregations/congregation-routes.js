@@ -40,11 +40,11 @@ function getCongregations() {
       congs.push(JSObj);
       numCongs = congs[0].length;
 
-      getInter("Denominations", "congregations", "congregation_denominations", "denomination_id", "congregation_id", congDen, numCongs);
-      getInter("Cong_Types",    "congregations",   "congregation_types" ,"congregation_type_id", "congregation_id", congCategories, numCongs);
-      getInter("Instrument_Types", "congregations", "congregation_instrument_types", "instrument_type_id", "congregation_id", congInstr, numCongs);
-      getInter("Ethnicities",  "congregations", "congregation_ethnicities",  "ethnicity_id", "congregation_id", congEth, numCongs);
-      getInter("Tags", "congregations", "congregation_tags", "tag_id", "congregation_id", congTags, numCongs);
+      getInter("Denominations", 	"congregations", "congregation_denominations", 		"denomination_id", 		"congregation_id", congDen, numCongs);
+      getInter("Cong_Types",    	"congregations", "congregation_types" ,				"congregation_type_id", "congregation_id", congCategories, numCongs);
+      getInter("Instrument_Types", 	"congregations", "congregation_instrument_types", 	"instrument_type_id", 	"congregation_id", congInstr, numCongs);
+      getInter("Ethnicities",  		"congregations", "congregation_ethnicities",  		"ethnicity_id", 			"congregation_id", congEth, numCongs);
+      getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
 
 
 
@@ -93,9 +93,9 @@ function formatCongregation(actualIndex) {
     url:            congs[0][actualIndex].website,
     //denominations
     denominations:  congDen[actualIndex],
-    city_id:        congs[0][actualIndex].city_id,
-    state_id:       congs[0][actualIndex].state_id,
-    country_id:     congs[0][actualIndex].country_id,
+    city:        congs[0][actualIndex].city,
+    state:       congs[0][actualIndex].state,
+    country:     congs[0][actualIndex].country,
     hymn_soc_member:congs[0][actualIndex].hymn_soc_member,
     //categories
     categories:     congCategories[actualIndex],

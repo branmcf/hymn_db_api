@@ -156,13 +156,14 @@ eventController.postConfig = {
   	},
   handler: function(req, reply) {
 
+
     var newEvent = { 
-      title: 		req.payload.event_title, 
-      website: 		req.payload.website, 
+      title: 		req.payload.title, 
+      website: 		req.payload.url, 
       description: 	req.payload.description,
       theme: 		req.payload.theme,
-      parent: 		req.payload.parent_org_id,
-      topic: 		req.payload.topic,
+      //parent_org_id: 		req.payload.parent_org_id,
+      //topic: 		req.payload.topic,
       cost: 		req.payload.cost,
       city: 		req.payload.city,
       state: 		req.payload.state,
@@ -201,9 +202,9 @@ eventController.postConfig = {
   validate: {
     payload: {
       title: Joi.string().required(),
-      website: Joi.string().required(),
+      url: Joi.string().required(),
       description: Joi.string().required(),
-      theme: Joi.string().required()
+      topic: Joi.string().required()
     }
   }
 
