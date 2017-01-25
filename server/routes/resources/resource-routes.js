@@ -1,5 +1,7 @@
 var Joi = require('joi')
-var mysql = require('mysql')
+//var mysql = require('mysql')
+
+var mysql = require('promise-mysql');
 
 var options = require('../../config/config.js');
 
@@ -9,9 +11,29 @@ var connection = mysql.createConnection({
   user     : options.user,
   password : options.password,
   database : options.database
+}).then(function(conn) {
+	
+	connection = conn;
+
+	getResources();
+
+	return connection.query('select `city` from events');
+
+}).then(function(rows) {
+	console.log("2nd then:\n", rows);
+    // Query the items for a ring that Frodo owns. 
+	return connection.query('select * from organizations where `city`="' + rows[0].city + '" and `state`="Arkansas"');
+
+}).then(function(rows) {
+	console.log("3rd then:\n", rows);
+
+}).catch(function(error){
+    //logs out the error 
+    console.log(error);
 });
 
-connection.connect();
+
+
 
 resourceController = {};
 var resources = [];
@@ -23,7 +45,7 @@ var resources = [];
   var resEth = [];
   var resAcc = [];
 
-getResources();
+//getResources();
 
 
 
@@ -62,11 +84,13 @@ function getResources() {
   connection.query(`SELECT * from resources`, function(err, rows, fields) {
             //need type, topics, accompaniment, tags, ethnicities
     if (!err) {
-    	console.log("got a resource");
+    	console.log("got resources");
 
       	var JSObj = rowsToJS(rows);       
       
       	resources.push(JSObj);
+
+      	console.log("resources: ", resources[0]);
 
       	numRes = resources[0].length;
 
@@ -222,16 +246,98 @@ resourceController.postConfig = {
 	//NOW FORMAT DATA FOR THE RIGHT TABLES
     */
 
+    function insertResource() {
+
+    }
+
+    function getIDAttribute() {
+
+    }
+
+    function insertIntoMiddle() {
+
+    }
+
+
+    /*
+
+    addResources(theData);
+
+    function addResources(theObj) {
+    	 
+
+		var noEth = JSON.parse(JSON.stringify(theObj));
+		delete noEth.ethnicities;
+		
+
+    	//1. Insert into resources
+    	var query = connection.query('INSERT INTO resources SET ?', 
+		noEth, function (err, rows) {
+			if(err) { throw new Error(err); return; }
+
+			resources[0].push(newRes);
+			
+			//2a. get ethnicity ID
+			var ethIDs = [];
+			for(var i=0; i< theObj.ethnicities.length; i++) {
+				var temp = getIDEth(theObj, i);
+				console.log("temp: ", temp)
+				ethIDs.push(temp);
+				console.log("ethIDs[",i,"] = ", ethIDs[i])
+			}
+
+			//2b. insert into middle table
+			var toInsert = {ethnicity_id: ethIDs[0],resource_id: resources[0].length}
+			var query = connection.query(`INSERT INTO resource_ethnicities SET ?`, 
+			toInsert, function (err, rows) {
+				if(err) { throw new Error(err); return; }
+
+				console.log("query: ", query.sql);
+
+				returnReply();		
+		
+			});
+
+			
+		});//end connection 1
+    };
+
+    function getIDEth(theObj, whichIndex, callback) {
+    	//console.log("theObj.ethnicities[whichIndex]:", theObj.ethnicities[whichIndex]);
+
+    	var eths = theObj.ethnicities[whichIndex];	
+    	//console.log("eths.name:", eths.name);
+
+    	var ethIDs = 0;
+
+    	
+		//2a
+		connection.query(`SELECT id from ethnicities WHERE name = ?`, 
+		eths.name, function (err, rows) {
+			if(err) { throw new Error(err); return; }
+			ethIDs = rows[0].id;
+			console.log("ethIDs: ",ethIDs);
+
+			//return ethIDs;
+		});
+
+		if(ethIDs != 0)
+			return ethIDs;
+		else
+			return 1;
+	    	
+
+    	//done
+    	
+    };
+    */
+
+
     //1. Resources Table
     //now delete rows for db entry
-	var toDb = theData;
-	delete toDb.ethnicities; 
+	
 
-    var query = connection.query('INSERT INTO resources SET ?', 
-		theData, function (err, rows) {
-			if(err) { throw new Error(err); return; }
-					
-	});
+    
     //2. Categories Table && resource_resource_types Table
     //3. Topics Table && resource_topics Table
     //4. Accompaniment Table && resource_accompaniment Table
@@ -239,6 +345,7 @@ resourceController.postConfig = {
     //6. Ensembles Table
     //7. Ethnicities Table
     	//get id of the ethnicities
+    	/*
     	var ethIDs = [];
 
     	for(var i = 0; i < newRes.data.ethnicities.length; i++) {
@@ -264,13 +371,14 @@ resourceController.postConfig = {
 				});
     		}
     	};
-    	
+    	*/
     	
 		
 		   
 
     // mysql
     //connection.connect();
+/*
     connection.query(
       'INSERT INTO resources SET ?', toDb,
       function(err, rows) {
@@ -290,10 +398,12 @@ resourceController.postConfig = {
         
       }
     );
+*/
     //end mysql
 
     
-    //reply(newRes);
+    return reply('SUCCESSFULLY ENTERED INTO RESOURCES');
+	
   },
   validate: {
     payload: {
