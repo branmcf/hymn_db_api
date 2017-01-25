@@ -31,46 +31,130 @@ getResources();
 function insertResource(theObj) {
 	var noEth = JSON.parse(JSON.stringify(theObj));
 	delete noEth.ethnicities;
+	delete noEth.authors;
+	delete noEth.parents;
+	delete noEth.categories;
+	delete noEth.topics;
+	delete noEth.accompaniment;
+	delete noEth.languages;
+	delete noEth.ensembles;
 
 	connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
         if(err) { throw err; }
         
         var JSObj = rowsToJS(theObj);
         
-        resources.push(JSObj); 
+        resources[0].push(JSObj); 
 
-        getIDAttribute(theObj, 0);    
+        //console.log("NOW RESOURCES.LENGTH IS: ", resources[0].length);
+
+        //for multiple ethnicities
+        for(var i=0; i< theObj.ethnicities.length; i++) {
+        	getID_left(theObj, i, "ethnicities", "ethnicity_id");   
+    	}
+
+    	for(var i=0; i< theObj.authors.length; i++) {
+    		getID_left(theObj, i, "authors", "author_id");
+
+    	}
+
+        //getIDAttribute(theObj, 1);
     });
 }
 
-function getIDAttribute(theObj, whichIndex) {
+function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	console.log("done with insertResource()");
 
-	var ethName = theObj.ethnicities[whichIndex].name;	
+	switch(tableName) {
+		case "ethnicities":
+			var attributeName = theObj.ethnicities[whichIndex].name;	break;
+		case "tags": 
+			var attributeName = theObj.tags[whichIndex].name;	break; 
+		case "types": 
+			var attributeName = theObj.types[whichIndex].name;	 break;
+		case "resource_types": 
+			var attributeName = theObj.types[whichIndex].name;	 break;
+		case "ensembles": 
+			var attributeName = theObj.ensembles[whichIndex].name;	 break;
+		case "authors": 
+			var attributeName = theObj.authors[whichIndex].name;	 break;
+		case "denominations": 
+			var attributeName = theObj.denominations[whichIndex].name;	 break;
+		case "instruments": 
+			var attributeName = theObj.instruments[whichIndex].name;	 break;
+		case "instrument_types": 
+			var attributeName = theObj.instruments[whichIndex].name;	 break;
+		case "topics": 
+			var attributeName = theObj.topics[whichIndex].name;	 break;
+		case "accompaniment": 
+			var attributeName = theObj.accompaniment[whichIndex].name;	 break;
+		default:
+			console.log("INVALID TABLE NAME SENT for ",tableName);
+			break;
+	}//end switch
 	
-	console.log("ethName:", ethName);
+	console.log("attributeName:", attributeName);
 
 	var theID = 0;
 
 	//2a
-	connection.query(`SELECT id from ethnicities WHERE name = ?`, 
-	ethName, function (err, rows) {
+	connection.query(`SELECT id from ${tableName} WHERE name = ?`, 
+	attributeName, function (err, rows) {
 		if(err) { throw new Error(err); return; }
 		theID = rows[0].id;
 		console.log("theID: ",theID);
 
-		insertMiddle(theID);
+		insertMiddle(theID, tableName, left_table_id);
 
 	});
 
 	
 }
 
-function insertMiddle(theID) {
+function insertMiddle(theID, tableName, left_table_id) {
 	//2b. insert into middle table
-	var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
+	//console.log("\nABOUT TO INSERT FOR RESOURCE #", resources[0].length, "\n");
+	switch(tableName) {
+		case "ethnicities":
+			var midTable = "resource_ethnicities";
+			var toInsert = {ethnicity_id: theID,resource_id: resources[0].length};	break;
+		case "tags": 
+			var midTable = "resource_tags";
+			var toInsert = {tag_id: theID,resource_id: resources[0].length};	break;
+		case "types": 
+			var midTable = "resource_resource_types";
+			var toInsert = {resource_type_id: theID,resource_id: resources[0].length};	break;
+		case "resource_types": 
+			var midTable = "resource_resource_types";
+			var toInsert = {resource_type_id: theID,resource_id: resources[0].length};	break;
+		case "ensembles": 
+			var midTable = "resource_ensembles";
+			var toInsert = {ensemble_id: theID,resource_id: resources[0].length};	break;
+		case "authors": 
+			var midTable = "resource_authors";
+			var toInsert = {author_id: theID,resource_id: resources[0].length};	break;
+		case "denominations": 
+			var midTable = "resource_denominations";
+			var toInsert = {denomination_id: theID,resource_id: resources[0].length};	break;
+		case "instruments": 
+			var midTable = "resource_instruments";
+			var toInsert = {instrument_type_id: theID,resource_id: resources[0].length};	break;
+		case "instrument_types": 
+			var midTable = "resource_instruments";
+			var toInsert = {instrument_type_id: theID,resource_id: resources[0].length};	break;
+		case "topics": 
+			var midTable = "resource_topics";
+			var toInsert = {topic_id: theID,resource_id: resources[0].length};	break;
+		case "accompaniment": 
+			var midTable = "resource_accompaniment";
+			var toInsert = {accompaniment_id: theID,resource_id: resources[0].length};	break;
+		default:
+			console.log("INVALID TABLE NAME SENT for ",tableName);
+			break;
+	}
+	//var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
 	console.log("\nTO INSERT: \n", toInsert);
-	var query = connection.query(`INSERT INTO resource_ethnicities SET ?`, 
+	var query = connection.query(`INSERT INTO ${midTable} SET ?`, 
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
 
@@ -114,6 +198,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 
 //get Resources
 function getResources() {
+
   //get RESOURCES from db
   connection.query(`SELECT * from resources`, function(err, rows, fields) {
             //need type, topics, accompaniment, tags, ethnicities
@@ -240,25 +325,32 @@ resourceController.getConfig = {
 
 //RESOURCE POST REQUEST
 resourceController.postConfig = {
+
+	
+
 	auth: {
   		mode: 'try'
   	},
 
   handler: function(req, reply) {
 
+  	getResources();
+
   	var theResourceID = resources.length+1;
 
     var theData = { 
       title: 			req.payload.title, 
       website: 			req.payload.url, 
-      //author: 			req.payload.author,
-      //parent: req.payload.parent,
+      authors: 			req.payload.authors,
+      
+      parent: 			req.payload.parent,
+
       description: 		req.payload.description,
-      //categories: req.payload.categories,
-      //topic: 			req.payload.topic,
-      //accompaniment: 	req.payload.accompaniment,
-      //languages: 		req.payload.languages,
-      //ensembles : 		req.payload.ensembles,
+      categories: req.payload.categories,
+      topics: 			req.payload.topic,
+      accompaniment: 	req.payload.accompaniment,
+      languages: 		req.payload.languages,
+      ensembles : 		req.payload.ensembles,
       ethnicities : 	req.payload.ethnicities,
       hymn_soc_member: 	req.payload.hymn_soc_member,
       is_free: 			req.payload.is_free,
@@ -434,7 +526,9 @@ resourceController.postConfig = {
       title: Joi.string().required(),
       website: Joi.string().required(),
       description: Joi.string().required(),
-      ethnicities: Joi.array().sparse()
+      ethnicities: Joi.array().sparse(),
+      authors: Joi.array().sparse()
+      //categories: Joi.array().sparse()
       //is_free: Joi.string().required()
     }
   }
