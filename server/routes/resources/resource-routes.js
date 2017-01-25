@@ -1,7 +1,7 @@
 var Joi = require('joi')
-//var mysql = require('mysql')
+var mysql = require('mysql')
 
-var mysql = require('promise-mysql');
+//var mysql = require('promise-mysql');
 
 var options = require('../../config/config.js');
 
@@ -11,25 +11,6 @@ var connection = mysql.createConnection({
   user     : options.user,
   password : options.password,
   database : options.database
-}).then(function(conn) {
-	
-	connection = conn;
-
-	getResources();
-
-	return connection.query('select `city` from events');
-
-}).then(function(rows) {
-	console.log("2nd then:\n", rows);
-    // Query the items for a ring that Frodo owns. 
-	return connection.query('select * from organizations where `city`="' + rows[0].city + '" and `state`="Arkansas"');
-
-}).then(function(rows) {
-	console.log("3rd then:\n", rows);
-
-}).catch(function(error){
-    //logs out the error 
-    console.log(error);
 });
 
 
@@ -45,7 +26,60 @@ var resources = [];
   var resEth = [];
   var resAcc = [];
 
-//getResources();
+getResources();
+
+function insertResource(theObj) {
+	var noEth = JSON.parse(JSON.stringify(theObj));
+	delete noEth.ethnicities;
+
+	connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
+        if(err) { throw err; }
+        
+        var JSObj = rowsToJS(theObj);
+        
+        resources.push(JSObj); 
+
+        getIDAttribute(theObj, 0);    
+    });
+}
+
+function getIDAttribute(theObj, whichIndex) {
+	console.log("done with insertResource()");
+
+	var ethName = theObj.ethnicities[whichIndex].name;	
+	
+	console.log("ethName:", ethName);
+
+	var theID = 0;
+
+	//2a
+	connection.query(`SELECT id from ethnicities WHERE name = ?`, 
+	ethName, function (err, rows) {
+		if(err) { throw new Error(err); return; }
+		theID = rows[0].id;
+		console.log("theID: ",theID);
+
+		insertMiddle(theID);
+
+	});
+
+	
+}
+
+function insertMiddle(theID) {
+	//2b. insert into middle table
+	var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
+	console.log("\nTO INSERT: \n", toInsert);
+	var query = connection.query(`INSERT INTO resource_ethnicities SET ?`, 
+	toInsert, function (err, rows) {
+		if(err) { throw new Error(err); return; }
+
+		console.log("query: ", query.sql);
+
+	});
+}
+
+
 
 
 
@@ -90,7 +124,7 @@ function getResources() {
       
       	resources.push(JSObj);
 
-      	console.log("resources: ", resources[0]);
+      	//console.log("resources: ", resources[0]);
 
       	numRes = resources[0].length;
 
@@ -246,17 +280,7 @@ resourceController.postConfig = {
 	//NOW FORMAT DATA FOR THE RIGHT TABLES
     */
 
-    function insertResource() {
-
-    }
-
-    function getIDAttribute() {
-
-    }
-
-    function insertIntoMiddle() {
-
-    }
+    insertResource(theData);
 
 
     /*
