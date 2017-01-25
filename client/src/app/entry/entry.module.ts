@@ -2,8 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { MaterialModule } from '@angular/material';
 import { Routing, RootComponent } from './../routes';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { EntryComponent } from './entryLogin/entryLogin.component';
@@ -37,18 +38,20 @@ import { UserService } from '../services/user.service';
     CommonModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HeaderModule,
+    MaterialModule.forRoot(),
     SharedModule,
     RouterModule.forRoot([
       { path: 'entry', component: EntryComponent },
-      { path: 'entry/welcome', component: EntryLandingComponent },
-      { path: 'entry/resources', component: EntryResourcesComponent },
-      { path: 'entry/person', component: EntryPersonComponent },
-      { path: 'entry/congregations', component: EntryCongregationComponent },
-      { path: 'entry/orgs', component: EntryOrgsComponent },
-      { path: 'entry/events', component: EntryEventComponent },
-      { path: 'entry/review', component: EntryReviewComponent },
+      { path: 'entry/welcome', component: EntryLandingComponent, canActivate: [UserService] },
+      { path: 'entry/resources', component: EntryResourcesComponent, canActivate: [UserService] },
+      { path: 'entry/person', component: EntryPersonComponent, canActivate: [UserService] },
+      { path: 'entry/congregations', component: EntryCongregationComponent, canActivate: [UserService] },
+      { path: 'entry/orgs', component: EntryOrgsComponent, canActivate: [UserService] },
+      { path: 'entry/events', component: EntryEventComponent, canActivate: [UserService] },
+      { path: 'entry/review', component: EntryReviewComponent, canActivate: [UserService] },
     ])
   ],
   providers: [
