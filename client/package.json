@@ -111,5 +111,9 @@
     "extends": [
       "xo-space/esnext"
     ]
+  },
+  "engines": {
+    "node": "6.3.0",
+    "npm": "4.0.5"
   }
 }
