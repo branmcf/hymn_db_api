@@ -9,14 +9,14 @@ export class UserService implements CanActivate {
 
     constructor(private http: Http){}
 
-    get(user_id : number) : Promise<any> {
-		return this.http
-			.get(`${this._apiUrl}/user/${user_id}`)
-			.toPromise()
-			.then(x => x['_body'] as any);
+    get(user_id: number): Promise<any> {
+        return this.http
+            .get(`${this._apiUrl}/user/${user_id}`)
+            .toPromise()
+            .then(x => x['_body'] as any);
     }
 
-    login(user) : Promise<any> {
+    login(user): Promise<any> {
         return this.http
             .post(this._apiUrl + '/login', user)
             .toPromise()
@@ -24,12 +24,12 @@ export class UserService implements CanActivate {
     }
 
     private extractData(res: Response) {
-        let body = res['_body'];
+        const body = res['_body'];
         return body || {};
     }
 
     canActivate() {
-        var userInfo = sessionStorage.getItem('userInfo');
+        const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) {
             return true;
         }
