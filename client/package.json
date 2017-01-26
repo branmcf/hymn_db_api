@@ -1,4 +1,7 @@
 {
+  "name": "hymndb-client",
+  "version": "0.0.0",
+  "license": "MIT",
   "dependencies": {
     "@angular/common": "^2.4.2",
     "@angular/compiler": "^2.4.2",
