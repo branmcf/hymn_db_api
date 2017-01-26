@@ -25,7 +25,7 @@ server.connection({
   port: 3000
 })
 
-
+/*
 
 // register plugins to server instance
 server.register([ Vision, BasicAuth, CookieAuth,
@@ -59,9 +59,7 @@ server.register([ Vision, BasicAuth, CookieAuth,
 
   server.log('info', 'Plugins registered')
 
-  /**
-   * view configuration
-   */
+  
   server.views({
     engines: {
       html: Handlebars
@@ -155,6 +153,47 @@ server.register([ Vision, BasicAuth, CookieAuth,
     server.log('info', 'Server running at: ' + server.info.uri)
   })
 });
+*/
+//
+
+
+var routesArray = []
+
+  //var routes = require('./routes.js')
+  //routesArray.push(routes)
+
+  routes = require('./routes/congregations/congregation-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/events/event-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/organizations/organization-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/resources/resource-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/users/user-routes')
+  routesArray.push(routes)
+
+  for(var i=0; i < routesArray.length; i++) {
+    server.route(routesArray[i])
+  }
+
+server.start(function (err) {
+    if (err) {
+      server.log('error', 'failed to start server')
+      server.log('error', err)
+
+      throw err
+    }
+
+    server.log('info', 'Server running at: ' + server.info.uri)
+});
+
+
+
 
 
 

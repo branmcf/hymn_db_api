@@ -151,9 +151,7 @@ eventController.getConfig = {
 
 //EVENT POST REQUEST
 eventController.postConfig = {
-	auth: {
-  		mode: 'try'
-  	},
+	
   handler: function(req, reply) {
 
 

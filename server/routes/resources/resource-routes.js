@@ -353,12 +353,6 @@ resourceController.getConfig = {
 //RESOURCE POST REQUEST
 resourceController.postConfig = {
 
-	
-
-	auth: {
-  		mode: 'try'
-  	},
-
   handler: function(req, reply) {
 
   	getResources();

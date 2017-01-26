@@ -179,10 +179,6 @@ userController.getConfig = {
 
 //USER POST REQUEST
 userController.postConfig = {
-  
-  auth: {
-      mode: 'try'
-  },
 
   handler: function(req, reply) {
 
