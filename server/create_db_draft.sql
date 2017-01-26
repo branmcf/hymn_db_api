@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS resource_topics;
 DROP TABLE IF EXISTS resource_ensembles;
 DROP TABLE IF EXISTS resource_ethnicities; 
 DROP TABLE IF EXISTS resource_Accompaniment;
+DROP TABLE IF EXISTS resource_languages;
 
 DROP TABLE IF EXISTS organization_tags; 
 DROP TABLE IF EXISTS organization_song_types;
@@ -437,6 +438,15 @@ CREATE TABLE event_event_types (
 - INTERMEDIATE TABLES FOR RESOURCES -
 =================================================== 
 */
+
+CREATE TABLE resource_languages(
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
+	language_id int unsigned,
+	FOREIGN KEY (language_id) REFERENCES Languages (id)
+);
 
 CREATE TABLE resource_accompaniment (
 	id int unsigned not null auto_increment,
