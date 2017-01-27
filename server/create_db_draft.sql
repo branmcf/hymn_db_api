@@ -3,6 +3,8 @@ SET FOREIGN_KEY_CHECKS=0;
 /*
 DROP TABLE IF EXISTS event_table;
 DROP TABLE IF EXISTS Event_Table;
+
+
 */
 
 DROP TABLE IF EXISTS congregation_tags;
@@ -99,10 +101,17 @@ SET FOREIGN_KEY_CHECKS=1;
 =================================================== 
 */
 
+CREATE TABLE Resource_Categories (
+	id int unsigned not null auto_increment,
+	name varchar(128),
+	other_text varchar(256),
+	PRIMARY KEY (id) 
+);
 
 CREATE TABLE Accompaniment (
 	id int unsigned not null auto_increment,
 	name varchar(128),
+	other_text varchar(256),
 	PRIMARY KEY (id) 
 );
 
@@ -114,6 +123,7 @@ CREATE TABLE Tags (
 	/* maybe link to other tables like congregation types? */
 );
 
+/*
 CREATE TABLE Authors (
 	id int unsigned auto_increment,
 	name varchar(128), 
@@ -121,10 +131,12 @@ CREATE TABLE Authors (
 	website varchar(128),
 	email varchar(64)
 );
+*/
 
 CREATE TABLE Resource_Types (
 	id int unsigned auto_increment,
 	name varchar(128), 
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
@@ -132,66 +144,77 @@ CREATE TABLE Resource_Types (
 CREATE TABLE Languages (
 	id int unsigned auto_increment,
 	name varchar(128), 
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Topics (
 	id int unsigned auto_increment,
-	name varchar(128), 
+	name varchar(128),
+	other_text varchar(256), 
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Ensembles (
 	id int unsigned auto_increment,
-	name varchar(128), 
+	name varchar(128),
+	other_text varchar(256), 
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Parent_Org (
 	id int unsigned auto_increment,
 	name varchar(128), 
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 	
 CREATE TABLE Event_Types (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Denominations (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Song_Types (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Instrument_Types (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Worship_Types (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Cong_Types (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Ethnicities (
 	id int unsigned auto_increment,
 	name varchar(64),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
@@ -231,7 +254,7 @@ CREATE TABLE congregations (
 CREATE TABLE events(
 	id int unsigned auto_increment,
 	PRIMARY KEY(id),
-	title varchar(128),
+	name varchar(128),
 	website varchar(128),
 	frequency varchar(64),
 	theme varchar(128),
@@ -257,7 +280,7 @@ CREATE TABLE events(
 CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
-	title varchar(128),
+	name varchar(128),
 	website varchar(128),
 	hymn_soc_member boolean default False,
 	is_free boolean default False,
@@ -266,6 +289,7 @@ CREATE TABLE resources (
 	views int unsigned,
 	resource_date timestamp,
 	
+	author varchar(128),
 	high_level boolean default False,
     is_active boolean default True,
 
@@ -439,6 +463,15 @@ CREATE TABLE event_event_types (
 =================================================== 
 */
 
+CREATE TABLE resource_resource_categories (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	resource_id int unsigned,
+	FOREIGN KEY (resource_id) REFERENCES resources (id),
+	resource_category_id int unsigned,
+	FOREIGN KEY (resource_category_id) REFERENCES Resource_Categories (id)
+);
+
 CREATE TABLE resource_languages(
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
@@ -466,6 +499,7 @@ CREATE TABLE resource_tags (
 	FOREIGN KEY (tag_id) REFERENCES Tags (id)
 );
 
+/*
 CREATE TABLE resource_authors (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
@@ -474,6 +508,7 @@ CREATE TABLE resource_authors (
 	author_id int unsigned,
 	FOREIGN KEY (author_id) REFERENCES Authors (id)
 );
+*/
 
 CREATE TABLE resource_resource_types (
 	id int unsigned not null auto_increment,

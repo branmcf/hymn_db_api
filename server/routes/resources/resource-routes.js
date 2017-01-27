@@ -54,9 +54,9 @@ function insertResource(theObj) {
         //console.log("NOW RESOURCES.LENGTH IS: ", resources[0].length);
 
         //for multiple ethnicities
-        for(var i=0; i< theObj.ethnicities.length; i++) {
-        	getID_left(theObj, i, "Ethnicities", "ethnicity_id");   
-    	  }
+      for(var i=0; i< theObj.ethnicities.length; i++) {
+      	getID_left(theObj, i, "Ethnicities", "ethnicity_id");   
+  	  }
 
     	//for multiple CATEGORIES
     	for(var i=0; i< theObj.categories.length; i++) {
@@ -116,8 +116,8 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 		case "Denominations": 
 			var attributeName = theObj.denominations[whichIndex].name;	 
 			break;
-		case "Instruments": 
-			var attributeName = theObj.instruments[whichIndex].name;	 
+		case "Languages": 
+			var attributeName = theObj.languages[whichIndex].name;	 
 			break;
 		case "Instrument_Types": 
 			var attributeName = theObj.instruments[whichIndex].name;	 
@@ -141,7 +141,11 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	connection.query(`SELECT id from ${tableName} WHERE name = ?`, 
 	attributeName, function (err, rows) {
 		if(err) { throw new Error(err); return; }
-		mid_table_id = rows[0].id;
+		
+    console.log("=========================");
+    console.log("=========================")
+
+    mid_table_id = rows[0].id;
 		console.log("theID: ",mid_table_id);
 
     if(mid_table_id != 0) {
@@ -180,9 +184,9 @@ function insertMiddle(theID, tableName, left_table_id) {
 		case "Denominations": 
 			var midTable = "resource_denominations";
 			var toInsert = {denomination_id: theID,resource_id: resources[0].length};	break;
-		case "Instruments": 
-			var midTable = "resource_instruments";
-			var toInsert = {instrument_type_id: theID,resource_id: resources[0].length};	break;
+		case "Languages": 
+			var midTable = "resource_languages";
+			var toInsert = {language_id: theID,resource_id: resources[0].length};	break;
 		case "Instrument_Types": 
 			var midTable = "resource_instruments";
 			var toInsert = {instrument_type_id: theID,resource_id: resources[0].length};	break;
@@ -311,7 +315,8 @@ function formatResource(actualIndex) {
     //ethnicities
     ethnicities:    resEth[actualIndex],
     //eth id
-    is_free:        resources[0][actualIndex].is_free
+    is_free:        resources[0][actualIndex].is_free,
+    languages:      resLanguages[actualIndex]
 
   };
 
@@ -381,7 +386,7 @@ resourceController.postConfig = {
   	var theResourceID = resources.length+1;
 
     var theData = { 
-      title: 			    req.payload.title, //
+      name: 			    req.payload.title, //
       website: 			  req.payload.url,  //
       author: 			  req.payload.author, //
       
@@ -416,9 +421,9 @@ resourceController.postConfig = {
 	//NOW FORMAT DATA FOR THE RIGHT TABLES
     */
 
-    //insertResource(theData);
+    insertResource(theData);
 
-    JUSTUGH(theData);
+    //JUSTUGH(theData); <= for testing inserting into resources
 
 
     /*
@@ -565,7 +570,7 @@ resourceController.postConfig = {
 
     var toReturn = {
 
-    	resource_id: users[0].length
+    	resource_id: resources[0].length
     }
     
     return reply(toReturn);
@@ -578,12 +583,12 @@ resourceController.postConfig = {
       description: Joi.string().required(),
       author: 	Joi.string().allow(''),
 
-      ethnicities: Joi.object(),
-      categories: Joi.object(),
-      topic: 	Joi.object(),
-      accompaniment: Joi.object(),
-      languages: Joi.object(),
-      ensembles: Joi.object(),
+      ethnicities: Joi.array().allow(''),
+      categories: Joi.array().allow(''),
+      topic: 	Joi.array().allow(''),
+      accompaniment: Joi.array().allow(''),
+      languages: Joi.array().allow(''),
+      ensembles: Joi.array().allow(''),
       //is_free: Joi.string().required()
       parent: 	Joi.string().allow(''),
       hymn_soc_member: Joi.string().allow(''),
@@ -598,10 +603,14 @@ function JUSTUGH(theObj) {
 
 	console.log("inserting resource");
 
-	getResources();
+	//getResources();
 
 	var noEth = JSON.parse(JSON.stringify(theObj));
-	delete noEth.ethnicities;
+	//change title to name!
+
+
+
+  delete noEth.ethnicities;
 	//delete noEth.author;
 	//delete noEth.parents;
 	delete noEth.categories;
@@ -611,7 +620,7 @@ function JUSTUGH(theObj) {
 	delete noEth.ensembles;
 
 
-	connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
+	var query = connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
         if(err) { throw err; }
         
         console.log(query.sql);
