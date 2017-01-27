@@ -37,6 +37,7 @@ function getUsers() {
   connection.query(`SELECT 
     id, 
     email, 
+    password,
     first_name, 
     last_name, 
     reg_date, 
@@ -279,11 +280,55 @@ userController.postConfig = {
 
 };
 
+userController.loginConfig = {
+
+  handler: function(req, reply) {
+
+    getUsers();
+
+    console.log("BEGIN LOGIN");
+
+    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+
+    var newUser = { 
+      email:      req.payload.email,  
+      password:   req.payload.password
+    };
+
+
+    for(var i=0; i< users[0].length; i++) {
+      if(users[0][i].email == newUser.email &&
+         users[0][i].password == newUser.password) {
+
+        console.log("found matching user");
+
+        var toReturn = {
+          id: users[0][i].id,
+          first_name: users[0][i].first_name,
+          last_name: users[0][i].last_name
+        }
+
+        reply(toReturn);
+      }//end if statement
+    }
+
+  },
+
+  validate: {
+    payload: {
+      email: Joi.string().required(),
+      password: Joi.string().min(4).max(64).required()
+    }
+  }
+
+}
+
 
 
 
 module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
-	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig }
+	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig },
+  { path: '/login', method: 'POST', config: userController.loginConfig}
   
 ];

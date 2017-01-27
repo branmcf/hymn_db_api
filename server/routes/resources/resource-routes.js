@@ -19,25 +19,30 @@ var connection = mysql.createConnection({
 resourceController = {};
 var resources = [];
   var numRes = 0;
-  var resTypes = [];
+  //var resTypes = [];
+  var resCategories = [];
   var resTopics =[];
   var resAcc = [];
-  var resTags = [];
+  var resLanguages = [];
+  //var resTags = [];
+  var resEnsembles = [];
   var resEth = [];
-  var resAcc = [];
+
+
 
 getResources();
 
 function insertResource(theObj) {
 	var noEth = JSON.parse(JSON.stringify(theObj));
-	delete noEth.ethnicities;
-	delete noEth.authors;
-	delete noEth.parents;
-	delete noEth.categories;
-	delete noEth.topics;
-	delete noEth.accompaniment;
-	delete noEth.languages;
-	delete noEth.ensembles;
+	
+  if(typeof noEth.ethnicities !== "undefined") { delete noEth.ethnicities; }
+  if(typeof noEth.categories !== "undefined") { delete noEth.categories; }
+	if(typeof noEth.topic !== "undefined") { delete noEth.topic; }
+	if(typeof noEth.topics !== "undefined") { delete noEth.topic; }
+  if(typeof noEth.accompaniment !== "undefined") { delete noEth.accompaniment; }
+  if(typeof noEth.languages !== "undefined") { delete noEth.languages; }
+  if(typeof noEth.ensembles !== "undefined") { delete noEth.ensembles; }
+
 
 	connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
         if(err) { throw err; }
@@ -51,22 +56,16 @@ function insertResource(theObj) {
         //for multiple ethnicities
         for(var i=0; i< theObj.ethnicities.length; i++) {
         	getID_left(theObj, i, "Ethnicities", "ethnicity_id");   
-    	}
+    	  }
 
-        //for multiple ethnicities
-    	for(var i=0; i< theObj.authors.length; i++) {
-    		getID_left(theObj, i, "Authors", "author_id");
-
-    	}
-
-    	//for multiple TAGS OR CATEGORIES
+    	//for multiple CATEGORIES
     	for(var i=0; i< theObj.categories.length; i++) {
-    		getID_left(theObj, i, "Tags", "tags_id");
+    		getID_left(theObj, i, "Resource_Categories", "resource_category_id");
 
     	}
 
     	//for multiple TOPICS
-    	for(var i=0; i< theObj.topics.length; i++) {
+    	for(var i=0; i< theObj.topic.length; i++) {
     		getID_left(theObj, i, "Topics", "topic_id");
 
     	}
@@ -77,11 +76,15 @@ function insertResource(theObj) {
 
     	}
 
-    	//for multiple Accompaniment
+    	//for multiple Ensembles
     	for(var i=0; i< theObj.ensembles.length; i++) {
     		getID_left(theObj, i, "Ensembles", "ensemble_id");
 
     	}
+
+      for(var i=0; i< theObj.languages.length; i++) {
+          getID_left(theObj, i, "Languages", "language_id");   
+      }
 
         //getIDAttribute(theObj, 1);
     });
@@ -91,30 +94,40 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	console.log("done with insertResource()");
 
 	switch(tableName) {
+
 		case "Ethnicities":
-			var attributeName = theObj.ethnicities[whichIndex].name;	break;
-		case "Tags": 
-			var attributeName = theObj.categories[whichIndex].name;	break; 
+			var attributeName = theObj.ethnicities[whichIndex].name;	
+			break;
+		case "Resource_Categories": 
+			var attributeName = theObj.categories[whichIndex].name;	
+			break; 
 		case "Categories": 
-			var attributeName = theObj.categories[whichIndex].name;	break; 
+			var attributeName = theObj.categories[whichIndex].name;	
+			break; 
 		case "Types": 
-			var attributeName = theObj.types[whichIndex].name;	 break;
+			var attributeName = theObj.types[whichIndex].name;	 
+			break;
 		case "Resource_Types": 
-			var attributeName = theObj.types[whichIndex].name;	 break;
+			var attributeName = theObj.types[whichIndex].name;	 
+			break;
 		case "Ensembles": 
-			var attributeName = theObj.ensembles[whichIndex].name;	 break;
-		case "Authors": 
-			var attributeName = theObj.authors[whichIndex].name;	 break;
+			var attributeName = theObj.ensembles[whichIndex].name;	 
+			break;
 		case "Denominations": 
-			var attributeName = theObj.denominations[whichIndex].name;	 break;
+			var attributeName = theObj.denominations[whichIndex].name;	 
+			break;
 		case "Instruments": 
-			var attributeName = theObj.instruments[whichIndex].name;	 break;
+			var attributeName = theObj.instruments[whichIndex].name;	 
+			break;
 		case "Instrument_Types": 
-			var attributeName = theObj.instruments[whichIndex].name;	 break;
+			var attributeName = theObj.instruments[whichIndex].name;	 
+			break;
 		case "Topics": 
-			var attributeName = theObj.topics[whichIndex].name;	 break;
+			var attributeName = theObj.topic[whichIndex].name;	 
+			break;
 		case "Accompaniment": 
-			var attributeName = theObj.accompaniment[whichIndex].name;	 break;
+			var attributeName = theObj.accompaniment[whichIndex].name;	 
+			break;
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
 			break;
@@ -122,16 +135,20 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	
 	console.log("attributeName:", attributeName);
 
-	var theID = 0;
+	var mid_table_id = 0;
 
 	//2a
 	connection.query(`SELECT id from ${tableName} WHERE name = ?`, 
 	attributeName, function (err, rows) {
 		if(err) { throw new Error(err); return; }
-		theID = rows[0].id;
-		console.log("theID: ",theID);
+		mid_table_id = rows[0].id;
+		console.log("theID: ",mid_table_id);
 
-		insertMiddle(theID, tableName, left_table_id);
+    if(mid_table_id != 0) {
+		  insertMiddle(mid_table_id, tableName, left_table_id);
+    } else {
+      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+    }
 
 	});
 
@@ -145,9 +162,9 @@ function insertMiddle(theID, tableName, left_table_id) {
 		case "Ethnicities":
 			var midTable = "resource_ethnicities";
 			var toInsert = {ethnicity_id: theID,resource_id: resources[0].length};	break;
-		case "Tags": 
-			var midTable = "resource_tags";
-			var toInsert = {tag_id: theID,resource_id: resources[0].length};	break;
+		case "Resource_Categories": 
+			var midTable = "resource_resource_categories";
+			var toInsert = {resource_category_id: theID,resource_id: resources[0].length};	break;
 		case "Types": 
 			var midTable = "resource_resource_types";
 			var toInsert = {resource_type_id: theID,resource_id: resources[0].length};	break;
@@ -245,11 +262,14 @@ function getResources() {
 - MIDDLE TABLES -
 =================================================== 
 */
-    getInter("Resource_Types",  "resources", "resource_resource_types", "resource_type_id", "resource_id", resTypes, numRes);
+    getInter("Resource_Categories",  "resources", "resource_resource_categories", "resource_category_id", "resource_id", resCategories, numRes);
     getInter("Topics",          "resources", "resource_topics",         "topic_id", "resource_id", resTopics, numRes);
-    getInter("Tags",            "resources", "resource_tags",           "tag_id", "resource_id", resTags, numRes);
+    //getInter("Tags",            "resources", "resource_tags",           "tag_id", "resource_id", resTags, numRes);
     getInter("Ethnicities",     "resources", "resource_ethnicities",    "ethnicity_id", "resource_id", resEth, numRes);
     getInter("Accompaniment", 	"resources", "resource_accompaniment", 	"accompaniment_id", "resource_id", resAcc, numRes);
+    getInter("Ensembles",       "resources", "resource_ensembles",  "ensemble_id", "resource_id", resEnsembles, numRes);
+    getInter("Languages",       "resources", "resource_languages",  "language_id", "resource_id", resLanguages, numRes);
+
       
     }
     else
@@ -271,16 +291,17 @@ function formatResource(actualIndex) {
     id:             resources[0][actualIndex].id, 
     title:          resources[0][actualIndex].title,
     //type(s)
-    types:          resTypes[actualIndex],
+    //types:          resTypes[actualIndex],
     url:            resources[0][actualIndex].website,
     resource_date:  resources[0][actualIndex].resource_date,
     description:    resources[0][actualIndex].description,
     parent_org_id:  resources[0][actualIndex].parent_org_id,
     //topics
-    topics:         resTopics[actualIndex],
+    topic:         resTopics[actualIndex],
     accompaniment: 	resAcc[actualIndex],
     //tags
-    tags:           resTags[actualIndex],
+    //tags:           resTags[actualIndex],
+    categories:     resCategories[actualIndex],
     is_active:      resources[0][actualIndex].is_active,
     high_level:     resources[0][actualIndex].high_level,
     city:        resources[0][actualIndex].city,
@@ -360,31 +381,33 @@ resourceController.postConfig = {
   	var theResourceID = resources.length+1;
 
     var theData = { 
-      title: 			req.payload.title, 
-      website: 			req.payload.url, 
-      authors: 			req.payload.authors,
+      title: 			    req.payload.title, //
+      website: 			  req.payload.url,  //
+      author: 			  req.payload.author, //
       
-      parent: 			req.payload.parent,
+      parent: 			  req.payload.parent, //
 
-      description: 		req.payload.description,
+      description: 		req.payload.description, //
       categories: 		req.payload.categories, /* TAGS */
-      topics: 			req.payload.topics,
-      accompaniment: 	req.payload.accompaniment,
-      languages: 		req.payload.languages,
-      ensembles : 		req.payload.ensembles,
-      ethnicities : 	req.payload.ethnicities,
-      hymn_soc_member: 	req.payload.hymn_soc_member,
-      is_free: 			req.payload.is_free,
-      city: 			req.payload.city,				
-      state: 			req.payload.state,
-      country: 			req.payload.country
+      topic: 			    req.payload.topic, //
+      accompaniment: 	req.payload.accompaniment, //
+      languages: 		  req.payload.languages, //
+      ensembles : 		req.payload.ensembles, //
+      ethnicities : 	req.payload.ethnicities, //
+      hymn_soc_member:req.payload.hymn_soc_member, //
+      is_free: 			  req.payload.is_free
+      //city: 			req.payload.city,				
+      //state: 			req.payload.state,
+      //country: 			req.payload.country
 
     };
+
+    console.log("CATEGORIES :", typeof theData.categories);
 
 
   	var newRes = {
   		type: "Resource",
-  		user: "Person Submitting...",
+  		user: "Person Submitting",
   		uid: resources[0].length + 1,
   		data: theData		
   	};
@@ -393,7 +416,9 @@ resourceController.postConfig = {
 	//NOW FORMAT DATA FOR THE RIGHT TABLES
     */
 
-    insertResource(theData);
+    //insertResource(theData);
+
+    JUSTUGH(theData);
 
 
     /*
@@ -538,27 +563,64 @@ resourceController.postConfig = {
 */
     //end mysql
 
+    var toReturn = {
+
+    	resource_id: users[0].length
+    }
     
-    return reply('SUCCESSFULLY ENTERED INTO RESOURCES');
+    return reply(toReturn);
 	
   },
   validate: {
     payload: {
-      title: Joi.string().required(),
-      website: Joi.string().required(),
+      title: 	Joi.string().required(),
+      website: 	Joi.string().required(),
       description: Joi.string().required(),
-      ethnicities: Joi.array().sparse(),
-      authors: Joi.array().sparse(),
-      categories: Joi.array().sparse(),
-      topics: Joi.array().sparse(),
-      accompaniment: Joi.array().sparse(),
-      languages: Joi.array().sparse(),
-      ensembles: Joi.array().sparse()
+      author: 	Joi.string().allow(''),
+
+      ethnicities: Joi.object(),
+      categories: Joi.object(),
+      topic: 	Joi.object(),
+      accompaniment: Joi.object(),
+      languages: Joi.object(),
+      ensembles: Joi.object(),
       //is_free: Joi.string().required()
+      parent: 	Joi.string().allow(''),
+      hymn_soc_member: Joi.string().allow(''),
+      is_free: Joi.string().allow('')
+
     }
   }
 
 };
+
+function JUSTUGH(theObj) {
+
+	console.log("inserting resource");
+
+	getResources();
+
+	var noEth = JSON.parse(JSON.stringify(theObj));
+	delete noEth.ethnicities;
+	//delete noEth.author;
+	//delete noEth.parents;
+	delete noEth.categories;
+	delete noEth.topic;
+	delete noEth.accompaniment;
+	delete noEth.languages;
+	delete noEth.ensembles;
+
+
+	connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
+        if(err) { throw err; }
+        
+        console.log(query.sql);
+
+        var JSObj = rowsToJS(theObj);
+        
+        resources[0].push(JSObj); 
+    });
+}
 
 
 module.exports = [

@@ -13,7 +13,20 @@ var users_db = require('./users-db')
 var Joi = require('joi')
 var mysql = require('mysql')
 
+//Added for login
 
+var options = require('./config/config.js');
+
+//mysql connection
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : options.user,
+  password : options.password,
+  database : options.database
+});
+
+connection.connect();
+//
 
 // create new server instance
 var server = new Hapi.Server();
@@ -22,8 +35,11 @@ var server = new Hapi.Server();
 // add server’s connection information
 server.connection({
   host: 'localhost',
-  port: 3000
-})
+  port: 3000,
+  routes: { cors: true }
+});
+
+//angular error test
 
 /*
 
@@ -154,10 +170,22 @@ server.register([ Vision, BasicAuth, CookieAuth,
   })
 });
 */
+// LOGIN
+
+
+
+
+
+
+
+
+
+
+
+
 //
 
-
-var routesArray = []
+var routesArray = [];
 
   //var routes = require('./routes.js')
   //routesArray.push(routes)
