@@ -334,6 +334,8 @@ CREATE TABLE organizations (
     the_process varchar(256),
     membership_free boolean default False,
 
+    denomination varchar(128), /* delete this if using middle table */
+    
     approved boolean default False
 
 
