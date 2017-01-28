@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
+
 
 @Component({
   selector: 'hymn-entry-person',
@@ -9,12 +11,12 @@ import { ContentfulService } from './../../services/contentful.service';
 
 export class EntryPersonComponent implements OnInit {
   content: JSON;
-
   submission: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
   }
 
   ngOnInit() {
@@ -32,8 +34,8 @@ export class EntryPersonComponent implements OnInit {
         city: '',
         state: '',
         country: '',
-        website: '',
-        social: '',
+        url: '',
+        social_url: '',
         emphasis: '',
         hymn_soc_member: '',
         topics: {
@@ -52,16 +54,15 @@ export class EntryPersonComponent implements OnInit {
           Native_American_Indigenous_Peoples: false,
           Asian: false,
           Middle_Eastern: false,
-          other: ''
+          Other: ''
         },
         categories: {
-
           Choir: false,
           Cantor: false,
           Song_Enlivener: false,
           Solo: false,
           Lead_Singer_from_Band_with_Other_Vocalists: false,
-          other: ''
+          Other: ''
 
         }
       }
@@ -85,7 +86,15 @@ export class EntryPersonComponent implements OnInit {
 
   submit() {
     // this.submitService.submitCongregation(this.submission);
-    console.log(JSON.stringify(this.submission));
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+
+    console.log(this.submission);
+
+    this.submitService.submitPerson(this.submission);
   }
 
 	

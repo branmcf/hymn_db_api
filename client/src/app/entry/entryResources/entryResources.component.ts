@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
+
 
 @Component({
   selector: 'hymn-entry-resources',
@@ -11,10 +13,12 @@ import { ContentfulService } from './../../services/contentful.service';
 export class EntryResourcesComponent implements OnInit {
   content: JSON;
   submission: any;
+  resourceTypeOther: any;
 
 	constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 }
 
   ngOnInit() {
@@ -26,6 +30,8 @@ export class EntryResourcesComponent implements OnInit {
 
     this.submission = {
       type: 'Resource',
+      user: '',
+      uid: '',
       data: {
         title: '',
         type: '',
@@ -43,13 +49,13 @@ export class EntryResourcesComponent implements OnInit {
           Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
           Song_from_another_country_or_World_Song: false,
           Secular_Song: false,
-          other: ''
+          Other: ''
         },
         topic: {
           Psalm_Setting: false,
           Lectionary_Based: false,
           Social_Justice: false,
-          other: ''
+          Other: ''
         },
         accompaniment: {
           Acappella: false,
@@ -60,13 +66,13 @@ export class EntryResourcesComponent implements OnInit {
           Orchestra: false,
           Handbells: false,
           Obligato: false,
-          other: ''
+          Other: ''
         },
         languages: {
           English: false,
           Spanish: false,
           French: false,
-          other: ''
+          Other: ''
         },
         ensembles: {
           Choir: false,
@@ -74,7 +80,7 @@ export class EntryResourcesComponent implements OnInit {
           Song_Enlivener: false,
           Solo: false,
           Lead_Singer_from_Band_with_Other_Vocalists: false,
-          other: ''
+          Other: ''
         },
         ethnicities: {
           White: false,
@@ -84,7 +90,7 @@ export class EntryResourcesComponent implements OnInit {
           Asian: false,
           African: false,
           Middle_Eastern: false,
-          other: ''
+          Other: ''
         },
         hymn_soc_member: '',
         is_free: ''
@@ -107,8 +113,16 @@ export class EntryResourcesComponent implements OnInit {
   }
 
   submit() {
-    // this.submitService.submitCongregation(this.submission);
-    console.log(JSON.stringify(this.submission));
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+    if (this.resourceTypeOther) {
+      this.submission.data.type = this.resourceTypeOther;
+    }
+    console.log((this.submission));
+    this.submitService.submitResource(this.submission);
   }
 
 	next() {

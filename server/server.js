@@ -1,7 +1,7 @@
 var Hapi = require('hapi')
 var Good = require('good')
 var Vision = require('vision')
-var Bcrypt = require('bcrypt')
+//var Bcrypt = require('bcrypt')
 //var Users = require('./users-db')
 var Handlebars = require('handlebars')
 var BasicAuth = require('hapi-auth-basic')
@@ -13,7 +13,20 @@ var users_db = require('./users-db')
 var Joi = require('joi')
 var mysql = require('mysql')
 
+//Added for login
 
+var options = require('./config/config.js');
+
+//mysql connection
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : options.user,
+  password : options.password,
+  database : options.database
+});
+
+connection.connect();
+//
 
 // create new server instance
 var server = new Hapi.Server();
@@ -22,10 +35,13 @@ var server = new Hapi.Server();
 // add server’s connection information
 server.connection({
   host: 'localhost',
-  port: 3000
-})
+  port: 3000,
+  routes: { cors: true }
+});
 
+//angular error test
 
+/*
 
 // register plugins to server instance
 server.register([ Vision, BasicAuth, CookieAuth,
@@ -59,9 +75,7 @@ server.register([ Vision, BasicAuth, CookieAuth,
 
   server.log('info', 'Plugins registered')
 
-  /**
-   * view configuration
-   */
+
   server.views({
     engines: {
       html: Handlebars
@@ -137,9 +151,9 @@ server.register([ Vision, BasicAuth, CookieAuth,
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i])
   }
-// 
+//
 
-  
+
   //server.route(routes)
   server.log('info', 'Routes registered')
 
@@ -155,6 +169,59 @@ server.register([ Vision, BasicAuth, CookieAuth,
     server.log('info', 'Server running at: ' + server.info.uri)
   })
 });
+*/
+// LOGIN
+
+
+
+
+
+
+
+
+
+
+
+
+//
+
+var routesArray = [];
+
+  //var routes = require('./routes.js')
+  //routesArray.push(routes)
+
+  routes = require('./routes/congregations/congregation-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/events/event-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/organizations/organization-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/resources/resource-routes')
+  routesArray.push(routes)
+
+  routes = require('./routes/users/user-routes')
+  routesArray.push(routes)
+
+  for(var i=0; i < routesArray.length; i++) {
+    server.route(routesArray[i])
+  }
+
+server.start(function (err) {
+    if (err) {
+      server.log('error', 'failed to start server')
+      server.log('error', err)
+
+      throw err
+    }
+
+    server.log('info', 'Server running at: ' + server.info.uri)
+});
+
+
+
 
 
 
@@ -184,9 +251,9 @@ const CookieAuth = require('hapi-auth-cookie');
 // Create a server with a host and port
 //
 const server = new Hapi.Server();
-server.connection({ 
-    host: 'localhost', 
-    port: 8000 
+server.connection({
+    host: 'localhost',
+    port: 8000
 });
 
 
@@ -220,7 +287,7 @@ server.registerCookieAuth, function(err) {
 
     // LOG OUT
     server.route({
-      method: 'GET', 
+      method: 'GET',
       path: '/private-route',
       config: {
             auth: 'session',
@@ -279,7 +346,7 @@ server.registerCookieAuth, function(err) {
     //end cookie test
 
     // Start the server
-    
+
 
 
 };

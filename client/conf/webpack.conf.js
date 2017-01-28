@@ -70,6 +70,7 @@ module.exports = {
     }), 
     new webpack.DefinePlugin({
       'process.env': {
+        'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         'CONTENTFUL_SPACE': JSON.stringify(process.env.CONTENTFUL_SPACE),
         'CONTENTFUL_TOKEN': JSON.stringify(process.env.CONTENTFUL_TOKEN)
       }

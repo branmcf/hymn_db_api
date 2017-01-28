@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
+import { SubmitService } from './../../services/submit.service';
 
 
 @Component({
@@ -11,10 +12,14 @@ import { ContentfulService } from './../../services/contentful.service';
 export class EntryOrgsComponent implements OnInit {
   content: JSON;
   submission: any;
+  countryOther: any;
+  denomOther: any;
+  geoOther: any;
 
   constructor (private route: ActivatedRoute,
     private router: Router,
-    private contentful: ContentfulService) {
+    private contentful: ContentfulService,
+    private submitService: SubmitService) {
 
   }
 
@@ -26,7 +31,6 @@ export class EntryOrgsComponent implements OnInit {
 
     this.submission = {
       type: 'Organization',
-      
       data: {
         name: '',
         url: '',
@@ -50,6 +54,7 @@ export class EntryOrgsComponent implements OnInit {
       return;
     }
 
+
     var onload = (data) => {
       if (data) {
         this.submission = data;
@@ -60,8 +65,23 @@ export class EntryOrgsComponent implements OnInit {
   }
 
   submit() {
-     // this.submitService.submitCongregation(this.submission);
-    console.log(JSON.stringify(this.submission));
-  }
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
 
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+
+    console.log((this.submission));
+    if (this.countryOther) {
+      this.submission.data.country = this.countryOther;
+    }
+    if (this.denomOther) {
+      this.submission.data.denomination = this.denomOther;
+    }
+    if (this.geoOther) {
+      this.submission.data.geographic_area = this.geoOther;
+    }
+
+    this.submitService.submitOrgs(this.submission);
+  }
 }
