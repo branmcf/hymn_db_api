@@ -32,22 +32,14 @@ function getEvents() {
   //get events from db
   connection.query('SELECT * from events', function(err, rows, fields) {
     if (!err) {
-      //console.log('The solution is: ', rows);
-      //console.log(rows[0].first_name, rows[0].last_name);
-      //console.log(rows);
-      
-      //events.push(rows);
-  /*
-      var str = JSON.stringify(rows);
-      var finalData = str.replace(/\\/g, "");
-  */
-      var JSObj = rowsToJS(rows);       
+
+      var JSObj = rowsToJS(rows);
       events.push(JSObj);
 
       numEvents = events[0].length;
 
-      getInter("Event_Types", "events", "event_event_types", "event_type_id", "event_id", eventTypes, numEvents );
-      getInter("Tags", "events", "event_tags", "tag_id", "event_id", eventTags, numEvents );
+      //getInter("Event_Types", "events", "event_event_types", "event_type_id", "event_id", eventTypes, numEvents );
+      //getInter("Tags", "events", "event_tags", "tag_id", "event_id", eventTags, numEvents );
 
 
     }
@@ -68,43 +60,43 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
           INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
           WHERE RT.id = ${varI}`, function(err, rows, fields) {
             if(err) { throw err; }
-            
+
             var JSObj = rowsToJS(rows);
-            
+
             arrayToUse.push(JSObj);
 
-          
+
         });
-        
+
     }//end for loop
 }//end function
 
-/* 
+/*
 ===================================================
 - EVENT Controllers -
-=================================================== 
+===================================================
 */
 
 function formatEvent(actualIndex) {
   var eventData = {};
 
   eventData = {
-    id:             events[0][actualIndex].id, 
+    id:             events[0][actualIndex].id,
     title:          events[0][actualIndex].title,
     frequency:      events[0][actualIndex].frequency,
     url:            events[0][actualIndex].website,
     parent:         events[0][actualIndex].parent_org_id,
-    //topic(s)
-    topic:         eventTypes[actualIndex],
+    topic:          events[0][actualIndex].topic,
+    //topic:         eventTypes[actualIndex],
     description:    events[0][actualIndex].description,
     event_date:     events[0][actualIndex].event_date,
     cost:           events[0][actualIndex].cost,
     //tag id's
-    tags:           eventTags[actualIndex],
+    //tags:           eventTags[actualIndex],
     city:        	events[0][actualIndex].city,
     state:       	events[0][actualIndex].state,
     country:     	events[0][actualIndex].country,
-    hymn_soc_member:events[0][actualIndex].hymn_soc_member,    
+    hymn_soc_member:events[0][actualIndex].hymn_soc_member,
     is_active:      events[0][actualIndex].is_active,
     high_level:     events[0][actualIndex].high_level
 
@@ -144,34 +136,62 @@ eventController.getConfig = {
       var bob = formatEvent(i);
       objToReturn.push(bob);
     }
-    
+
     reply(objToReturn);
   }
 };
 
 //EVENT POST REQUEST
 eventController.postConfig = {
-	
+
   handler: function(req, reply) {
 
+    console.log("\nRECEIVED :", req.payload.data);
 
-    var newEvent = { 
-      title: 		req.payload.title, 
-      website: 		req.payload.url, 
-      description: 	req.payload.description,
-      theme: 		req.payload.theme,
-      //parent_org_id: 		req.payload.parent_org_id,
+    getEvents();
+
+    var theEventID = events.length+1;
+
+    var newEvent = {
+      name: 		   req.payload.data.title,
+      frequency:   req.payload.data.frequency,
+      website: 		 req.payload.data.url,
+      parent:       req.payload.data.parent,
+      description: req.payload.data.description,
+      event_date:  req.payload.data.event_date,
+      cost: 		    req.payload.data.cost,
+      city: 		    req.payload.data.city,
+      state: 		    req.payload.data.state,
+      country: 		  req.payload.data.country,
+      hymn_soc_member:req.payload.data.hymn_soc_member
+/*
+      theme: 		   req.payload.data.theme,
+      parent: 		req.payload.data.parent,
       //topic: 		req.payload.topic,
-      cost: 		req.payload.cost,
-      city: 		req.payload.city,
-      state: 		req.payload.state,
-      country: 		req.payload.country,
-      hymn_soc_member:req.payload.hymn_soc_member,
-      is_active: 	req.payload.is_active,
-      high_level: 	req.payload.high_level
-
+      is_active: 	  req.payload.data.is_active,
+      high_level: 	req.payload.data.high_level
+*/
 
     };
+
+    var fixedDate = new Date().toISOString().slice(0, 10);
+
+    newEvent.event_date = fixedDate;
+
+    newEvent.cost = Number(newEvent.cost);
+    if(typeof newEvent.hymn_soc_member !== "string") {
+      if(newEvent.hymn_soc_member == 1) {
+        newEvent.hymn_soc_member = true;
+      } else {
+        newEvent.hymn_soc_member = false;
+      }
+    } else if(typeof newEvent.hymn_soc_member !== "number") {
+      if(newEvent.hymn_soc_member == "yes") {
+        newEvent.hymn_soc_member = true;
+      } else {
+        newEvent.hymn_soc_member = false;
+      }
+    }
 
     // mysql
     //connection.connect();
@@ -183,20 +203,25 @@ eventController.postConfig = {
           return;
         }
 
-        events[0].push(newEvent);
+        var JSObj = rowsToJS(newEvent);
 
-        reply([{
-          statusCode: 200,
-          message: 'Inserted Successfully',
-        }]);
-        
+        events[0].push(JSObj);
+
+        var toReturn = {
+
+        	event_id: events[0].length +1 /* +1 or not?... */
+        }
+
+        return reply(toReturn);
+
       }
-    );
-    //end mysql
+    ); //end mysql
 
-    
+
+
     //reply(newRes);
-  },
+  }
+  /* REMOVE COMMA ^
   validate: {
     payload: {
       title: Joi.string().required(),
@@ -205,6 +230,7 @@ eventController.postConfig = {
       topic: Joi.string().required()
     }
   }
+  */
 
 };
 
