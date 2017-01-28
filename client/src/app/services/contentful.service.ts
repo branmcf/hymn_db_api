@@ -31,6 +31,7 @@ export class ContentfulService {
     }
 
     // contentful definition of entry is used here
+
     getEntry(entryID: string) {
         return this.client.getEntry(entryID)
         .then(function (entry) {
@@ -57,38 +58,32 @@ export class ContentfulService {
     }
 
     getOrgsForm() {
-        // return this.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
-        // .then((form) => {
-        //     return form;
-        // });
         return Promise.resolve(this.client.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
             .then((form) => {
                 return JSON.stringify(form);
             }));
-
-        // return Promise.resolve(JSON.stringify({fields: {instructions: 'what', title: 'wut'}}));
-
     }
 
     getPersonForm() {
-        return this.getEntry('4Io2dsT11KQW0UmsIcSKOQ')
-        .then((form) => {
-            return form;
-        });
+        return Promise.resolve(this.client.getEntry('4Io2dsT11KQW0UmsIcSKOQ')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
     }
 
     getCongregationForm() {
-        return this.getEntry('36bnlQ1OKsYUIQoEkUWeYG')
-        .then((form) => {
-            return form;
-        });
+         return Promise.resolve(this.client.getEntry('36bnlQ1OKsYUIQoEkUWeYG')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
     }
 
     getEventForm() {
-        return this.getEntry('26KrDew6nyooYKWAeayeq4')
-        .then((form) => {
-            return form;
-        });
+        return Promise.resolve(this.client.getEntry('26KrDew6nyooYKWAeayeq4')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
+
     }
 }
 

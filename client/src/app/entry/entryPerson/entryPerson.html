@@ -1,159 +1,402 @@
 <div class="entry-container">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Fill out this form to have your information included in The Center for Congregational Song's database so that we can
-                    connect people to you who could use your expertise to encourage, promote, or enliven their congregation's
-                    song.
-                </div>
-                <div class="card-block">
-                    <h4 class="card-title">Clinician/Consultant</h4>
+            <md-card>
+                <md-card-content>
+                    <md-card-subtitle class="entry-card-header">
+                        {{content?.fields.instructions}}
+                    </md-card-subtitle>
+                    <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
+
+                    <form name="personForm"
+                    (ngSubmit)="submit()"
+                    #personForm="ngForm"
+                    *ngIf="submission">
 
                     <div class="form-group">
-                        <label for="person_fname">First Name</label>
-                        <input id="person_fname" class="form-control" />
+                        <!--<label for="personFname">First Name</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="First Name"
+                            id="personFname" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.first_name"
+                            name="personFname"
+                            #personFname="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personFname.errors && personFname.touched">
+                            <ul>
+                                <li [hidden]="!personFname.errors.required">
+                                    First name is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_lname">Last Name</label>
-                        <input id="person_lname" class="form-control" />
+                        <!--<label for="personLname">Last Name</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Last Name"
+                            id="personLname" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.last_name"
+                            name="personLname"
+                            #personLname="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personLname.errors && personLname.touched">
+                            <ul>
+                                <li [hidden]="!personLname.errors.required">
+                                    Last name is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_email">Email</label>
-                        <input id="person_email" class="form-control" />
+                        <!--<label for="personEmail">Email
+                            </label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Email"
+                            id="personEmail" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.email"
+                            name="personEmail"
+                            #personEmail="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personEmail.errors && personEmail.touched">
+                            <ul>
+                                <li [hidden]="!personEmail.errors.required">
+                                    Email is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_city">City</label>
-                        <input id="person_city" class="form-control" />
+                        <!--<label for="personCity">City</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="City"
+                            id="personCity" 
+                            class="form-control"
+                            [(ngModel)]="submission.data.city" 
+                            name="personCity"
+                            #personCity="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personCity.errors && personCity.touched">
+                            <ul>
+                                <li [hidden]="!personCity.errors.required">
+                                    City is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_state_prov">State/Province</label>
-                        <input id="person_state_prov" class="form-control" />
+                        <!--<label for="personState">State/Province</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="State/Province"
+                            id="personState" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.state"
+                            name="personState"
+                            #personState="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personState.errors && personState.touched">
+                            <ul>
+                                <li [hidden]="!personState.errors.required">
+                                    State is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_country">Country</label>
-                        <input id="person_country" class="form-control" />
+                        <!--<label for="personCountry">Country</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Country"
+                            id="personCountry" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.country"
+                            name="personCountry"
+                            #personCountry="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personCountry.errors && personCountry.touched">
+                            <ul>
+                                <li [hidden]="!personCountry.errors.required">
+                                    Country is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_url">Personal/Professional Website</label>
-                        <input type="url" id="person_url" class="form-control" />
+                        <!--<label for="personUrl">Personal/Professional Website</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="url" 
+                            placeholder="Personal/Professional Website"
+                            id="personUrl" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.url"
+                            name="personUrl"
+                            #personUrl="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personUrl.errors && personUrl.touched">
+                            <ul>
+                                <li [hidden]="!personUrl.errors.required">
+                                    URL is required
+                                </li>
+                                <li>
+                                    Please follow this format: https://www.google.com
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_social">Personal/Professional Website</label>
-                        <input type="url" id="person_social" class="form-control" />
+                        <!--<label for="personSocial">Facebook, Twitter, and other Social Media Connections</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="url" 
+                            placeholder="Facebook, Twitter, and other Social Media Connections"
+                            id="personSocial" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.social_url"
+                            name="personSocial"
+                            #personSocial="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personSocial.errors && personSocial.touched">
+                            <ul>
+                                <li [hidden]="!personSocial.errors.required">
+                                    Social media URL is required
+                                </li>
+                                <li>
+                                    Please follow this format: https://www.google.com
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_member">Are you a Hymn Society Member?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="isMember" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="isMember" value="no" /> No
-                        </form>
+                        <!--<label for="personEmphasis">Main Topic/Emphasis</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Main Topic/Emphasiss"
+                            id="personEmphasis" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.emphasis"
+                            name="personEmphasis"
+                            #personEmphasis="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="personEmphasis.errors && personEmphasis.touched">
+                            <ul>
+                                <li [hidden]="!personEmphasis.errors.required">
+                                    Topic/Emphasis is required
+                                </li>
+                            </ul>
+                        </div>
+                    </div>                    
+
+                    <div class="form-group">
+                        <label for="personMember">Are you a Hymn Society Member?</label>
+                        <md-radio-group [(ngModel)]="submission.data.hymn_soc_member" name="personMember" required>
+                            <md-radio-button class="block-input" name="isMember" value="yes" required>Yes</md-radio-button>
+                            <md-radio-button class="block-input"  name="isMember" value="no">No</md-radio-button>
+                        </md-radio-group>
                     </div>
  
                     <div class="form-group">
-                        <label for="person_categories">Which Topics/Situations Are You Comfortable Working With?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Contemporary Song/Band
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Traditional Hymnody
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Musician/Pastor RelationshipSong/Band
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Cantoring
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Song Enlivening
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Keyboards (piano/organ)
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Worship Planning
-                            </label>
-                        </div>          
+                        <label for="personTopics">Which Topics/Situations Are You Comfortable Working With?</label>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicOne"
+                                [(ngModel)]="submission.data.topics.Contemporary_Song_Band">
+                            Contemporary Song/Band
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicTwo"
+                                [(ngModel)]="submission.data.topics.Traditional_Hymnody">
+                            Traditional Hymnody
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicThree"
+                                [(ngModel)]="submission.data.topics.Musician_Pastor_Relationship_Song_Band">
+                            Musician/Pastor Relationship Song/Band
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicFour"
+                                [(ngModel)]="submission.data.topics.Cantoring">
+                            Cantoring
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicFive"
+                                [(ngModel)]="submission.data.topics.Song_Enlivening">
+                            Song Enlivening
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicSix"
+                                [(ngModel)]="submission.data.topics.Keyboards">
+                            Keyboards (piano/organ)
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personTopicSeven"
+                                [(ngModel)]="submission.data.topics.Worship_Planning">
+                            Worship Planning
+                            </md-checkbox>
                     </div>
 
                     <div class="form-group">
-                        <label for="person_categories">Which ethnicities do you work with in at least 10% of your events??</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> White
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Black
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Asian
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> African
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Middle-Eastern
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="other"> Other...
-                            </label>
-                        </div>
-                        <div class="form-group" [hidden]="!other">
-                            <input id="person_city" class="form-control" />
-                        </div>
+                        <label for="personEthnicity">Which ethnicities do you work with in at least 10% of your events??</label>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicityOne"
+                                [(ngModel)]="submission.data.ethnicities.White"> 
+                            White
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicityTwo"
+                                [(ngModel)]="submission.data.ethnicities.Black"> 
+                            Black
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicityThree"
+                                [(ngModel)]="submission.data.ethnicities.Hispanic_Latin_American_Caribbean"> 
+                            Hispanic/Latin-American/Caribbean
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicityFour"
+                                [(ngModel)]="submission.data.ethnicities.Native_American_Indigenous_Peoples"> 
+                            Native American/Indigenous Peoples
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicityFive"
+                                [(ngModel)]="submission.data.ethnicities.Asian"> 
+                            Asian
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicitySix"
+                                [(ngModel)]="submission.data.ethnicities.African"> 
+                            African
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="personEthnicitySeven"
+                                [(ngModel)]="submission.data.ethnicities.Middle_Eastern"> 
+                            Middle-Eastern
+                            </md-checkbox>
+                            <md-checkbox class="block-input" name="other">
+                                <md-input-container class="full-width">
+                                    <input md-input mdInput type="text"
+                                    id="resourceTopic" 
+                                    class="form-control" 
+                                    [(ngModel)]="submission.data.ethnicities.Other"
+                                    name="resourceEthnicityOther"
+                                    placeholder="Other Ethnicities"/>
+                                </md-input-container>
+                        </md-checkbox>
                     </div>
 
-                    <div>
-                        <a class="btn btn-block btn-primary">Submit</a>
-                        <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-                    </div>  
+                    <div class="form-group">
+                        <label for="personEnsemble">What types of ensembles are you comfortable working with?</label>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                name="personEnsembleOne"
+                                [(ngModel)]="submission.data.categories.Choir">
+                                Choir
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                name="personEnsembleTwo"
+                                [(ngModel)]="submission.data.categories.Cantor">
+                                Cantor
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                name="personEnsembleThree"
+                                [(ngModel)]="submission.data.categories.Song_Enlivener">
+                                Song-Enlivener
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                name="personEnsembleFour"
+                                [(ngModel)]="submission.data.categories.Solo">
+                                Lead Singer from Band (Solo)
+                            </md-checkbox>
+                            <md-checkbox class="block-input"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                name="personEnsembleFive"
+                                [(ngModel)]="submission.data.categories.Lead_Singer_from_Band_with_Other_Vocalists">
+                            Lead Singer from Band with Other Vocalists</md-checkbox>
+                            <md-checkbox class="block-input" name="other">
+                                <md-input-container class="full-width">
+                                <input md-input mdInput type="text"
+                                id="resourceTopic" 
+                                class="form-control" 
+                                [(ngModel)]="submission.data.categories.Other"
+                                name="resourceTopicOther"
+                                placeholder="Other Ensemble"/>
+                                </md-input-container>
+                            </md-checkbox>
+                    </div>
+          
+                    <md-card-actions>
+                        <button md-raised-button color="primary" type="submit" 
+                        [disabled]="personForm.invalid">
+                        Submit
+                        </button>
+                        <button md-button routerLink="/">
+                        Return to home
+                        </button>
+                    </md-card-actions>
+                    </form>  
                     
-                </div> <!-- end class card-block-->
-            </div> <!-- end class card -->
+                </md-card-content> <!-- end class card-block-->
+            </md-card> <!-- end class card -->
         </div> <!-- end class col-md-8 offset-md-2 -->
     </div> <!-- end entry-body row -->
 </div>

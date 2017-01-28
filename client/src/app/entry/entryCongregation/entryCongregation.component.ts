@@ -1,87 +1,100 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 
-import { SubmitService } from './../../services/submit.service'
+import { SubmitService } from './../../services/submit.service';
+import { ContentfulService } from './../../services/contentful.service';
+
 
 @Component({
   selector: 'hymn-entry-congregation',
-  template: require('./entryCongregation.html'),
-  styleUrls: ['app/shared/entryNavbar/entryNavbar.css']
+  template: require('./entryCongregation.html')
 })
 
 export class EntryCongregationComponent {
-  title: string;
-  type: string;
-  url: string;
-  author: string;
-  parent: string;
-  desc: string;
-  category: any[];
-  topic: any[];
-  accompany: any[];
-  lang: any[];
-  ensemble: any[];
-  ethnicity: any;
-  isInvolved: any;
-  free: any;
-
-  submission: {
-    title: string;
-    type: string;
-    url: string;
-    author: string;
-    parent: string;
-    desc: string;
-    category: any[];
-    topic: any[];
-    accompany: any[];
-    lang: any[];
-    ensemble: any[];
-    ethnicity: any;
-    isInvolved: any;
-    free: any;
-  }
+  content: JSON;
+  data: any;
+  submission: any;
+  countryOtherText: string;
+  denomOther: string;
+  shapeOther: string;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private submitService : SubmitService) {
+    private submitService : SubmitService,
+    private contentful: ContentfulService) {
 
   }
 
   ngOnInit() {
+      this.contentful.getCongregationForm().then((content) => {
+      this.content = JSON.parse(content);
+    });
+
     this.route.params.forEach(x => this.load(+x['user.id']));
 
-    this.title = '';
-    this.type = '';
-    this.url = '';
-    this.author = '';
-    this.parent = '';
-    this.desc = '';
-    this.category = [];
-    this.topic = [];
-    this.accompany = [];
-    this.lang = [];
-    this.ensemble = [];
-    this.ethnicity = '';
-    this.isInvolved = '';
-    this.free = '';
-
     this.submission = {
-      title: '',
-      type: '',
-      url: '',
-      author: '',
-      parent: '',
-      desc: '',
-      category: [],
-      topic: [],
-      accompany: [],
-      lang: [],
-      ensemble: [],
-      ethnicity: '',
-      isInvolved: '',
-      free: '',
-    }
+      type: 'Congregation',
+      user: '',
+      uid: '',
+      data: {
+        name: '',
+        url: '',
+        denomination: '',
+        city: '',
+        state: '',
+        country: '',
+        hymn_soc_member: '',
+        categories: {
+          A_hymn_written_prior_to_1970: false,
+          Newly_composed_hymn_within_the_last_10_years: false,
+          Praise_and_Worship_Song_CCM: false,
+          Psalm_Setting: false,
+          Chant_Gregorian_Anglican_Pointed_or_Taize: false,
+          Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned: false,
+          Song_from_another_country_or_World_Song: false,
+          Secular_Song: false,
+        },
+        instruments: {
+          Acappella: false,
+          Organ: false,
+          Piano: false,
+          Guitar_not_full_band: false,
+          Band_guitar_bass_drums_etc: false,
+          Orchestra_Wind_Ensemble: false,
+          Handbells: false,
+          Obligato_instruments_flute_clarinet_trumpet_etc: false,
+          congInstruOther: ''
+        },
+        shape: '',
+        clothing: '',
+        geography: '',
+        ethnicities: {
+          White: false,
+          Black: false,
+          Hispanic_Latin_American_Caribbean: false,
+          Native_American_Indigenous_Peoples: false,
+          Asian: false,
+          Middle_Eastern: false,
+          congEthOther: ''
+        },
+        attendance: ''
+      }
+    };
+  }
+
+  typesOptions = [
+    "A hymn written prior to 1970",
+    "Newly composed hymn (within the last 10 years)",
+    "Praise and Worship Song (CCM)",
+    "Psalm Setting",
+    "Chant (Gregorian, Anglican, Pointed or Taize)",
+    "Older hymn text set to a new contemporary tune (or 're-tuned')",
+    "Song from another country (or 'World Song')",
+    "Secular Song"
+  ]
+
+  private getUser() {
+
   }
 
   private load(id) {
@@ -91,31 +104,33 @@ export class EntryCongregationComponent {
 
     var onload = (data) => {
       if (data) {
-        this.submission = data;
-      } else {
+        this.data = data;
+      }
+      else {
 
       }
     };
-
   }
 
-
-
   submit() {
-    this.submission.title = this.title;
-    this.submission.type = this.type;
-    this.submission.url = this.url;
-    this.submission.author = this.author;
-    this.submission.parent = this.parent;
-    this.submission.desc = this.desc;
-    this.submission.category = this.category;
-    this.submission.topic = this.topic;
-    this.submission.accompany = this.accompany;
-    this.submission.lang = this.lang;
-    this.submission.ensemble = this.ensemble;
-    this.submission.ethnicity = this.ethnicity;
-    this.submission.isInvolved = this.isInvolved;
-    this.submission.free = this.free
+    // this.submitService.submitCongregation(this.submission);
+    var userInfo = sessionStorage.getItem('userInfo');
+    var obj = (JSON.parse(userInfo));
+
+    this.submission.user = obj.first_name + ' ' + obj.last_name;
+    this.submission.uid = obj.user_id;
+
+    if (this.countryOtherText) {
+      this.submission.data.country = this.countryOtherText;
+    }
+    if (this.denomOther) {
+      this.submission.data.denomination = this.denomOther;
+    }
+    if (this.shapeOther) {
+      this.submission.data.shape = this.shapeOther;
+    }
+    console.log(this.submission);
+    this.submitService.submitCongregation(this.submission);
   }
 
   next() {

@@ -1,292 +1,418 @@
 <div class="entry-container">
     <entry-nav class="left"></entry-nav>
     <hymn-header></hymn-header>
+    <entry-nav-modal></entry-nav-modal>
+
+     
     <div class="entry-body row">
         <div class="col-md-8 offset-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Fill out this form to include your congregation in The Center for Congregational Song's database so that we can connect others to you who work in similar ministry contexts.
-                </div>
-                <div class="card-block">
-                    <h4 class="card-title">Congregations</h4>
+            <md-card>
+                <md-card-content>
+                    <md-card-subtitle class="entry-card-header">
+                        {{content?.fields.instructions}}
+                    </md-card-subtitle>
+                    <md-card-title><h4 class="card-title">{{content?.fields.title}}</h4></md-card-title>
+
+                    <form name="congregationForm"
+                    (ngSubmit)="submit()"
+                    #congregationForm="ngForm"
+                    *ngIf="submission">
 
                     <div class="form-group">
-                        <label for="congregation_name">Congregation Name</label>
-                        <input id="congregation_name" class="form-control" />
+                        <!--<label for="congregationName">Congregation Name</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="Congregation Name"
+                            id="congregationName" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.name"
+                            name="congregationName"
+                            #congregationName="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="congregationName.errors && congregationName.touched">
+                            <ul>
+                                <li [hidden]="!congregationName.errors.required">
+                                    Name is required
+                                </li>
+                            </ul>
+                        </div> 
                     </div>
 
                     <div class="form-group">
-                        <label for="congregation_url">Congregation Website</label>
-                        <input type="url" id="congregation_url" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_city">City</label>
-                        <input id="congregation_city" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_city">City</label>
-                        <input id="congregation_city" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_state_prov">State/Province</label>
-                        <input id="congregation_state_prov" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_country">Country</label>
-                        <form action="" method="post">
-                            <input type="radio" name="country" value="usa" /> USA
-                            <br>
-                            <input type="radio" name="country" value="canada" /> Canada
-                            <br>
-                            <input type="radio" name="country" value="other" /> Other...
-                            <div class="form-group" [hidden]="!other">
-                                <input id="congregation_country" class="form-control" />
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_denom_trad">Denomination/Tradition</label>
-                        <form action="" method="post">
-                            <input type="radio" name="denomination" value="catholic" /> Roman Catholic
-                            <br>
-                            <input type="radio" name="denomination" value="anglican" /> Anglican/Episcopal
-                            <br>
-                            <input type="radio" name="denomination" value="lutheran" /> Lutheran
-                            <br>
-                            <input type="radio" name="denomination" value="wesleyan" /> Wesleyan (United Methodist, AME, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="reformed" /> Reformed (Presbyterian, RCA, etc...)
-                            <br>
-                            <input type="radio" name="denomination" value="baptist" /> Baptist/Free-Church
-                            <br>
-                            <input type="radio" name="denomination" value="pentecostal" /> Pentecostal
-                            <br>
-                            <input type="radio" name="denomination" value="nondenom" /> Non-Denominational
-                            <br>
-                            <input type="radio" name="denomination" value="other" /> Other...           <div class="form-group" [hidden]="!other">
-                                <input id="congregation_state_prov" class="form-control" />
-                            </div>
-                        </form>
-                    </div>
-
-                     <div class="form-group">
-                        <label for="congregation_exist_member">Are there any Hymn Society members in your congregation or on your church staff?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="memberExist" value="yes" /> Yes
-                            <br>
-                            <input type="radio" name="memberExist" value="no" /> No
-                        </form>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="congregation_song_type">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> A hymn written prior to 1970
-                            </label>
+                        <!--<label for="congregationUrl">Congregation Website</label>-->
+                        <md-input-container class="full-width"> 
+                            <input md-input mdInput type="url" 
+                            placeholder="Congregation Website"
+                            id="congregationUrl" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.url"
+                            name="congregationUrl"
+                            #congregationUrl="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="congregationUrl.errors && congregationUrl.touched">
+                            <ul>
+                                <li [hidden]="!congregationUrl.errors.required">
+                                    URL is required
+                                </li>
+                                <li>
+                                    Please follow this format: https://www.google.com
+                                </li>
+                            </ul>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Newly composed hymn (within the last 10 years)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Praise and Worship Song (CCM)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Psalm Setting
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Chant (Gregorian, Anglican, Pointed or Taize)
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Older hymn text set to a new contemporary tune (or "re-tuned")
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Song from another country (or "World Song")
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Secular Song
-                            </label>
-                        </div>                                      
-                    </div>                   
+                    </div>
 
                     <div class="form-group">
-                        <label for="congregation_instrument">Which types of instruments does your congregation use during congregational singing?</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> A Cappella
-                            </label>
+                        <!--<label for="congregationCity">City</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="City"
+                            id="congregationCity" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.city"
+                            name="congregationCity"
+                            #congregationCity="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="congregationCity.errors && congregationCity.touched">
+                            <ul>
+                                <li [hidden]="!congregationCity.errors.required">
+                                    City is required
+                                </li>
+                            </ul>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Organ
-                            </label>
+                    </div>
+
+                    <div class="form-group">
+                        <!--<label for="congregationState">State</label>-->
+                        <md-input-container class="full-width">
+                            <input md-input mdInput type="text"
+                            placeholder="State"
+                            id="congregationState" 
+                            class="form-control" 
+                            [(ngModel)]="submission.data.state"
+                            name="congregationState"
+                            #congregationState="ngModel"
+                            required/>
+                        </md-input-container>
+                        <div class="alert alert-danger" *ngIf="congregationState.errors && congregationState.touched">
+                            <ul>
+                                <li [hidden]="!congregationState.errors.required">
+                                    State is required
+                                </li>
+                            </ul>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Piano
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Guitar (not full band)
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Band (guitar, bass, drums, etc...)
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Handbells
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox">Obligato Instruments (flute, clarinet, trumpet, etc...)
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Other...
-                            </label>
-                        </div>
-                        <div class="form-group" [hidden]="!other">
-                            <input id="congregation_instrument" class="form-control" />
-                        </div>                                      
+                    </div>
+
+                    <div class="form-group">
+                        <label for="congregationCountry">Country</label>
+                        <md-radio-group [(ngModel)]="submission.data.country" name="congregationCountry" required>
+                            <md-radio-button class="block-input" value="USA" required> USA</md-radio-button>
+                            <md-radio-button class="block-input" value="Canada"> Canada</md-radio-button>
+                            <md-radio-button class="block-input">
+                                <md-input-container>
+                                <input md-input mdInput type="text" 
+                                placeholder="Other Country"
+                                [(ngModel)]="countryOtherText"
+                                name="otherCountry"/>
+                                </md-input-container>
+                            </md-radio-button>
+                            
+                        </md-radio-group>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="congregationDenom">Denomination/Tradition</label>
+                        <md-radio-group [(ngModel)]="submission.data.denomination" name="congregationDenom" required>
+                            <md-radio-button class="block-input" value="Roman Catholic" required>Roman Catholic</md-radio-button>
+                            <md-radio-button class="block-input" value="Anglican" >Anglican/Episcopal</md-radio-button>
+                            <md-radio-button class="block-input" value="Lutheran" >Lutheran</md-radio-button>
+                            <md-radio-button class="block-input" value="Wesleyan (United Methodist, AME, etc...)" >Wesleyan (United Methodist, AME, etc...)</md-radio-button>
+                            <md-radio-button class="block-input" value="Reformed (Presbyterian, RCA, etc...)" >Reformed (Presbyterian, RCA, etc...)</md-radio-button>
+                            <md-radio-button class="block-input" value="Baptist/Free-Church" >Baptist/Free-Church</md-radio-button>
+                            <md-radio-button class="block-input" value="Pentecostal" >Pentecostal</md-radio-button>
+                            <md-radio-button class="block-input" value="Non-Denominational" >Non-Denominational</md-radio-button>
+                            <md-radio-button class="block-input">   
+                                <md-input-container>
+                                <input md-input mdInput type="text" 
+                                placeholder="Other Denomination/Tradition"
+                                [(ngModel)]="denomOther"
+                                name="otherDenom"/>
+                                </md-input-container>
+                            </md-radio-button>
+                        </md-radio-group>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="congregationMembers">Are there any Hymn Society members in your congregation or on your church staff?</label>
+                        <md-radio-group [(ngModel)]="submission.data.hymn_soc_member" name="congregationMember" required>
+                            <md-radio-button class="block-input" name="hymn_soc_member" value="yes" required>Yes</md-radio-button>
+                            <md-radio-button class="block-input" name="hymn_soc_member" value="no">No</md-radio-button>
+                        </md-radio-group>
+                    </div>
+
+                    <div class="form-group" >
+                        <label for="congregationTypes">Which types of song/hymn(s) has your congregation sung in the last 2 months?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                [(ngModel)]="submission.data.categories.A_hymn_written_prior_to_1970"
+                                name="congregationTypeOne"
+                                >A hymn written prior to 1970</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeTwo"
+                                [(ngModel)]="submission.data.categories.Newly_composed_hymn_within_the_last_10_years">Newly composed hymn (within the last 10 years)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeThree"
+                                [(ngModel)]="submission.data.categories.Praise_and_Worship_Song_CCM">Praise and Worship Song (CCM)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeFour"
+                                [(ngModel)]="submission.data.categories.Psalm_Setting">Psalm Setting</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeFive"
+                                [(ngModel)]="submission.data.categories.Chant_Gregorian_Anglican_Pointed_or_Taize">Chant (Gregorian, Anglican, Pointed or Taize)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeSix"
+                                [(ngModel)]="submission.data.categories.Older_hymn_text_set_to_a_new_contemporary_tune_or_retuned">Older hymn text set to a new contemporary tune (or 're-tuned')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeSeven"
+                                [(ngModel)]="submission.data.categories.Song_from_another_country_or_World_Song">Song from another country (or 'World Song')</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationTypeEight"
+                                [(ngModel)]="submission.data.categories.Secular_Song">Secular Song</md-checkbox>
+                    </div>
+
+                    <div class="form-group" >
+                        <label for="congregationInstruments">Which types of instruments does your congregation use during congregational singing?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentOne"
+                                [(ngModel)]="submission.data.instruments.Acappella">
+                                Acappella</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentTwo"
+                                [(ngModel)]="submission.data.instruments.Organ">
+                                Organ</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentThree"
+                                [(ngModel)]="submission.data.instruments.Piano">
+                                Piano</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentFour"
+                                [(ngModel)]="submission.data.instruments.Guitar_not_full_band">
+                                Guitar (not full band)</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentFive"
+                                [(ngModel)]="submission.data.instruments.Band_guitar_bass_drums_etc">
+                                Band (guitar, bass, drums, etc...)</md-checkbox>
+
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentSix"
+                                [(ngModel)]="submission.data.instruments.Orchestra_Wind_Ensemble">
+                                Orchestra/Wind Ensemble</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentSeven"
+                                [(ngModel)]="submission.data.instruments.Handbells">
+                                Handbells</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congregationInstrumentEight"
+                                [(ngModel)]="Obligato_instruments_flute_clarinet_trumpet_etc">
+                                Obligato Instruments (flute, clarinet, trumpet, etc...)</md-checkbox>
+                    
+                            <md-checkbox class="block-input">                        
+                                <md-input-container class="full-width">
+                                <input md-input mdInput type="text"
+                                id="congregationInstruments" 
+                                class="form-control" 
+                                [(ngModel)]="submission.data.instruments.Other"
+                                name="congregationInstruments"
+                                placeholder="Other Instruments"
+                                name="congregationInstrumentOther"/>
+                                </md-input-container>
+                            </md-checkbox>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="congregationShape">Which best describes the shape of your worship?</label>
+                        <md-radio-group [(ngModel)]="submission.data.shape" name="congregationShape" required>
+                            <md-radio-button class="block-input" value="5-Fold Pattern (Gathering, Word, Response, Table, Sending)" required> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)</md-radio-button>
+                            <md-radio-button class="block-input" value="4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly"> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly</md-radio-button>
+                            <md-radio-button class="block-input" value="2-Fold Pattern (Praise & Teaching)"> 2-Fold Pattern (Praise & Teaching)</md-radio-button>
+                            <md-radio-button class="block-input"> 
+                                <md-input-container>
+                                <input md-input mdInput type="text" 
+                                placeholder="Other Shape"
+                                [(ngModel)]="shapeOther"
+                                name=shapeOther/>
+                                </md-input-container>
+                            </md-radio-button>
+                        </md-radio-group>
                     </div> 
 
                     <div class="form-group">
-                        <label for="congregation_shape">Which best describes the shape of your worship?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="shape" value="5fold" /> 5-Fold Pattern (Gathering, Word, Response, Table, Sending)
-                            <br>
-                            <input type="radio" name="shape" value="4fold" /> 4-Fold Pattern (Gathering, Word, Response, Sending) - Communion monthly or quarterly
-                            <br>
-                            <input type="radio" name="shape" value="2fold" /> 2-Fold Pattern (Praise & Teaching)
-                            <br>                            
-                            <input type="radio" name="shape" value="other" /> Other...
-                            <div class="form-group" [hidden]="!other">
-                                <input id="congregation_wordhip_shape" class="form-control" />
-                            </div>
-                        </form>
-                    </div> 
-
-                    <div class="form-group">
-                        <label for="congregation_attire">What does your pastor/priest wear when he/she preaches?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="attire" value="yes" /> Vestments
-                            <br>
-                            <input type="radio" name="attire" value="no" /> Robes, with or without stoles
-                            <br>
-                            <input type="radio" name="attire" value="other" /> Business Attire
-                            <br>
-                            <input type="radio" name="attire" value="other" /> Casual
-                        </form>
+                        <label for="congregationAttire">What does your pastor/priest wear when he/she preaches?</label>
+                        <md-radio-group [(ngModel)]="submission.data.clothing" name="congregationAttire" required>
+                            <md-radio-button class="block-input" value="Vestments" required> Vestments</md-radio-button>
+                            <md-radio-button class="block-input" value="Robes, with or without stoles" > Robes, with or without stoles</md-radio-button>
+                            <md-radio-button class="block-input" value="Business Attire" > Business Attire</md-radio-button>
+                            <md-radio-button class="block-input" value="Casual" > Casual</md-radio-button>
+                        </md-radio-group>
                     </div>       
                     
                      <div class="form-group">
-                        <label for="congregation_location">Is your congregation...</label>
-                        <form action="" method="post">
-                            <input type="radio" name="location" value="yes" /> Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)
-                            <br>
-                            <input type="radio" name="location" value="no" /> Urban (downtown churches in a large metropolitan area)
-                            <br>
-                            <input type="radio" name="location" value="other" /> Suburban
-                            <br>
-                            <input type="radio" name="location" value="other" /> Rural - In a small city
-                            <br>
-                            <input type="radio" name="location" value="other" /> Rural - Not in a city
-                        </form>
+                        <label for="congregationLocation">Is your congregation...</label>
+                        <md-radio-group [(ngModel)]="submission.data.geography" name="congregationLocation" required>
+                            <md-radio-button class="block-input"
+                            value="Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)" required>
+                            Regional (attracting many attendees from further than 30 miles away and/or has multiple campuses)</md-radio-button>
+                            <md-radio-button class="block-input"
+                            value="Urban (downtown churches in a large metropolitan area)">
+                            Urban (downtown churches in a large metropolitan area)</md-radio-button>
+                            <md-radio-button class="block-input" 
+                            value="Suburban"> 
+                            Suburban</md-radio-button>
+                            <md-radio-button class="block-input"
+                            value="Rural - In a small city"> Rural - In a small city</md-radio-button>
+                            <md-radio-button class="block-input"
+                            value="Rural - Not in a city"> 
+                            Rural - Not in a city</md-radio-button>
+                        </md-radio-group>
                     </div>     
 
-                    <div class="form-group">
-                        <label for="congregation_ethnicity">Which ethnicities do you work with in at least 10% of your events??</label>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> White
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Black
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Hispanic/Latin-American/Caribbean
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Native American/Indigenous Peoples
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Asian
-                            </label>
-                        </div>        
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> African
-                            </label>
-                        </div>     
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Middle-Eastern
-                            </label>
-                        </div>  
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="other"> Other...
-                            </label>
-                        </div>
-                        <div class="form-group" [hidden]="!other">
-                            <input id="person_city" class="form-control" />
-                        </div>
+                    <div class="form-group" >
+                        <label for="congregationEthnicities">Which ethnicities make up at least 10% of your congregation?</label>
+                        
+                            <md-checkbox class="block-input" 
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesOne"
+                                [(ngModel)]="submission.data.ethnicities.White">
+                                White</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesTwo"
+                                [(ngModel)]="submission.data.ethnicities.Black">
+                                Black</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesThree"
+                                [(ngModel)]="submission.data.ethnicities.Hispanic_Latin_American_Caribbean">
+                                Hispanic/Latin-American/Caribbean</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesFour"
+                                [(ngModel)]="submission.data.ethnicities.Native_American_Indigenous_Peoples">
+                                Native American/Indigenous Peoples</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesFive"
+                                [(ngModel)]="submission.data.ethnicities.Asian">
+                                Asian</md-checkbox>
+
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesSix"
+                                [(ngModel)]="submission.data.ethnicities.African">
+                                African</md-checkbox>
+                    
+                            <md-checkbox class="block-input"
+                                ng-true-value="true" 
+                                ng-false-value="false"
+                                name="congEthnicitiesSeven"
+                                [(ngModel)]="submission.data.ethnicities.Middle_Eastern">
+                                Middle-Eastern</md-checkbox>
+                    
+                            <md-checkbox class="block-input">
+                                <md-input-container class="full-width">
+                                <input md-input mdInput type="text"
+                                id="congregationEthnicities" 
+                                class="form-control" 
+                                [(ngModel)]="submission.data.ethnicities.Other"
+                                name="congregationEthnicities"
+                                placeholder="Other Ethnicities"
+                                name="congEthnicitiesEight"/>
+                                </md-input-container>
+                            </md-checkbox>
                     </div>  
 
                     <div class="form-group">
-                        <label for="congregation_attendance">On average, how many people attend your weekly worship services?</label>
-                        <form action="" method="post">
-                            <input type="radio" name="attendance" value="under100" /> Under 100
-                            <br>
-                            <input type="radio" name="attendance" value="100to200" /> Between 100 and 250
-                            <br>
-                            <input type="radio" name="attendance" value="250to500" /> Between 250 and 500
-                            <br>
-                            <input type="radio" name="attendance" value="500to1000" /> Between 500 and 1000
-                            <br>
-                            <input type="radio" name="attendance" value="over1000" /> Over 1000
-                        </form>
-                    </div> 
+                        <label for="congregationAttendance">On average, how many people attend your weekly worship services?</label>
+                        <md-radio-group [(ngModel)]="submission.data.attendance" name="congAttendance" required>
+                            <md-radio-button class="block-input" value="Under 100" required> Under 100</md-radio-button>
+                            <md-radio-button class="block-input" value="Between 100 and 250"> Between 100 and 250</md-radio-button>
+                            <md-radio-button  class="block-input" value="Between 250 and 500"> Between 250 and 500</md-radio-button>
+                            <md-radio-button  class="block-input" value="Between 500 and 1000"> Between 500 and 1000</md-radio-button>
+                            <md-radio-button  class="block-input" value="Over 1000"> Over 1000</md-radio-button>
+                        </md-radio-group>
+                    </div>
 
-                    <div>
-                        <a class="btn btn-block btn-primary" >Submit</a>
-                        <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-                    </div>                                              
+                    <md-card-actions>
+                        <button md-raised-button color="primary" type="submit" 
+                        [disabled]="congregationForm.invalid">
+                        Submit
+                        </button>
+                        <button md-button routerLink="/">
+                        Return to home
+                        </button>
+                    </md-card-actions>
+                    </form>                      
                     
-                </div> <!-- end class card-block-->
-            </div> <!-- end class card -->
+                </md-card-content> <!-- end class card-block-->
+            </md-card> <!-- end class card -->
         </div> <!-- end class col-md-8 offset-md-2 -->
     </div> <!-- end entry-body row -->
 </div>
