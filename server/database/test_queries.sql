@@ -1,4 +1,3 @@
-
 /* Create quiz with questions */
 ALTER TABLE users auto_increment = 1;
 
@@ -10,7 +9,8 @@ ALTER TABLE resources auto_increment = 1;
 	ALTER TABLE resource_ensembles auto_increment = 1;
 	ALTER TABLE resource_denominations auto_increment = 1;
 	ALTER TABLE resource_languages auto_increment = 1;
-	
+    ALTER TABLE resource_resource_categories auto_increment = 1;
+
 ALTER TABLE Languages auto_increment = 1;
 
 
@@ -27,17 +27,15 @@ ALTER TABLE questions auto_increment = 1;
 ALTER TABLE choices auto_increment = 1;
 ALTER TABLE Tags auto_increment = 1;
 
-ALTER TABLE Parent_Org auto_increment = 1;
 ALTER TABLE Denominations auto_increment = 1;
 ALTER TABLE Instrument_Types auto_increment = 1;
 ALTER TABLE Topics auto_increment = 1;
 ALTER TABLE Ensembles auto_increment = 1;
 ALTER TABLE Ethnicities auto_increment = 1;
+ALTER TABLE Resource_Categories auto_increment = 1;
 
-INSERT INTO Parent_Org (name) VALUES ("Parent Org 1"), ("Parent Org 2"), ("Parent Org 3");
 
 INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Others');
-
 
 /* TAGS */
 INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),('Lutheran'),('Orthodox'),('Anglican'),('Conservative'),('Liberal'),('Moderate');
@@ -51,12 +49,12 @@ INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), 
 INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"), ("Other");
 INSERT INTO Ethnicities(name) VALUES ("European"), ("African"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"), ("Other");
 
-INSERT INTO Resource_Categories(name) 
+INSERT INTO Resource_Categories(name)
 VALUES ("A_hymn_written_prior_to_1970"),
 ("Newly_composed_hymn_within_the_last_10_years"),
 ("Song_by_local_church_musicians"),
 ("Other");
-INSERT INTO Topics (name) 
+INSERT INTO Topics (name)
 VALUES ("Psalm_Setting"),
 ("Lectionary_Based"),
 ("Other");
@@ -65,8 +63,8 @@ INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
 
 
 /* resources */
-INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent_org_id, author) 
-VALUES ("test_title_1","https://google.com",0,1,"test_description_1",1, "John Steinbeck"), ("test_title_2","https://bing.com",0,1,"test_description_2",1, "John Steinbeck");
+INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent, author)
+VALUES ("test_title_1","https://google.com",0,1,"test_description_1","Parent 1", "John Steinbeck"), ("test_title_2","https://bing.com",0,1,"test_description_2","Parent 2", "John Steinbeck");
 
 
 INSERT INTO resource_resource_types(resource_id, resource_type_id) VALUES(1,1),(1,2),(2,2);
@@ -103,29 +101,29 @@ INSERT INTO user_ethnicities(user_id, ethnicity_id) VALUES
 
 
 
-INSERT INTO quizes(quiz_title) 
-VALUES 
+INSERT INTO quizes(quiz_title)
+VALUES
 ('Primary Quiz');
 
 
-INSERT INTO questions(question_text, question_weight, quiz_id) 
+INSERT INTO questions(question_text, question_weight, quiz_id)
 VALUES
 ('What is your denomination?', 3, 1);
 
 
-INSERT INTO choices(choice_text, question_id, tag_id) 
-VALUES 
+INSERT INTO choices(choice_text, question_id, tag_id)
+VALUES
 ('Protestant', 1, 3),
-('Catholic', 1, 2), 
+('Catholic', 1, 2),
 ('Orthodox', 1, 6),
 ('Other', 1, 1);
 
-INSERT INTO questions(question_text, question_weight, quiz_id) 
+INSERT INTO questions(question_text, question_weight, quiz_id)
 VALUES
 ('What is your Race?', 1, 1);
 
-INSERT INTO choices(choice_text, question_id) 
-VALUES 
+INSERT INTO choices(choice_text, question_id)
+VALUES
 ('White', 2),
 ('Black', 2),
 ('Hispanic', 2),
@@ -133,12 +131,12 @@ VALUES
 ('Indian', 2),
 ('Other', 2);
 
-INSERT INTO questions(question_text, question_weight, quiz_id) 
+INSERT INTO questions(question_text, question_weight, quiz_id)
 VALUES
 ('What line do you fall on the political spectrum?', 1, 1);
 
-INSERT INTO choices(choice_text, question_id) 
-VALUES 
+INSERT INTO choices(choice_text, question_id)
+VALUES
 ('Conservative', 3),
 ('Liberal', 3),
 ('Moderate', 3);
@@ -150,7 +148,7 @@ name,
 website,
 mission,
 priest_attire
-) 
+)
 VALUES (
 "Catholic_Church",
 "https://catholicchurch.org",
@@ -208,7 +206,7 @@ is_active
 );
 
 /* Congs */
-INSERT INTO congregations(name, website, hymn_soc_member) VALUES 
+INSERT INTO congregations(name, website, hymn_soc_member) VALUES
 ("cong number 1", "https://google.com", True),
 ("cong number 2", "https://yahoo.com", True);
 
@@ -224,10 +222,10 @@ INSERT INTO congregation_tags(congregation_id, tag_id) VALUES (1,1), (1,2), (2,1
 /* Orgs */
 INSERT INTO Song_Types(name) VALUES("Song Type 1"), ("Song Type 2");
 INSERT INTO organizations(name, website)
-VALUES 
+VALUES
 ("Organization 1", "https://yahoo.com"),
 ("Organization 2", "https://gudsucc.com");
-INSERT INTO organization_tags(organization_id, tag_id) VALUES (1,1), (1,2), (2,3); 
+INSERT INTO organization_tags(organization_id, tag_id) VALUES (1,1), (1,2), (2,3);
 INSERT INTO organization_song_types(organization_id, song_type_id) VALUES (1,1), (1,2), (2,2);
 INSERT INTO organization_instrument_types(organization_id, instrument_type_id) VALUES (1,1), (1,2), (2,1);
 INSERT INTO organization_congregations(organization_id, congregation_id) VALUES (1,1), (1,2), (2,1);
@@ -238,13 +236,3 @@ INSERT INTO Event_Types(name) VALUES ("Event Type 1"), ("Event Type 2"), ("Event
 
 INSERT INTO event_tags(event_id, tag_id) VALUES (1,1), (1,2), (2,1);
 INSERT INTO event_event_types(event_id, event_type_id) VALUES (1,1), (1,2), (1,3), (2,1), (2,2);
-
-
-
-
-
-
-
-
-
-
