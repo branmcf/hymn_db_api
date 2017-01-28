@@ -1,7 +1,7 @@
 var Hapi = require('hapi')
 var Good = require('good')
 var Vision = require('vision')
-var Bcrypt = require('bcrypt')
+//var Bcrypt = require('bcrypt')
 //var Users = require('./users-db')
 var Handlebars = require('handlebars')
 var BasicAuth = require('hapi-auth-basic')
@@ -75,7 +75,7 @@ server.register([ Vision, BasicAuth, CookieAuth,
 
   server.log('info', 'Plugins registered')
 
-  
+
   server.views({
     engines: {
       html: Handlebars
@@ -151,9 +151,9 @@ server.register([ Vision, BasicAuth, CookieAuth,
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i])
   }
-// 
+//
 
-  
+
   //server.route(routes)
   server.log('info', 'Routes registered')
 
@@ -251,9 +251,9 @@ const CookieAuth = require('hapi-auth-cookie');
 // Create a server with a host and port
 //
 const server = new Hapi.Server();
-server.connection({ 
-    host: 'localhost', 
-    port: 8000 
+server.connection({
+    host: 'localhost',
+    port: 8000
 });
 
 
@@ -287,7 +287,7 @@ server.registerCookieAuth, function(err) {
 
     // LOG OUT
     server.route({
-      method: 'GET', 
+      method: 'GET',
       path: '/private-route',
       config: {
             auth: 'session',
@@ -346,7 +346,7 @@ server.registerCookieAuth, function(err) {
     //end cookie test
 
     // Start the server
-    
+
 
 
 };
