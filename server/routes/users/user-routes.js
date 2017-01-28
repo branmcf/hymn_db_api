@@ -42,9 +42,9 @@ function getUsers() {
     reg_date, 
     is_active, 
     high_level, 
-    city_id, 
-    state_id, 
-    country_id, 
+    city, 
+    state, 
+    country, 
     website, 
     hymn_soc_member 
     from users`, function(err, rows, fields) {
@@ -127,9 +127,9 @@ function formatUser(actualIndex) {
     is_active:        users[0][actualIndex].is_active,
     reg_date:         users[0][actualIndex].reg_date,
     high_level:       users[0][actualIndex].high_level,
-    city_id:          users[0][actualIndex].city_id,
-    state_id:         users[0][actualIndex].state_id,
-    country_id:       users[0][actualIndex].country_id,
+    city:          users[0][actualIndex].city,
+    state:         users[0][actualIndex].state,
+    country:       users[0][actualIndex].country,
     website:          users[0][actualIndex].website,
     ethnicity_name:   eth[0]
 
@@ -205,14 +205,14 @@ userController.postConfig = {
       is_active:        req.payload.is_active,
       reg_date:         req.payload.reg_date,
       high_level:       req.payload.high_level,
-      city_id:          req.payload.city_id,
-      state_id:         req.payload.state_id,
-      country_id:       req.payload.country_id,
+      city:             req.payload.city,
+      state:            req.payload.state,
+      country:          req.payload.country,
       website:          req.payload.website,
       ethnicity_name:   req.payload.ethnicity_name,
       ethnicity_name2:  req.payload.ethnicity_name2,
       ethnicity_name3:  req.payload.ethnicity_name3,
-      ethnicity_name4:  req.payload.ethnicity_name4,
+      ethnicity_name4:  req.payload.ethnicity_name4
     };
 
     /*

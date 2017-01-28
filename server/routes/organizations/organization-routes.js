@@ -165,7 +165,7 @@ orgController.getConfig = {
   }
 };
 
-//CONG POST REQUEST
+//ORG POST REQUEST
 orgController.postConfig = {
 	auth: {
   		mode: 'try'
@@ -174,8 +174,8 @@ orgController.postConfig = {
     var newOrg = { 
       name: req.payload.name, 
       url: req.payload.website, 
-      //
-      parent_org_id: req.payload.parent,
+      
+      //parent_org_id: req.payload.parent,
 
       //denomination: req.payload.denomination_id,
       city: req.payload.city,
@@ -220,8 +220,9 @@ orgController.postConfig = {
   },
   validate: {
     payload: {
-      cong_name: Joi.string().required(),
-      website: Joi.string().required(),
+      name: Joi.string().required(),
+      url: Joi.string().required()
+      /*
       cong_city: Joi.string().required(),
       cong_state: Joi.string().required(),
       cong_country: Joi.string().required(),
@@ -232,6 +233,7 @@ orgController.postConfig = {
       worship_types_id: Joi.number().required(),
       ethnicity_types_id: Joi.number().required(),
       cong_type_id: Joi.number().required()
+      */
 
     }
   }
