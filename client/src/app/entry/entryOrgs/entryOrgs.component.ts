@@ -4,6 +4,7 @@ import { ContentfulService } from './../../services/contentful.service';
 import { SubmitService } from './../../services/submit.service';
 
 
+
 @Component({
   selector: 'hymn-entry-orgs',
   template: require('./entryOrgs.html'),
@@ -83,5 +84,4 @@ export class EntryOrgsComponent implements OnInit {
 
     this.submitService.submitOrgs(this.submission);
   }
-
 }
