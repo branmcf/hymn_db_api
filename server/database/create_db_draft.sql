@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS congregation_instrument_types;
 DROP TABLE IF EXISTS congregation_worship_types;
 DROP TABLE IF EXISTS congregation_types;
 DROP TABLE IF EXISTS congregation_ethnicities;
+DROP TABLE IF EXISTS congregation_congregation_categories;
+
 
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types;
@@ -77,6 +79,7 @@ DROP TABLE IF EXISTS Languages;
 DROP TABLE IF EXISTS Resource_Types;
 DROP TABLE IF EXISTS Authors;
 
+DROP TABLE IF EXISTS Congregation_Categories;
 DROP TABLE IF EXISTS Resource_Categories;
 DROP TABLE IF EXISTS Accompaniment;
 
@@ -102,6 +105,12 @@ SET FOREIGN_KEY_CHECKS=1;
 ===================================================
 */
 
+CREATE TABLE Congregation_Categories (
+	id int unsigned not null auto_increment,
+	name varchar(128),
+  other_text varchar(256),
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE Resource_Categories (
 	id int unsigned not null auto_increment,
@@ -240,18 +249,19 @@ CREATE TABLE congregations (
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default False,
 	priest_attire varchar(64),
-	avg_attendance float,
+	attendance varchar(64) default "under 50",
 
 	description_of_worship_to_guests varchar(256),
-	size int(10) unsigned default 0,
     is_active boolean default False,
-    geogrpahic_area varchar(128),
+    geography varchar(128),
     is_free boolean default False,
     events_free boolean default False,
-    process varchar(128),
+    the_process varchar(128),
     high_level boolean default False,
-    shape varchar(256),
+    shape varchar(128),
     clothing varchar(128),
+
+    denomination varchar(64),
 
     approved boolean default False
 
@@ -335,7 +345,7 @@ CREATE TABLE organizations (
     membership_free boolean default False,
 
     denomination varchar(128), /* delete this if using middle table */
-    
+
     approved boolean default False
 
 
@@ -377,6 +387,15 @@ CREATE TABLE user_ethnicities(
 - INTERMEDIATE TABLES FOR CONGREGATIONS -
 ===================================================
 */
+
+CREATE TABLE congregation_congregation_categories (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations (id),
+	congregation_category_id int unsigned,
+	FOREIGN KEY (congregation_category_id) REFERENCES Congregation_Categories (id)
+);
 
 CREATE TABLE congregation_tags (
 	id int unsigned not null auto_increment,

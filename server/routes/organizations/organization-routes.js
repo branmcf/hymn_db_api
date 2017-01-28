@@ -131,7 +131,7 @@ function formatOrg(actualIndex) {
 
   };
 
-  var theUrl = "/organization/" + String(actualIndex+1);
+  var theUrl = "/orgs/" + String(actualIndex+1);
 
   var finalObj = {
     url: theUrl,
