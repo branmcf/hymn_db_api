@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ContentfulService } from './../../services/contentful.service';
 import { SubmitService } from './../../services/submit.service';
 
+
 @Component({
   selector: 'hymn-entry-resources',
   template: require('./entryResources.html'),
