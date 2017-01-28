@@ -167,9 +167,7 @@ orgController.getConfig = {
 
 //ORG POST REQUEST
 orgController.postConfig = {
-	auth: {
-  		mode: 'try'
-  	},
+	
   handler: function(req, reply) {
     var newOrg = { 
       name: req.payload.name, 

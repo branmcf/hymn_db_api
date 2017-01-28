@@ -71,6 +71,21 @@ export class ContentfulService {
             }));
     }
 
+    getOrgsForm() {
+        return Promise.resolve(this.client.getEntry('3LFm4Uq6lWEEM40qWkMKWG')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
+    }
+
+    getPersonForm() {
+        return Promise.resolve(this.client.getEntry('4Io2dsT11KQW0UmsIcSKOQ')
+            .then((form) => {
+                return JSON.stringify(form);
+            }));
+    }
+
+
     getCongregationForm() {
          return Promise.resolve(this.client.getEntry('36bnlQ1OKsYUIQoEkUWeYG')
             .then((form) => {
