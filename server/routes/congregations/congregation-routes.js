@@ -152,9 +152,7 @@ congController.getConfig = {
 
 //CONG POST REQUEST
 congController.postConfig = {
-	auth: {
-  		mode: 'try'
-  	},
+	
   handler: function(req, reply) {
     var newCong = { 
       cong_name: req.payload.cong_name, 

@@ -1,6 +1,7 @@
 
 
 var routes = [
+  /*
   {
     method: 'GET',
     path: '/profile',
@@ -36,6 +37,7 @@ var routes = [
       }
     }
   },
+  */
 
   {
     method: 'POST',
@@ -45,17 +47,8 @@ var routes = [
       auth: {
         mode: 'try'
       },
-      plugins: {
-        'hapi-auth-cookie': {
-          redirectTo: false
-        }
-      },
       handler: function (request, reply) {
-        if (request.auth.isAuthenticated) {
-          console.log("return the profile");
-
-          return reply.view('Profile')
-        }
+        
 
         var username = request.payload.username
         var user = Users[ username ]
@@ -66,19 +59,14 @@ var routes = [
 
         var password = request.payload.password
 
-        return Bcrypt.compare(password, user.password, function (err, isValid) {
-          if (isValid) {
-            request.server.log('info', 'user authentication successful')
-            request.cookieAuth.set(user);
-            return reply.view('profile')
-          }
+        return reply.
 
-          return reply.view('index')
-        })
+
+        });
       }
     }
   },
-
+/*
   {
     method: 'GET',
     path: '/logout',
@@ -90,6 +78,7 @@ var routes = [
       }
     }
   }
+  */
 
 ]
 

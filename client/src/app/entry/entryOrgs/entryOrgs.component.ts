@@ -4,7 +4,6 @@ import { ContentfulService } from './../../services/contentful.service';
 import { SubmitService } from './../../services/submit.service';
 
 
-
 @Component({
   selector: 'hymn-entry-orgs',
   template: require('./entryOrgs.html'),
@@ -54,6 +53,7 @@ export class EntryOrgsComponent implements OnInit {
     if (!id) {
       return;
     }
+
 
     var onload = (data) => {
       if (data) {
