@@ -135,12 +135,14 @@ CREATE TABLE Authors (
 );
 */
 
+/*
 CREATE TABLE Resource_Types (
 	id int unsigned auto_increment,
 	name varchar(128),
     other_text varchar(256),
 	PRIMARY KEY (id)
 );
+*/
 
 
 CREATE TABLE Languages (
@@ -291,7 +293,9 @@ CREATE TABLE resources (
 	favorites int unsigned,
 	views int unsigned,
 	resource_date timestamp,
-    author varchar(128),
+  author varchar(128),
+
+	type varchar(64),
 
 	high_level boolean default False,
     is_active boolean default True,
@@ -510,6 +514,7 @@ CREATE TABLE resource_authors (
 );
 */
 
+/*
 CREATE TABLE resource_resource_types (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
@@ -518,6 +523,7 @@ CREATE TABLE resource_resource_types (
 	resource_type_id int unsigned,
 	FOREIGN KEY (resource_type_id) REFERENCES Resource_Types (id)
 );
+*/
 
 CREATE TABLE resource_denominations (
 	id int unsigned not null auto_increment,
