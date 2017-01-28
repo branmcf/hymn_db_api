@@ -4,8 +4,6 @@ ALTER TABLE users auto_increment = 1;
 ALTER TABLE resources auto_increment = 1;
 	ALTER TABLE resource_ethnicities auto_increment = 1;
 	ALTER TABLE resource_tags auto_increment = 1;
-    ALTER TABLE Resource_Types auto_increment = 1;
-    ALTER TABLE resource_resource_types auto_increment = 1;
 	ALTER TABLE resource_ensembles auto_increment = 1;
 	ALTER TABLE resource_denominations auto_increment = 1;
 	ALTER TABLE resource_languages auto_increment = 1;
@@ -35,7 +33,7 @@ ALTER TABLE Ethnicities auto_increment = 1;
 ALTER TABLE Resource_Categories auto_increment = 1;
 
 
-INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Others');
+INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Other');
 
 /* TAGS */
 INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),('Lutheran'),('Orthodox'),('Anglican'),('Conservative'),('Liberal'),('Moderate');
@@ -43,7 +41,6 @@ INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),
 /* END TAGS */
 
 /* Resource Data */
-INSERT INTO Resource_Types(name) VALUES("Resource Type 1"), ("Resource Type 2"), ("Other");
 INSERT INTO Denominations(name) VALUES ("Catholic"), ("Lutheran"), ("Baptist"), ("Orthodox"), ("Non-Denominational"), ("Other");
 INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), ("Other");
 INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"), ("Other");
@@ -63,11 +60,10 @@ INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
 
 
 /* resources */
-INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent, author)
-VALUES ("test_title_1","https://google.com",0,1,"test_description_1","Parent 1", "John Steinbeck"), ("test_title_2","https://bing.com",0,1,"test_description_2","Parent 2", "John Steinbeck");
+INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent, author, type)
+VALUES ("test_title_1","https://google.com",0,1,"test_description_1","Parent 1", "John Steinbeck", "Book"), ("test_title_2","https://bing.com",0,1,"test_description_2","Parent 2", "John Steinbeck", "Blog");
 
 
-INSERT INTO resource_resource_types(resource_id, resource_type_id) VALUES(1,1),(1,2),(2,2);
 INSERT INTO resource_tags(resource_id, tag_id) VALUES(1,1),(1,3),(2,2);
 INSERT INTO resource_denominations(resource_id, denomination_id) VALUES(1,1),(2,1),(2,2);
 INSERT INTO resource_instruments(resource_id, instrument_type_id) VALUES(1,1),(2,1),(2,2),(2,3);
