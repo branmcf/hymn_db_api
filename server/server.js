@@ -24,6 +24,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database
 });
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
 
 connection.connect();
 //
@@ -34,8 +37,7 @@ var server = new Hapi.Server();
 
 // add server’s connection information
 server.connection({
-  host: 'localhost',
-  port: 3000,
+  port: process.env.PORT || 3000,
   routes: { cors: true }
 });
 

@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS resource_instruments;
 DROP TABLE IF EXISTS resource_topics;
 DROP TABLE IF EXISTS resource_ensembles;
 DROP TABLE IF EXISTS resource_ethnicities;
-DROP TABLE IF EXISTS resource_Accompaniment;
+DROP TABLE IF EXISTS resource_accompaniment;
 DROP TABLE IF EXISTS resource_languages;
 DROP TABLE IF EXISTS resource_resource_categories;
 
@@ -69,7 +69,7 @@ DROP TABLE IF EXISTS Tags;
 
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS congregations;
-DROP TABLE IF EXISTS Resources;
+DROP TABLE IF EXISTS resources;
 DROP TABLE IF EXISTS organizations;
 DROP TABLE IF EXISTS Ensembles;
 DROP TABLE IF EXISTS Topics;

@@ -10,6 +10,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database
 });
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
 
 connection.connect();
 
@@ -61,7 +64,7 @@ function getUsers() {
         numUsers = users[0].length;
 
 
-        getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
+        getInter("Ethnicities", "users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
         
         //console.log(`selected ${numUsers} users from db`);
         

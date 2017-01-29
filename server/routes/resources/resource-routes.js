@@ -12,7 +12,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database
 });
-
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
 
 
 

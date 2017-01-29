@@ -10,6 +10,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database
 });
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
 
 connection.connect();
 
@@ -152,7 +155,6 @@ congController.getConfig = {
 
 //CONG POST REQUEST
 congController.postConfig = {
-	
   handler: function(req, reply) {
     var newCong = { 
       cong_name: req.payload.cong_name, 
