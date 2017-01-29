@@ -37,13 +37,14 @@ function getOrganizations() {
   //get orgs from db
   connection.query('SELECT * from organizations', function(err, rows, fields) {
     if (!err) {
-      
-      
-      var JSObj = rowsToJS(rows);       
+
+
+      var JSObj = rowsToJS(rows);
       orgs.push(JSObj);
 
       numOrgs = orgs[0].length;
 
+/*
       getInter("Denominations", "organizations", "organization_denominations", "denomination_id", "organization_id", orgDen, numOrgs);
       getInter("Tags", "organizations", "organization_tags", "tag_id", "organization_id", orgTags, numOrgs);
       //song types
@@ -55,7 +56,7 @@ function getOrganizations() {
       getInter("Ethnicities", "organizations", "organization_ethnicities", "ethnicity_id", "organization_id", orgEth, numOrgs);
       //congregations
       getInter("congregations", "organizations", "organization_congregations", "congregation_id", "organization_id", orgCongs, numOrgs);
-
+*/
     }
     else
       console.log('Error while performing Events Query.');
@@ -74,62 +75,63 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
           INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
           WHERE RT.id = ${varI}`, function(err, rows, fields) {
             if(err) { throw err; }
-            
+
             var JSObj = rowsToJS(rows);
-            
+
             arrayToUse.push(JSObj);
 
-          
+
         });
-        
+
     }//end for loop
 }//end function
 
-/* 
+/*
 ===================================================
 - ORGANIZATINS -
-=================================================== 
+===================================================
 */
 
 function formatOrg(actualIndex) {
   var orgData = {};
 
   orgData = {
-    id:             orgs[0][actualIndex].id, 
-    name:          orgs[0][actualIndex].name,
+    id:             orgs[0][actualIndex].id,
+    name:           orgs[0][actualIndex].name,
     url:            orgs[0][actualIndex].website,
-    parent:         orgs[0][actualIndex].parent_org_id,
-    //denomination(s)   
-    denomination:   orgDen[actualIndex],      
-    city:        	orgs[0][actualIndex].city,
-    state:       	orgs[0][actualIndex].state,
-    country:     	orgs[0][actualIndex].country,
+    parent:         orgs[0][actualIndex].parent,
+    //denomination(s)
+    //denomination:   orgDen[actualIndex],
+    denomination:   orgs[0][actualIndex].denomination,
+    city:        	  orgs[0][actualIndex].city,
+    state:       	  orgs[0][actualIndex].state,
+    country:     	  orgs[0][actualIndex].country,
     geographic_area:orgs[0][actualIndex].geography,
     is_org_free:    orgs[0][actualIndex].is_free,
     events_free:    orgs[0][actualIndex].offers_free_events,
     membership_free:orgs[0][actualIndex].membership_free,
-    mission:        orgs[0][actualIndex].mission,   
+    mission:        orgs[0][actualIndex].mission,
     process:        orgs[0][actualIndex].the_process,
     //tags
-    tags:           orgTags[actualIndex],
+    //tags:           orgTags[actualIndex],
     hymn_soc_member:orgs[0][actualIndex].hymn_soc_member,
-    is_active:      orgs[0][actualIndex].is_active,  
-    high_level:     orgs[0][actualIndex].high_level,
+    is_active:      orgs[0][actualIndex].is_active,
+    high_level:     orgs[0][actualIndex].high_level
     //song types
-    song_types:     orgSongTypes[actualIndex],  
+    //song_types:     orgSongTypes[actualIndex],
     //instrument types
-    instrument_types:orgInstr[actualIndex],
+    //instrument_types:orgInstr[actualIndex],
     //worship types
-    worship_types:  orgWorshipTypes[actualIndex],
+    //worship_types:  orgWorshipTypes[actualIndex],
     //ethnicities
-    ethnicities:   orgEth[actualIndex],
+    //ethnicities:   orgEth[actualIndex],
     //congregations
-    congregations:  orgCongs[actualIndex]
-    
+    //congregations:  orgCongs[actualIndex]
+
 
   };
 
-  var theUrl = "/organization/" + String(actualIndex+1);
+  var theUrl = "/orgs/" + String(actualIndex+1);
 
   var finalObj = {
     url: theUrl,
@@ -148,9 +150,9 @@ orgController.getConfig = {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-      
+
       finalObj = formatOrg(actualIndex);
-      
+
       return reply(finalObj);
     }
 
@@ -160,35 +162,36 @@ orgController.getConfig = {
       var bob = formatOrg(i);
       objToReturn.push(bob);
     }
-    
+
     reply(objToReturn);
   }
 };
 
 //ORG POST REQUEST
 orgController.postConfig = {
-	
-  handler: function(req, reply) {
-    var newOrg = { 
-      name: req.payload.name, 
-      url: req.payload.website, 
-      
-      //parent_org_id: req.payload.parent,
 
-      //denomination: req.payload.denomination_id,
-      city: req.payload.city,
-      state: req.payload.state,
-      country: req.payload.country,
-      geography: req.payload.geographic_area,
-      is_free: req.payload.is_org_free,
-      offers_free_events: req.payload.events_free,
-      membership_free: req.payload.membership_free,
-      mission: req.payload.mission,
-      process: req.payload.process,
-      tag_id: req.payload.tag_id,
-      hymn_soc_member: req.payload.hymn_soc_member,
-      is_active: req.payload.is_active,
-      high_level: req.payload.high_level
+  handler: function(req, reply) {
+
+    getOrganizations();
+
+    var newOrg = {
+      name: req.payload.data.name,
+      website: req.payload.data.url,
+      parent: req.payload.data.parent,
+      denomination: req.payload.data.denomination,
+      city: req.payload.data.city,
+      state: req.payload.data.state,
+      country: req.payload.data.country,
+      geography: req.payload.data.geographic_area,
+      is_free: req.payload.data.is_org_free,
+      offers_free_events: req.payload.data.events_free,
+      membership_free: req.payload.data.membership_free,
+      mission: req.payload.data.mission,
+      the_process: req.payload.data.process,
+      //tag_id: req.payload.data.tag_id,
+      hymn_soc_member: req.payload.data.hymn_soc_member
+      //is_active: req.payload.data.is_active,
+      //high_level: req.payload.data.high_level
 
     };
 
@@ -202,25 +205,30 @@ orgController.postConfig = {
           return;
         }
 
-        orgs[0].push(newOrg);
+        var JSObj = rowsToJS(newOrg);
 
-        reply([{
-          statusCode: 200,
-          message: 'Inserted Successfully',
-        }]);
-        
+        orgs[0].push(JSObj);
+
+        var toReturn = {
+
+        	org_id: orgs[0].length +1 /* +1 or not?... */
+        }
+
+        return reply(toReturn);
+
       }
     );
     //end mysql
 
-    
+
     //reply(newRes);
-  },
+  }
+  /* ADD COMMA ^
   validate: {
     payload: {
       name: Joi.string().required(),
       url: Joi.string().required()
-      /*
+
       cong_city: Joi.string().required(),
       cong_state: Joi.string().required(),
       cong_country: Joi.string().required(),
@@ -231,14 +239,15 @@ orgController.postConfig = {
       worship_types_id: Joi.number().required(),
       ethnicity_types_id: Joi.number().required(),
       cong_type_id: Joi.number().required()
-      */
+
 
     }
   }
+  */
 
 };
 
 module.exports = [
-  	{ path: '/organization/', method: 'POST', config: orgController.postConfig},
-  	{ path: '/organization/{id?}', method: 'GET', config: orgController.getConfig }
+  	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
+  	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig }
   ];
