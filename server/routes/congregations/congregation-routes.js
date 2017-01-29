@@ -49,7 +49,7 @@ function getCongregations() {
       getInter("Instrument_Types", 	 "congregations", "congregation_instrument_types", 	      "instrument_type_id", 	"congregation_id", congInstr, numCongs);
       getInter("Ethnicities",  		   "congregations", "congregation_ethnicities",  		        "ethnicity_id", 			"congregation_id", congEth, numCongs);
       //getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
-      getInter("congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
+      getInter("Congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
 
 
     }
