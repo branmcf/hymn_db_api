@@ -15,6 +15,7 @@ ALTER TABLE Languages auto_increment = 1;
 ALTER TABLE organizations auto_increment = 1;
 
 ALTER TABLE congregations auto_increment = 1;
+	ALTER TABLE Congregation_Categories auto_increment = 1;
 
 ALTER TABLE events auto_increment = 1;
 	ALTER TABLE event_tags auto_increment = 1;
@@ -44,7 +45,7 @@ INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),
 INSERT INTO Denominations(name) VALUES ("Catholic"), ("Lutheran"), ("Baptist"), ("Orthodox"), ("Non-Denominational"), ("Other");
 INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), ("Other");
 INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"), ("Other");
-INSERT INTO Ethnicities(name) VALUES ("European"), ("African"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"), ("Other");
+INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"), ("Other");
 
 INSERT INTO Resource_Categories(name)
 VALUES ("A_hymn_written_prior_to_1970"),
@@ -207,8 +208,10 @@ INSERT INTO congregations(name, website, hymn_soc_member) VALUES
 ("cong number 2", "https://yahoo.com", True);
 
 INSERT INTO Cong_Types(name) VALUES ("Cong Type 1"), ("Cong Type 2"), ("Cong Type 3");
-INSERT INTO Instrument_Types(name) VALUES ("Instrument Type 1"), ("Instrument Type 2"), ("Instrument Type 3");
+INSERT INTO Instrument_Types(name) VALUES ("Acapella"), ("Organ"), ("Piano");
+INSERT INTO Congregation_Categories(name) VALUES ("Secular Song");
 
+INSERT INTO congregation_congregation_categories(congregation_id, congregation_category_id) VALUES (1,1), (2,1);
 INSERT INTO congregation_denominations(congregation_id, denomination_id) VALUES (1,1), (1,2), (2,1);
 INSERT INTO congregation_types(congregation_id, congregation_type_id) VALUES (1,1), (1,2), (2,1);
 INSERT INTO congregation_instrument_types(congregation_id, instrument_type_id) VALUES (1,1), (1,2), (2,1);
