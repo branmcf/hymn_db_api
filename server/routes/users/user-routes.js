@@ -1,5 +1,6 @@
-var Joi = require('joi')
-var mysql = require('mysql')
+var Joi = require('joi');
+var mysql = require('mysql');
+var Boom = require('boom');
 
 var options = require('../../config/config.js');
 
@@ -151,8 +152,10 @@ userController.getConfig = {
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     if (request.params.id) {
-      if (numUsers <= request.params.id - 1)
-        return reply('Not enough users in the database for your request').code(404);
+      if (numUsers <= request.params.id - 1) {
+        //return reply('Not enough users in the database for your request').code(404);
+        return reply(Boom.notFound());
+      }
 
       var actualIndex = Number(request.params.id) - 1;
 
@@ -168,8 +171,8 @@ userController.getConfig = {
     var objToReturn = [];
 
     for(var i=0; i < users[0].length; i++) {
-      var bob = formatUser(i);
-      objToReturn.push(bob);
+      var temp = formatUser(i);
+      objToReturn.push(temp);
     }
 
 
@@ -312,7 +315,6 @@ userController.loginConfig = {
       }//end if statement
       else if(i+1 == users[0].length) {
         console.log("no user in database with that email and/or password");
-        var Boom = require('boom');
         reply(Boom.notFound('Invalid username and/or password combination'));
       }
     }//end for loop
