@@ -34,26 +34,26 @@ function getUsers() {
 
   //console.log(">>>>>getUsers()");
 
-  connection.query(`SELECT 
-    id, 
-    email, 
+  connection.query(`SELECT
+    id,
+    email,
     password,
-    first_name, 
-    last_name, 
-    reg_date, 
-    is_active, 
-    high_level, 
-    city, 
-    state, 
-    country, 
-    website, 
-    hymn_soc_member 
+    first_name,
+    last_name,
+    reg_date,
+    is_active,
+    high_level,
+    city,
+    state,
+    country,
+    website,
+    hymn_soc_member
     from users`, function(err, rows, fields) {
 
       if (!err) {
 
         //console.log(">>>>>select from db");
-        
+
         var JSObj = rowsToJS(rows);
 
         users.push(JSObj);
@@ -62,9 +62,9 @@ function getUsers() {
 
 
         getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
-        
+
         //console.log(`selected ${numUsers} users from db`);
-        
+
 
       }//end if statement
       else
@@ -88,30 +88,30 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
           INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
           INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
           WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) { 
+            if(err) {
               console.log(`ERROR IN INTERMEDIATE TABLE for leftTable: ${leftTable}, middle: ${middleTable}, right: ${rightTable}`);
-              throw err; 
+              throw err;
             }
 
             //console.log(`>>>>>select id= ${varI} out of ${numLoops} from ${leftTable} from db`);
-            
+
             var JSObj = rowsToJS(rows);
-            
+
             arrayToUse.push(JSObj);
 
             //console.log(`done selecting ${varI} from ${leftTable}`);
         });
-        
+
     }//end for loop
 
     //console.log(`end getInter()`);
 
 }//end function
 
-/* 
+/*
 ===================================================
 - USER Controllers -
-=================================================== 
+===================================================
 */
 
 function formatUser(actualIndex) {
@@ -120,7 +120,7 @@ function formatUser(actualIndex) {
 
   userData = {
     url:              "/users/" + String(actualIndex + 1),
-    id:               users[0][actualIndex].id, 
+    id:               users[0][actualIndex].id,
     email:            users[0][actualIndex].email,
     first_name:       users[0][actualIndex].first_name,
     hymn_soc_member:  users[0][actualIndex].hymn_soc_member,
@@ -151,7 +151,7 @@ userController.getConfig = {
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     if (request.params.id) {
-      if (numUsers <= request.params.id - 1) 
+      if (numUsers <= request.params.id - 1)
         return reply('Not enough users in the database for your request').code(404);
 
       var actualIndex = Number(request.params.id) - 1;
@@ -162,7 +162,7 @@ userController.getConfig = {
 
       return reply(userData);
 
-      
+
     }
     //if no ID specified
     var objToReturn = [];
@@ -172,7 +172,7 @@ userController.getConfig = {
       objToReturn.push(bob);
     }
 
-    
+
     reply(objToReturn);
   }
 };
@@ -185,8 +185,8 @@ userController.postConfig = {
 
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
-    var newUser = { 
-      email: req.payload.email,  
+    var newUser = {
+      email: req.payload.email,
       password: req.payload.password,
       first_name: req.payload.first_name,
       last_name: req.payload.last_name,
@@ -228,7 +228,7 @@ userController.postConfig = {
       newUser.password = "password123";
     }
     */
-    
+
 
 // mysql
 
@@ -243,7 +243,7 @@ userController.postConfig = {
       function(err, rows) {
 
         console.log("inserted into db");
-        
+
 
         if(err) {
           throw new Error(err);
@@ -254,7 +254,7 @@ userController.postConfig = {
           statusCode: 200,
           message: 'Inserted Successfully',
         }]);
-        
+
       }
     )
 
@@ -263,10 +263,10 @@ userController.postConfig = {
 //end mysql
 
     //console.log("\n\nINSERTED!\n\n");
-    
+
     //reply(newUser);
 
-    
+
 
   },
   validate: {
@@ -290,8 +290,8 @@ userController.loginConfig = {
 
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
-    var newUser = { 
-      email:      req.payload.email,  
+    var newUser = {
+      email:      req.payload.email,
       password:   req.payload.password
     };
 
@@ -310,7 +310,12 @@ userController.loginConfig = {
 
         reply(toReturn);
       }//end if statement
-    }
+      else if(i+1 == users[0].length) {
+        console.log(no user in database with that email and/or password);
+        var Boom = require('boom');
+        reply(Boom.notFound('Invalid username and/or password combination'));
+      }
+    }//end for loop
 
   },
 
@@ -330,5 +335,5 @@ module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
 	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig },
   { path: '/login', method: 'POST', config: userController.loginConfig}
-  
+
 ];
