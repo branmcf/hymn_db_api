@@ -410,15 +410,19 @@ resourceController.getConfig = {
     getResources();
 
     if (request.params.id) {
-      //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-      var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+        if (numRes <= request.params.id - 1) {
+          //return reply('Not enough resources in the database for your request').code(404);
+          return reply(Boom.notFound());
+        }
+        //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+        var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
 
-      //create new object, convert to json
-      var str = formatResource(actualIndex);
+        //create new object, convert to json
+        var str = formatResource(actualIndex);
 
 
 
-      return reply(str);
+        return reply(str);
 
 
       //return reply(resources[actualId]);
@@ -523,6 +527,77 @@ resourceController.postConfig = {
 */
 };
 
+//RESOURCE DELETE ENDPOINT
+resourceController.deleteConfig = {
+    handler: function(request, reply) {
+        getResources();
+      	var theResourceID = resources.length+1;
+
+        if (request.params.id) {
+            if (numRes <= request.params.id - 1) {
+              //return reply('Not enough resources in the database for your request').code(404);
+              return reply(Boom.notFound());
+            }
+            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            connection.query(`
+            UPDATE resources SET is_active = false
+            WHERE id = ${mysqlIndex}`, function(err, rows, fields) {
+              if(err) {
+                  throw err;
+              } else {
+                  console.log("set resource #", mysqlIndex, " to innactive (is_active = false)");
+              }
+
+              return reply( {code: 200} );
+            });
+
+          //return reply(resources[actualId]);
+        }
+
+
+    }
+};
+
+//RESOURCE MAKE ACTIVE ENDPOINT
+//RESOURCE DELETE ENDPOINT
+resourceController.activateConfig = {
+    handler: function(request, reply) {
+        getResources();
+      	var theResourceID = resources.length+1;
+
+        if (request.params.id) {
+            if (numRes <= request.params.id - 1) {
+              //return reply('Not enough resources in the database for your request').code(404);
+              return reply(Boom.notFound());
+            }
+            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            connection.query(`
+            UPDATE resources SET is_active = true
+            WHERE id = ${mysqlIndex}`, function(err, rows, fields) {
+              if(err) {
+                  throw err;
+              } else {
+                  console.log("set resource #", mysqlIndex, " to active (is_active = true)");
+              }
+
+              return reply( {code: 200} );
+            });
+
+          //return reply(resources[actualId]);
+        }
+
+
+    }
+};
+
 function JUSTUGH(theObj) {
 
 	//getResources();
@@ -558,5 +633,7 @@ function JUSTUGH(theObj) {
 
 module.exports = [
 	{ path: '/resource', method: 'POST', config: resourceController.postConfig },
-  	{ path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig }
+  { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
+  { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
+  { path: '/resource/activate/{id}', method: 'PUT', config: resourceController.activateConfig}
 ];

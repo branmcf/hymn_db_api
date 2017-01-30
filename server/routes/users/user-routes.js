@@ -311,11 +311,11 @@ userController.loginConfig = {
           last_name: users[0][i].last_name
         }
 
-        reply(toReturn);
+        return reply(toReturn);
       }//end if statement
       else if(i+1 == users[0].length) {
         console.log("no user in database with that email and/or password");
-        reply(Boom.notFound('Invalid username and/or password combination'));
+        return reply(Boom.notFound('Invalid username and/or password combination'));
       }
     }//end for loop
 
@@ -336,6 +336,6 @@ userController.loginConfig = {
 module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
 	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig },
-  { path: '/login', method: 'POST', config: userController.loginConfig}
+    { path: '/login', method: 'POST', config: userController.loginConfig}
 
 ];
