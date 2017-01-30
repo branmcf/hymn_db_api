@@ -252,18 +252,18 @@ CREATE TABLE congregations (
 	attendance varchar(64) default "under 50",
 
 	description_of_worship_to_guests varchar(256),
-    is_active boolean default False,
-    geography varchar(128),
-    is_free boolean default False,
-    events_free boolean default False,
-    the_process varchar(128),
-    high_level boolean default False,
-    shape varchar(128),
-    clothing varchar(128),
+  is_active boolean default False,
+  geography varchar(128),
+  is_free boolean default False,
+  events_free boolean default False,
+  the_process varchar(128),
+  high_level boolean default False,
+  shape varchar(128),
+  clothing varchar(128),
 
-    denomination varchar(64),
+  denomination varchar(64),
 
-    approved boolean default False
+  approved boolean default False
 
 );
 
@@ -271,6 +271,7 @@ CREATE TABLE events(
 	id int unsigned auto_increment,
 	PRIMARY KEY(id),
 	name varchar(128),
+	INDEX(name(8)),
 	website varchar(128),
 	frequency varchar(64),
 	theme varchar(128),
@@ -296,6 +297,7 @@ CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
 	name varchar(128),
+	INDEX(name(8)),
 	website varchar(128),
 	hymn_soc_member boolean default False,
 	is_free boolean default False,
@@ -308,7 +310,7 @@ CREATE TABLE resources (
 	type varchar(64),
 
 	high_level boolean default False,
-    is_active boolean default True,
+  is_active boolean default True,
 
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
@@ -356,6 +358,7 @@ CREATE TABLE users (
 	PRIMARY KEY (id),
 	salt varchar(128) default "wtfdyjfsamylb69420",
 	email varchar(128) default null,
+	UNIQUE(email),
 	password varchar(128) default null,
 	first_name varchar(64) default null,
 	last_name varchar(64) default null,
