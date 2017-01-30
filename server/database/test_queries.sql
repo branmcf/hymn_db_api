@@ -8,18 +8,31 @@ ALTER TABLE resources auto_increment = 1;
 	ALTER TABLE resource_denominations auto_increment = 1;
 	ALTER TABLE resource_languages auto_increment = 1;
     ALTER TABLE resource_resource_categories auto_increment = 1;
+	ALTER TABLE resource_topics auto_increment = 1;
 
 ALTER TABLE Languages auto_increment = 1;
-
+ALTER TABLE Song_Types auto_increment = 1;
 
 ALTER TABLE organizations auto_increment = 1;
+	ALTER TABLE organization_tags auto_increment = 1;
+	ALTER TABLE organization_song_types auto_increment = 1;
+	ALTER TABLE organization_instrument_types auto_increment = 1;
+	ALTER TABLE organization_congregations auto_increment = 1;
 
 ALTER TABLE congregations auto_increment = 1;
 	ALTER TABLE Congregation_Categories auto_increment = 1;
+	ALTER TABLE congregation_tags auto_increment = 1;
+	ALTER TABLE congregation_instrument_types auto_increment = 1;
+	ALTER TABLE congregation_denominations auto_increment = 1;
+	ALTER TABLE congregation_types auto_increment = 1;
+	ALTER TABLE congregation_ethnicities auto_increment = 1;
+	ALTER TABLE Cong_Types auto_increment = 1;
+	ALTER TABLE congregation_congregation_categories auto_increment = 1;
 
 ALTER TABLE events auto_increment = 1;
 	ALTER TABLE event_tags auto_increment = 1;
 	ALTER TABLE event_event_types auto_increment = 1;
+	ALTER TABLE Event_Types auto_increment = 1;
 
 ALTER TABLE quizes auto_increment = 1;
 ALTER TABLE questions auto_increment = 1;
@@ -32,6 +45,7 @@ ALTER TABLE Topics auto_increment = 1;
 ALTER TABLE Ensembles auto_increment = 1;
 ALTER TABLE Ethnicities auto_increment = 1;
 ALTER TABLE Resource_Categories auto_increment = 1;
+ALTER TABLE Accompaniment auto_increment = 1;
 
 
 INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Other');
