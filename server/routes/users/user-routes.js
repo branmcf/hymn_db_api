@@ -61,14 +61,14 @@ function getUsers() {
         numUsers = users[0].length;
 
 
-        getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
+        getInter("Ethnicities", "users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
 
         //console.log(`selected ${numUsers} users from db`);
 
 
       }//end if statement
       else
-        console.log('Error while performing Users Query.');
+        console.log('Error while performing users Query.');
 
   }); //end connection.connect
 
@@ -271,10 +271,10 @@ userController.postConfig = {
   },
   validate: {
     payload: {
-      email: Joi.string().required(),
-      password: Joi.string().min(6).max(64).required(),
+      email:      Joi.string().email(),
+      password:   Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
       first_name: Joi.string().required(),
-      last_name: Joi.string().required()
+      last_name:  Joi.string().required()
     }
   }
 
@@ -311,7 +311,7 @@ userController.loginConfig = {
         reply(toReturn);
       }//end if statement
       else if(i+1 == users[0].length) {
-        console.log(no user in database with that email and/or password);
+        console.log("no user in database with that email and/or password");
         var Boom = require('boom');
         reply(Boom.notFound('Invalid username and/or password combination'));
       }
