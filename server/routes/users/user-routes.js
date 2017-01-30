@@ -1,5 +1,6 @@
-var Joi = require('joi')
-var mysql = require('mysql')
+var Joi = require('joi');
+var mysql = require('mysql');
+var Boom = require('boom');
 
 var options = require('../../config/config.js');
 
@@ -64,13 +65,15 @@ function getUsers() {
         numUsers = users[0].length;
 
 
-        getInter("Ethnicities", "Users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
+
+        getInter("Ethnicities", "users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
+
         //console.log(`selected ${numUsers} users from db`);
 
 
       }//end if statement
       else
-        console.log('Error while performing Users Query.');
+        console.log('Error while performing users Query.');
 
   }); //end connection.connect
 
@@ -153,8 +156,10 @@ userController.getConfig = {
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     if (request.params.id) {
-      if (numUsers <= request.params.id - 1)
-        return reply('Not enough users in the database for your request').code(404);
+      if (numUsers <= request.params.id - 1) {
+        //return reply('Not enough users in the database for your request').code(404);
+        return reply(Boom.notFound());
+      }
 
       var actualIndex = Number(request.params.id) - 1;
 
@@ -170,8 +175,8 @@ userController.getConfig = {
     var objToReturn = [];
 
     for(var i=0; i < users[0].length; i++) {
-      var bob = formatUser(i);
-      objToReturn.push(bob);
+      var temp = formatUser(i);
+      objToReturn.push(temp);
     }
 
 
@@ -273,10 +278,10 @@ userController.postConfig = {
   },
   validate: {
     payload: {
-      email: Joi.string().required(),
-      password: Joi.string().min(6).max(64).required(),
+      email:      Joi.string().email(),
+      password:   Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
       first_name: Joi.string().required(),
-      last_name: Joi.string().required()
+      last_name:  Joi.string().required()
     }
   }
 
