@@ -306,7 +306,7 @@ userController.loginConfig = {
         console.log("found matching user");
 
         var toReturn = {
-          id: users[0][i].id,
+          user_id: users[0][i].id,
           first_name: users[0][i].first_name,
           last_name: users[0][i].last_name
         }

@@ -75,8 +75,8 @@ INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
 
 
 /* resources */
-INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent, author, type)
-VALUES ("test_title_1","https://google.com",0,1,"test_description_1","Parent 1", "John Steinbeck", "Book"), ("test_title_2","https://bing.com",0,1,"test_description_2","Parent 2", "John Steinbeck", "Blog");
+INSERT INTO resources(name, website, hymn_soc_member, is_free, description, parent, author, type, approved)
+VALUES ("test_title_1","https://google.com",0,1,"test_description_1","Parent 1", "John Steinbeck", "Book", true), ("test_title_2","https://bing.com",0,1,"test_description_2","Parent 2", "John Steinbeck", "Blog", false);
 
 
 INSERT INTO resource_tags(resource_id, tag_id) VALUES(1,1),(1,3),(2,2);
