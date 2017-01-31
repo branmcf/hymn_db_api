@@ -885,6 +885,60 @@ CREATE TABLE user_viewed_events(
     PRIMARY KEY(id)
 );
 
+DROP TABLE IF EXISTS person_ethnicities;
+DROP TABLE IF EXISTS person_ensembles;
+DROP TABLE IF EXISTS person_topics;
+DROP TABLE IF EXISTS persons;
+CREATE TABLE persons (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	first_name varchar(64),
+	last_name varchar(64),
+	email varchar(128),
+	city varchar(128),
+	state varchar(64),
+	country varchar(128),
+	website varchar(128),
+	social_url varchar(128),
+	emphasis varchar(128),
+	hymn_soc_member boolean default false,
+
+	approved boolean default false,
+	is_active boolean default false,
+	high_level boolean default false
+
+);
+
+
+CREATE TABLE person_topics (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	topic_id int unsigned,
+	FOREIGN KEY (topic_id) REFERENCES Topics (id)
+);
+
+
+CREATE TABLE person_ensembles(
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	ensemble_id int unsigned,
+	FOREIGN KEY (ensemble_id) REFERENCES Ensembles (id)
+);
+
+
+CREATE TABLE person_ethnicities (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
+);
+
 
 
 

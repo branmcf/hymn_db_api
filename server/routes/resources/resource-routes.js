@@ -321,6 +321,16 @@ function getResources() {
 
       	var JSObj = rowsToJS(rows);
 
+        resources = [];
+        resTypes = [];
+        resCategories = [];
+        resTopics =[];
+        resAcc = [];
+        resLanguages = [];
+        resTags = [];
+        resEnsembles = [];
+        resEth = [];
+
       	resources.push(JSObj);
 
         console.log("RESOURCE SIZE BEFORE INSERTION: ", resources[0].length);
@@ -494,6 +504,8 @@ resourceController.postConfig = {
     };
 
     insertResource(theData);
+
+    getResources();
 
     var toReturn = {
 

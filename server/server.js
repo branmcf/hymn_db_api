@@ -37,6 +37,7 @@ server.connection({
   host: 'localhost',
   port: 3000,
   routes: { cors: true }
+  //protocol: 'https'
 });
 
 //angular error test
@@ -202,7 +203,10 @@ var routesArray = [];
   routes = require('./routes/resources/resource-routes');
   routesArray.push(routes);
 
-  routes = require('./routes/users/user-routes')
+  routes = require('./routes/users/user-routes');
+  routesArray.push(routes);
+
+  routes = require('./routes/persons/person-routes');
   routesArray.push(routes);
 
   for(var i=0; i < routesArray.length; i++) {
