@@ -99,15 +99,29 @@ function insertPerson(theObj) {
     });
 }
 
-function checkIfTrue(param1, theObj, whichIndex) {
+function checkIfTrue(param1, theObj, whichIndex, tableName) {
   var attributeName = Object.keys(theObj[param1])[whichIndex];
-  if(theObj[param1][attributeName] == true) {
-      console.log("TRUE FOR ", attributeName);
+    if(attributeName == "Other" || attributeName == "other") {
+        //insert into "other_text" column
+        var theOtherText = theObj[param1][attributeName];
+        var toInsert = {
+            name: "Other",
+            other_text: theOtherText
+        };
 
- } else {
-    attributeName = "false";
+        var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+          if(err) { throw new Error(err); return; }
 
-  }
+          console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
+
+        });
+
+    } else if (theObj[param1][attributeName] == true || theObj[param1][attributeName] == "true"){
+        console.log("TRUE FOR ", attributeName);
+
+    } else {
+        attributeName = "false";
+    }
 
   return attributeName;
 }
@@ -119,18 +133,18 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 
         case "Ethnicities":
 			//var attributeName = theObj.ethnicities[whichIndex];
-            var attributeName = checkIfTrue("ethnicities", theObj, whichIndex);
+            var attributeName = checkIfTrue("ethnicities", theObj, whichIndex, tableName);
 			break;
 		case "Topics":
             //var attributeName = theObj.topics[whichIndex];
-            var attributeName = checkIfTrue("topics", theObj, whichIndex);
+            var attributeName = checkIfTrue("topics", theObj, whichIndex, tableName);
 			break;
 		case "Ensembles":
             //var attributeName = theObj.ensembles[whichIndex];
-            var attributeName = checkIfTrue("ensembles", theObj, whichIndex);
+            var attributeName = checkIfTrue("ensembles", theObj, whichIndex, tableName);
 			break;
 		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
+			console.log("INVALID TABLE NAME SENT for ",tableName, tableName);
 			break;
 	}//end switch
 
