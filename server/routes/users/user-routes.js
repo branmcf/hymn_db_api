@@ -6,10 +6,11 @@ var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : options.host,
   user     : options.user,
   password : options.password,
-  database : options.database
+  database : options.database,
+  port     : options.port
 });
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
@@ -315,12 +316,11 @@ userController.loginConfig = {
           last_name: users[0][i].last_name
         }
 
-        reply(toReturn);
+        return reply(toReturn);
       }//end if statement
       else if(i+1 == users[0].length) {
         console.log('no user in database with that email and/or password');
-        var Boom = require('boom');
-        reply(Boom.notFound('Invalid username and/or password combination'));
+        return reply(Boom.notFound('Invalid username and/or password combination'));
       }
     }//end for loop
 
