@@ -5,11 +5,15 @@ var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : options.host,
   user     : options.user,
   password : options.password,
-  database : options.database
+  database : options.database,
+  port     : options.port
 });
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
 
 connection.connect();
 
@@ -46,7 +50,7 @@ function getCongregations() {
       getInter("Instrument_Types", 	 "congregations", "congregation_instrument_types", 	      "instrument_type_id", 	"congregation_id", congInstr, numCongs);
       getInter("Ethnicities",  		   "congregations", "congregation_ethnicities",  		        "ethnicity_id", 			"congregation_id", congEth, numCongs);
       //getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
-      getInter("congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
+      getInter("Congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
 
 
     }
@@ -289,7 +293,6 @@ congController.getConfig = {
 
 //CONG POST REQUEST
 congController.postConfig = {
-
   handler: function(req, reply) {
 
     getCongregations();

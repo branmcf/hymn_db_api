@@ -75,11 +75,25 @@ function hashAndStoreAsync2(user) {
 */
 var connection = mysql.createConnection({
   host     : 'localhost',
+<<<<<<< HEAD
+  user     : options.user,
+  password : options.password,
+  database : options.database
+});
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
+//end myql connection
+=======
   user     : 'root',
   password : '123',
   database : 'testDb'
 });
 //end myql connection
+if (process.env.CLEARDB_DATABASE_URL) {
+  connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
+}
+>>>>>>> f757ceeb64d14b5384e8d2633e729b3089fb333f
 
 //
 //
