@@ -1,17 +1,17 @@
-var Hapi = require('hapi')
-var Good = require('good')
-var Vision = require('vision')
+var Hapi = require('hapi');
+var Good = require('good');
+var Vision = require('vision');
 //var Bcrypt = require('bcrypt')
 //var Users = require('./users-db')
-var Handlebars = require('handlebars')
-var BasicAuth = require('hapi-auth-basic')
-var CookieAuth = require('hapi-auth-cookie')
+var Handlebars = require('handlebars');
+var BasicAuth = require('hapi-auth-basic');
+var CookieAuth = require('hapi-auth-cookie');
 
-var Boom = require('boom')
-var users_db = require('./users-db')
+var Boom = require('boom');
+var users_db = require('./users-db');
 
-var Joi = require('joi')
-var mysql = require('mysql')
+var Joi = require('joi');
+var mysql = require('mysql');
 
 //Added for login
 
@@ -193,34 +193,34 @@ var routesArray = [];
   //var routes = require('./routes.js')
   //routesArray.push(routes)
 
-  routes = require('./routes/congregations/congregation-routes')
-  routesArray.push(routes)
+  routes = require('./routes/congregations/congregation-routes');
+  routesArray.push(routes);
 
-  routes = require('./routes/events/event-routes')
-  routesArray.push(routes)
+  routes = require('./routes/events/event-routes');
+  routesArray.push(routes);
 
-  routes = require('./routes/organizations/organization-routes')
-  routesArray.push(routes)
+  routes = require('./routes/organizations/organization-routes');
+  routesArray.push(routes);
 
-  routes = require('./routes/resources/resource-routes')
-  routesArray.push(routes)
+  routes = require('./routes/resources/resource-routes');
+  routesArray.push(routes);
 
   routes = require('./routes/users/user-routes')
-  routesArray.push(routes)
+  routesArray.push(routes);
 
   for(var i=0; i < routesArray.length; i++) {
-    server.route(routesArray[i])
-  }
+    server.route(routesArray[i]);
+  };
 
 server.start(function (err) {
     if (err) {
-      server.log('error', 'failed to start server')
-      server.log('error', err)
+      server.log('error', 'failed to start server');
+      server.log('error', err);
 
       throw err
-    }
+  };
 
-    server.log('info', 'Server running at: ' + server.info.uri)
+    server.log('info', 'Server running at: ' + server.info.uri);
 });
 
 

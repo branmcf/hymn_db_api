@@ -311,7 +311,7 @@ userController.loginConfig = {
         console.log("found matching user");
 
         var toReturn = {
-          id: users[0][i].id,
+          user_id: users[0][i].id,
           first_name: users[0][i].first_name,
           last_name: users[0][i].last_name
         }
@@ -341,6 +341,6 @@ userController.loginConfig = {
 module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
 	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig },
-  { path: '/login', method: 'POST', config: userController.loginConfig}
+    { path: '/login', method: 'POST', config: userController.loginConfig}
 
 ];
