@@ -39,21 +39,7 @@ function getUsers() {
 
   //console.log(">>>>>getUsers()");
 
-  connection.query(`SELECT
-    id,
-    email,
-    password,
-    first_name,
-    last_name,
-    reg_date,
-    is_active,
-    high_level,
-    city,
-    state,
-    country,
-    website,
-    hymn_soc_member
-    from users`, function(err, rows, fields) {
+  connection.query(`SELECT * from users`, function(err, rows, fields) {
 
       if (!err) {
 
@@ -137,8 +123,8 @@ function formatUser(actualIndex) {
     city:          users[0][actualIndex].city,
     state:         users[0][actualIndex].state,
     country:       users[0][actualIndex].country,
-    website:          users[0][actualIndex].website,
-    ethnicity_name:   eth[0]
+    website:          users[0][actualIndex].website
+    //ethnicity_name:   eth[0]
 
   };
 
@@ -213,11 +199,9 @@ userController.postConfig = {
       city:             req.payload.city,
       state:            req.payload.state,
       country:          req.payload.country,
-      website:          req.payload.website,
-      ethnicity_name:   req.payload.ethnicity_name,
-      ethnicity_name2:  req.payload.ethnicity_name2,
-      ethnicity_name3:  req.payload.ethnicity_name3,
-      ethnicity_name4:  req.payload.ethnicity_name4
+      website:          req.payload.website
+      //ethnicity_name:   req.payload.ethnicity_name,
+
     };
 
     /*
@@ -276,7 +260,8 @@ userController.postConfig = {
 
 
 
-  },
+  }
+  /* COMMA ^
   validate: {
     payload: {
       email:      Joi.string().email(),
@@ -285,6 +270,7 @@ userController.postConfig = {
       last_name:  Joi.string().required()
     }
   }
+  */
 
 };
 

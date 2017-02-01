@@ -204,11 +204,11 @@ country,
 is_active
 
 ) VALUES (
-"Burning Man",
-"https://burningman.com",
+"EVENT NAME 1",
+"https://asdawdawde.com",
 "Annual",
 "Music Festival",
-"Burn shit, and not just the statue...",
+"Woah man take it easy...",
 0,
 0,
 "Little Rock",
@@ -217,11 +217,11 @@ is_active
 1
 ),
 (
-"March for Mexico",
-"https://mexico.mx",
+"daeaweadawde",
+"https://eyo.mx",
 "Semi-Annual",
 "Music Festival",
-"Tacos...",
+"Hey what's up",
 0,
 0,
 "Guadalajara",
