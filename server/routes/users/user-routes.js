@@ -39,21 +39,7 @@ function getUsers() {
 
   //console.log(">>>>>getUsers()");
 
-  connection.query(`SELECT
-    id,
-    email,
-    password,
-    first_name,
-    last_name,
-    reg_date,
-    is_active,
-    high_level,
-    city,
-    state,
-    country,
-    website,
-    hymn_soc_member
-    from users`, function(err, rows, fields) {
+  connection.query(`SELECT * from users`, function(err, rows, fields) {
 
       if (!err) {
 
