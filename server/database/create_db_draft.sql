@@ -13,12 +13,13 @@ DROP TABLE IF EXISTS congregation_worship_types;
 DROP TABLE IF EXISTS congregation_types;
 DROP TABLE IF EXISTS congregation_ethnicities;
 DROP TABLE IF EXISTS congregation_congregation_categories;
-
+DROP TABLE IF EXISTS congregation_favorites;
 
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types;
-DROP TABLE IF EXISTS resource_resource_category;
+DROP TABLE IF EXISTS event_favorites;
 
+DROP TABLE IF EXISTS resource_resource_category;
 DROP TABLE IF EXISTS resource_tags;
 DROP TABLE IF EXISTS resource_authors;
 DROP TABLE IF EXISTS resource_resource_types;
@@ -30,7 +31,7 @@ DROP TABLE IF EXISTS resource_ethnicities;
 DROP TABLE IF EXISTS resource_accompaniment;
 DROP TABLE IF EXISTS resource_languages;
 DROP TABLE IF EXISTS resource_resource_categories;
-
+DROP TABLE IF EXISTS resource_favorites;
 DROP TABLE IF EXISTS resource_users;
 
 DROP TABLE IF EXISTS organization_tags;
@@ -42,19 +43,9 @@ DROP TABLE IF EXISTS organization_congregations;
 DROP TABLE IF EXISTS organization_denominations;
 
 DROP TABLE IF EXISTS user_ethnicities;
-
 DROP TABLE IF EXISTS user_viewed_events;
 DROP TABLE IF EXISTS user_viewed_congs;
 DROP TABLE IF EXISTS user_viewed_resources;
-DROP TABLE IF EXISTS resource_favorites;
-DROP TABLE IF EXISTS cong_favorites;
-DROP TABLE IF EXISTS event_favorites;
-
-DROP TABLE IF EXISTS resource_tags;
-DROP TABLE IF EXISTS congregation_tags;
-DROP TABLE IF EXISTS event_tags;
-DROP TABLE IF EXISTS organization_tags;
-
 DROP TABLE IF EXISTS user_choices;
 DROP TABLE IF EXISTS user_questions;
 DROP TABLE IF EXISTS user_quizes;
@@ -97,7 +88,6 @@ DROP TABLE IF EXISTS Parent_Org;
 DROP TABLE IF EXISTS cities;
 DROP TABLE IF EXISTS states;
 DROP TABLE IF EXISTS countries;
-
 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -249,23 +239,23 @@ CREATE TABLE congregations (
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	hymn_soc_member boolean default False,
+	hymn_soc_member boolean default false,
 	priest_attire varchar(64),
 	attendance varchar(64) default "under 50",
 
 	description_of_worship_to_guests varchar(256),
-  is_active boolean default False,
+  is_active boolean default false,
   geography varchar(128),
-  is_free boolean default False,
-  events_free boolean default False,
+  is_free boolean default false,
+  events_free boolean default false,
   the_process varchar(128),
-  high_level boolean default False,
+  high_level boolean default false,
   shape varchar(128),
   clothing varchar(128),
 
   denomination varchar(64),
 
-  approved boolean default False
+  approved boolean default false
 
 );
 
@@ -284,15 +274,15 @@ CREATE TABLE events(
 	event_end_date date,
 	event_end_time time,
 	cost int unsigned default 0,
-	hymn_soc_member boolean default False,
+	hymn_soc_member boolean default false,
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	parent varchar(128),
-	is_active boolean default False,
-	high_level boolean default False,
+	is_active boolean default false,
+	high_level boolean default false,
 
-	approved boolean default False
+	approved boolean default false
 );
 
 CREATE TABLE resources (
@@ -301,8 +291,8 @@ CREATE TABLE resources (
 	name varchar(128),
 	INDEX(name(8)),
 	website varchar(128),
-	hymn_soc_member boolean default False,
-	is_free boolean default False,
+	hymn_soc_member boolean default false,
+	is_free boolean default false,
 	description text(512),
 	favorites int unsigned,
 	views int unsigned,
@@ -311,15 +301,15 @@ CREATE TABLE resources (
 
 	type varchar(64),
 
-	high_level boolean default False,
-  is_active boolean default True,
+	high_level boolean default false,
+  is_active boolean default true,
 
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	parent varchar(128),
 
-	approved boolean default False
+	approved boolean default false
 );
 
 CREATE TABLE organizations (
@@ -333,24 +323,24 @@ CREATE TABLE organizations (
 	parent varchar(128),
 	/* CHANGE BELOW TO ANOTHER TABLE LATER */
 	geography varchar(128),
-	is_free boolean default False,
-	offers_free_events boolean default False,
+	is_free boolean default false,
+	offers_free_events boolean default false,
 	charge decimal(6) default 0.00,
 	mission varchar(256),
 	promotions varchar(256),
 	priest_attire varchar(64),
-    hymn_soc_member boolean default False,
+    hymn_soc_member boolean default false,
     shape varchar(128),
     clothing varchar(128),
     attendance varchar(64),
-    is_active boolean default False,
-    high_level boolean default False,
+    is_active boolean default false,
+    high_level boolean default false,
     the_process varchar(256),
-    membership_free boolean default False,
+    membership_free boolean default false,
 
     denomination varchar(128), /* delete this if using middle table */
 
-    approved boolean default False
+    approved boolean default false
 
 
 );
@@ -365,15 +355,16 @@ CREATE TABLE users (
 	first_name varchar(64) default null,
 	last_name varchar(64) default null,
 	reg_date timestamp,
-	is_active boolean default True,
-	high_level boolean default False,
+	is_active boolean default true,
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	website varchar(128),
-	hymn_soc_member boolean default False,
+	hymn_soc_member boolean default false,
 
-	approved boolean default False
+	approved boolean default false,
+	high_level boolean default false,
+	is_admin boolean default false
 
 );
 
@@ -685,7 +676,7 @@ CREATE TABLE organization_denominations (
 CREATE TABLE quizes (
 	quiz_id int unsigned not null auto_increment,
 	quiz_title varchar(512),
-	is_active boolean default True,
+	is_active boolean default true,
 	PRIMARY KEY (quiz_id)
     /* create a quiz when a user is created! */
 );
@@ -710,7 +701,7 @@ CREATE TABLE choices (
 	question_id int unsigned not null,
 	FOREIGN KEY (question_id) REFERENCES questions (question_id),
 	/* after modification */
-	is_selected boolean default False,
+	is_selected boolean default false,
 	tag_id int unsigned,
 	FOREIGN KEY (tag_id) REFERENCES Tags (id),
 	text_field varchar(512) /*if 'other' is selected */
@@ -749,7 +740,7 @@ CREATE TABLE user_choices (
 	FOREIGN KEY (user_question_id) REFERENCES user_questions (id),
 	choice_id int unsigned,
 	FOREIGN KEY (choice_id) REFERENCES choices (choice_id),
-	is_selected boolean default False
+	is_selected boolean default false
 );
 
 /*
@@ -828,7 +819,7 @@ CREATE TABLE resource_favorites(
 
 );
 
-CREATE TABLE cong_favorites(
+CREATE TABLE congregation_favorites(
 	id int unsigned not null auto_increment,
     user_id int unsigned not null,
 	cong_id int unsigned not null,
@@ -883,6 +874,60 @@ CREATE TABLE user_viewed_events(
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(event_id) REFERENCES events(id),
     PRIMARY KEY(id)
+);
+
+DROP TABLE IF EXISTS person_ethnicities;
+DROP TABLE IF EXISTS person_ensembles;
+DROP TABLE IF EXISTS person_topics;
+DROP TABLE IF EXISTS persons;
+CREATE TABLE persons (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	first_name varchar(64),
+	last_name varchar(64),
+	email varchar(128),
+	city varchar(128),
+	state varchar(64),
+	country varchar(128),
+	website varchar(128),
+	social_url varchar(128),
+	emphasis varchar(128),
+	hymn_soc_member boolean default false,
+
+	approved boolean default false,
+	is_active boolean default false,
+	high_level boolean default false
+
+);
+
+
+CREATE TABLE person_topics (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	topic_id int unsigned,
+	FOREIGN KEY (topic_id) REFERENCES Topics (id)
+);
+
+
+CREATE TABLE person_ensembles(
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	ensemble_id int unsigned,
+	FOREIGN KEY (ensemble_id) REFERENCES Ensembles (id)
+);
+
+
+CREATE TABLE person_ethnicities (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
 );
 
 

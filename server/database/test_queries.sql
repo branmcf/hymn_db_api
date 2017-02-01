@@ -47,6 +47,11 @@ ALTER TABLE Ethnicities auto_increment = 1;
 ALTER TABLE Resource_Categories auto_increment = 1;
 ALTER TABLE Accompaniment auto_increment = 1;
 
+ALTER TABLE persons auto_increment = 1;
+	ALTER TABLE person_topics auto_increment = 1;
+	ALTER TABLE person_ensembles auto_increment = 1;
+	ALTER TABLE person_ethnicities auto_increment = 1;
+
 
 INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Other');
 
@@ -58,8 +63,10 @@ INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),
 /* Resource Data */
 INSERT INTO Denominations(name) VALUES ("Catholic"), ("Lutheran"), ("Baptist"), ("Orthodox"), ("Non-Denominational"), ("Other");
 INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), ("Other");
-INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"), ("Other");
-INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"), ("Other");
+INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"),
+("Choir"),("Cantor"),("Song_Enlivener"),("Solo"),("Other");
+INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"),
+("Hispanic_Latin_American_Caribbean"),("Native_American_Indigenous_Peoples"),("Other");
 
 INSERT INTO Resource_Categories(name)
 VALUES ("A_hymn_written_prior_to_1970"),
@@ -69,6 +76,13 @@ VALUES ("A_hymn_written_prior_to_1970"),
 INSERT INTO Topics (name)
 VALUES ("Psalm_Setting"),
 ("Lectionary_Based"),
+("Contemporary_Song_Band"),
+("Traditional_Hymnody"),
+("Musician_Pastor_Relationship_Song_Band"),
+("Cantoring"),
+("Song_Enlivening"),
+("Keyboards"),
+("Worship_Planning"),
 ("Other");
 INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
 
@@ -249,3 +263,8 @@ INSERT INTO Event_Types(name) VALUES ("Event Type 1"), ("Event Type 2"), ("Event
 
 INSERT INTO event_tags(event_id, tag_id) VALUES (1,1), (1,2), (2,1);
 INSERT INTO event_event_types(event_id, event_type_id) VALUES (1,1), (1,2), (1,3), (2,1), (2,2);
+
+INSERT INTO persons(email, first_name, last_name) VALUES ("ActionDan@gmail.com", "Action", "Dan"), ("hunter2@yahoo.com", "ya", "hoo");
+INSERT INTO person_topics(person_id, topic_id) VALUES(1,1),(1,2),(2,1),(2,2);
+INSERT INTO person_ensembles(person_id, ensemble_id) VALUES(1,1),(1,2),(2,1),(2,2);
+INSERT INTO person_ethnicities(person_id, ethnicity_id) VALUES(1,1),(1,2),(1,3),(2,1),(2,2);

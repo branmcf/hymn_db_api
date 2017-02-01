@@ -85,7 +85,7 @@ function insertResource(theObj) {
 
 // END TYPE CONVERSION
 
-	connection.query(`insert into resources set ?`, justResource, function(err, rows, fields) {
+	connection.query(`INSERT INTO resources set ?`, justResource, function(err, rows, fields) {
         if(err) { throw err; }
 
         var JSObj = rowsToJS(theObj);
@@ -137,12 +137,28 @@ function insertResource(theObj) {
     });
 }
 
-function checkIfTrue(param1, theObj, whichIndex) {
+function checkIfTrue(param1, theObj, whichIndex, tableName) {
   var attributeName = Object.keys(theObj[param1])[whichIndex];
-  if(theObj[param1][attributeName] == false) {
+  if(attributeName == "Other" || attributeName == "other") {
+      //insert into "other_text" column
+      var theOtherText = theObj[param1][attributeName];
+      var toInsert = {
+          name: "Other",
+          other_text: theOtherText
+      };
+
+      var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
+
+  	 });
+
+
+ } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
      attributeName = "false";
 
-  } else {
+ } else {
     console.log ("It's True for: ", attributeName);
   }
 
@@ -165,41 +181,41 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
         attributeName = "false";
       }
       */
-      var attributeName = checkIfTrue("ethnicities", theObj, whichIndex);
+      var attributeName = checkIfTrue("ethnicities", theObj, whichIndex, tableName);
 			break;
 		case "Resource_Categories":
 			//var attributeName = theObj.categories[whichIndex].name;
-      var attributeName = checkIfTrue("categories", theObj, whichIndex);
+      var attributeName = checkIfTrue("categories", theObj, whichIndex, tableName);
 			break;
 		case "Categories":
 			//var attributeName = theObj.categories[whichIndex].name;
 			break;
 		case "Ensembles":
 			//var attributeName = theObj.ensembles[whichIndex].name;
-      var attributeName = checkIfTrue("ensembles", theObj, whichIndex);
+      var attributeName = checkIfTrue("ensembles", theObj, whichIndex, tableName);
 			break;
 		case "Denominations":
 			//var attributeName = theObj.denominations[whichIndex].name;
-      var attributeName = checkIfTrue("denominations", theObj, whichIndex);
+      var attributeName = checkIfTrue("denominations", theObj, whichIndex, tableName);
 			break;
 		case "Languages":
 			//var attributeName = theObj.languages[whichIndex].name;
-      var attributeName = checkIfTrue("languages", theObj, whichIndex);
+      var attributeName = checkIfTrue("languages", theObj, whichIndex, tableName);
 			break;
 		case "Instrument_Types":
 			//var attributeName = theObj.instruments[whichIndex].name;
 			break;
 		case "Topics":
 			//var attributeName = theObj.topic[whichIndex].name;
-      var attributeName = checkIfTrue("topic", theObj, whichIndex);
+      var attributeName = checkIfTrue("topic", theObj, whichIndex, tableName);
 			break;
     case "Topic":
 			//var attributeName = theObj.topic[whichIndex].name;
-      var attributeName = checkIfTrue("topic", theObj, whichIndex);
+      var attributeName = checkIfTrue("topic", theObj, whichIndex, tableName);
 			break;
 		case "Accompaniment":
 			//var attributeName = theObj.accompaniment[whichIndex].name;
-      var attributeName = checkIfTrue("accompaniment", theObj, whichIndex);
+      var attributeName = checkIfTrue("accompaniment", theObj, whichIndex, tableName);
 			break;
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
@@ -323,6 +339,16 @@ function getResources() {
     if (!err) {
 
       	var JSObj = rowsToJS(rows);
+
+        resources = [];
+        resTypes = [];
+        resCategories = [];
+        resTopics =[];
+        resAcc = [];
+        resLanguages = [];
+        resTags = [];
+        resEnsembles = [];
+        resEth = [];
 
       	resources.push(JSObj);
 
@@ -498,6 +524,8 @@ resourceController.postConfig = {
 
     insertResource(theData);
 
+    getResources();
+
     var toReturn = {
 
     	resource_id: resources[0].length +1 /* +1 or not?... */
@@ -622,7 +650,7 @@ function JUSTUGH(theObj) {
 	delete noEth.ensembles;
 
 
-	var query = connection.query(`insert into resources set ?`, noEth, function(err, rows, fields) {
+	var query = connection.query(`INSERT INTO resources SET ?`, noEth, function(err, rows, fields) {
         if(err) { throw err; }
 
         console.log(query.sql);

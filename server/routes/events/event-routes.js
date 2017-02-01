@@ -5,15 +5,11 @@ var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : options.host,
+  host     : 'localhost',
   user     : options.user,
   password : options.password,
-  database : options.database,
-  port     : options.port
+  database : options.database
 });
-if (process.env.JAWSDB_URL) {
-  connection = mysql.createConnection(process.env.JAWSDB_URL);
-}
 
 connection.connect();
 
