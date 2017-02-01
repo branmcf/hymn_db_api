@@ -178,7 +178,7 @@ VALUES (
 "Catholic_Church",
 "https://catholicchurch.org",
 "Catholicism",
-"White Robes"
+"Robes"
 ),
 ("Church_of_England",
 "https://churchofengland.org",
@@ -235,7 +235,7 @@ INSERT INTO congregations(name, website, hymn_soc_member) VALUES
 ("cong number 1", "https://google.com", True),
 ("cong number 2", "https://yahoo.com", True);
 
-INSERT INTO Cong_Types(name) VALUES ("Cong Type 1"), ("Cong Type 2"), ("Cong Type 3");
+INSERT INTO Cong_Types(name) VALUES ("Cong Type 1"), ("Cong Type 2"), ("Cong Type 3"), ("Cong Type 2");
 INSERT INTO Instrument_Types(name) VALUES ("Acapella"), ("Organ"), ("Piano");
 INSERT INTO Congregation_Categories(name) VALUES ("Secular Song");
 
@@ -251,7 +251,7 @@ INSERT INTO Song_Types(name) VALUES("Song Type 1"), ("Song Type 2");
 INSERT INTO organizations(name, website)
 VALUES
 ("Organization 1", "https://yahoo.com"),
-("Organization 2", "https://gudsucc.com");
+("Organization 2", "https://yahooooooo.com");
 INSERT INTO organization_tags(organization_id, tag_id) VALUES (1,1), (1,2), (2,3);
 INSERT INTO organization_song_types(organization_id, song_type_id) VALUES (1,1), (1,2), (2,2);
 INSERT INTO organization_instrument_types(organization_id, instrument_type_id) VALUES (1,1), (1,2), (2,1);
