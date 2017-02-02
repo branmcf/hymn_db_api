@@ -13,7 +13,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database,
   port     : options.port
+
 });
+
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
@@ -350,7 +352,6 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
             var JSObj = rowsToJS(rows);
 
             arrayToUse.push(JSObj);
-
 
         });
 
