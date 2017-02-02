@@ -4,15 +4,15 @@ var Boom = require('boom');
 
 //var mysql = require('promise-mysql');
 
-var options = require('../../config/config.js');
+//var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : options.host,
-  user     : options.user,
-  password : options.password,
-  database : options.database,
-  port     : options.port
+  host     : 'localhost',
+  user     : 'root',
+  password : '123',
+  database : 'testDb'
+  //port     : options.port
 
 });
 
@@ -141,26 +141,44 @@ function insertResource(theObj) {
 }
 
   function checkIfExists(other_text, tableName) {
-    var query = connection.query(`SELECT FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
+    var TorF = false;
+    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
       console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
 
       if(!rows[0]) {
-        return false;
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
+        TorF = false;
       }
       else {
-        return true;
+        TorF = true;
       }
+
+      testMe(TorF, other_text, tableName);
   		
     });
   }
 
+  function testMe(TorF, other_text, tableName) {
+    if(TorF == false) {
+        var toInsert = {
+          name: "Other",
+          other_text: other_text
+        };
+
+        //insert!
+        insertIfNotExists(toInsert, tableName);
+        
+      }
+
+  }
+
   function insertIfNotExists(toInsert, tableName) {
-    var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
     });
   };
 
@@ -170,14 +188,9 @@ function checkIfTrue(param1, theObj, whichIndex, tableName) {
       //insert into "other_text" column
       var theOtherText = theObj[param1][attributeName];
 
-      if(!alreadyExists) {
-        var toInsert = {
-          name: "Other",
-          other_text: theOtherText
-        };
+      checkIfExists(theOtherText, tableName);
 
-        var alreadyExists = checkIfExists(theOtherText, tableName);
-      }
+      
 
 
  } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {

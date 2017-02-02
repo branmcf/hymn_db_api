@@ -4,14 +4,14 @@ var Boom = require('boom');
 
 //var mysql = require('promise-mysql');
 
-var options = require('../../config/config.js');
-
 //mysql connection
 var connection = mysql.createConnection({
   host     : 'localhost',
-  user     : options.user,
-  password : options.password,
-  database : options.database
+  user     : 'root',
+  password : '123',
+  database : 'testDb'
+  //port     : options.port
+
 });
 
 
