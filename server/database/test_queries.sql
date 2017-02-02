@@ -65,13 +65,19 @@ INSERT INTO Denominations(name) VALUES ("Catholic"), ("Lutheran"), ("Baptist"), 
 INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), ("Other");
 INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"),
 ("Choir"),("Cantor"),("Song_Enlivener"),("Solo"),("Other");
-INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"),
-("Hispanic_Latin_American_Caribbean"),("Native_American_Indigenous_Peoples"),("Other");
+INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"),("Asian"),("Indian"),("Native American"),
+("Hispanic_Latin_American_Caribbean"),("Native_American_Indigenous_Peoples"),("Other"),("African");
 
 INSERT INTO Resource_Categories(name)
 VALUES ("A_hymn_written_prior_to_1970"),
 ("Newly_composed_hymn_within_the_last_10_years"),
 ("Song_by_local_church_musicians"),
+("Praise_and_Worship_Song"),
+("Psalm_Setting"),
+("Chant"),
+("Older_hymn_text_set_to_a_new_contemporary_tune"),
+("Song_from_another_country"),
+("Secular_Song"),
 ("Other");
 INSERT INTO Topics (name)
 VALUES ("Psalm_Setting"),
@@ -83,8 +89,19 @@ VALUES ("Psalm_Setting"),
 ("Song_Enlivening"),
 ("Keyboards"),
 ("Worship_Planning"),
+("Social_Justice"),
 ("Other");
-INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
+INSERT INTO Accompaniment(name) 
+VALUES 
+("Handbells"),
+("Obligato"),
+("Acapella"),
+("Organ"),
+("Piano"),
+("Guitar_no_band"),
+("Guitar_with_band"),
+("Orchestra_Wind_Ensemble"),
+("Other");
 
 
 
