@@ -139,7 +139,7 @@ function insertResource(theObj) {
 };
 
   function checkIfExists(other_text, tableName) {
-    var query = connection.query(`SELECT FROM ${tableName} WHERE other_text`, other_text, function (err, rows) {
+    var query = connection.query(`SELECT FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
       console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
@@ -176,10 +176,6 @@ function checkIfTrue(param1, theObj, whichIndex, tableName) {
 
         var alreadyExists = checkIfExists(theOtherText, tableName);
       }
-
-      
-
-  	 
 
 
  } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
