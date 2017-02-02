@@ -136,24 +136,50 @@ function insertResource(theObj) {
 
         //getIDAttribute(theObj, 1);
     });
-}
+};
+
+  function checkIfExists(other_text, tableName) {
+    var query = connection.query(`SELECT FROM ${tableName} WHERE other_text`, other_text, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+      console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
+
+      if(!rows[0]) {
+        return false;
+      }
+      else {
+        return true;
+      }
+  		
+    });
+  };
+
+  function insertIfNotExists(toInsert, tableName) {
+    var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
+    });
+  };
 
 function checkIfTrue(param1, theObj, whichIndex, tableName) {
   var attributeName = Object.keys(theObj[param1])[whichIndex];
   if(attributeName == "Other" || attributeName == "other") {
       //insert into "other_text" column
       var theOtherText = theObj[param1][attributeName];
-      var toInsert = {
+
+      if(!alreadyExists) {
+        var toInsert = {
           name: "Other",
           other_text: theOtherText
-      };
+        };
 
-      var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
+        var alreadyExists = checkIfExists(theOtherText, tableName);
+      }
 
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
+      
 
-  	 });
+  	 
 
 
  } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
