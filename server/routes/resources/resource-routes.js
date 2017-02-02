@@ -190,7 +190,12 @@ function checkIfTrue(param1, theObj, whichIndex, tableName) {
 
       checkIfExists(theOtherText, tableName);
 
-      
+      var returnObj = {
+        name: "Other",
+        other_text: theOtherText
+      };
+
+      return returnObj;      
 
 
  } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
@@ -198,7 +203,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName) {
 
  } else {
     console.log ("It's True for: ", attributeName);
-  }
+ }
 
   return attributeName;
 }
@@ -272,24 +277,48 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
 
   if(attributeName !== "false") {
     	//2a
-    	var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
-    	attributeName, function (err, rows) {
-    		if(err) { throw new Error(err); return; }
+      //NEED TO: if name= Other, then resort to 'other_text'
+    if(typeof attributeName == "object") {
+
+      var query = connection.query(`SELECT id from ${tableName} WHERE other_text = ?`,
+        attributeName.other_text, function (err, rows) {
+          if(err) { throw new Error(err); return; }
+
+          console.log("=========================");
+          console.log(query.sql);
+          console.log("=========================")
+
+          mid_table_id = rows[0].id;
+          console.log("mid_table_id: ",mid_table_id);
+
+          if(mid_table_id != 0) {
+            insertMiddle(mid_table_id, tableName, left_table_id);
+          } else {
+            console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+          }
+
+        }); //end mysql connection
+      } else {
+
+      var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
+      attributeName, function (err, rows) {
+        if(err) { throw new Error(err); return; }
 
         console.log("=========================");
         console.log(query.sql);
         console.log("=========================")
 
         mid_table_id = rows[0].id;
-    		console.log("mid_table_id: ",mid_table_id);
+        console.log("mid_table_id: ",mid_table_id);
 
         if(mid_table_id != 0) {
-    		  insertMiddle(mid_table_id, tableName, left_table_id);
+          insertMiddle(mid_table_id, tableName, left_table_id);
         } else {
           console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
         }
 
-    	}); //end mysql connection
+      }); //end mysql connection
+    }
   }
 }
 
