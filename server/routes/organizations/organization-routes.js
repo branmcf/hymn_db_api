@@ -1,5 +1,6 @@
 var Joi = require('joi')
 var mysql = require('mysql')
+var Boom = require('boom');
 
 var options = require('../../config/config.js');
 
@@ -151,7 +152,15 @@ function formatOrg(actualIndex) {
 orgController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
+
+        getOrganizations();
+        
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
+      if (numOrgs <= request.params.id - 1) {
+        //return reply('Not enough resources in the database for your request').code(404);
+        return reply(Boom.notFound());
+      }
+
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
 

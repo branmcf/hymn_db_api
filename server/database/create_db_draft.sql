@@ -273,7 +273,7 @@ CREATE TABLE events(
 
 	event_end_date date,
 	event_end_time time,
-	cost int unsigned default 0,
+	cost varchar(64) default "$0.00",
 	hymn_soc_member boolean default false,
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",

@@ -1,5 +1,6 @@
 var Joi = require('joi')
 var mysql = require('mysql')
+var Boom = require('boom');
 
 var options = require('../../config/config.js');
 
@@ -82,7 +83,7 @@ function formatEvent(actualIndex) {
 
   eventData = {
     id:             events[0][actualIndex].id,
-    title:          events[0][actualIndex].title,
+    title:          events[0][actualIndex].name,
     frequency:      events[0][actualIndex].frequency,
     url:            events[0][actualIndex].website,
     parent:         events[0][actualIndex].parent_org_id,
@@ -116,8 +117,16 @@ function formatEvent(actualIndex) {
 //EVENT GET REQUEST
 eventController.getConfig = {
   handler: function (request, reply) {
+
+      getEvents();
+
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      if (numEvents <= request.params.id - 1) {
+        //return reply('Not enough resources in the database for your request').code(404);
+        return reply(Boom.notFound());
+      }
+
       var actualIndex = Number(request.params.id) - 1;
       //
       //create new object, convert to json
@@ -178,7 +187,8 @@ eventController.postConfig = {
 
     newEvent.event_date = fixedDate;
 
-    newEvent.cost = Number(newEvent.cost);
+    //newEvent.cost = Number(newEvent.cost);
+
     if(typeof newEvent.hymn_soc_member !== "string") {
       if(newEvent.hymn_soc_member == 1) {
         newEvent.hymn_soc_member = true;
@@ -186,7 +196,7 @@ eventController.postConfig = {
         newEvent.hymn_soc_member = false;
       }
     } else if(typeof newEvent.hymn_soc_member !== "number") {
-      if(newEvent.hymn_soc_member == "yes") {
+      if(newEvent.hymn_soc_member == "yes" || newEvent.hymn_soc_member == "Yes") {
         newEvent.hymn_soc_member = true;
       } else {
         newEvent.hymn_soc_member = false;
@@ -209,7 +219,8 @@ eventController.postConfig = {
 
         var toReturn = {
 
-        	event_id: events[0].length +1 /* +1 or not?... */
+        	event_id: events[0].length /* +1 or not?... */
+            //
         }
 
         return reply(toReturn);

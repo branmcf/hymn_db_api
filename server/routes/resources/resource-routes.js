@@ -1,5 +1,6 @@
-var Joi = require('joi')
-var mysql = require('mysql')
+var Joi = require('joi');
+var mysql = require('mysql');
+var Boom = require('boom');
 
 //var mysql = require('promise-mysql');
 
