@@ -136,7 +136,7 @@ function insertResource(theObj) {
 
         //getIDAttribute(theObj, 1);
     });
-};
+}
 
   function checkIfExists(other_text, tableName) {
     var query = connection.query(`SELECT FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
@@ -152,7 +152,7 @@ function insertResource(theObj) {
       }
   		
     });
-  };
+  }
 
   function insertIfNotExists(toInsert, tableName) {
     var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
@@ -247,7 +247,13 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 
 	console.log("attributeName:", attributeName);
 
-	var mid_table_id = 0;
+	getLeftTableID(tableName, left_table_id, attributeName);
+
+
+}
+
+function getLeftTableID(tableName, left_table_id, attributeName) {
+  var mid_table_id = 0;
 
   if(attributeName !== "false") {
     	//2a
@@ -270,8 +276,6 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 
     	}); //end mysql connection
   }
-
-
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
