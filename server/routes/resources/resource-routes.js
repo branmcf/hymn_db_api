@@ -333,34 +333,76 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
 
         }); //end mysql connection
       } else {
+        //if it's not "Other"...
 
-      var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
-      attributeName, function (err, rows) {
-        if(err) { throw new Error(err); return; }
-
-        //console.log("=========================");
-        //console.log(query.sql);
-        //console.log("=========================")
-        try {
-          mid_table_id = rows[0].id;
-        } catch (err) {
-          // Handle the error here.
-          console.log("ERROR WITH RESULT: ", rows);
-          console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-        }
-
+        //if it exists
         
-        //console.log("mid_table_id: ",mid_table_id);
+          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+          attributeName, function (err, rows) {
+            if(err) { throw new Error(err); return; }
 
-        if(mid_table_id != 0) {
-          insertMiddle(mid_table_id, tableName, left_table_id);
-        } else {
-          console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-        }
+            //console.log("=========================");
+            //console.log(query.sql);
+            //console.log("=========================")
+            
 
-      }); //end mysql connection
+            if(!rows[0]) {
+              //does not exist in db yet...
+              createNewAttribute(tableName, attributeName, left_table_id)
+            } else {
+              //it does exist!
+              mid_table_id = rows[0].id;
+
+              insertMiddle(mid_table_id, tableName, left_table_id)
+            }
+
+          });        
+
+    }//end else (as in, if the attributeName is not == "object")
+  }//end if attribute name !== "false"
+}
+
+function createNewAttribute(tableName, attributeName, left_table_id) {
+  
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
+
+  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
+    attributeName, function (err, rows) {
+      if(err) { throw new Error(err); return; }
+
+      getNewAttribute(tableName, attributeName, left_table_id);
+
+  }); //end mysql connection
+
+}
+
+function getNewAttribute(tableName, attributeName, left_table_id) {
+
+  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+    attributeName, function (err, rows) {
+    if(err) { throw new Error(err); return; }
+
+    var mid_table_id = 0;
+
+    try {
+      mid_table_id = rows[0].id;
+    } catch (err) {
+      // Handle the error here.
+      console.log("ERROR WITH RESULT: ", rows);
+      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
     }
-  }
+
+    
+    //console.log("mid_table_id: ",mid_table_id);
+
+    if(mid_table_id != 0) {
+      insertMiddle(mid_table_id, tableName, left_table_id);
+    } else {
+      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+    }
+
+  }); //end mysql connection  
+
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
