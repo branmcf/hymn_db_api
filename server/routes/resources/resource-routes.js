@@ -140,7 +140,7 @@ function insertResource(theObj) {
 
 function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	//console.log("done with insertResource()");
-  console.log("1: ", tableName );
+  //console.log("1: ", tableName );
 
 	switch(tableName) {
 
@@ -204,7 +204,7 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 }
 
 function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
-  console.log("2: ", tableName)
+  //console.log("2: ", tableName)
   var attributeName2 = Object.keys(theObj[param1])[whichIndex];
   if(attributeName2 == "Other" || attributeName2 == "other") {
       //insert into "other_text" column
@@ -236,7 +236,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 }
 
   function checkIfExists(other_text, tableName, left_table_id, attributeName) {
-    console.log("3: ", tableName);
+    //console.log("3: ", tableName);
     var TorF = false;
     var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
   		if(err) { throw new Error(err); return; }
@@ -257,7 +257,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
   }
 
   function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
-    console.log("4: ", tableName);
+    //console.log("4: ", tableName);
     if(TorF == false) {
         var toInsert = {
           name: "Other",
@@ -282,7 +282,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
   }
 
   function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
-    console.log("5: ", tableName);
+    //console.log("5: ", tableName);
 
     var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
@@ -300,7 +300,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 
 function getLeftTableID(tableName, left_table_id, attributeName) {
 
-  console.log("6: ", tableName);
+  //console.log("6: ", tableName);
   var mid_table_id = 0;
 
   if(attributeName !== "false") {
@@ -364,7 +364,7 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
 
 function createNewAttribute(tableName, attributeName, left_table_id) {
   
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
+  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
 
   var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
     attributeName, function (err, rows) {
@@ -406,7 +406,7 @@ function getNewAttribute(tableName, attributeName, left_table_id) {
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
-  console.log("7: ", tableName);
+  //console.log("7: ", tableName);
 	//2b. insert into middle table
 	//console.log("\nABOUT TO INSERT FOR RESOURCE #", resources[0].length, "\n");
 	switch(tableName) {

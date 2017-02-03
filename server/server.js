@@ -13,7 +13,10 @@ var users_db = require('./users-db');
 var Joi = require('joi');
 var mysql = require('mysql');
 
-//Added for login
+//const fs = require('fs');
+//const https = require('https');
+
+
 
 var options = require('./config/config.js');
 
@@ -44,6 +47,19 @@ server.connection({
   routes: { cors: true }
   //protocol: 'https'
 });
+
+/*
+const tls = {
+  key: fs.readFileSync('./ssl/privkey.pem'),
+  cert: fs.readFileSync('./ssl/cert.pem')
+};
+
+server.connection({ 
+  port: process.env.PORT || 443,
+  tls: tls,
+  routes: { cors: true } 
+});
+*/
 
 //angular error test
 
