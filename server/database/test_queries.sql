@@ -53,7 +53,7 @@ ALTER TABLE persons auto_increment = 1;
 	ALTER TABLE person_ethnicities auto_increment = 1;
 
 
-INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Other');
+INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French');
 
 /* TAGS */
 INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),('Lutheran'),('Orthodox'),('Anglican'),('Conservative'),('Liberal'),('Moderate');

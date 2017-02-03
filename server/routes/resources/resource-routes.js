@@ -2,17 +2,15 @@ var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
 
-//var mysql = require('promise-mysql');
-
-//var options = require('../../config/config.js');
+var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '123',
-  database : 'testDb'
-  //port     : options.port
+  host     : options.host,
+  user     : options.user,
+  password : options.password,
+  database : options.database,
+  port     : options.port
 
 });
 
@@ -95,7 +93,7 @@ function insertResource(theObj) {
 
         resources[0].push(JSObj);
 
-        console.log("NOW RESOURCES.LENGTH IS: ", resources[0].length);
+        //console.log("NOW RESOURCES.LENGTH IS: ", resources[0].length);
 
         //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
 
@@ -140,76 +138,9 @@ function insertResource(theObj) {
     });
 }
 
-  function checkIfExists(other_text, tableName) {
-    var TorF = false;
-    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-      console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
-
-      if(!rows[0]) {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
-        TorF = false;
-      }
-      else {
-        TorF = true;
-      }
-
-      testMe(TorF, other_text, tableName);
-  		
-    });
-  }
-
-  function testMe(TorF, other_text, tableName) {
-    if(TorF == false) {
-        var toInsert = {
-          name: "Other",
-          other_text: other_text
-        };
-
-        //insert!
-        insertIfNotExists(toInsert, tableName);
-        
-      }
-
-  }
-
-  function insertIfNotExists(toInsert, tableName) {
-    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
-    });
-  };
-
-function checkIfTrue(param1, theObj, whichIndex, tableName) {
-  var attributeName = Object.keys(theObj[param1])[whichIndex];
-  if(attributeName == "Other" || attributeName == "other") {
-      //insert into "other_text" column
-      var theOtherText = theObj[param1][attributeName];
-
-      checkIfExists(theOtherText, tableName);
-
-      var returnObj = {
-        name: "Other",
-        other_text: theOtherText
-      };
-
-      return returnObj;      
-
-
- } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
-     attributeName = "false";
-
- } else {
-    console.log ("It's True for: ", attributeName);
- }
-
-  return attributeName;
-}
-
 function getID_left(theObj, whichIndex, tableName, left_table_id) {
-	console.log("done with insertResource()");
+	//console.log("done with insertResource()");
+  console.log("1: ", tableName );
 
 	switch(tableName) {
 
@@ -224,55 +155,152 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
         attributeName = "false";
       }
       */
-      var attributeName = checkIfTrue("ethnicities", theObj, whichIndex, tableName);
+      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Resource_Categories":
 			//var attributeName = theObj.categories[whichIndex].name;
-      var attributeName = checkIfTrue("categories", theObj, whichIndex, tableName);
+      checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Categories":
 			//var attributeName = theObj.categories[whichIndex].name;
 			break;
 		case "Ensembles":
 			//var attributeName = theObj.ensembles[whichIndex].name;
-      var attributeName = checkIfTrue("ensembles", theObj, whichIndex, tableName);
+      checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Denominations":
 			//var attributeName = theObj.denominations[whichIndex].name;
-      var attributeName = checkIfTrue("denominations", theObj, whichIndex, tableName);
+      checkIfTrue("denominations", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Languages":
 			//var attributeName = theObj.languages[whichIndex].name;
-      var attributeName = checkIfTrue("languages", theObj, whichIndex, tableName);
+      checkIfTrue("languages", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Instrument_Types":
 			//var attributeName = theObj.instruments[whichIndex].name;
 			break;
 		case "Topics":
 			//var attributeName = theObj.topic[whichIndex].name;
-      var attributeName = checkIfTrue("topic", theObj, whichIndex, tableName);
+      checkIfTrue("topic", theObj, whichIndex, tableName, left_table_id);
 			break;
     case "Topic":
 			//var attributeName = theObj.topic[whichIndex].name;
-      var attributeName = checkIfTrue("topic", theObj, whichIndex, tableName);
+      checkIfTrue("topic", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Accompaniment":
 			//var attributeName = theObj.accompaniment[whichIndex].name;
-      var attributeName = checkIfTrue("accompaniment", theObj, whichIndex, tableName);
+      checkIfTrue("accompaniment", theObj, whichIndex, tableName, left_table_id);
 			break;
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
 			break;
 	}//end switch
 
-	console.log("attributeName:", attributeName);
+	//console.log("attributeName:", attributeName);
 
-	getLeftTableID(tableName, left_table_id, attributeName);
+	//getLeftTableID(tableName, left_table_id, attributeName);
 
 
 }
 
+function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
+  console.log("2: ", tableName)
+  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
+  if(attributeName2 == "Other" || attributeName2 == "other") {
+      //insert into "other_text" column
+      var theOtherText = theObj[param1][attributeName2];
+
+      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
+
+     /*
+      var returnObj = {
+        name: "Other",
+        other_text: theOtherText
+      };
+      */
+
+      //return returnObj;   
+       
+
+
+ } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
+     attributeName2 = "false";
+     console.log("False, insert nothing...");
+
+ } else {
+    console.log ("It's True for: ", attributeName2);
+    getLeftTableID(tableName, left_table_id, attributeName2);
+ }
+
+  //return attributeName2;
+}
+
+  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
+    console.log("3: ", tableName);
+    var TorF = false;
+    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
+
+      if(!rows[0]) {
+        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
+        TorF = false;
+      }
+      else {
+        TorF = true;
+      }
+
+      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
+  		
+    });
+  }
+
+  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
+    console.log("4: ", tableName);
+    if(TorF == false) {
+        var toInsert = {
+          name: "Other",
+          other_text: other_text
+        };
+
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
+
+        //insert!
+        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
+        
+      }//end if
+      else {
+        var toGet = {
+          name: "Other",
+          other_text: other_text
+        }
+        //it exists already
+        getLeftTableID(tableName, left_table_id, toGet);
+      }
+
+  }
+
+  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
+    console.log("5: ", tableName);
+
+    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+
+      getLeftTableID(tableName, left_table_id, toInsert);
+    });
+  }
+
+//
+//
+//
+
+
 function getLeftTableID(tableName, left_table_id, attributeName) {
+
+  console.log("6: ", tableName);
   var mid_table_id = 0;
 
   if(attributeName !== "false") {
@@ -280,16 +308,22 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
       //NEED TO: if name= Other, then resort to 'other_text'
     if(typeof attributeName == "object") {
 
-      var query = connection.query(`SELECT id from ${tableName} WHERE other_text = ?`,
+      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
         attributeName.other_text, function (err, rows) {
           if(err) { throw new Error(err); return; }
 
           console.log("=========================");
           console.log(query.sql);
-          console.log("=========================")
+          console.log("=========================");
 
-          mid_table_id = rows[0].id;
-          console.log("mid_table_id: ",mid_table_id);
+          try {
+            mid_table_id = rows[0].id;
+          } catch (err) {
+            // Handle the error here.
+            console.log("ERROR WITH RESULT: ", rows);
+            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+          }
+          //console.log("mid_table_id: ",mid_table_id);
 
           if(mid_table_id != 0) {
             insertMiddle(mid_table_id, tableName, left_table_id);
@@ -304,12 +338,19 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
       attributeName, function (err, rows) {
         if(err) { throw new Error(err); return; }
 
-        console.log("=========================");
-        console.log(query.sql);
-        console.log("=========================")
+        //console.log("=========================");
+        //console.log(query.sql);
+        //console.log("=========================")
+        try {
+          mid_table_id = rows[0].id;
+        } catch (err) {
+          // Handle the error here.
+          console.log("ERROR WITH RESULT: ", rows);
+          console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+        }
 
-        mid_table_id = rows[0].id;
-        console.log("mid_table_id: ",mid_table_id);
+        
+        //console.log("mid_table_id: ",mid_table_id);
 
         if(mid_table_id != 0) {
           insertMiddle(mid_table_id, tableName, left_table_id);
@@ -323,6 +364,7 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
+  console.log("7: ", tableName);
 	//2b. insert into middle table
 	//console.log("\nABOUT TO INSERT FOR RESOURCE #", resources[0].length, "\n");
 	switch(tableName) {
