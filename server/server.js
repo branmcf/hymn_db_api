@@ -15,15 +15,16 @@ var mysql = require('mysql');
 
 //Added for login
 
-var options = require('./config/config.js');
+//var options = require('./config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : options.host,
-  user     : options.user,
-  password : options.password,
-  database : options.database,
-  port     : options.port
+  host     : 'localhost',
+  user     : 'root',
+  password : '123',
+  database : 'testDb'
+  //port     : options.port
+
 });
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);

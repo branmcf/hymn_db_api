@@ -4,16 +4,18 @@ var Boom = require('boom');
 
 //var mysql = require('promise-mysql');
 
-var options = require('../../config/config.js');
+//var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
-  host     : options.host,
-  user     : options.user,
-  password : options.password,
-  database : options.database,
-  port     : options.port
+  host     : 'localhost',
+  user     : 'root',
+  password : '123',
+  database : 'testDb'
+  //port     : options.port
+
 });
+
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
@@ -138,22 +140,62 @@ function insertResource(theObj) {
     });
 }
 
+  function checkIfExists(other_text, tableName) {
+    var TorF = false;
+    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+      console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
+
+      if(!rows[0]) {
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
+        TorF = false;
+      }
+      else {
+        TorF = true;
+      }
+
+      testMe(TorF, other_text, tableName);
+  		
+    });
+  }
+
+  function testMe(TorF, other_text, tableName) {
+    if(TorF == false) {
+        var toInsert = {
+          name: "Other",
+          other_text: other_text
+        };
+
+        //insert!
+        insertIfNotExists(toInsert, tableName);
+        
+      }
+
+  }
+
+  function insertIfNotExists(toInsert, tableName) {
+    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+    });
+  };
+
 function checkIfTrue(param1, theObj, whichIndex, tableName) {
   var attributeName = Object.keys(theObj[param1])[whichIndex];
   if(attributeName == "Other" || attributeName == "other") {
       //insert into "other_text" column
       var theOtherText = theObj[param1][attributeName];
-      var toInsert = {
-          name: "Other",
-          other_text: theOtherText
+
+      checkIfExists(theOtherText, tableName);
+
+      var returnObj = {
+        name: "Other",
+        other_text: theOtherText
       };
 
-      var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
-
-  	 });
+      return returnObj;      
 
 
  } else if(theObj[param1][attributeName] == false || theObj[param1][attributeName] == "false") {
@@ -161,7 +203,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName) {
 
  } else {
     console.log ("It's True for: ", attributeName);
-  }
+ }
 
   return attributeName;
 }
@@ -225,31 +267,59 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 
 	console.log("attributeName:", attributeName);
 
-	var mid_table_id = 0;
+	getLeftTableID(tableName, left_table_id, attributeName);
+
+
+}
+
+function getLeftTableID(tableName, left_table_id, attributeName) {
+  var mid_table_id = 0;
 
   if(attributeName !== "false") {
     	//2a
-    	var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
-    	attributeName, function (err, rows) {
-    		if(err) { throw new Error(err); return; }
+      //NEED TO: if name= Other, then resort to 'other_text'
+    if(typeof attributeName == "object") {
+
+      var query = connection.query(`SELECT id from ${tableName} WHERE other_text = ?`,
+        attributeName.other_text, function (err, rows) {
+          if(err) { throw new Error(err); return; }
+
+          console.log("=========================");
+          console.log(query.sql);
+          console.log("=========================")
+
+          mid_table_id = rows[0].id;
+          console.log("mid_table_id: ",mid_table_id);
+
+          if(mid_table_id != 0) {
+            insertMiddle(mid_table_id, tableName, left_table_id);
+          } else {
+            console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+          }
+
+        }); //end mysql connection
+      } else {
+
+      var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
+      attributeName, function (err, rows) {
+        if(err) { throw new Error(err); return; }
 
         console.log("=========================");
         console.log(query.sql);
         console.log("=========================")
 
         mid_table_id = rows[0].id;
-    		console.log("mid_table_id: ",mid_table_id);
+        console.log("mid_table_id: ",mid_table_id);
 
         if(mid_table_id != 0) {
-    		  insertMiddle(mid_table_id, tableName, left_table_id);
+          insertMiddle(mid_table_id, tableName, left_table_id);
         } else {
           console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
         }
 
-    	}); //end mysql connection
+      }); //end mysql connection
+    }
   }
-
-
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
@@ -324,7 +394,6 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
             var JSObj = rowsToJS(rows);
 
             arrayToUse.push(JSObj);
-
 
         });
 
