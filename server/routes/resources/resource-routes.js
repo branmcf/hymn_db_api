@@ -56,7 +56,7 @@ function insertResource(theObj) {
     } else {
       justResource.hymn_soc_member = true;
     }
-  } else if(typeof justResource.hymn_soc_member == number) {
+  } else if(typeof justResource.hymn_soc_member == "number") {
     if(justResource.hymn_soc_member == 0) {
       justResource.hymn_soc_member = false;
     } else {
@@ -73,7 +73,7 @@ function insertResource(theObj) {
     } else {
       justResource.is_free = false;
     }
-  } else if(typeof justResource.is_free == number) {
+  } else if(typeof justResource.is_free == "number") {
     if(justResource.is_free == 0) {
       justResource.is_free = false;
     } else {

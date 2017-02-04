@@ -24,21 +24,25 @@ var persons = [];
   var personEnsembles = [];
   var personEthnicities =[];
 
-
-
-
 getPersons();
+
+
+/*
+================================================================================
+================================================================================
+ - FOR INSERTING INTO PERSONS AND MIDDLE TABLES
+================================================================================
+================================================================================
+*/
 
 function insertPerson(theObj) {
 
   var justPerson = JSON.parse(JSON.stringify(theObj));
 
-//delete columns not stored in the resources table!
-    if(typeof justPerson.ethnicities !== "undefined") { delete justPerson.ethnicities; }
-    if(typeof justPerson.ensembles !== "undefined") { delete justPerson.ensembles; }
-    if(typeof justPerson.topic !== "undefined") { delete justPerson.topic; }
-    if(typeof justPerson.topics !== "undefined") { delete justPerson.topics; }
-
+//delete columns not stored in the persons table!
+  if(typeof justPerson.topics !== "undefined") { delete justPerson.topics; }
+  if(typeof justPerson.ensembles !== "undefined") { delete justPerson.ensembles; }
+  if(typeof justPerson.ethnicities !== "undefined") { delete justPerson.ethnicities; }
 
 // TYPE CONVERSION
   if(typeof justPerson.hymn_soc_member == "string") {
@@ -47,7 +51,7 @@ function insertPerson(theObj) {
     } else {
       justPerson.hymn_soc_member = true;
     }
-} else if(typeof justPerson.hymn_soc_member == Number) {
+  } else if(typeof justPerson.hymn_soc_member == "number") {
     if(justPerson.hymn_soc_member == 0) {
       justPerson.hymn_soc_member = false;
     } else {
@@ -58,17 +62,16 @@ function insertPerson(theObj) {
     justPerson.hymn_soc_member = false;
   }
 
+  
+
 // END TYPE CONVERSION
 
-	connection.query(`insert into persons set ?`, justPerson, function(err, rows, fields) {
+	connection.query(`INSERT INTO persons SET ?`, justPerson, function(err, rows, fields) {
         if(err) { throw err; }
 
-        //var JSObj = rowsToJS(theObj);
+        var JSObj = rowsToJS(theObj);
 
-        //persons[0].push(JSObj);
-        persons[0].push(theObj);
-
-        console.log("NOW PERSONS.LENGTH IS: ", persons[0].length);
+        persons[0].push(JSObj);
 
         //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
 
@@ -76,128 +79,250 @@ function insertPerson(theObj) {
 
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
-        //Object.keys(theObj.ethnicities).length
-
       //for multiple ethnicities
-        for(var i=0; i< Object.keys(theObj.ethnicities).length ; i++) {
-            //console.log(">>>Ethnicities #", i);
-      	    getID_left(theObj, i, "Ethnicities", "ethnicity_id");
-  	    }
-
-    	//for multiple ensembles
-    	for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
-            //console.log(">>>Ensembles #", i);
-            getID_left(theObj, i, "Ensembles", "ensemble_id");
-    	}
-
-    	//for multiple TOPICS
-    	for(var i=0; i< Object.keys(theObj.topics).length; i++) {
-            //console.log(">>>Topics #", i);
-    		getID_left(theObj, i, "Topics", "topic_id");
-    	}
+        for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
+            getID_left(theObj, i, "Ethnicities", "ethnicity_id");
+        }
+        for(var i=0; i< Object.keys(theObj.topics).length; i++) {
+            getID_left(theObj, i, "Topics", "topic_id");
+        }
+    	  for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
+    		  getID_left(theObj, i, "Ensembles", "ensemble_id");
+    	  }
 
     });
 }
 
-function checkIfTrue(param1, theObj, whichIndex, tableName) {
-  var attributeName = Object.keys(theObj[param1])[whichIndex];
-    if(attributeName == "Other" || attributeName == "other") {
-        //insert into "other_text" column
-        var theOtherText = theObj[param1][attributeName];
-        var toInsert = {
-            name: "Other",
-            other_text: theOtherText
-        };
-
-        var query = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-          if(err) { throw new Error(err); return; }
-
-          console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query.sql);
-
-        });
-
-    } else if (theObj[param1][attributeName] == true || theObj[param1][attributeName] == "true"){
-        console.log("TRUE FOR ", attributeName);
-
-    } else {
-        attributeName = "false";
-    }
-
-  return attributeName;
-}
-
 function getID_left(theObj, whichIndex, tableName, left_table_id) {
-	console.log("getting name from ", tableName);
+  //console.log("1: ", tableName );
 
-    switch(tableName) {
+	switch(tableName) {
 
-        case "Ethnicities":
-			//var attributeName = theObj.ethnicities[whichIndex];
-            var attributeName = checkIfTrue("ethnicities", theObj, whichIndex, tableName);
+		case "Ethnicities":
+            checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Topics":
-            //var attributeName = theObj.topics[whichIndex];
-            var attributeName = checkIfTrue("topics", theObj, whichIndex, tableName);
+            checkIfTrue("topics", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Ensembles":
-            //var attributeName = theObj.ensembles[whichIndex];
-            var attributeName = checkIfTrue("ensembles", theObj, whichIndex, tableName);
+			checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
 			break;
 		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName, tableName);
+			console.log("INVALID TABLE NAME SENT for ",tableName);
 			break;
 	}//end switch
 
-	//console.log("attributeName:", attributeName);
+}
 
-	var mid_table_id = 0;
+function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
+  //console.log("2: ", tableName)
+  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
+  if(attributeName2 == "Other" || attributeName2 == "other") {
+      //insert into "other_text" column
+      var theOtherText = theObj[param1][attributeName2];
 
-    if(attributeName !== "false") {
-    	//2a
-    	var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
-    	attributeName, function (err, rows) {
-    		if(err) { throw new Error(err); return; }
+      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
 
-        //console.log("=========================");
-        //console.log(query.sql);
-        //console.log("=========================")
+ } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
+     attributeName2 = "false";
+     console.log("False, insert nothing...");
 
-        mid_table_id = rows[0].id;
-    		console.log("mid_table_id: ",mid_table_id);
+ } else {
+    console.log ("It's True for: ", attributeName2);
+    getLeftTableID(tableName, left_table_id, attributeName2);
+ }
 
-        if(mid_table_id != 0) {
-    		  insertMiddle(mid_table_id, tableName, left_table_id);
-        } else {
-          console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-        }
+  //return attributeName2;
+}
 
-    	}); //end mysql connection
+  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
+    //console.log("3: ", tableName);
+    var TorF = false;
+    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
+
+      if(!rows[0]) {
+        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
+        TorF = false;
+      }
+      else {
+        TorF = true;
+      }
+
+      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
+
+    });
   }
 
+  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
+    //console.log("4: ", tableName);
+    if(TorF == false) {
+        var toInsert = {
+          name: "Other",
+          other_text: other_text
+        };
+        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
+        //insert!
+        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
+
+      }//end if
+      else {
+        var toGet = {
+          name: "Other",
+          other_text: other_text
+        }
+        //it exists already
+        getLeftTableID(tableName, left_table_id, toGet);
+      }
+
+  }
+
+  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
+    //console.log("5: ", tableName);
+
+    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+
+      getLeftTableID(tableName, left_table_id, toInsert);
+    });
+  }
+
+//
+//
+//
+
+
+function getLeftTableID(tableName, left_table_id, attributeName) {
+
+  //console.log("6: ", tableName);
+  var mid_table_id = 0;
+
+  if(attributeName !== "false") {
+    	//2a
+      //NEED TO: if name= Other, then resort to 'other_text'
+    if(typeof attributeName == "object") {
+
+      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
+        attributeName.other_text, function (err, rows) {
+          if(err) { throw new Error(err); return; }
+
+          //console.log("=========================");
+          //console.log(query.sql);
+          //console.log("=========================");
+
+          try {
+            mid_table_id = rows[0].id;
+          } catch (err) {
+            // Handle the error here.
+            console.log("ERROR WITH RESULT: ", rows);
+            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+          }
+          //console.log("mid_table_id: ",mid_table_id);
+
+          if(mid_table_id != 0) {
+            insertMiddle(mid_table_id, tableName, left_table_id);
+          } else {
+            console.log("ERROR, NO ROW FOUND IN ", tableName, " WITH name = ",attributeName);
+          }
+
+        }); //end mysql connection
+      } else {
+        //if it's not "Other"...
+
+        //if it exists
+
+          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+          attributeName, function (err, rows) {
+            if(err) { throw new Error(err); return; }
+
+            //console.log("=========================");
+            //console.log(query.sql);
+            //console.log("=========================")
+
+
+            if(!rows[0]) {
+              //does not exist in db yet...
+              createNewAttribute(tableName, attributeName, left_table_id)
+            } else {
+              //it does exist!
+              mid_table_id = rows[0].id;
+
+              insertMiddle(mid_table_id, tableName, left_table_id)
+            }
+
+          });
+
+    }//end else (as in, if the attributeName is not == "object")
+  }//end if attribute name !== "false"
+}
+
+function createNewAttribute(tableName, attributeName, left_table_id) {
+
+  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
+
+  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
+    attributeName, function (err, rows) {
+      if(err) { throw new Error(err); return; }
+
+      getNewAttribute(tableName, attributeName, left_table_id);
+
+  }); //end mysql connection
+
+}
+
+function getNewAttribute(tableName, attributeName, left_table_id) {
+
+  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+    attributeName, function (err, rows) {
+    if(err) { throw new Error(err); return; }
+
+    var mid_table_id = 0;
+
+    try {
+      mid_table_id = rows[0].id;
+    } catch (err) {
+      // Handle the error here.
+      console.log("ERROR WITH RESULT: ", rows);
+      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+    }
+
+
+    //console.log("mid_table_id: ",mid_table_id);
+
+    if(mid_table_id != 0) {
+      insertMiddle(mid_table_id, tableName, left_table_id);
+    } else {
+      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+    }
+
+  }); //end mysql connection
 
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
+  //console.log("7: ", tableName);
 	//2b. insert into middle table
-	//console.log("\nABOUT TO INSERT FOR RESOURCE #", resources[0].length, "\n");
-
 	switch(tableName) {
 		case "Ethnicities":
 			var midTable = "person_ethnicities";
-			var toInsert = {ethnicity_id: theID,         person_id: persons[0].length};	break;
-		case "Ensembles":
-			var midTable = "person_ensembles";
-			var toInsert = {ensemble_id: theID,          person_id: persons[0].length};	break;
+			var toInsert = {ethnicity_id: theID, person_id: persons[0].length};	break;
 		case "Topics":
 			var midTable = "person_topics";
-			var toInsert = {topic_id: theID,             person_id: persons[0].length};	break;
+			var toInsert = {topic_id: theID, person_id: persons[0].length};	break;
+		case "Ensembles":
+			var midTable = "person_ensembles";
+			var toInsert = {ensemble_id: theID, person_id: persons[0].length};	break;
+
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
 			break;
 	}
-	//var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
-	console.log("\nTO INSERT: \n", toInsert);
-	connection.query(`INSERT INTO ${midTable} SET ?`,
+	//console.log("\nTO INSERT: \n", toInsert);
+	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
 
@@ -206,9 +331,13 @@ function insertMiddle(theID, tableName, left_table_id) {
 	});
 }
 
-
-
-
+/*
+================================================================================
+================================================================================
+ - END OF INSERTING INTO PERSONS AND MIDDLE TABLES
+================================================================================
+================================================================================
+*/
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -245,7 +374,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 function getPersons() {
 
   //get RESOURCES from db
-  connection.query(`SELECT * from persons`, function(err, rows, fields) {
+  connection.query(`SELECT * FROM persons`, function(err, rows, fields) {
             //need type, topics, accompaniment, tags, ethnicities
     if (!err) {
 
@@ -258,7 +387,7 @@ function getPersons() {
 
       	persons.push(JSObj);
 
-        console.log("PERSON SIZE BEFORE INSERTION: ", persons[0].length);
+        //console.log("PERSON SIZE BEFORE INSERTION: ", persons[0].length);
 
       	numPersons = persons[0].length;
 
@@ -383,7 +512,6 @@ personController.postConfig = {
       ensembles : 		req.payload.ensembles,
       ethnicities : 	req.payload.ethnicities,
       hymn_soc_member:req.payload.hymn_soc_member,
-      is_free: 			  req.payload.is_free
       //city: 			req.payload.city,
       //state: 			req.payload.state,
       //country: 			req.payload.country
@@ -437,10 +565,8 @@ personController.postConfig = {
       accompaniment: Joi.array().allow(''),
       languages: Joi.array().allow(''),
       ensembles: Joi.array().allow(''),
-      //is_free: Joi.string().required()
       parent: 	Joi.string().allow(''),
-      hymn_soc_member: Joi.string().allow(''),
-      is_free: Joi.string().allow('')
+      hymn_soc_member: Joi.string().allow('')
 
     }
   }

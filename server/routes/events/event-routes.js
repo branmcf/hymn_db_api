@@ -33,7 +33,7 @@ function rowsToJS(theArray) {
 
 function getEvents() {
   //get events from db
-  connection.query('SELECT * from events', function(err, rows, fields) {
+  connection.query('SELECT * FROM events', function(err, rows, fields) {
     if (!err) {
 
       var JSObj = rowsToJS(rows);
