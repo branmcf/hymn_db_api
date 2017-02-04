@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS congregation_types;
 DROP TABLE IF EXISTS congregation_ethnicities;
 DROP TABLE IF EXISTS congregation_congregation_categories;
 DROP TABLE IF EXISTS congregation_favorites;
+DROP TABLE IF EXISTS congregation_languages;
 
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types;
@@ -100,7 +101,7 @@ SET FOREIGN_KEY_CHECKS=1;
 CREATE TABLE Congregation_Categories (
 	id int unsigned not null auto_increment,
 	name varchar(128),
-  other_text varchar(256),
+  	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
@@ -122,6 +123,7 @@ CREATE TABLE Accompaniment (
 CREATE TABLE Tags (
 	id int unsigned not null auto_increment,
 	name varchar(128),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 	/* maybe link to other tables like congregation types? */
 );
@@ -380,6 +382,16 @@ CREATE TABLE user_ethnicities(
 - INTERMEDIATE TABLES FOR CONGREGATIONS -
 ===================================================
 */
+
+CREATE TABLE congregation_languages (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations (id),
+	language_id int unsigned,
+	FOREIGN KEY (language_id) REFERENCES Languages (id)
+
+);
 
 CREATE TABLE congregation_congregation_categories (
 	id int unsigned not null auto_increment,
