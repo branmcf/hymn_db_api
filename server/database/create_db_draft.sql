@@ -347,10 +347,11 @@ CREATE TABLE organizations (
 CREATE TABLE users (
 	id int unsigned not null auto_increment,
 	PRIMARY KEY (id),
-	salt varchar(128) default "wtfdyjfsamylb69420",
 	email varchar(128) default null,
 	UNIQUE(email),
 	password varchar(128) default null,
+    salt varchar(128),
+    iterations int unsigned,
 	first_name varchar(64) default null,
 	last_name varchar(64) default null,
 	reg_date timestamp,

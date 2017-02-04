@@ -126,11 +126,11 @@ INSERT INTO resource_accompaniment(resource_id, accompaniment_id) VALUES(1,1),(1
 
 
 
-INSERT INTO users(email, password, first_name, last_name, high_level) VALUES ('testemail1@yahoo.com', 'password1', 'Jim', 'Tom Jenkins', 1);
-INSERT INTO users(email, password, first_name, last_name) VALUES ('JUST@yahoo.com', 'password2', 'Vasili', 'Zaitev');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('anotheremail@yahoo.com', 'password3', 'Bob', 'Lewandowski');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('foobar@yahoo.com', 'password4', 'Gertrude', 'Hammerschmidt');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('daksdaiuwd@yahoo.com', 'asidnalwidh', 'Dak', 'Prescott');
+INSERT INTO users(email, password, first_name, last_name, high_level) VALUES ('testemail1@yahoo.com', 'asdpassword1asd', 'Jim', 'Tom Jenkins');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('JUST@yahoo.com', 'asdpassword2asd', 'Vasili', 'Zaitev');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('anotheremail@yahoo.com', 'asdpassword3asd', 'Bob', 'Lewandowski');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('foobar@yahoo.com', 'asdpassword4asd', 'Gertrude', 'Hammerschmidt');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('daksdaiuwd@yahoo.com', 'asdpassword5asd', 'Dak', 'Prescott');
 
 /* User eth */
 INSERT INTO user_ethnicities(user_id, ethnicity_id) VALUES
