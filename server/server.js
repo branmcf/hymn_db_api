@@ -14,7 +14,10 @@ var users_db = require('./users-db');
 var Joi = require('joi');
 var mysql = require('mysql');
 
-//Added for login
+//const fs = require('fs');
+//const https = require('https');
+
+
 
 var options = require('./config/config.js');
 
@@ -45,8 +48,6 @@ server.connection({
   routes: { cors: true }
   //protocol: 'https'
 });
-
-
 
 /*
 

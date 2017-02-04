@@ -56,7 +56,7 @@ function insertResource(theObj) {
     } else {
       justResource.hymn_soc_member = true;
     }
-  } else if(typeof justResource.hymn_soc_member == number) {
+  } else if(typeof justResource.hymn_soc_member == "number") {
     if(justResource.hymn_soc_member == 0) {
       justResource.hymn_soc_member = false;
     } else {
@@ -73,7 +73,7 @@ function insertResource(theObj) {
     } else {
       justResource.is_free = false;
     }
-  } else if(typeof justResource.is_free == number) {
+  } else if(typeof justResource.is_free == "number") {
     if(justResource.is_free == 0) {
       justResource.is_free = false;
     } else {
@@ -140,7 +140,7 @@ function insertResource(theObj) {
 
 function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	//console.log("done with insertResource()");
-  console.log("1: ", tableName );
+  //console.log("1: ", tableName );
 
 	switch(tableName) {
 
@@ -204,7 +204,7 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 }
 
 function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
-  console.log("2: ", tableName)
+  //console.log("2: ", tableName)
   var attributeName2 = Object.keys(theObj[param1])[whichIndex];
   if(attributeName2 == "Other" || attributeName2 == "other") {
       //insert into "other_text" column
@@ -236,7 +236,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 }
 
   function checkIfExists(other_text, tableName, left_table_id, attributeName) {
-    console.log("3: ", tableName);
+    //console.log("3: ", tableName);
     var TorF = false;
     var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
   		if(err) { throw new Error(err); return; }
@@ -257,7 +257,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
   }
 
   function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
-    console.log("4: ", tableName);
+    //console.log("4: ", tableName);
     if(TorF == false) {
         var toInsert = {
           name: "Other",
@@ -282,7 +282,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
   }
 
   function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
-    console.log("5: ", tableName);
+    //console.log("5: ", tableName);
 
     var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
@@ -300,7 +300,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 
 function getLeftTableID(tableName, left_table_id, attributeName) {
 
-  console.log("6: ", tableName);
+  //console.log("6: ", tableName);
   var mid_table_id = 0;
 
   if(attributeName !== "false") {
@@ -333,38 +333,80 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
 
         }); //end mysql connection
       } else {
+        //if it's not "Other"...
 
-      var query = connection.query(`SELECT id from ${tableName} WHERE name = ?`,
-      attributeName, function (err, rows) {
-        if(err) { throw new Error(err); return; }
-
-        //console.log("=========================");
-        //console.log(query.sql);
-        //console.log("=========================")
-        try {
-          mid_table_id = rows[0].id;
-        } catch (err) {
-          // Handle the error here.
-          console.log("ERROR WITH RESULT: ", rows);
-          console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-        }
-
+        //if it exists
         
-        //console.log("mid_table_id: ",mid_table_id);
+          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+          attributeName, function (err, rows) {
+            if(err) { throw new Error(err); return; }
 
-        if(mid_table_id != 0) {
-          insertMiddle(mid_table_id, tableName, left_table_id);
-        } else {
-          console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-        }
+            //console.log("=========================");
+            //console.log(query.sql);
+            //console.log("=========================")
+            
 
-      }); //end mysql connection
+            if(!rows[0]) {
+              //does not exist in db yet...
+              createNewAttribute(tableName, attributeName, left_table_id)
+            } else {
+              //it does exist!
+              mid_table_id = rows[0].id;
+
+              insertMiddle(mid_table_id, tableName, left_table_id)
+            }
+
+          });        
+
+    }//end else (as in, if the attributeName is not == "object")
+  }//end if attribute name !== "false"
+}
+
+function createNewAttribute(tableName, attributeName, left_table_id) {
+  
+  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
+
+  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
+    attributeName, function (err, rows) {
+      if(err) { throw new Error(err); return; }
+
+      getNewAttribute(tableName, attributeName, left_table_id);
+
+  }); //end mysql connection
+
+}
+
+function getNewAttribute(tableName, attributeName, left_table_id) {
+
+  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+    attributeName, function (err, rows) {
+    if(err) { throw new Error(err); return; }
+
+    var mid_table_id = 0;
+
+    try {
+      mid_table_id = rows[0].id;
+    } catch (err) {
+      // Handle the error here.
+      console.log("ERROR WITH RESULT: ", rows);
+      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
     }
-  }
+
+    
+    //console.log("mid_table_id: ",mid_table_id);
+
+    if(mid_table_id != 0) {
+      insertMiddle(mid_table_id, tableName, left_table_id);
+    } else {
+      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+    }
+
+  }); //end mysql connection  
+
 }
 
 function insertMiddle(theID, tableName, left_table_id) {
-  console.log("7: ", tableName);
+  //console.log("7: ", tableName);
 	//2b. insert into middle table
 	//console.log("\nABOUT TO INSERT FOR RESOURCE #", resources[0].length, "\n");
 	switch(tableName) {
@@ -400,15 +442,15 @@ function insertMiddle(theID, tableName, left_table_id) {
 			break;
 	}
 	//var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
-	console.log("\nTO INSERT: \n", toInsert);
+	//console.log("\nTO INSERT: \n", toInsert);
 	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
 
-		console.log("query: ", query.sql);
+		//console.log("query: ", query.sql);
 
 	});
-}
+}//end insertMiddle
 
 
 
@@ -507,17 +549,17 @@ function formatResource(actualIndex) {
     url:            resources[0][actualIndex].website,
     resource_date:  resources[0][actualIndex].resource_date,
     description:    resources[0][actualIndex].description,
-    parent:  resources[0][actualIndex].parent,
+    parent:         resources[0][actualIndex].parent,
     topics:         resTopics[actualIndex],
     accompaniment: 	resAcc[actualIndex],
-    tags:         resTags[actualIndex],
+    tags:           resTags[actualIndex],
     //tags:           resTags[actualIndex],
     //categories:     resCategories[actualIndex],
     is_active:      resources[0][actualIndex].is_active,
     high_level:     resources[0][actualIndex].high_level,
-    city:        resources[0][actualIndex].city,
-    state:       resources[0][actualIndex].state,
-    country:     resources[0][actualIndex].country,
+    city:           resources[0][actualIndex].city,
+    state:          resources[0][actualIndex].state,
+    country:        resources[0][actualIndex].country,
     hymn_soc_member:resources[0][actualIndex].hymn_soc_member,
     //ethnicities
     ethnicities:    resEth[actualIndex],
@@ -741,37 +783,6 @@ resourceController.activateConfig = {
     }
 };
 
-function JUSTUGH(theObj) {
-
-	//getResources();
-
-	var noEth = JSON.parse(JSON.stringify(theObj));
-
-  console.log("inserting resource ", noEth);
-	//change title to name!
-
-
-
-  delete noEth.ethnicities;
-	//delete noEth.author;
-	//delete noEth.parents;
-	delete noEth.categories;
-	delete noEth.topic;
-	delete noEth.accompaniment;
-	delete noEth.languages;
-	delete noEth.ensembles;
-
-
-	var query = connection.query(`INSERT INTO resources SET ?`, noEth, function(err, rows, fields) {
-        if(err) { throw err; }
-
-        console.log(query.sql);
-
-        var JSObj = rowsToJS(theObj);
-
-        resources[0].push(JSObj);
-    });
-}
 
 
 module.exports = [
