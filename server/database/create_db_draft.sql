@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS congregation_types;
 DROP TABLE IF EXISTS congregation_ethnicities;
 DROP TABLE IF EXISTS congregation_congregation_categories;
 DROP TABLE IF EXISTS congregation_favorites;
+DROP TABLE IF EXISTS congregation_languages;
 
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types;
@@ -100,7 +101,7 @@ SET FOREIGN_KEY_CHECKS=1;
 CREATE TABLE Congregation_Categories (
 	id int unsigned not null auto_increment,
 	name varchar(128),
-  other_text varchar(256),
+  	other_text varchar(256),
 	PRIMARY KEY (id)
 );
 
@@ -122,6 +123,7 @@ CREATE TABLE Accompaniment (
 CREATE TABLE Tags (
 	id int unsigned not null auto_increment,
 	name varchar(128),
+	other_text varchar(256),
 	PRIMARY KEY (id)
 	/* maybe link to other tables like congregation types? */
 );
@@ -236,26 +238,24 @@ CREATE TABLE congregations (
 	PRIMARY KEY (id),
 	name varchar(64),
 	website varchar(64),
+	denomination varchar(64),
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default false,
-	priest_attire varchar(64),
+	shape varchar(128),
+	clothing varchar(128),
+	geography varchar(128),
 	attendance varchar(64) default "under 50",
-
-	description_of_worship_to_guests varchar(256),
-  is_active boolean default false,
-  geography varchar(128),
-  is_free boolean default false,
-  events_free boolean default false,
-  the_process varchar(128),
-  high_level boolean default false,
-  shape varchar(128),
-  clothing varchar(128),
-
-  denomination varchar(64),
-
-  approved boolean default false
+	is_active boolean default false,
+	high_level boolean default false,
+	
+	priest_attire varchar(64),
+	description_of_worship_to_guests text(512),
+	is_free boolean default false,
+	events_free boolean default false,
+	the_process varchar(128),
+	approved boolean default false
 
 );
 
@@ -264,24 +264,27 @@ CREATE TABLE events(
 	PRIMARY KEY(id),
 	name varchar(128),
 	INDEX(name(8)),
-	website varchar(128),
 	frequency varchar(64),
-	theme varchar(128),
-	description varchar(512),
+	website varchar(128),
+	parent varchar(128),
+	theme varchar(128), /* aka topic */
+	description text(1024),
 	event_date date,
 	event_start_time time,
-
-	event_end_date date,
-	event_end_time time,
 	cost varchar(64) default "$0.00",
-	hymn_soc_member boolean default false,
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	parent varchar(128),
+	hymn_soc_member boolean default false,
 	is_active boolean default false,
 	high_level boolean default false,
 
+	event_end_date date,
+	event_end_time time,
+	views int unsigned default 0,
+	favorites int unsigned default 0,
+	expected_attendance varchar(64),
+	amount_going int unsigned default 0,
 	approved boolean default false
 );
 
@@ -289,26 +292,24 @@ CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
 	name varchar(128),
-	INDEX(name(8)),
-	website varchar(128),
-	hymn_soc_member boolean default false,
-	is_free boolean default false,
-	description text(512),
-	favorites int unsigned,
-	views int unsigned,
-	resource_date timestamp,
-  author varchar(128),
-
+	INDEX(name(8)),	
 	type varchar(64),
-
+	INDEX(type(6)),
+	website varchar(128),
+	resource_date timestamp,
+	description text(1024),
+	parent varchar(128),
+	author varchar(128),
+	is_active boolean default true,
 	high_level boolean default false,
-  is_active boolean default true,
-
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	parent varchar(128),
+	hymn_soc_member boolean default false,
+	is_free boolean default false,
 
+	favorites int unsigned default 0,
+	views int unsigned default 0,
 	approved boolean default false
 );
 
@@ -317,29 +318,27 @@ CREATE TABLE organizations (
 	PRIMARY KEY (id),
 	name varchar(64),
 	website varchar(128),
+	parent varchar(128),
+	denomination varchar(128),
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	parent varchar(128),
-	/* CHANGE BELOW TO ANOTHER TABLE LATER */
 	geography varchar(128),
 	is_free boolean default false,
 	offers_free_events boolean default false,
 	charge decimal(6) default 0.00,
 	mission varchar(256),
+	the_process varchar(256),
+	hymn_soc_member boolean default false,
+	is_active boolean default false,
+    high_level boolean default false,
+
 	promotions varchar(256),
 	priest_attire varchar(64),
-    hymn_soc_member boolean default false,
     shape varchar(128),
     clothing varchar(128),
     attendance varchar(64),
-    is_active boolean default false,
-    high_level boolean default false,
-    the_process varchar(256),
     membership_free boolean default false,
-
-    denomination varchar(128), /* delete this if using middle table */
-
     approved boolean default false
 
 
@@ -383,6 +382,16 @@ CREATE TABLE user_ethnicities(
 - INTERMEDIATE TABLES FOR CONGREGATIONS -
 ===================================================
 */
+
+CREATE TABLE congregation_languages (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	congregation_id int unsigned,
+	FOREIGN KEY (congregation_id) REFERENCES congregations (id),
+	language_id int unsigned,
+	FOREIGN KEY (language_id) REFERENCES Languages (id)
+
+);
 
 CREATE TABLE congregation_congregation_categories (
 	id int unsigned not null auto_increment,
