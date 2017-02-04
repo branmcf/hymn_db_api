@@ -442,15 +442,15 @@ function insertMiddle(theID, tableName, left_table_id) {
 			break;
 	}
 	//var toInsert = {ethnicity_id: theID,resource_id: resources[0].length}
-	console.log("\nTO INSERT: \n", toInsert);
+	//console.log("\nTO INSERT: \n", toInsert);
 	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
 
-		console.log("query: ", query.sql);
+		//console.log("query: ", query.sql);
 
 	});
-}
+}//end insertMiddle
 
 
 
@@ -549,17 +549,17 @@ function formatResource(actualIndex) {
     url:            resources[0][actualIndex].website,
     resource_date:  resources[0][actualIndex].resource_date,
     description:    resources[0][actualIndex].description,
-    parent:  resources[0][actualIndex].parent,
+    parent:         resources[0][actualIndex].parent,
     topics:         resTopics[actualIndex],
     accompaniment: 	resAcc[actualIndex],
-    tags:         resTags[actualIndex],
+    tags:           resTags[actualIndex],
     //tags:           resTags[actualIndex],
     //categories:     resCategories[actualIndex],
     is_active:      resources[0][actualIndex].is_active,
     high_level:     resources[0][actualIndex].high_level,
-    city:        resources[0][actualIndex].city,
-    state:       resources[0][actualIndex].state,
-    country:     resources[0][actualIndex].country,
+    city:           resources[0][actualIndex].city,
+    state:          resources[0][actualIndex].state,
+    country:        resources[0][actualIndex].country,
     hymn_soc_member:resources[0][actualIndex].hymn_soc_member,
     //ethnicities
     ethnicities:    resEth[actualIndex],
@@ -783,37 +783,6 @@ resourceController.activateConfig = {
     }
 };
 
-function JUSTUGH(theObj) {
-
-	//getResources();
-
-	var noEth = JSON.parse(JSON.stringify(theObj));
-
-  console.log("inserting resource ", noEth);
-	//change title to name!
-
-
-
-  delete noEth.ethnicities;
-	//delete noEth.author;
-	//delete noEth.parents;
-	delete noEth.categories;
-	delete noEth.topic;
-	delete noEth.accompaniment;
-	delete noEth.languages;
-	delete noEth.ensembles;
-
-
-	var query = connection.query(`INSERT INTO resources SET ?`, noEth, function(err, rows, fields) {
-        if(err) { throw err; }
-
-        console.log(query.sql);
-
-        var JSObj = rowsToJS(theObj);
-
-        resources[0].push(JSObj);
-    });
-}
 
 
 module.exports = [
