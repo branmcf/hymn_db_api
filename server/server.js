@@ -478,7 +478,7 @@ server.route({
       //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
       if (request.params.id) {
-        if (numUsers <= request.params.id - 1) {
+        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
           //return reply('Not enough users in the database for your request').code(404);
           return reply(Boom.notFound());
         }
