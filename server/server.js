@@ -264,10 +264,8 @@ const validate = function (request, username, password, reply) {
                 website:    user.website,
                 user_id:    user.id 
             };
-
-            console.log("FOUND A MATCH!\n", returnThis);
             
-            server.inject(`/user/${i}`, (res) => { reply(res.result); });
+            server.inject(`/user/${i+1}`, (res) => { reply(res.result).code(201); });
 
            }//end if password matches...
            else {
@@ -291,30 +289,65 @@ server.route({
     //auth: 'simple',
     handler: function(req, reply) {
 
+      getUsers();
+
       var salt = Bcrypt.genSaltSync(10);
       var hash = Bcrypt.hashSync(req.payload.password, salt);
 
-      console.log(req.payload.password, " TURNED INTO : ", hash);
+      //console.log(req.payload.password, " TURNED INTO : ", hash);
       // Store hash in your password DB. 
-      if(hash) { console.log("wth... => ", hash); }
+
+      //loop thru all emails and see if email is already in users_db
+      for(var i=0; i< users[0].length; i++) {
+        if(users[0][i].email == req.payload.email) {
+          return reply(Boom.badRequest('invalid query, email already exists!')); 
+        }
+      }
       
       var query = connection.query('INSERT INTO users SET ?', 
       { 
         email: req.payload.email, 
         password: hash,
         salt: salt,
-        iterations: 10
+        iterations: 10,
+        first_name: req.payload.first_name,
+        last_name: req.payload.last_name,
+        city: req.payload.city,
+        state: req.payload.state,
+        country: req.payload.country,
+        website: req.payload.website
       }, 
       function(err, rows, fields) {
-          if(err) { throw err; }
+          if(err) { 
+            console.log("Error with registering a user...");
+            return reply(Boom.badRequest('invalid query')); 
+          }
           
           users[0].push({email: req.payload.email, password:hash, salt: salt, iterations: 10});
           console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
-          console.log("DONE WITH hash");
+          return reply ({ 
+            email: req.payload.email,
+            user_id: users[0].length,
+            first_name: req.payload.first_name,
+            last_name: req.payload.last_name
+          }).code(200);
       });
-    console.log("done with genSalt");
+    //console.log("done with genSalt");
         
-    }//end handler
+  },//end handler
+  validate: {
+    payload: {
+      email: Joi.string().email().required(),
+      password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
+
+      first_name: Joi.string().alphanum(),
+      last_name: Joi.string().alphanum(),
+      city: Joi.string().alphanum(),
+      state: Joi.string().alphanum(),
+      country: Joi.string().alphanum(),
+      website: Joi.string().hostname()
+    }
+  }
   }//end config
 });
 
@@ -410,6 +443,7 @@ function formatUser(actualIndex) {
     url:              "/users/" + String(actualIndex + 1),
     id:               users[0][actualIndex].id,
     email:            users[0][actualIndex].email,
+    password:         users[0][actualIndex].password,
     first_name:       users[0][actualIndex].first_name,
     hymn_soc_member:  users[0][actualIndex].hymn_soc_member,
     last_name:        users[0][actualIndex].last_name,
@@ -767,56 +801,57 @@ server.register(Basic, (err) => {
     }
 
     server.auth.strategy('simple', 'basic', { validateFunc: validate });
+    
     //login!
-server.route({
+    server.route({
 
-  method: 'GET',
-  path: '/login',
-  config: {
-    auth: 'simple',
-    handler: function(req, reply) {
+      method: 'GET',
+      path: '/login',
+      config: {
+        auth: 'simple',
+        handler: function(req, reply) {
 
-      getUsers();
+          getUsers();
 
-      console.log("BEGIN LOGIN");
+          console.log("BEGIN LOGIN");
 
-  /*
-      var newUser = {
-        email:      req.payload.email,
-        password:   req.payload.password
-      };
+      /*
+          var newUser = {
+            email:      req.payload.email,
+            password:   req.payload.password
+          };
 
 
-      for(var i=0; i< users[0].length; i++) {
-        if(users[0][i].email == newUser.email &&
-          users[0][i].password == newUser.password) {
+          for(var i=0; i< users[0].length; i++) {
+            if(users[0][i].email == newUser.email &&
+              users[0][i].password == newUser.password) {
 
-          console.log("found matching user");
+              console.log("found matching user");
 
-          var toReturn = {
-            user_id: users[0][i].id,
-            first_name: users[0][i].first_name,
-            last_name: users[0][i].last_name
-          }
+              var toReturn = {
+                user_id: users[0][i].id,
+                first_name: users[0][i].first_name,
+                last_name: users[0][i].last_name
+              }
 
-          return reply(toReturn);
-          */
-          console.log("CREDENTIALS: ", req.auth.credentials);
-          return reply(req.auth.credentials);
+              return reply(toReturn);
+              */
+              console.log("CREDENTIALS: ", req.auth.credentials);
+              return reply(req.auth.credentials);
 
-        //}
-        //else if(i+1 == users[0].length) {
-          //console.log('no user in database with that email and/or password');
-          //return reply(Boom.notFound('Invalid username and/or password combination'));
-        //}
-      //}//end for loop
+            //}
+            //else if(i+1 == users[0].length) {
+              //console.log('no user in database with that email and/or password');
+              //return reply(Boom.notFound('Invalid username and/or password combination'));
+            //}
+          //}//end for loop
 
+        }
+
+        
     }
 
-    
-}
-
-});
+    });
 
     server.start((err) => {
 
