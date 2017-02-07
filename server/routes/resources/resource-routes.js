@@ -228,7 +228,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
      console.log("False, insert nothing...");
 
  } else {
-    console.log ("It's True for: ", attributeName2);
+    //console.log ("It's True for: ", attributeName2);
     getLeftTableID(tableName, left_table_id, attributeName2);
  }
 
@@ -264,7 +264,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
           other_text: other_text
         };
 
-        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
+        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
 
         //insert!
         insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
@@ -287,7 +287,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
     var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
 
       getLeftTableID(tableName, left_table_id, toInsert);
     });
@@ -312,9 +312,9 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
         attributeName.other_text, function (err, rows) {
           if(err) { throw new Error(err); return; }
 
-          console.log("=========================");
-          console.log(query.sql);
-          console.log("=========================");
+          //console.log("=========================");
+          //console.log(query.sql);
+          //console.log("=========================");
 
           try {
             mid_table_id = rows[0].id;
@@ -506,7 +506,7 @@ function getResources() {
 
       	resources.push(JSObj);
 
-        console.log("RESOURCE SIZE BEFORE INSERTION: ", resources[0].length);
+        console.log("RESOURCE SIZE : ", resources[0].length);
 
       	numRes = resources[0].length;
 
@@ -535,7 +535,16 @@ function getResources() {
 
 /*
 ===================================================
-- RESOURCE Controllers -
+- -
+===================================================
+*/
+
+
+
+
+/*
+===================================================
+- -
 ===================================================
 */
 
@@ -565,7 +574,9 @@ function formatResource(actualIndex) {
     ethnicities:    resEth[actualIndex],
     //eth id
     is_free:        resources[0][actualIndex].is_free,
-    languages:      resLanguages[actualIndex]
+    languages:      resLanguages[actualIndex],
+    user_id:        resources[0][actualIndex].user_id,
+    user:           resources[0][actualIndex].user
 
   };
 
@@ -583,6 +594,12 @@ function formatResource(actualIndex) {
 
 }
 
+/*
+===================================================
+- RESOURCE Controllers -
+===================================================
+*/
+
 //RESOURCE GET REQUEST
 resourceController.getConfig = {
 
@@ -593,9 +610,9 @@ resourceController.getConfig = {
     getResources();
 
     if (request.params.id) {
-        if (numRes <= request.params.id - 1) {
+        if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
           //return reply('Not enough resources in the database for your request').code(404);
-          return reply(Boom.notFound());
+          return reply(Boom.notFound("Index out of range for Resources get request"));
         }
         //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
         var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
@@ -656,7 +673,7 @@ resourceController.postConfig = {
 
     };
 */
-    console.log("\nRECEIVED :", req.payload.data);
+    //console.log("\nRECEIVED :", req.payload.data);
 
     var theData = {
       name:             req.payload.data.title,
@@ -672,7 +689,9 @@ resourceController.postConfig = {
       accompaniment:    req.payload.data.accompaniment,
       languages:        req.payload.data.languages,
       ensembles:        req.payload.data.ensembles,
-      ethnicities:      req.payload.data.ethnicities
+      ethnicities:      req.payload.data.ethnicities,
+      user_id:          req.payload.uid,
+      user:             req.payload.user
 
     };
 

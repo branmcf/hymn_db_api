@@ -124,9 +124,9 @@ eventController.getConfig = {
 
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-      if (numEvents <= request.params.id - 1) {
-        //return reply('Not enough resources in the database for your request').code(404);
-        return reply(Boom.notFound());
+      if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough resources in the database for your request').code(404);
+          return reply(Boom.notFound("Index out of range for Events get request"));
       }
 
       var actualIndex = Number(request.params.id) - 1;
@@ -221,7 +221,7 @@ eventController.postConfig = {
 
         var toReturn = {
 
-        	event_id: events[0].length /* +1 or not?... */
+        	event_id: events[0].length +1 /* +1 or not?... */
             //
         }
 

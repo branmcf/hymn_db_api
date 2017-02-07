@@ -94,7 +94,7 @@ SET FOREIGN_KEY_CHECKS=1;
 
 /*
 ===================================================
-- ATTRIBUTE TABLES -
+- ATTRIBUTE TABLES - SET FOREIGN_KEY_CHECKS=1;
 ===================================================
 */
 
@@ -233,30 +233,58 @@ CREATE TABLE Ethnicities (
 ===================================================
 */
 
-CREATE TABLE congregations (
+
+CREATE TABLE users (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	email varchar(128) default null,
+	UNIQUE(email),
+	password varchar(128) default null,
+    salt varchar(128),
+    iterations int unsigned,
+	first_name varchar(64) default null,
+	last_name varchar(64) default null,
+	reg_date timestamp,
+	is_active boolean default true,
+	city varchar(64) default "Dallas",
+	state varchar(64) default "Texas",
+	country varchar(128) default "United States",
+	website varchar(128),
+	hymn_soc_member boolean default false,
+
+	approved boolean default false,
+	high_level boolean default false,
+	is_admin boolean default false
+
+);
+
+CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
-	name varchar(64),
-	website varchar(64),
-	denomination varchar(64),
+	name varchar(128),
+	INDEX(name(8)),	
+	type varchar(64),
+	INDEX(type(6)),
+	website varchar(128),
+	resource_date timestamp,
+	description text(1024),
+	parent varchar(128),
+	author varchar(128),
+	is_active boolean default true,
+	high_level boolean default false,
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default false,
-	shape varchar(128),
-	clothing varchar(128),
-	geography varchar(128),
-	attendance varchar(64) default "under 50",
-	is_active boolean default false,
-	high_level boolean default false,
-	
-	priest_attire varchar(64),
-	description_of_worship_to_guests text(512),
 	is_free boolean default false,
-	events_free boolean default false,
-	the_process varchar(128),
-	approved boolean default false
 
+	favorites int unsigned default 0,
+	views int unsigned default 0,
+	approved boolean default false,
+    
+    user varchar(64),
+    user_id int unsigned,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE events(
@@ -285,32 +313,10 @@ CREATE TABLE events(
 	favorites int unsigned default 0,
 	expected_attendance varchar(64),
 	amount_going int unsigned default 0,
-	approved boolean default false
-);
-
-CREATE TABLE resources (
-	id int unsigned auto_increment,
-	PRIMARY KEY (id),
-	name varchar(128),
-	INDEX(name(8)),	
-	type varchar(64),
-	INDEX(type(6)),
-	website varchar(128),
-	resource_date timestamp,
-	description text(1024),
-	parent varchar(128),
-	author varchar(128),
-	is_active boolean default true,
-	high_level boolean default false,
-	city varchar(64) default "Dallas",
-	state varchar(64) default "Texas",
-	country varchar(128) default "United States",
-	hymn_soc_member boolean default false,
-	is_free boolean default false,
-
-	favorites int unsigned default 0,
-	views int unsigned default 0,
-	approved boolean default false
+	approved boolean default false,
+    
+    user_id int unsigned,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE organizations (
@@ -339,32 +345,40 @@ CREATE TABLE organizations (
     clothing varchar(128),
     attendance varchar(64),
     membership_free boolean default false,
-    approved boolean default false
-
+    approved boolean default false,
+    
+    user_id int unsigned,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 
 );
 
-CREATE TABLE users (
-	id int unsigned not null auto_increment,
+
+CREATE TABLE congregations (
+	id int unsigned auto_increment,
 	PRIMARY KEY (id),
-	email varchar(128) default null,
-	UNIQUE(email),
-	password varchar(128) default null,
-    salt varchar(128),
-    iterations int unsigned,
-	first_name varchar(64) default null,
-	last_name varchar(64) default null,
-	reg_date timestamp,
-	is_active boolean default true,
+	name varchar(64),
+	website varchar(64),
+	denomination varchar(64),
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	website varchar(128),
 	hymn_soc_member boolean default false,
-
-	approved boolean default false,
+	shape varchar(128),
+	clothing varchar(128),
+	geography varchar(128),
+	attendance varchar(64) default "under 50",
+	is_active boolean default false,
 	high_level boolean default false,
-	is_admin boolean default false
+	
+	priest_attire varchar(64),
+	description_of_worship_to_guests text(512),
+	is_free boolean default false,
+	events_free boolean default false,
+	the_process varchar(128),
+	approved boolean default false,
+    
+    user_id int unsigned,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 
 );
 
