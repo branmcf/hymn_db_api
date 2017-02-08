@@ -4,15 +4,19 @@
   "description": "Hapi server-side for HymnDatabase",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"hello world\""
+    "test": "echo \"hello world\"",
+    "start": "node server.js"
   },
   "author": "Tyler Kirkpatrick, Danh Nguyen, Justin Suh",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^1.0.2",
+    "app-root-path": "^2.0.1",
+    "async": "^2.1.4",
+    "bcryptjs": "^2.4.0",
     "body-parser": "^1.15.2",
     "boom": "^4.2.0",
     "express": "^4.14.0",
+    "fs": "0.0.1-security",
     "glob": "^7.1.1",
     "good": "^7.1.0",
     "good-console": "^6.3.1",
@@ -23,10 +27,14 @@
     "hapi-auth-cookie": "^6.1.1",
     "hapi-mysql": "^1.0.15",
     "hapi-swagger": "^7.4.0",
+    "https": "^1.0.0",
     "joi": "^10.0.2",
-    "mongodb": "^2.2.12",
     "mongoose": "^4.7.1",
     "mysql": "^2.12.0",
+    "node-cache": "^4.1.1",
+    "promise-mysql": "^3.0.0",
+    "q": "^1.4.1",
+    "redis": "^2.6.5",
     "vision": "^4.1.1"
   }
 }

@@ -54,6 +54,7 @@ export class EntryOrgsComponent implements OnInit {
       return;
     }
 
+
     var onload = (data) => {
       if (data) {
         this.submission = data;
@@ -83,5 +84,4 @@ export class EntryOrgsComponent implements OnInit {
 
     this.submitService.submitOrgs(this.submission);
   }
-
 }
