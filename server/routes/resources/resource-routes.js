@@ -225,7 +225,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 
  } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
      attributeName2 = "false";
-     console.log("False, insert nothing...");
+     //console.log("False, insert nothing...");
 
  } else {
     //console.log ("It's True for: ", attributeName2);
@@ -448,6 +448,15 @@ function insertMiddle(theID, tableName, left_table_id) {
 		if(err) { throw new Error(err); return; }
 
 		//console.log("query: ", query.sql);
+    //getResources();
+
+    if(tableName == "Languages") {
+      //THIS IS VERY HARD-CODED IN
+      //but...
+      //since languages is the last middle table to be inserted, only call getResources() after its completion because nodejs asynchronous calls are incredibly painful
+      getResources();
+      
+    }
 
 	});
 }//end insertMiddle
@@ -524,7 +533,6 @@ function getResources() {
     getInter("Accompaniment", 	"resources", "resource_accompaniment", 	"accompaniment_id", "resource_id", resAcc, numRes);
     getInter("Ensembles",       "resources", "resource_ensembles",  "ensemble_id", "resource_id", resEnsembles, numRes);
     getInter("Languages",       "resources", "resource_languages",  "language_id", "resource_id", resLanguages, numRes);
-
 
     }
     else
@@ -697,7 +705,7 @@ resourceController.postConfig = {
 
     insertResource(theData);
 
-    getResources();
+    //getResources();
 
     var toReturn = {
 
