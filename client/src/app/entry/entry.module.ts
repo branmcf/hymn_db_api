@@ -45,13 +45,13 @@ import { UserService } from '../services/user.service';
     SharedModule,
     RouterModule.forRoot([
       { path: 'entry', component: EntryComponent },
-      { path: 'entry/welcome', component: EntryLandingComponent },
-      { path: 'entry/resources', component: EntryResourcesComponent },
-      { path: 'entry/person', component: EntryPersonComponent },
-      { path: 'entry/congregations', component: EntryCongregationComponent },
-      { path: 'entry/orgs', component: EntryOrgsComponent },
-      { path: 'entry/events', component: EntryEventComponent },
-      { path: 'entry/review', component: EntryReviewComponent },
+      { path: 'entry/welcome', component: EntryLandingComponent, canActivate: [UserService] },
+      { path: 'entry/resources', component: EntryResourcesComponent, canActivate: [UserService] },
+      { path: 'entry/person', component: EntryPersonComponent, canActivate: [UserService] },
+      { path: 'entry/congregations', component: EntryCongregationComponent, canActivate: [UserService] },
+      { path: 'entry/orgs', component: EntryOrgsComponent, canActivate: [UserService] },
+      { path: 'entry/events', component: EntryEventComponent, canActivate: [UserService] },
+      { path: 'entry/review', component: EntryReviewComponent, canActivate: [UserService] },
     ])
   ],
   providers: [
