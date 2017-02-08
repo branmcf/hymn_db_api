@@ -461,9 +461,9 @@ personController.getConfig = {
     //console.log("\n\nETHS[", persons[0].length-1, "] => ",personEthnicities[persons[0].length-1]);
 
     if (request.params.id) {
-        if (numPersons <= request.params.id - 1) {
+        if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
           //return reply('Not enough resources in the database for your request').code(404);
-          return reply(Boom.notFound());
+          return reply(Boom.notFound("Index out of range for Persons get request"));
         }
         //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
         var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]

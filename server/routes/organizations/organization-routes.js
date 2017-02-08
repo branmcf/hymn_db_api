@@ -157,9 +157,9 @@ orgController.getConfig = {
         getOrganizations();
         
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);      //
-      if (numOrgs <= request.params.id - 1) {
-        //return reply('Not enough resources in the database for your request').code(404);
-        return reply(Boom.notFound());
+      if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough resources in the database for your request').code(404);
+          return reply(Boom.notFound("Index out of range for Orgs get request"));
       }
 
       var actualIndex = Number(request.params.id) - 1;

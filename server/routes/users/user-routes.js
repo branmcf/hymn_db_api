@@ -212,9 +212,9 @@ userController.getConfig = {
     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
     if (request.params.id) {
-      if (numUsers <= request.params.id - 1) {
-        //return reply('Not enough users in the database for your request').code(404);
-        return reply(Boom.notFound());
+      if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough resources in the database for your request').code(404);
+          return reply(Boom.notFound("Index out of range for Users get request"));
       }
 
       var actualIndex = Number(request.params.id) - 1;

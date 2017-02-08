@@ -450,10 +450,12 @@ function formatUser(actualIndex) {
     is_active:        users[0][actualIndex].is_active,
     reg_date:         users[0][actualIndex].reg_date,
     high_level:       users[0][actualIndex].high_level,
-    city:          users[0][actualIndex].city,
-    state:         users[0][actualIndex].state,
-    country:       users[0][actualIndex].country,
-    website:          users[0][actualIndex].website
+    city:             users[0][actualIndex].city,
+    state:            users[0][actualIndex].state,
+    country:          users[0][actualIndex].country,
+    website:          users[0][actualIndex].website,
+    approved:         users[0][actualIndex].approved,
+    is_admin:         users[0][actualIndex].is_admin
     //ethnicity_name:   eth[0]
 
   };
@@ -615,7 +617,69 @@ server.route({
 });
 
 
+//
+//
+//
 
+server.route({
+  
+  method: 'POST',
+  path: '/user/admin/{id}',
+  config: { 
+
+    handler: function(request, reply) {
+
+      getUsers();
+
+      if (request.params.id) {
+        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough users in the database for your request').code(404);
+          return reply(Boom.notFound());
+        }
+
+        var theValue = {
+          is_admin: request.payload.is_admin
+
+        };
+
+        
+
+        connection.query(
+          'UPDATE users SET is_admin = ? WHERE id = ?', [theValue.is_admin, request.params.id],
+          function(err, rows) {
+
+            console.log(`made user with id=${request.params.id} an admin...`);
+
+
+            if(err) {
+              return reply(Boom.badRequest(`Error while trying to make user with id=${request.params.id} an admin...`));
+              return;
+            }
+
+            reply([{
+              statusCode: 201,
+              message: 'Made admin Successfully',
+            }]);
+
+          }); //end mysql connection
+
+
+
+        }//end if(req.params)
+  
+  }//end handler
+  /* COMMA ^
+  validate: {
+    payload: {
+      email:      Joi.string().email(),
+      password:   Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
+      first_name: Joi.string().required(),
+      last_name:  Joi.string().required()
+    }
+  }
+  */
+  }//end config
+});
 
 
 
