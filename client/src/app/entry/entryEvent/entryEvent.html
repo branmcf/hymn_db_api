@@ -9,6 +9,10 @@
                 <md-card-title><h4>{{content?.fields.title}}</h4></md-card-title>
                 <md-card-content>
                     
+                    <form name="eventForm"
+                    (ngSubmit)="submit()"
+                    #eventForm="ngForm"
+                    *ngIf="submission">
 
                     <div class="form-group">
                         <md-input-container class="full-width">
@@ -19,14 +23,22 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.title"
                             name="eventTitle"
+                            #eventTitle="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventTitle.errors && eventTitle.touched">
+                            <ul>
+                                <li [hidden]="!eventTitle.errors.required">
+                                    Title is required
+                                </li>
+                            </ul>
+                        </div> 
                     </div>
 
                     <div class="form-group">
                         <label for="eventOccurance">Is Your Event...</label>
-                            <md-radio-group [(ngModel)]="submission.data.occurance">
-                                <md-radio-button class="block-input" name="occurance" value="annual">Annual</md-radio-button>
+                            <md-radio-group [(ngModel)]="submission.data.occurance" name="eventOccrance" required>
+                                <md-radio-button class="block-input" name="occurance" value="annual" required>Annual</md-radio-button>
                                 <md-radio-button class="block-input" name="occurance" value="every2yrs">Every-Other-Year (once every 2 years)</md-radio-button>
                                 <md-radio-button class="block-input" name="occurance" value="once">One Time Only</md-radio-button>
                                 <md-radio-button class="block-input" name="occurance" value="other">
@@ -36,19 +48,10 @@
                                         id="eventOccurance" 
                                         class="form-control" 
                                         [(ngModel)]="eventOccurance"
-                                        name="eventOccurance"
-                                        required/>
+                                        name="submission.data.occurance"/>
                                     </md-input-container> 
                                 </md-radio-button>
                             </md-radio-group>
-                            <div class="form-group" [hidden]="!other">
-                                <input type="text"
-                                id="eventOccurance" 
-                                class="form-control" 
-                                [(ngModel)]="submission.data.occurance"
-                                name="eventOccurance"
-                                required/>
-                            </div>
                     </div>
 
                     <div class="form-group">
@@ -60,8 +63,19 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.url"
                             name="eventUrl"
+                            #eventUrl="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventUrl.errors && eventUrl.touched">
+                            <ul>
+                                <li [hidden]="!eventUrl.errors.required">
+                                    URL is required
+                                </li>
+                                <li>
+                                    Please follow this format: https://www.google.com
+                                </li>
+                            </ul>
+                        </div> 
                     </div>
 
                     <div class="form-group">
@@ -73,8 +87,16 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.parent"
                             name="eventParent"
+                            #eventParent="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventParent.errors && eventParent.touched">
+                            <ul>
+                                <li [hidden]="!eventParent.errors.required">
+                                    Parent/Sponsoring rganization is required
+                                </li>
+                            </ul>
+                        </div>
                         
                     </div>
 
@@ -87,8 +109,16 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.topic"
                             name="eventTopic"
+                            #eventTopic="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventTopic.errors && eventTopic.touched">
+                            <ul>
+                                <li [hidden]="!eventTopic.errors.required">
+                                    Topic is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -100,8 +130,16 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.description"
                             name="eventDesc"
+                            #eventDesc="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventDesc.errors && eventDesc.touched">
+                            <ul>
+                                <li [hidden]="!eventDesc.errors.required">
+                                    Description is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -113,14 +151,22 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.eventDate"
                             name="eventDate"
+                            #eventDate="ngModel"
                             rerquired/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventDate.errors && eventDate.touched">
+                            <ul>
+                                <li [hidden]="!eventDate.errors.required">
+                                    Date is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="eventCost">Registration Cost</label>
-                            <md-radio-group [(ngModel)]="submission.data.cost">
-                                <md-radio-button class="block-input" name="cost" value="free">Free</md-radio-button>
+                            <md-radio-group [(ngModel)]="submission.data.cost" name="eventCost" required>
+                                <md-radio-button class="block-input" name="cost" value="free" required>Free</md-radio-button>
                                 <md-radio-button class="block-input" name="cost" value="under100">Under $100</md-radio-button>
                                 <md-radio-button class="block-input" name="cost" value="100to200">Between $100 and $250</md-radio-button>
                                 <md-radio-button class="block-input" name="cost" value="250to500">Between $250 and $500</md-radio-button>
@@ -137,8 +183,16 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.city"
                             name="eventCity"
+                            #eventCity="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventCity.errors && eventCity.touched">
+                            <ul>
+                                <li [hidden]="!eventCity.errors.required">
+                                    City is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -150,8 +204,16 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.state"
                             name="eventState"
+                            #eventState="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventState.errors && eventState.touched">
+                            <ul>
+                                <li [hidden]="!eventState.errors.required">
+                                    City is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -163,22 +225,36 @@
                             class="form-control" 
                             [(ngModel)]="submission.data.country"
                             name="eventCountry"
+                            #eventCountry="ngModel"
                             required/>
                         </md-input-container>
+                        <div class="alert alert-danger" *ngIf="eventCountry.errors && eventCountry.touched">
+                            <ul>
+                                <li [hidden]="!eventCountry.errors.required">
+                                    Country is required
+                                </li>
+                            </ul>
+                        </div>
                     </div>    
 
                     <div class="form-group">
-                        <label for="eventCost">Is a Hymn Society member involved?</label>
-                            <md-radio-group [(ngModel)]="submission.data.hymn_soc_member">
-                                <md-radio-button class="block-input" name="hymn_soc_member" value="yes">Yes</md-radio-button>
+                        <label for="eventMember">Is a Hymn Society member involved?</label>
+                            <md-radio-group [(ngModel)]="submission.data.hymn_soc_member" name="isMember" required>
+                                <md-radio-button class="block-input" name="hymn_soc_member" value="yes" required>Yes</md-radio-button>
                                 <md-radio-button class="block-input" name="hymn_soc_member" value="no">No</md-radio-button>
                             </md-radio-group>
                     </div>   
 
-                    <div>
-                        <a class="btn btn-block btn-primary" (click)=submit()>Submit</a>
-                        <a class="btn btn-block btn-link" routerLink="/">Return to home</a>
-                    </div>              
+                    <md-card-actions>
+                        <button md-raised-button color="primary" type="submit" 
+                        [disabled]="eventForm.invalid">
+                        Submit
+                        </button>
+                        <button md-button routerLink="/">
+                        Return to home
+                        </button>
+                    </md-card-actions>
+                    </form>                
 
                 </md-card-content> <!-- end class card-block-->
             </md-card> <!-- end class card -->

@@ -54,6 +54,7 @@ export class EntryOrgsComponent implements OnInit {
       return;
     }
 
+
     var onload = (data) => {
       if (data) {
         this.submission = data;
@@ -70,7 +71,7 @@ export class EntryOrgsComponent implements OnInit {
     this.submission.user = obj.first_name + ' ' + obj.last_name;
     this.submission.uid = obj.user_id;
 
-    console.log(JSON.stringify(this.submission));
+    console.log((this.submission));
     if (this.countryOther) {
       this.submission.data.country = this.countryOther;
     }
@@ -83,5 +84,4 @@ export class EntryOrgsComponent implements OnInit {
 
     this.submitService.submitOrgs(this.submission);
   }
-
 }
