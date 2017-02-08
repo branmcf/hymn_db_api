@@ -53,7 +53,7 @@ ALTER TABLE persons auto_increment = 1;
 	ALTER TABLE person_ethnicities auto_increment = 1;
 
 
-INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French'),('Other');
+INSERT INTO Languages(name) VALUES ('English'), ('Spanish'), ('French');
 
 /* TAGS */
 INSERT INTO Tags(name) VALUES ('Other'),('Catholic'),('Protestant'),('Baptist'),('Lutheran'),('Orthodox'),('Anglican'),('Conservative'),('Liberal'),('Moderate');
@@ -65,13 +65,19 @@ INSERT INTO Denominations(name) VALUES ("Catholic"), ("Lutheran"), ("Baptist"), 
 INSERT INTO Instrument_Types(name) VALUES ("None"), ("Organ"), ("Modern Band"), ("Other");
 INSERT INTO Ensembles(name) VALUES("Lead_Singer_from_Band_with_Other_Vocalists"),
 ("Choir"),("Cantor"),("Song_Enlivener"),("Solo"),("Other");
-INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"), ("Latino"),("Asian"),("Indian"),("Native American"),
-("Hispanic_Latin_American_Caribbean"),("Native_American_Indigenous_Peoples"),("Other");
+INSERT INTO Ethnicities(name) VALUES ("White"), ("Black"), ("Middle_Eastern"), ("Hispanic"),("Asian"),("Indian"),("Native American"),
+("Hispanic_Latin_American_Caribbean"),("Native_American_Indigenous_Peoples"),("Other"),("African");
 
 INSERT INTO Resource_Categories(name)
 VALUES ("A_hymn_written_prior_to_1970"),
 ("Newly_composed_hymn_within_the_last_10_years"),
 ("Song_by_local_church_musicians"),
+("Praise_and_Worship_Song"),
+("Psalm_Setting"),
+("Chant"),
+("Older_hymn_text_set_to_a_new_contemporary_tune"),
+("Song_from_another_country"),
+("Secular_Song"),
 ("Other");
 INSERT INTO Topics (name)
 VALUES ("Psalm_Setting"),
@@ -83,8 +89,19 @@ VALUES ("Psalm_Setting"),
 ("Song_Enlivening"),
 ("Keyboards"),
 ("Worship_Planning"),
+("Social_Justice"),
 ("Other");
-INSERT INTO Accompaniment(name) VALUES ("Handbells"),("Obligato"),("Other");
+INSERT INTO Accompaniment(name) 
+VALUES 
+("Handbells"),
+("Obligato"),
+("Acapella"),
+("Organ"),
+("Piano"),
+("Guitar_no_band"),
+("Guitar_with_band"),
+("Orchestra_Wind_Ensemble"),
+("Other");
 
 
 
@@ -108,14 +125,16 @@ INSERT INTO resource_accompaniment(resource_id, accompaniment_id) VALUES(1,1),(1
 
 
 
-
-INSERT INTO users(email, password, first_name, last_name, high_level) VALUES ('testemail1@yahoo.com', 'password1', 'Jim', 'Tom Jenkins', 1);
-INSERT INTO users(email, password, first_name, last_name) VALUES ('JUST@yahoo.com', 'password2', 'Vasili', 'Zaitev');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('anotheremail@yahoo.com', 'password3', 'Bob', 'Lewandowski');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('foobar@yahoo.com', 'password4', 'Gertrude', 'Hammerschmidt');
-INSERT INTO users(email, password, first_name, last_name) VALUES ('daksdaiuwd@yahoo.com', 'asidnalwidh', 'Dak', 'Prescott');
+/*
+INSERT INTO users(email, password, first_name, last_name, high_level) VALUES ('testemail1@yahoo.com', 'asdpassword1asd', 'Jim', 'Tom Jenkins');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('JUST@yahoo.com', 'asdpassword2asd', 'Vasili', 'Zaitev');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('anotheremail@yahoo.com', 'asdpassword3asd', 'Bob', 'Lewandowski');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('foobar@yahoo.com', 'asdpassword4asd', 'Gertrude', 'Hammerschmidt');
+INSERT INTO users(email, password, first_name, last_name) VALUES ('daksdaiuwd@yahoo.com', 'asdpassword5asd', 'Dak', 'Prescott');
+*/
 
 /* User eth */
+/*
 INSERT INTO user_ethnicities(user_id, ethnicity_id) VALUES
 (1, 1),
 (1, 2),
@@ -123,7 +142,7 @@ INSERT INTO user_ethnicities(user_id, ethnicity_id) VALUES
 (3, 2),
 (4, 3),
 (5, 4);
-
+*/
 
 
 INSERT INTO quizes(quiz_title)
@@ -209,7 +228,7 @@ is_active
 "Annual",
 "Music Festival",
 "Woah man take it easy...",
-0,
+"$0.00",
 0,
 "Little Rock",
 "Arkansas",
@@ -222,7 +241,7 @@ is_active
 "Semi-Annual",
 "Music Festival",
 "Hey what's up",
-0,
+"$50.00",
 0,
 "Guadalajara",
 "Guadalupe",

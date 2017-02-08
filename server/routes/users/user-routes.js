@@ -1,6 +1,8 @@
 var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
+const Bcrypt = require('bcryptjs');
+const Basic = require('hapi-auth-basic');
 
 var options = require('../../config/config.js');
 
@@ -11,7 +13,9 @@ var connection = mysql.createConnection({
   password : options.password,
   database : options.database,
   port     : options.port
+
 });
+
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
@@ -26,6 +30,71 @@ var users = [];
   var numUsers = 0;
 
 getUsers();
+
+//bcrypt authentication
+
+const validate = function (request, username, password, callback) {
+    
+    for(var i=0; i< users[0].length; i++) {
+      if(users[0][i].email == username ) {
+
+        console.log("found matching user email...");
+
+
+        var user = users[0][i];
+        if (!user) {
+            return callback(null, false);
+        }
+
+        Bcrypt.compare(password, user.password, (err, isValid) => {
+            callback(err, isValid, { 
+              email: user.email, 
+              first_name: user.first_name,
+              last_name:  user.last_name,
+              city:       user.city,
+              state:      user.state,
+              country:    user.country,
+              website:    user.website,
+              user_id:    user.id 
+            });
+        });
+    
+
+      }//end matching email found
+    }
+
+    console.log("NO MATCHING CREDENTIALS FOUND");
+    
+};
+
+userController.registerConfig = {
+  
+  handler: function(req, reply) {
+
+    
+    Bcrypt.genSalt(10, function(err, salt) {
+      Bcrypt.hash(req.password, salt, function(err, hash) {
+          // Store hash in your password DB. 
+          var query = connection.query('INSERT INTO users SET ?', 
+          { 
+            email: req.email, 
+            password: hash,
+            salt: salt,
+            iterations: 10
+          }, 
+          function(error, result) {
+              if(error) { throw error; }
+              
+              
+              console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
+          });
+      });
+    });
+  }
+}
+
+
+//end authentication
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -276,14 +345,14 @@ userController.postConfig = {
 
 userController.loginConfig = {
 
+  auth: 'simple',
   handler: function(req, reply) {
 
-    getUsers();
+    //getUsers();
 
     console.log("BEGIN LOGIN");
 
-    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
-
+/*
     var newUser = {
       email:      req.payload.email,
       password:   req.payload.password
@@ -303,12 +372,16 @@ userController.loginConfig = {
         }
 
         return reply(toReturn);
-      }//end if statement
-      else if(i+1 == users[0].length) {
-        console.log('no user in database with that email and/or password');
-        return reply(Boom.notFound('Invalid username and/or password combination'));
-      }
-    }//end for loop
+        */
+        console.log("CREDENTIALS: ", request.auth.credentials);
+        return reply(request.auth.credentials);
+
+      //}
+      //else if(i+1 == users[0].length) {
+        //console.log('no user in database with that email and/or password');
+        //return reply(Boom.notFound('Invalid username and/or password combination'));
+      //}
+    //}//end for loop
 
   },
 
@@ -327,6 +400,7 @@ userController.loginConfig = {
 module.exports = [
 	{ path: '/user', method: 'POST', config: userController.postConfig },
 	{ path: '/user/{id?}', method: 'GET', config: userController.getConfig },
-    { path: '/login', method: 'POST', config: userController.loginConfig}
+    { path: '/login', method: 'POST', config: userController.loginConfig},
+    { path: '/register', method: 'POST', config: userController.registerConfig}
 
 ];
