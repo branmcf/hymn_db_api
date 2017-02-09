@@ -111,19 +111,26 @@ function insertCongregation(theObj) {
 
   if(typeof justCongregation.is_free == "string") {
     if(justCongregation.is_free == "yes" || justCongregation.is_free == "Yes") {
-      justCongregation.is_free = true;
+      justCongregation.is_free = 1;
+    } else if(justCongregation.is_free == "no" || justCongregation.is_free == "No") {
+      justCongregation.is_free = 0;
     } else {
-      justCongregation.is_free = false;
+      justCongregation.is_free = 2;
     }
-  } else if(typeof justCongregation.is_free == "number") {
-    if(justCongregation.is_free == 0) {
-      justCongregation.is_free = false;
+  } else if(typeof justCongregation.is_free !== "number") {
+    justCongregation.is_free = 2;
+  }
+
+  if(typeof justCongregation.events_free == "string") {
+    if(justCongregation.events_free == "yes" || justCongregation.events_free == "Yes") {
+      justCongregation.events_free = 1;
+    } else if(justCongregation.events_free == "no" || justCongregation.events_free == "No") {
+      justCongregation.events_free = 0;
     } else {
-      justCongregation.is_free = true;
+      justCongregation.events_free = 2;
     }
-  } else {
-    //neither a string nor Number
-    justCongregation.is_free = false;
+  } else if(typeof justCongregation.events_free !== "number") {
+    justCongregation.events_free = 2;
   }
 
 // END TYPE CONVERSION
@@ -142,26 +149,40 @@ function insertCongregation(theObj) {
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
       //for multiple ethnicities
-        if(Object.keys(theObj.ethnicities).length > 0) {
+        if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
           for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
             getID_left(theObj, i, "Ethnicities", "ethnicity_id");
           }
-        }
+        } else { console.log("No ethnicities passed in..."); }
         
-        if(Object.keys(theObj.tags).length > 0) {
+        if("tags" in theObj && typeof theObj.tags !== "undefined" && typeof theObj.tags !== "null") {
           for(var i=0; i< Object.keys(theObj.tags).length; i++) {
             getID_left(theObj, i, "Tags", "topic_id");
           }
-        } 
-        for(var i=0; i< Object.keys(theObj.categories).length; i++) {
-          getID_left(theObj, i, "Congregation_Categories", "category_id");
-        }
-        for(var i=0; i< Object.keys(theObj.languages).length; i++) {
-            getID_left(theObj, i, "Languages", "language_id");
-        }
-        for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
-            getID_left(theObj, i, "Instrument_Types", "instrument_id");
-        }
+        } else { console.log("No tags passed in..."); }
+
+        if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") { 
+          for(var i=0; i< Object.keys(theObj.categories).length; i++) {
+            getID_left(theObj, i, "Congregation_Categories", "category_id");
+          }
+        } else { console.log("No categories passed in..."); }
+        
+        if("languages" in theObj && typeof theObj.languages !== "undefined" && typeof theObj.languages !== "null") { 
+          for(var i=0; i< Object.keys(theObj.languages).length; i++) {
+              getID_left(theObj, i, "Languages", "language_id");
+          }
+        } else { console.log("No languages passed in..."); }
+
+        if("instruments" in theObj && typeof theObj.instruments !== "undefined" && typeof theObj.instruments !== "null") {
+          for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
+              getID_left(theObj, i, "Instrument_Types", "instrument_id");
+              
+              if(i == Object.keys(theObj.instruments).length - 1) {
+                getCongregations();
+              }
+          }
+        } else { console.log("No instruments passed in..."); getCongregations();}
+
         
     });
 }
@@ -524,6 +545,22 @@ congController.getConfig = {
   }
 };
 
+//BELOW is for the POST request
+function insertFirst(toInsert, _callback){
+
+    insertCongregation(toInsert);
+
+    _callback();    
+}
+
+function insertAndGet(toInsert){
+
+    insertFirst(toInsert, function() {
+        getCongregations();
+        console.log("Done with post requst getCongregations...");
+    });    
+}
+
 //CONG POST REQUEST
 congController.postConfig = {
   handler: function(req, reply) {
@@ -549,8 +586,11 @@ congController.postConfig = {
       languages:      req.payload.data.languages,
       tags:           req.payload.data.tags
     };
+    
+    //insertCongregation(newCong);
+    //getCongregations();
 
-    insertCongregation(newCong);
+    insertAndGet(newCong);
 
     var toReturn = {
 

@@ -44,6 +44,15 @@ function getOrganizations() {
   connection.query('SELECT * from organizations', function(err, rows, fields) {
     if (!err) {
 
+    orgs = [];
+    numOrgs = 0;
+    orgDen = [];
+    orgTags = [];
+    orgSongTypes = [];
+    orgInstr = [];
+    orgWorshipTypes = [];
+    orgEth = [];
+    orgCongs = [];
 
       var JSObj = rowsToJS(rows);
       orgs.push(JSObj);
@@ -209,6 +218,62 @@ orgController.postConfig = {
 
     };
 
+    if(typeof newOrg.membership_free !== "undefined") {
+      if(typeof newOrg.membership_free == "string") {
+        if(newOrg.membership_free == "Yes" || newOrg.membership_free == "yes") {
+          newOrg.membership_free = 1;
+        } else if(newOrg.membership_free == "No" || newOrg.membership_free == "no") {
+          newOrg.membership_free = 0;
+        } else {
+          newOrg.membership_free = 2;
+        }
+      } else if(typeof newOrg.membership_free !== "number") {
+        newOrg.membership_free = 2;
+      }
+    }//end if not undefined...
+
+    if(typeof newOrg.hymn_soc_member !== "undefined") {
+      if(typeof newOrg.hymn_soc_member == "string") {
+        if(newOrg.hymn_soc_member == "Yes" || newOrg.hymn_soc_member == "yes") {
+          newOrg.hymn_soc_member = 1;
+        } else if(newOrg.hymn_soc_member == "No" || newOrg.hymn_soc_member == "no") {
+          newOrg.hymn_soc_member = 0;
+        } else {
+          newOrg.hymn_soc_member = 2;
+        }
+      } else if(typeof newOrg.hymn_soc_member !== "number") {
+        newOrg.hymn_soc_member = 2;
+      }
+    }//end if not undef...
+
+    if(typeof newOrg.is_free !== "undefined") {
+      if(typeof newOrg.is_free == "string") {
+        if(newOrg.is_free == "Yes" || newOrg.is_free == "yes") {
+          newOrg.is_free = 1;
+        } else if(newOrg.is_free == "No" || newOrg.is_free == "no"){
+          newOrg.is_free = 0;
+        } else {
+          newOrg.is_free = 2;
+        }
+      } else if(typeof newOrg.is_free !== "number") {
+        newOrg.is_free = 2;
+      }
+    }//end if not undefined
+
+    if(typeof newOrg.offers_free_events !== "undefined") {
+      if(typeof newOrg.offers_free_events == "string") {
+        if(newOrg.offers_free_events == "Yes" || newOrg.offers_free_events == "yes") {
+          newOrg.offers_free_events = 1;
+        } else if(newOrg.offers_free_events == "No" || newOrg.offers_free_events == "no"){
+          newOrg.offers_free_events = 0;
+        } else {
+          newOrg.offers_free_events = 2;
+        }
+      } else if(typeof newOrg.offers_free_events !== "number") {
+        newOrg.offers_free_events = 2;
+      }
+    }//end if not defined 
+
     // mysql
     //connection.connect();
     connection.query(
@@ -225,7 +290,7 @@ orgController.postConfig = {
 
         var toReturn = {
 
-        	org_id: orgs[0].length +1 /* +1 or not?... */
+        	org_id: orgs[0].length /* +1 or not?... */
         }
 
         return reply(toReturn);

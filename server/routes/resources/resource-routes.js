@@ -69,19 +69,14 @@ function insertResource(theObj) {
 
   if(typeof justResource.is_free == "string") {
     if(justResource.is_free == "yes" || justResource.is_free == "Yes") {
-      justResource.is_free = true;
+      justResource.is_free = 1;
+    } else if(justResource.is_free == "no" || justResource.is_free == "No"){
+      justResource.is_free = 0;
     } else {
-      justResource.is_free = false;
+      justResource.is_free = 2;
     }
-  } else if(typeof justResource.is_free == "number") {
-    if(justResource.is_free == 0) {
-      justResource.is_free = false;
-    } else {
-      justResource.is_free = true;
-    }
-  } else {
-    //neither a string nor Number
-    justResource.is_free = false;
+  } else if(typeof justResource.is_free !== "number") {
+    justResource.is_free = 2;
   }
 
 // END TYPE CONVERSION
@@ -102,37 +97,54 @@ function insertResource(theObj) {
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
       //for multiple ethnicities
-      for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
-      	getID_left(theObj, i, "Ethnicities", "ethnicity_id");
-  	  }
+      if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
+        for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
+          getID_left(theObj, i, "Ethnicities", "ethnicity_id");
+        }
+      } else { console.log("No ethnicities passed in..."); }
 
     	//for multiple CATEGORIES
-    	for(var i=0; i< Object.keys(theObj.categories).length; i++) {
-    		getID_left(theObj, i, "Resource_Categories", "resource_category_id");
+      if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") {
+        for(var i=0; i< Object.keys(theObj.categories).length; i++) {
+          getID_left(theObj, i, "Resource_Categories", "resource_category_id");
 
-    	}
+        }
+      } else { console.log("No categories passed in..."); }
 
     	//for multiple TOPICS
-    	for(var i=0; i< Object.keys(theObj.topic).length; i++) {
-    		getID_left(theObj, i, "Topics", "topic_id");
+      if("topic" in theObj && typeof theObj.topic !== "undefined" && typeof theObj.topic !== "null") {
+        for(var i=0; i< Object.keys(theObj.topic).length; i++) {
+          getID_left(theObj, i, "Topics", "topic_id");
 
-    	}
+        }
+      } else { console.log("No topics passed in..."); }
 
     	//for multiple Accompaniment
-    	for(var i=0; i< Object.keys(theObj.accompaniment).length; i++) {
-    		getID_left(theObj, i, "Accompaniment", "accompaniment_id");
+      if("accompaniment" in theObj && typeof theObj.accompaniment !== "undefined" && typeof theObj.accompaniment !== "null") {
+        for(var i=0; i< Object.keys(theObj.accompaniment).length; i++) {
+          getID_left(theObj, i, "Accompaniment", "accompaniment_id");
 
-    	}
+        }
+      } else { console.log("No accompaniment passed in..."); }
 
     	//for multiple Ensembles
-    	for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
-    		getID_left(theObj, i, "Ensembles", "ensemble_id");
+      if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
+        for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
+          getID_left(theObj, i, "Ensembles", "ensemble_id");
 
-    	}
+        }
+      } else { console.log("No ensembles passed in..."); }
 
-      for(var i=0; i< Object.keys(theObj.languages).length; i++) {
-          getID_left(theObj, i, "Languages", "language_id");
-      }
+      //for multiple languages
+      if("languages" in theObj && typeof theObj.languages !== "undefined" && typeof theObj.languages !== "null") {
+        for(var i=0; i< Object.keys(theObj.languages).length; i++) {
+            getID_left(theObj, i, "Languages", "language_id");
+            if(i == Object.keys(theObj.languages).length - 1) {
+              getResources();
+            }
+        }
+      } else { console.log("No languages passed in..."); getResources();}
+
 
         //getIDAttribute(theObj, 1);
     });
@@ -446,8 +458,11 @@ function insertMiddle(theID, tableName, left_table_id) {
 	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
-
+    //console.log("Finally done inserting into middle table...");
 		//console.log("query: ", query.sql);
+    //getResources();
+    
+    
 
 	});
 }//end insertMiddle
@@ -478,6 +493,8 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
             var JSObj = rowsToJS(rows);
 
             arrayToUse.push(JSObj);
+
+            //console.log("finally done with getInter()...");
 
         });
 
@@ -563,7 +580,7 @@ function formatResource(actualIndex) {
     accompaniment: 	resAcc[actualIndex],
     tags:           resTags[actualIndex],
     //tags:           resTags[actualIndex],
-    //categories:     resCategories[actualIndex],
+    categories:     resCategories[actualIndex],
     is_active:      resources[0][actualIndex].is_active,
     high_level:     resources[0][actualIndex].high_level,
     city:           resources[0][actualIndex].city,
@@ -642,6 +659,23 @@ resourceController.getConfig = {
   }
 };
 
+//BELOW is for the POST request
+function insertFirst(toInsert, _callback){
+
+    insertResource(toInsert);
+
+    _callback();    
+}
+
+function insertAndGet(toInsert){
+
+    insertFirst(toInsert, function() {
+        getResources();
+        console.log("Done with post requst getResources...");
+    });    
+}
+
+
 //RESOURCE POST REQUEST
 resourceController.postConfig = {
 
@@ -695,9 +729,11 @@ resourceController.postConfig = {
 
     };
 
-    insertResource(theData);
+    //insertResource(theData);
 
-    getResources();
+    //getResources();
+
+    insertAndGet(theData);
 
     var toReturn = {
 

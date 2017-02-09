@@ -276,15 +276,15 @@ CREATE TABLE resources (
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default false,
-	is_free boolean default false,
+	is_free TINYINT(3) default 0,
 
 	favorites int unsigned default 0,
 	views int unsigned default 0,
 	approved boolean default false,
     
     user varchar(64),
-    user_id int unsigned,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    user_id int unsigned
+    
 );
 
 CREATE TABLE events(
@@ -330,8 +330,8 @@ CREATE TABLE organizations (
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	geography varchar(128),
-	is_free boolean default false,
-	offers_free_events boolean default false,
+	is_free TINYINT(3) default 0,
+	offers_free_events TINYINT(3) default 0,
 	charge decimal(6) default 0.00,
 	mission varchar(256),
 	the_process varchar(256),
@@ -344,7 +344,7 @@ CREATE TABLE organizations (
     shape varchar(128),
     clothing varchar(128),
     attendance varchar(64),
-    membership_free boolean default false,
+    membership_free TINYINT(3) default 0,
     approved boolean default false,
     
     user_id int unsigned,
@@ -372,8 +372,8 @@ CREATE TABLE congregations (
 	
 	priest_attire varchar(64),
 	description_of_worship_to_guests text(512),
-	is_free boolean default false,
-	events_free boolean default false,
+	is_free TINYINT(3) default 0,
+	events_free TINYINT(3) default 0,
 	the_process varchar(128),
 	approved boolean default false,
     
