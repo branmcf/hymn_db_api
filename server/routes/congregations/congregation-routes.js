@@ -40,7 +40,7 @@ function rowsToJS(theArray) {
 }
 
 function getCongregations() {
-  console.log("getting congregations...");
+  //console.log("getting congregations...");
   //get congregations from db
   connection.query('SELECT * from congregations', function(err, rows, fields) {
     if (!err) {
@@ -149,17 +149,13 @@ function insertCongregation(theObj) {
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
       //for multiple ethnicities
-<<<<<<< HEAD
+
         if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
-=======
-        if("ethnicities" in theObj && (theObj.ethnicities !== undefined)) {
->>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
           for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
             getID_left(theObj, i, "Ethnicities", "ethnicity_id");
           }
         } else { console.log("No ethnicities passed in..."); }
         
-<<<<<<< HEAD
         if("tags" in theObj && typeof theObj.tags !== "undefined" && typeof theObj.tags !== "null") {
           for(var i=0; i< Object.keys(theObj.tags).length; i++) {
             getID_left(theObj, i, "Tags", "topic_id");
@@ -187,30 +183,6 @@ function insertCongregation(theObj) {
               }
           }
         } else { console.log("No instruments passed in..."); getCongregations();}
-
-=======
-        if("tags" in theObj && (theObj.tags !== undefined)) {
-          //console.log("=======\n", theObj);
-          for(var i=0; i< Object.keys(theObj.tags).length; i++) {
-            getID_left(theObj, i, "Tags", "topic_id");
-          }
-        }
-        if("categories" in theObj && (theObj.tags !== categories)) { 
-          for(var i=0; i< Object.keys(theObj.categories).length; i++) {
-            getID_left(theObj, i, "Congregation_Categories", "category_id");
-          }
-        }
-        if("languages" in theObj && (theObj.languages !== undefined)) {
-          for(var i=0; i< Object.keys(theObj.languages).length; i++) {
-              getID_left(theObj, i, "Languages", "language_id");
-          }
-        }
-        if("instruments" in theObj && (theObj.instruments !== undefined)) {
-          for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
-              getID_left(theObj, i, "Instrument_Types", "instrument_id");
-          }
-        }
->>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
         
     });
 }
@@ -253,7 +225,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 
  } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
      attributeName2 = "false";
-     console.log("False, insert nothing...");
+     //console.log("False, insert nothing...");
 
  } else {
     console.log ("It's True for: ", attributeName2);
@@ -313,7 +285,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
     var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
 
       getLeftTableID(tableName, left_table_id, toInsert);
     });
@@ -338,9 +310,9 @@ function getLeftTableID(tableName, left_table_id, attributeName) {
         attributeName.other_text, function (err, rows) {
           if(err) { throw new Error(err); return; }
 
-          console.log("=========================");
-          console.log(query.sql);
-          console.log("=========================");
+          //console.log("=========================");
+          //console.log(query.sql);
+          //console.log("=========================");
 
           try {
             mid_table_id = rows[0].id;
@@ -533,7 +505,9 @@ function formatCongregation(actualIndex) {
     is_active:      congs[0][actualIndex].is_active,
     high_level:     congs[0][actualIndex].high_level,
 
-    languages:      congLanguages[actualIndex]
+    languages:      congLanguages[actualIndex],
+    user_id:        congs[0][actualIndex].user_id,
+    user:           congs[0][actualIndex].user
 
   };
 
@@ -592,7 +566,7 @@ function insertAndGet(toInsert){
 
     insertFirst(toInsert, function() {
         getCongregations();
-        console.log("Done with post requst getCongregations...");
+        //console.log("Done with post requst getCongregations...");
     });    
 }
 
@@ -619,7 +593,9 @@ congController.postConfig = {
       attendance:     req.payload.data.attendance,
 
       languages:      req.payload.data.languages,
-      tags:           req.payload.data.tags
+      tags:           req.payload.data.tags,
+      user_id:        req.payload.uid,
+      user:           req.payload.user
     };
     
     //insertCongregation(newCong);

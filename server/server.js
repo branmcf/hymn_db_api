@@ -314,7 +314,7 @@ server.route({
               country:    users[0][i].country,
               website:    users[0][i].website,
               user_id:    users[0][i].id ,
-              is_admin:   user[0][i].is_admin
+              is_admin:   users[0][i].is_admin
             };
             
             server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
@@ -393,7 +393,8 @@ server.route({
             email: req.payload.email,
             user_id: users[0].length,
             first_name: req.payload.first_name,
-            last_name: req.payload.last_name
+            last_name: req.payload.last_name,
+            is_admin: req.payload.is_admin
           }).code(200);
       });
     //console.log("done with genSalt");
@@ -691,7 +692,7 @@ server.route({
 //
 //
 //
-
+/*
 server.route({
   
   method: 'POST',
@@ -764,6 +765,7 @@ server.route({
   }
   }//end config
 });
+*/
 
 //
 //

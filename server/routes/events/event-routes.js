@@ -101,7 +101,9 @@ function formatEvent(actualIndex) {
     country:     	events[0][actualIndex].country,
     hymn_soc_member:events[0][actualIndex].hymn_soc_member,
     is_active:      events[0][actualIndex].is_active,
-    high_level:     events[0][actualIndex].high_level
+    high_level:     events[0][actualIndex].high_level,
+    user_id:        events[0][actualIndex].user_id,
+    user:           events[0][actualIndex].user
 
 
   };
@@ -157,7 +159,7 @@ eventController.postConfig = {
 
   handler: function(req, reply) {
 
-    console.log("\nRECEIVED :", req.payload.data);
+    //console.log("\nRECEIVED :", req.payload.data);
 
     getEvents();
 
@@ -174,7 +176,9 @@ eventController.postConfig = {
       city: 		    req.payload.data.city,
       state: 		    req.payload.data.state,
       country: 		  req.payload.data.country,
-      hymn_soc_member:req.payload.data.hymn_soc_member
+      hymn_soc_member:req.payload.data.hymn_soc_member,
+      user_id:      req.payload.uid,
+      user:         req.payload.user
 /*
       theme: 		   req.payload.data.theme,
       parent: 		req.payload.data.parent,

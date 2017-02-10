@@ -44,7 +44,7 @@ function insertResource(theObj) {
   if(typeof justResource.ethnicities !== "undefined") { delete justResource.ethnicities; }
   if(typeof justResource.categories !== "undefined") { delete justResource.categories; }
 	if(typeof justResource.topic !== "undefined") { delete justResource.topic; }
-	if(typeof justResource.topics !== "undefined") { delete justResource.topic; }
+	if(typeof justResource.topics !== "undefined") { delete justResource.topics; }
   if(typeof justResource.accompaniment !== "undefined") { delete justResource.accompaniment; }
   if(typeof justResource.languages !== "undefined") { delete justResource.languages; }
   if(typeof justResource.ensembles !== "undefined") { delete justResource.ensembles; }
@@ -112,8 +112,8 @@ function insertResource(theObj) {
       } else { console.log("No categories passed in..."); }
 
     	//for multiple TOPICS
-      if("topic" in theObj && typeof theObj.topic !== "undefined" && typeof theObj.topic !== "null") {
-        for(var i=0; i< Object.keys(theObj.topic).length; i++) {
+      if("topics" in theObj && typeof theObj.topics !== "undefined" && typeof theObj.topics !== "null") {
+        for(var i=0; i< Object.keys(theObj.topics).length; i++) {
           getID_left(theObj, i, "Topics", "topic_id");
 
         }
@@ -192,8 +192,8 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 			//var attributeName = theObj.instruments[whichIndex].name;
 			break;
 		case "Topics":
-			//var attributeName = theObj.topic[whichIndex].name;
-      checkIfTrue("topic", theObj, whichIndex, tableName, left_table_id);
+			//var attributeName = theObj.topics[whichIndex].name;
+      checkIfTrue("topics", theObj, whichIndex, tableName, left_table_id);
 			break;
     case "Topic":
 			//var attributeName = theObj.topic[whichIndex].name;
@@ -460,12 +460,7 @@ function insertMiddle(theID, tableName, left_table_id) {
 		if(err) { throw new Error(err); return; }
     //console.log("Finally done inserting into middle table...");
 		//console.log("query: ", query.sql);
-    //getResources();
-<<<<<<< HEAD
-    
-    
-=======
-
+    //getResources();      
     if(tableName == "Languages") {
       //THIS IS VERY HARD-CODED IN
       //but...
@@ -473,7 +468,6 @@ function insertMiddle(theID, tableName, left_table_id) {
       getResources();
       
     }
->>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
 
 	});
 }//end insertMiddle
@@ -729,7 +723,7 @@ resourceController.postConfig = {
       hymn_soc_member:  req.payload.data.hymn_soc_member,
       is_free:          req.payload.data.is_free,
       categories:       req.payload.data.categories,
-      topic:            req.payload.data.topic,
+      topics:            req.payload.data.topics,
       accompaniment:    req.payload.data.accompaniment,
       languages:        req.payload.data.languages,
       ensembles:        req.payload.data.ensembles,
@@ -742,11 +736,8 @@ resourceController.postConfig = {
     //insertResource(theData);
 
     //getResources();
-<<<<<<< HEAD
 
     insertAndGet(theData);
-=======
->>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
 
     var toReturn = {
 

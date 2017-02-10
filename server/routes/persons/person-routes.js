@@ -80,15 +80,23 @@ function insertPerson(theObj) {
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
       //for multiple ethnicities
+      if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
         for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
             getID_left(theObj, i, "Ethnicities", "ethnicity_id");
         }
+      }
+
+      if("topics" in theObj && typeof theObj.topics !== "undefined" && typeof theObj.topics !== "null") {
         for(var i=0; i< Object.keys(theObj.topics).length; i++) {
             getID_left(theObj, i, "Topics", "topic_id");
         }
+      }
+
+      if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
     	  for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
     		  getID_left(theObj, i, "Ensembles", "ensemble_id");
     	  }
+      }
 
     });
 }
@@ -99,10 +107,10 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	switch(tableName) {
 
 		case "Ethnicities":
-            checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Topics":
-            checkIfTrue("topics", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("topics", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Ensembles":
 			checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
@@ -430,7 +438,7 @@ function formatPerson(actualIndex) {
     emphasis:       persons[0][actualIndex].emphasis,
     hymn_soc_member:persons[0][actualIndex].hymn_soc_member,
     topics:         personTopics[actualIndex],
-    ensemble:       personEnsembles[actualIndex],
+    ensembles:       personEnsembles[actualIndex],
     ethnicities:    personEthnicities[actualIndex],
 
     topic: "none" //placeholders for now
@@ -532,7 +540,7 @@ personController.postConfig = {
       emphasis:       req.payload.data.emphasis,
       hymn_soc_member:            req.payload.data.hymn_soc_member,
       topics:    req.payload.data.topics,
-      ensembles:        req.payload.data.ensemble,
+      ensembles:        req.payload.data.ensembles,
       ethnicities:      req.payload.data.ethnicities
 
     };

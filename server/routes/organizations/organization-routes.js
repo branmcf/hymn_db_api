@@ -131,7 +131,9 @@ function formatOrg(actualIndex) {
     //tags:           orgTags[actualIndex],
     hymn_soc_member:orgs[0][actualIndex].hymn_soc_member,
     is_active:      orgs[0][actualIndex].is_active,
-    high_level:     orgs[0][actualIndex].high_level
+    high_level:     orgs[0][actualIndex].high_level,
+    user_id:        orgs[0][actualIndex].user_id,
+    user:           orgs[0][actualIndex].user
     //song types
     //song_types:     orgSongTypes[actualIndex],
     //instrument types
@@ -212,7 +214,9 @@ orgController.postConfig = {
       mission: req.payload.data.mission,
       the_process: req.payload.data.process,
       //tag_id: req.payload.data.tag_id,
-      hymn_soc_member: req.payload.data.hymn_soc_member
+      hymn_soc_member: req.payload.data.hymn_soc_member,
+      user:             req.payload.user,
+      user_id:          req.payload.uid
       //is_active: req.payload.data.is_active,
       //high_level: req.payload.data.high_level
 

@@ -316,7 +316,7 @@ CREATE TABLE events(
 	approved boolean default false,
     
     user_id int unsigned,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    user varchar(64)
 );
 
 CREATE TABLE organizations (
@@ -348,7 +348,7 @@ CREATE TABLE organizations (
     approved boolean default false,
     
     user_id int unsigned,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    user varchar(64)
 
 );
 
@@ -378,7 +378,7 @@ CREATE TABLE congregations (
 	approved boolean default false,
     
     user_id int unsigned,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    user varchar(64)
 
 );
 
