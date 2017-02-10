@@ -300,7 +300,8 @@ server.route({
           //var user = users[0][i];     
 
           var checkThis = Bcrypt.compareSync(req.payload.password, users[0][i].password);
-          console.log(checkThis);
+          //console.log(checkThis);
+
           if(checkThis == true) {
             var returnThis = {   
               email:      users[0][i].email, 
@@ -311,9 +312,9 @@ server.route({
               is_admin:   users[0][i].is_admin
             };
             
-            //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+            server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
 
-            return reply(returnThis).code(201);
+            //return reply(returnThis).code(201);
 
            }//end if password matches...
            else {
@@ -382,6 +383,9 @@ server.route({
           
           users[0].push({email: req.payload.email, password:hash, salt: salt, iterations: 10});
           console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
+
+          getUsers();
+
           return reply ({ 
             email: req.payload.email,
             user_id: users[0].length,
@@ -546,6 +550,7 @@ server.route({
         var actualIndex = Number(request.params.id) - 1;
 
         var userData = formatUser(actualIndex);
+        delete userData.password;
 
         //var str = JSON.stringify(userData);
 
