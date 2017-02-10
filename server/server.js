@@ -280,7 +280,6 @@ const validate = function (request, username, password, reply) {
     
 };
 
-<<<<<<< HEAD
 //
 // login (accepted email and password)
 //
@@ -421,8 +420,6 @@ server.route({
 
 
 
-=======
->>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
 //end authentication
 
 function rowsToJS(theArray) {
