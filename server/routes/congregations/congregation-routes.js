@@ -149,12 +149,17 @@ function insertCongregation(theObj) {
         //var ethlength = Object.keys(theObj.ethnicities).length;
 
       //for multiple ethnicities
+<<<<<<< HEAD
         if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
+=======
+        if("ethnicities" in theObj && (theObj.ethnicities !== undefined)) {
+>>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
           for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
             getID_left(theObj, i, "Ethnicities", "ethnicity_id");
           }
         } else { console.log("No ethnicities passed in..."); }
         
+<<<<<<< HEAD
         if("tags" in theObj && typeof theObj.tags !== "undefined" && typeof theObj.tags !== "null") {
           for(var i=0; i< Object.keys(theObj.tags).length; i++) {
             getID_left(theObj, i, "Tags", "topic_id");
@@ -183,6 +188,29 @@ function insertCongregation(theObj) {
           }
         } else { console.log("No instruments passed in..."); getCongregations();}
 
+=======
+        if("tags" in theObj && (theObj.tags !== undefined)) {
+          //console.log("=======\n", theObj);
+          for(var i=0; i< Object.keys(theObj.tags).length; i++) {
+            getID_left(theObj, i, "Tags", "topic_id");
+          }
+        }
+        if("categories" in theObj && (theObj.tags !== categories)) { 
+          for(var i=0; i< Object.keys(theObj.categories).length; i++) {
+            getID_left(theObj, i, "Congregation_Categories", "category_id");
+          }
+        }
+        if("languages" in theObj && (theObj.languages !== undefined)) {
+          for(var i=0; i< Object.keys(theObj.languages).length; i++) {
+              getID_left(theObj, i, "Languages", "language_id");
+          }
+        }
+        if("instruments" in theObj && (theObj.instruments !== undefined)) {
+          for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
+              getID_left(theObj, i, "Instrument_Types", "instrument_id");
+          }
+        }
+>>>>>>> cf6788bef65521e9758d7cfb79e64d35475811e0
         
     });
 }
@@ -433,6 +461,13 @@ function insertMiddle(theID, tableName, left_table_id) {
 		if(err) { throw new Error(err); return; }
 
 		//console.log("query: ", query.sql);
+    if(tableName == "Instrument_Types") {
+      //THIS IS VERY HARD-CODED IN
+      //but...
+      //since languages is the last middle table to be inserted, only call getResources() after its completion because nodejs asynchronous calls are incredibly painful
+      getCongregations();
+      
+    }
 
 	});
 }
@@ -624,9 +659,44 @@ congController.postConfig = {
 
 };
 
+//delete
+congController.deleteConfig = {
+  handler: function(request, reply) {
+        getCongregations();
+
+        if (request.params.id) {
+            if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+              //return reply('Not enough users in the database for your request').code(404);
+              return reply(Boom.notFound("Error with congregations DELETE endpoint"));
+            }
+
+            var query = connection.query(`
+            UPDATE congregations SET is_active = false
+            WHERE id = ${request.params.id}`, function(err, rows, fields) {
+              if(err) {
+                  return reply(Boom.badRequest(`Error while trying to DELETE cong with id=${request.params.id}...`));
+              } else {
+                  console.log("set cong #", request.params.id, " to innactive (is_active = false)");
+              }
+
+              getCongregations();
+
+              reply([{
+                statusCode: 200,
+                message: `Congregation with id=${request.params.id} set to innactive`,
+              }]);
+            });
+
+        } else {
+          return reply(Boom.notFound("You must specify an id as a parameter"));
+        }
+    }//end handler
+}
+
 
 module.exports = [
 	{ path: '/congregation', method: 'POST', config: congController.postConfig },
- 	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig }
+ 	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
+   { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig }
 
 ];

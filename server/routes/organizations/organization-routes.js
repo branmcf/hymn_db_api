@@ -326,7 +326,42 @@ orgController.postConfig = {
 
 };
 
+//delete
+orgController.deleteConfig = {
+  handler: function(request, reply) {
+        getOrganizations();
+
+        if (request.params.id) {
+            if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+              //return reply('Not enough users in the database for your request').code(404);
+              return reply(Boom.notFound("Error with organizations DELETE endpoint"));
+            }
+
+            var query = connection.query(`
+            UPDATE organizations SET is_active = false
+            WHERE id = ${request.params.id}`, function(err, rows, fields) {
+              if(err) {
+                  return reply(Boom.badRequest(`Error while trying to DELETE organization with id=${request.params.id}...`));
+              } else {
+                  console.log("set organization #", request.params.id, " to innactive (is_active = false)");
+              }
+
+              getOrganizations();
+
+              reply([{
+                statusCode: 200,
+                message: `organization with id=${request.params.id} set to innactive`,
+              }]);
+            });
+
+        } else {
+          return reply(Boom.notFound("You must specify an id as a parameter"));
+        }
+    }//end handler
+}
+
 module.exports = [
   	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
-  	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig }
+  	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig },
+    { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig }
   ];
