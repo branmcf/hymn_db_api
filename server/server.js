@@ -280,6 +280,69 @@ const validate = function (request, username, password, reply) {
     
 };
 
+//
+// login (accepted email and password)
+//
+server.route({
+
+  method: 'POST',
+  path: '/login',
+  config: {
+    handler: function(req, reply) {
+
+      getUsers();
+
+      if(users[0].length==0) { return reply(Boom.unauthorized('no users register right now because tyler doesnt know how to computer')); }
+
+      for(var i=0; i< users[0].length; i++) {
+        //console.log("trying...", users[0][i]);
+        if(users[0][i].email == req.payload.email ) {
+
+          //console.log("found matching user email...");
+
+          //var user = users[0][i];     
+
+          var checkThis = Bcrypt.compareSync(req.payload.password, users[0][i].password);
+          console.log(checkThis);
+          if(checkThis == true) {
+            var returnThis = {   
+              email:      users[0][i].email, 
+              first_name: users[0][i].first_name,
+              last_name:  users[0][i].last_name,
+              city:       users[0][i].city,
+              state:      users[0][i].state,
+              country:    users[0][i].country,
+              website:    users[0][i].website,
+              user_id:    users[0][i].id ,
+              is_admin:   user[0][i].is_admin
+            };
+            
+            server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+
+           }//end if password matches...
+           else {
+             console.log("NO MATCHING PASSWORD FOUND");
+             reply(Boom.unauthorized('invalid password'));
+           }
+
+      }//end matching email found
+    }
+
+        
+
+    },//end handler
+    validate: {
+      payload: {
+        email: Joi.string().email().required(),
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required()
+      }
+    }
+
+    
+  }
+
+});
+
 
 server.route({
   
@@ -315,7 +378,8 @@ server.route({
         city: req.payload.city,
         state: req.payload.state,
         country: req.payload.country,
-        website: req.payload.website
+        website: req.payload.website,
+        is_admin: req.payload.is_admin
       }, 
       function(err, rows, fields) {
           if(err) { 
@@ -345,7 +409,9 @@ server.route({
       city: Joi.string().alphanum(),
       state: Joi.string().alphanum(),
       country: Joi.string().alphanum(),
-      website: Joi.string().hostname()
+      website: Joi.string().hostname(),
+      is_admin: Joi.number(),
+
     }
   }
   }//end config
@@ -845,19 +911,20 @@ server.start((err) => {
 */
 
 
-/*
+
 server.start(function (err) {
     if (err) {
       server.log('error', 'failed to start server');
       server.log('error', err);
 
-      throw err
+      throw err;
   };
 
     server.log('info', 'Server running at: ' + server.info.uri);
 });
-*/
 
+
+/*
 server.register(Basic, (err) => {
 
     if (err) {
@@ -879,27 +946,7 @@ server.register(Basic, (err) => {
 
           console.log("BEGIN LOGIN");
 
-      /*
-          var newUser = {
-            email:      req.payload.email,
-            password:   req.payload.password
-          };
-
-
-          for(var i=0; i< users[0].length; i++) {
-            if(users[0][i].email == newUser.email &&
-              users[0][i].password == newUser.password) {
-
-              console.log("found matching user");
-
-              var toReturn = {
-                user_id: users[0][i].id,
-                first_name: users[0][i].first_name,
-                last_name: users[0][i].last_name
-              }
-
-              return reply(toReturn);
-              */
+     
               console.log("CREDENTIALS: ", req.auth.credentials);
               return reply(req.auth.credentials);
 
@@ -926,3 +973,5 @@ server.register(Basic, (err) => {
         console.log('server running at: ' + server.info.uri);
     });
 });
+
+*/
