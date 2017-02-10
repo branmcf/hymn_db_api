@@ -89,7 +89,7 @@ function formatEvent(actualIndex) {
     frequency:      events[0][actualIndex].frequency,
     url:            events[0][actualIndex].website,
     parent:         events[0][actualIndex].parent_org_id,
-    topic:          events[0][actualIndex].topic,
+    //topic:          events[0][actualIndex].topic,
     //topic:         eventTypes[actualIndex],
     description:    events[0][actualIndex].description,
     event_date:     events[0][actualIndex].event_date,
@@ -103,7 +103,8 @@ function formatEvent(actualIndex) {
     is_active:      events[0][actualIndex].is_active,
     high_level:     events[0][actualIndex].high_level,
     user_id:        events[0][actualIndex].user_id,
-    user:           events[0][actualIndex].user
+    user:           events[0][actualIndex].user,
+    theme:          events[0][actualIndex].theme
 
 
   };
@@ -178,7 +179,8 @@ eventController.postConfig = {
       country: 		  req.payload.data.country,
       hymn_soc_member:req.payload.data.hymn_soc_member,
       user_id:      req.payload.uid,
-      user:         req.payload.user
+      user:         req.payload.user,
+      theme:        req.payload.theme
 /*
       theme: 		   req.payload.data.theme,
       parent: 		req.payload.data.parent,

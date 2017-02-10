@@ -371,7 +371,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 
             var JSObj = rowsToJS(rows);
 
-            console.log("=====MIDDLE TALBE=====");
+            //console.log("=====MIDDLE TALBE=====");
 
             arrayToUse.push(JSObj);
 
