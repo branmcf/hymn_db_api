@@ -180,7 +180,7 @@ eventController.postConfig = {
       hymn_soc_member:req.payload.data.hymn_soc_member,
       user_id:      req.payload.uid,
       user:         req.payload.user,
-      theme:        req.payload.theme
+      theme:        req.payload.data.theme
 /*
       theme: 		   req.payload.data.theme,
       parent: 		req.payload.data.parent,
