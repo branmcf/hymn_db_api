@@ -95,8 +95,14 @@ function insertPerson(theObj) {
       if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
     	  for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
     		  getID_left(theObj, i, "Ensembles", "ensemble_id");
+
+          if(i == Object.keys(theObj.ensembles).length - 1) {
+              console.log("EYYYYYYYYYY 1");
+              getPersons();
+              console.log("EYYYYYYYYYY 2");
+          }
     	  }
-      }
+      } else { console.log("EYYYYYYYYYY"); getPersons(); }
 
     });
 }
@@ -368,7 +374,7 @@ function getInter(leftTable, rightTable, middleTable, left_table_id, right_table
 
             var JSObj = rowsToJS(rows);
 
-            //console.log(query.sql);
+            console.log("=====MIDDLE TALBE=====");
 
             arrayToUse.push(JSObj);
 
@@ -547,14 +553,12 @@ personController.postConfig = {
 
     insertPerson(theData);
 
-
     var toReturn = {
 
     	person_id: persons[0].length +1 /* +1 or not?... */
 
     }
 
-    getPersons();
 
     return reply(toReturn);
 

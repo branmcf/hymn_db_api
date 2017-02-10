@@ -255,7 +255,7 @@ const validate = function (request, username, password, reply) {
            console.log(checkThis);
            if(checkThis == true) {
             var returnThis = {   
-                email: user.email, 
+                email:      user.email, 
                 first_name: user.first_name,
                 last_name:  user.last_name,
                 city:       user.city,
@@ -317,7 +317,9 @@ server.route({
               is_admin:   users[0][i].is_admin
             };
             
-            server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+            //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+
+            return reply(returnThis).code(201);
 
            }//end if password matches...
            else {
@@ -395,7 +397,7 @@ server.route({
             first_name: req.payload.first_name,
             last_name: req.payload.last_name,
             is_admin: req.payload.is_admin
-          }).code(200);
+          }).code(201);
       });
     //console.log("done with genSalt");
         
@@ -511,7 +513,7 @@ function formatUser(actualIndex) {
   var userData = {};
 
   userData = {
-    url:              "/users/" + String(actualIndex + 1),
+    url:              "/user/" + String(actualIndex + 1),
     id:               users[0][actualIndex].id,
     email:            users[0][actualIndex].email,
     password:         users[0][actualIndex].password,

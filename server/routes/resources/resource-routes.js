@@ -539,9 +539,7 @@ function getResources() {
 */
     getInter("Resource_Categories",  "resources", "resource_resource_categories", "resource_category_id", "resource_id", resCategories, numRes);
     getInter("Topics",          "resources", "resource_topics",         "topic_id", "resource_id", resTopics, numRes);
-
     getInter("Tags",            "resources", "resource_tags",           "tag_id", "resource_id", resTags, numRes);
-
     getInter("Ethnicities",     "resources", "resource_ethnicities",    "ethnicity_id", "resource_id", resEth, numRes);
     getInter("Accompaniment", 	"resources", "resource_accompaniment", 	"accompaniment_id", "resource_id", resAcc, numRes);
     getInter("Ensembles",       "resources", "resource_ensembles",  "ensemble_id", "resource_id", resEnsembles, numRes);
@@ -640,8 +638,6 @@ resourceController.getConfig = {
 
         //create new object, convert to json
         var str = formatResource(actualIndex);
-
-
 
         return reply(str);
 
