@@ -258,9 +258,6 @@ const validate = function (request, username, password, reply) {
                 email:      user.email, 
                 first_name: user.first_name,
                 last_name:  user.last_name,
-                city:       user.city,
-                state:      user.state,
-                country:    user.country,
                 website:    user.website,
                 user_id:    user.id 
             };
@@ -309,9 +306,6 @@ server.route({
               email:      users[0][i].email, 
               first_name: users[0][i].first_name,
               last_name:  users[0][i].last_name,
-              city:       users[0][i].city,
-              state:      users[0][i].state,
-              country:    users[0][i].country,
               website:    users[0][i].website,
               user_id:    users[0][i].id ,
               is_admin:   users[0][i].is_admin
@@ -377,9 +371,6 @@ server.route({
         iterations: 10,
         first_name: req.payload.first_name,
         last_name: req.payload.last_name,
-        city: req.payload.city,
-        state: req.payload.state,
-        country: req.payload.country,
         website: req.payload.website,
         is_admin: req.payload.is_admin
       }, 
@@ -409,9 +400,6 @@ server.route({
 
       first_name: Joi.string().alphanum(),
       last_name: Joi.string().alphanum(),
-      city: Joi.string().alphanum(),
-      state: Joi.string().alphanum(),
-      country: Joi.string().alphanum(),
       website: Joi.string().hostname(),
       is_admin: Joi.number(),
 
@@ -523,9 +511,6 @@ function formatUser(actualIndex) {
     is_active:        users[0][actualIndex].is_active,
     reg_date:         users[0][actualIndex].reg_date,
     high_level:       users[0][actualIndex].high_level,
-    city:             users[0][actualIndex].city,
-    state:            users[0][actualIndex].state,
-    country:          users[0][actualIndex].country,
     website:          users[0][actualIndex].website,
     approved:         users[0][actualIndex].approved,
     is_admin:         users[0][actualIndex].is_admin
@@ -611,9 +596,6 @@ server.route({
       is_active:        req.payload.is_active,
       reg_date:         req.payload.reg_date,
       high_level:       req.payload.high_level,
-      city:             req.payload.city,
-      state:            req.payload.state,
-      country:          req.payload.country,
       website:          req.payload.website
       //ethnicity_name:   req.payload.ethnicity_name,
 

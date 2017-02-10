@@ -97,12 +97,10 @@ function insertPerson(theObj) {
     		  getID_left(theObj, i, "Ensembles", "ensemble_id");
 
           if(i == Object.keys(theObj.ensembles).length - 1) {
-              console.log("EYYYYYYYYYY 1");
               getPersons();
-              console.log("EYYYYYYYYYY 2");
           }
     	  }
-      } else { console.log("EYYYYYYYYYY"); getPersons(); }
+      } else { getPersons(); }
 
     });
 }
@@ -158,7 +156,6 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
       //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
 
       if(!rows[0]) {
-        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
         TorF = false;
       }
       else {
@@ -199,7 +196,7 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
     var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
   		if(err) { throw new Error(err); return; }
 
-  		console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
 
       getLeftTableID(tableName, left_table_id, toInsert);
     });
