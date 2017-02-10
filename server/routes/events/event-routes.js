@@ -227,8 +227,8 @@ eventController.postConfig = {
 
         var toReturn = {
 
-        	event_id: events[0].length +1 /* +1 or not?... */
-            //
+        	event_id: events[0].length /* +1 if using middle tables, otherwise dont*/
+            
         }
 
         return reply(toReturn);
