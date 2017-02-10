@@ -918,7 +918,8 @@ CREATE TABLE persons (
 	approved boolean default false,
 	is_active boolean default false,
 	high_level boolean default false,
-	user_id int unsigned
+	user_id int unsigned,
+	user varchar(64)
 
 );
 
