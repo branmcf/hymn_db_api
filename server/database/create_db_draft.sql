@@ -246,9 +246,6 @@ CREATE TABLE users (
 	last_name varchar(64) default null,
 	reg_date timestamp,
 	is_active boolean default true,
-	city varchar(64) default "Dallas",
-	state varchar(64) default "Texas",
-	country varchar(128) default "United States",
 	website varchar(128),
 	hymn_soc_member boolean default false,
 
@@ -920,7 +917,8 @@ CREATE TABLE persons (
 
 	approved boolean default false,
 	is_active boolean default false,
-	high_level boolean default false
+	high_level boolean default false,
+	user_id int unsigned
 
 );
 

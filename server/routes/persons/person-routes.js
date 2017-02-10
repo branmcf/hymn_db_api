@@ -446,8 +446,9 @@ function formatPerson(actualIndex) {
     topics:         personTopics[actualIndex],
     ensembles:       personEnsembles[actualIndex],
     ethnicities:    personEthnicities[actualIndex],
+    user_id:        persons[0][actualIndex].user_id,
+    user:           persons[0][actualIndex].user
 
-    topic: "none" //placeholders for now
 
   };
 
@@ -547,7 +548,9 @@ personController.postConfig = {
       hymn_soc_member:            req.payload.data.hymn_soc_member,
       topics:    req.payload.data.topics,
       ensembles:        req.payload.data.ensembles,
-      ethnicities:      req.payload.data.ethnicities
+      ethnicities:      req.payload.data.ethnicities,
+      user_id:          req.payload.uid,
+      user:             req.payload.user
 
     };
 
