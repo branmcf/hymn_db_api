@@ -137,10 +137,10 @@ function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
 
  } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
      attributeName2 = "false";
-     console.log("False, insert nothing...");
+     //console.log("False, insert nothing...");
 
  } else {
-    console.log ("It's True for: ", attributeName2);
+    //console.log ("It's True for: ", attributeName2);
     getLeftTableID(tableName, left_table_id, attributeName2);
  }
 
@@ -530,7 +530,7 @@ personController.postConfig = {
 
     };
 */
-    console.log("\nRECEIVED :", req.payload.data);
+    //console.log("\nRECEIVED :", req.payload.data);
 
     var theData = {
       first_name:             req.payload.data.first_name,
