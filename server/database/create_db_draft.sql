@@ -278,6 +278,8 @@ CREATE TABLE resources (
 	favorites int unsigned default 0,
 	views int unsigned default 0,
 	approved boolean default false,
+
+	pract_schol varchar(32),
     
     user varchar(64),
     user_id int unsigned

@@ -595,7 +595,8 @@ function formatResource(actualIndex) {
     is_free:        resources[0][actualIndex].is_free,
     languages:      resLanguages[actualIndex],
     user_id:        resources[0][actualIndex].user_id,
-    user:           resources[0][actualIndex].user
+    user:           resources[0][actualIndex].user,
+    pract_schol:    resources[0][actualIndex].pract_schol
 
   };
 
@@ -725,7 +726,8 @@ resourceController.postConfig = {
       ensembles:        req.payload.data.ensembles,
       ethnicities:      req.payload.data.ethnicities,
       user_id:          req.payload.uid,
-      user:             req.payload.user
+      user:             req.payload.user,
+      pract_schol:      req.payload.data.pract_schol
 
     };
 
