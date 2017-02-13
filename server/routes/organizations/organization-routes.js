@@ -488,7 +488,7 @@ function formatOrg(actualIndex) {
     user:           orgs[0][actualIndex].user,
 
     shape:          orgs[0][actualIndex].shape,
-    priest_attire:  orgs[0][actualIndex].priest_attire,
+    clothing:       orgs[0][actualIndex].priest_attire,
     categories:     orgCategories[actualIndex],
     instruments:    orgInstr[actualIndex],
     ethnicities:    orgEth[actualIndex]
@@ -584,7 +584,7 @@ orgController.postConfig = {
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
       user_id:          req.payload.uid,
-      priest_attire:    req.payload.data.priest_attire,
+      priest_attire:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
       categories:       req.payload.data.categories,
       instruments:      req.payload.data.instruments,

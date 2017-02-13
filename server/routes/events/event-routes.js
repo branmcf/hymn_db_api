@@ -411,6 +411,7 @@ function formatEvent(actualIndex) {
     //topic:         eventTypes[actualIndex],
     description:    events[0][actualIndex].description,
     event_date:     events[0][actualIndex].event_date,
+    event_end_date:     events[0][actualIndex].event_end_date,
     cost:           events[0][actualIndex].cost,
     //tag id's
     //tags:           eventTags[actualIndex],
@@ -424,7 +425,7 @@ function formatEvent(actualIndex) {
     user:           events[0][actualIndex].user,
     theme:          events[0][actualIndex].theme,
     shape:          events[0][actualIndex].shape,
-    priest_attire:  events[0][actualIndex].priest_attire,
+    clothing:  events[0][actualIndex].priest_attire,
     attendance:     events[0][actualIndex].attendance,
     ethnicities:    eventEthnicities[actualIndex],
     ensembles:      eventEnsembles[actualIndex]
@@ -507,11 +508,12 @@ eventController.postConfig = {
 
     var newEvent = {
       name: 		   req.payload.data.title,
-      frequency:   req.payload.data.frequency,
+      frequency:   req.payload.data.occurance,
       website: 		 req.payload.data.url,
       parent:       req.payload.data.parent,
       description: req.payload.data.description,
       event_date:  req.payload.data.event_date,
+      event_end_date: req.payload.data.event_end_date,
       cost: 		    req.payload.data.cost,
       city: 		    req.payload.data.city,
       state: 		    req.payload.data.state,
@@ -521,7 +523,7 @@ eventController.postConfig = {
       user:         req.payload.user,
       theme:        req.payload.data.theme,
       shape:        req.payload.data.shape,
-      priest_attire:req.payload.data.priest_attire,
+      priest_attire:req.payload.data.clothing,
       attendance:   req.payload.data.attendance,
       ethnicities:  req.payload.data.ethnicities,
       ensembles:    req.payload.data.ensembles

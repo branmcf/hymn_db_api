@@ -89,6 +89,7 @@ DROP TABLE IF EXISTS Song_Types;
 DROP TABLE IF EXISTS Denominations;
 DROP TABLE IF EXISTS Event_Types;
 DROP TABLE IF EXISTS Parent_Org;
+DROP TABLE IF EXISTS Person_Categories;
 
 DROP TABLE IF EXISTS cities;
 DROP TABLE IF EXISTS states;
@@ -101,6 +102,13 @@ SET FOREIGN_KEY_CHECKS=1;
 - ATTRIBUTE TABLES - SET FOREIGN_KEY_CHECKS=1;
 ===================================================
 */
+
+CREATE TABLE Person_Categories (
+	id int unsigned not null auto_increment,
+	name varchar(128),
+  	other_text varchar(256),
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE Organization_Categories (
 	id int unsigned not null auto_increment,
@@ -944,6 +952,9 @@ CREATE TABLE user_viewed_events(
 DROP TABLE IF EXISTS person_ethnicities;
 DROP TABLE IF EXISTS person_ensembles;
 DROP TABLE IF EXISTS person_topics;
+DROP TABLE IF EXISTS person_instrument_types;
+DROP TABLE IF EXISTS person_person_categories;
+
 DROP TABLE IF EXISTS persons;
 CREATE TABLE persons (
 	id int unsigned not null auto_increment,
@@ -955,7 +966,9 @@ CREATE TABLE persons (
 	state varchar(64),
 	country varchar(128),
 	website varchar(128),
-	social_url varchar(128),
+	social_facebook varchar(128),
+	social_twitter varchar(128),
+	social_other varchar(128),
 	emphasis varchar(128),
 	hymn_soc_member boolean default false,
 
@@ -965,6 +978,24 @@ CREATE TABLE persons (
 	user_id int unsigned,
 	user varchar(64)
 
+);
+
+CREATE TABLE person_instrument_types (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	instrument_type_id int unsigned,
+	FOREIGN KEY (instrument_type_id) REFERENCES Instrument_Types (id)
+);
+
+CREATE TABLE person_person_categories (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	person_id int unsigned,
+	FOREIGN KEY (person_id) REFERENCES persons (id),
+	person_category_id int unsigned,
+	FOREIGN KEY (person_category_id) REFERENCES Person_Categories (id)
 );
 
 

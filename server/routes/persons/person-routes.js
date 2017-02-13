@@ -23,6 +23,8 @@ var persons = [];
   var personTopics = [];
   var personEnsembles = [];
   var personEthnicities =[];
+  var personInstruments = [];
+  var personCategories = [];
 
 getPersons();
 
@@ -43,6 +45,9 @@ function insertPerson(theObj) {
   if(typeof justPerson.topics !== "undefined") { delete justPerson.topics; }
   if(typeof justPerson.ensembles !== "undefined") { delete justPerson.ensembles; }
   if(typeof justPerson.ethnicities !== "undefined") { delete justPerson.ethnicities; }
+  if(typeof justPerson.instruments !== "undefined") { delete justPerson.instruments; }
+  if(typeof justPerson.categories !== "undefined") { delete justPerson.categories; }
+
 
 // TYPE CONVERSION
   if(typeof justPerson.hymn_soc_member == "string") {
@@ -92,6 +97,18 @@ function insertPerson(theObj) {
         }
       }
 
+      if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") {
+        for(var i=0; i< Object.keys(theObj.categories).length; i++) {
+            getID_left(theObj, i, "Person_Categories", "person_category_id");
+        }
+      }
+
+      if("instruments" in theObj && typeof theObj.instruments !== "undefined" && typeof theObj.instruments !== "null") {
+        for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
+            getID_left(theObj, i, "Instrument_Types", "instrument_type_id");
+        }
+      }
+
       if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
     	  for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
     		  getID_left(theObj, i, "Ensembles", "ensemble_id");
@@ -119,6 +136,12 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 		case "Ensembles":
 			checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
 			break;
+    case "Instrument_Types":
+      checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
+      break;
+    case "Person_Categories":
+      checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
+      break;
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
 			break;
@@ -327,6 +350,12 @@ function insertMiddle(theID, tableName, left_table_id) {
 		case "Ensembles":
 			var midTable = "person_ensembles";
 			var toInsert = {ensemble_id: theID, person_id: persons[0].length};	break;
+    case "Instrument_Types":
+			var midTable = "person_instrument_types";
+			var toInsert = {instrument_type_id: theID, person_id: persons[0].length};	break;
+    case "Person_Categories":
+      var midTable = "person_person_categories";
+      var toInsert = {person_category_id: theID, person_id: persons[0].length};	break;
 
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
@@ -395,6 +424,8 @@ function getPersons() {
         personTopics = [];
         personEnsembles = [];
         personEthnicities = [];
+        personInstruments = [];
+        personCategories = [];
 
       	persons.push(JSObj);
 
@@ -410,6 +441,9 @@ function getPersons() {
         getInter("Ethnicities",  "persons", "person_ethnicities", "ethnicity_id", "person_id", personEthnicities, numPersons);
         getInter("Topics",       "persons", "person_topics",         "topic_id",  "person_id", personTopics, numPersons);
         getInter("Ensembles",    "persons", "person_ensembles",  "ensemble_id",   "person_id", personEnsembles, numPersons);
+        getInter("Instrument_Types",    "persons", "person_instrument_types",  "instrument_type_id",   "person_id", personInstruments, numPersons);
+        getInter("Person_Categories",    "persons", "person_person_categories",  "person_category_id",   "person_id", personCategories, numPersons);
+
 
 
     }
@@ -437,12 +471,16 @@ function formatPerson(actualIndex) {
     state:          persons[0][actualIndex].state,
     country:        persons[0][actualIndex].country,
     url:            persons[0][actualIndex].website,
-    social_url:     persons[0][actualIndex].social_url,
+    social_facebook:persons[0][actualIndex].social_facebook,
+    social_twitter: persons[0][actualIndex].social_twitter,
+    social_other:   persons[0][actualIndex].social_other,
     emphasis:       persons[0][actualIndex].emphasis,
     hymn_soc_member:persons[0][actualIndex].hymn_soc_member,
     topics:         personTopics[actualIndex],
-    ensembles:       personEnsembles[actualIndex],
+    ensembles:      personEnsembles[actualIndex],
     ethnicities:    personEthnicities[actualIndex],
+    categories:     personCategories[actualIndex],
+    instruments:    personInstruments[actualIndex],
     user_id:        persons[0][actualIndex].user_id,
     user:           persons[0][actualIndex].user
 
@@ -540,14 +578,19 @@ personController.postConfig = {
       state:           req.payload.data.state,
       country:      req.payload.data.country,
       website:          req.payload.data.url,
-      social_url:          req.payload.data.social_url,
+      social_facebook:          req.payload.data.social_facebook,
+      social_twitter:          req.payload.data.social_twitter,
+      social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
       hymn_soc_member:            req.payload.data.hymn_soc_member,
       topics:    req.payload.data.topics,
       ensembles:        req.payload.data.ensembles,
       ethnicities:      req.payload.data.ethnicities,
       user_id:          req.payload.uid,
-      user:             req.payload.user
+      user:             req.payload.user,
+      
+      instruments:      req.payload.data.instruments,
+      categories:       req.payload.data.categories
 
     };
 
