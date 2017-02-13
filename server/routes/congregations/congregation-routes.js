@@ -193,19 +193,19 @@ function getID_left(theObj, whichIndex, tableName, left_table_id) {
 	switch(tableName) {
 
 		case "Ethnicities":
-            checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
       break;
 		case "Congregation_Categories":
-            checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Tags":
 			checkIfTrue("tags", theObj, whichIndex, tableName, left_table_id);
 			break;
 		case "Languages":
-            checkIfTrue("languages", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("languages", theObj, whichIndex, tableName, left_table_id);
 			break;
     case "Instrument_Types":
-            checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
+      checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
 			break;
 		default:
 			console.log("INVALID TABLE NAME SENT for ",tableName);
@@ -484,21 +484,22 @@ function formatCongregation(actualIndex) {
     state:          congs[0][actualIndex].state,
     country:        congs[0][actualIndex].country,
     hymn_soc_member:congs[0][actualIndex].hymn_soc_member,
-    categories:     congCategories[actualIndex],
-    instruments:    congInstr[actualIndex],
     shape:          congs[0][actualIndex].shape,
     clothing:       congs[0][actualIndex].clothing,
     geography:      congs[0][actualIndex].geography,
     ethnicities:    congEth[actualIndex],
     attendance:     congs[0][actualIndex].attendance,
-    //tags
-    tags:           congTags[actualIndex],
     is_active:      congs[0][actualIndex].is_active,
     high_level:     congs[0][actualIndex].high_level,
+    user_id:        congs[0][actualIndex].user_id,
+    user:           congs[0][actualIndex].user,
 
     languages:      congLanguages[actualIndex],
-    user_id:        congs[0][actualIndex].user_id,
-    user:           congs[0][actualIndex].user
+    categories:     congCategories[actualIndex],
+    instruments:    congInstr[actualIndex],
+    tags:           congTags[actualIndex],
+    ethnicities:    congEth[actualIndex]
+    
 
   };
 
