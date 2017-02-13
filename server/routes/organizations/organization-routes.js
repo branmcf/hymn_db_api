@@ -121,6 +121,30 @@ function insertOrganization(theObj) {
     justOrganization.is_free = 2;
   }
 
+  if(typeof justOrganization.offers_free_events == "string") {
+    if(justOrganization.offers_free_events == "yes" || justOrganization.offers_free_events == "Yes") {
+      justOrganization.offers_free_events = 1;
+    } else if(justOrganization.offers_free_events == "no" || justOrganization.offers_free_events == "No") {
+      justOrganization.offers_free_events = 0;
+    } else {
+      justOrganization.offers_free_events = 2;
+    }
+  } else if(typeof justOrganization.offers_free_events !== "number") {
+    justOrganization.offers_free_events = 2;
+  }
+
+  if(typeof justOrganization.membership_free == "string") {
+    if(justOrganization.membership_free == "yes" || justOrganization.membership_free == "Yes") {
+      justOrganization.membership_free = 1;
+    } else if(justOrganization.membership_free == "no" || justOrganization.membership_free == "No") {
+      justOrganization.membership_free = 0;
+    } else {
+      justOrganization.membership_free = 2;
+    }
+  } else if(typeof justOrganization.membership_free !== "number") {
+    justOrganization.membership_free = 2;
+  }
+
 
 // END TYPE CONVERSION
 
