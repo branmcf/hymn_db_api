@@ -28,7 +28,7 @@ var orgs = [];
   var orgInstr = [];
   var orgWorshipTypes = [];
   var orgEth = [];
-  var orgCongs = [];
+  var orgCategories = [];
 
 getOrganizations();
 
@@ -40,6 +40,7 @@ function rowsToJS(theArray) {
 }
 
 function getOrganizations() {
+  console.log("begin getOrgs()...");
   //get orgs from db
   connection.query('SELECT * from organizations', function(err, rows, fields) {
     if (!err) {
@@ -52,26 +53,21 @@ function getOrganizations() {
     orgInstr = [];
     orgWorshipTypes = [];
     orgEth = [];
-    orgCongs = [];
+    orgCategories = [];
 
       var JSObj = rowsToJS(rows);
       orgs.push(JSObj);
-
       numOrgs = orgs[0].length;
 
-/*
-      getInter("Denominations", "organizations", "organization_denominations", "denomination_id", "organization_id", orgDen, numOrgs);
-      getInter("Tags", "organizations", "organization_tags", "tag_id", "organization_id", orgTags, numOrgs);
-      //song types
-      getInter("Song_Types", "organizations", "organization_song_types", "song_type_id", "organization_id", orgSongTypes, numOrgs);
-      //instrument types
+
+      //getInter("Denominations", "organizations", "organization_denominations", "denomination_id", "organization_id", orgDen, numOrgs);
+      //getInter("Tags", "organizations", "organization_tags", "tag_id", "organization_id", orgTags, numOrgs);
+      //getInter("Song_Types", "organizations", "organization_song_types", "song_type_id", "organization_id", orgSongTypes, numOrgs);
       getInter("Instrument_Types", "organizations", "organization_instrument_types", "instrument_type_id", "organization_id", orgInstr, numOrgs);
-      //worship types
-      //ethnicities
       getInter("Ethnicities", "organizations", "organization_ethnicities", "ethnicity_id", "organization_id", orgEth, numOrgs);
-      //congregations
-      getInter("congregations", "organizations", "organization_congregations", "congregation_id", "organization_id", orgCongs, numOrgs);
-*/
+      getInter("Organization_Categories", "organizations", "organization_organization_categories", "organization_category_id", "organization_id", orgCategories, numOrgs);
+      //getInter("congregations", "organizations", "organization_congregations", "congregation_id", "organization_id", orgCongs, numOrgs);
+      
     }
     else
       console.log('Error while performing Events Query.');
@@ -79,7 +75,363 @@ function getOrganizations() {
   });
 }//end getOrganizations function
 
-//test: Method for querying intermediate tables:
+/*
+================================================================================
+================================================================================
+ - FOR INSERTING INTO ORGS AND MIDDLE TABLES -
+================================================================================
+================================================================================
+*/
+function insertOrganization(theObj) {
+
+  var justOrganization = JSON.parse(JSON.stringify(theObj));
+
+//delete columns not stored in the organizations table!
+  if(typeof justOrganization.categories !== "undefined") { delete justOrganization.categories; }
+  if(typeof justOrganization.instruments !== "undefined") { delete justOrganization.instruments; }
+  if(typeof justOrganization.ethnicities !== "undefined") { delete justOrganization.ethnicities; }
+
+// TYPE CONVERSION
+  if(typeof justOrganization.hymn_soc_member == "string") {
+    if(justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
+      justOrganization.hymn_soc_member = false;
+    } else {
+      justOrganization.hymn_soc_member = true;
+    }
+  } else if(typeof justOrganization.hymn_soc_member == "number") {
+    if(justOrganization.hymn_soc_member == 0) {
+      justOrganization.hymn_soc_member = false;
+    } else {
+      justOrganization.hymn_soc_member = true;
+    }
+  } else {
+    //neither a string nor Number
+    justOrganization.hymn_soc_member = false;
+  }
+
+  if(typeof justOrganization.is_free == "string") {
+    if(justOrganization.is_free == "yes" || justOrganization.is_free == "Yes") {
+      justOrganization.is_free = 1;
+    } else if(justOrganization.is_free == "no" || justOrganization.is_free == "No") {
+      justOrganization.is_free = 0;
+    } else {
+      justOrganization.is_free = 2;
+    }
+  } else if(typeof justOrganization.is_free !== "number") {
+    justOrganization.is_free = 2;
+  }
+
+
+// END TYPE CONVERSION
+
+	connection.query(`INSERT INTO organizations set ?`, justOrganization, function(err, rows, fields) {
+        if(err) { throw err; }
+
+        var JSObj = rowsToJS(theObj);
+
+        orgs[0].push(JSObj);
+
+        //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
+
+        //console.log("FIRST KEY IN ETHNICITIES: ",Object.keys(theObj.ethnicities)[0]);
+
+        //var ethlength = Object.keys(theObj.ethnicities).length;
+
+      //for multiple ethnicities
+
+        if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
+          for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
+            getID_left(theObj, i, "Ethnicities", "ethnicity_id");
+          }
+        } else { console.log("No ethnicities passed in..."); }
+        
+        if("tags" in theObj && typeof theObj.tags !== "undefined" && typeof theObj.tags !== "null") {
+          for(var i=0; i< Object.keys(theObj.tags).length; i++) {
+            getID_left(theObj, i, "Tags", "topic_id");
+          }
+        } else { console.log("No tags passed in..."); }
+
+        if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") { 
+          for(var i=0; i< Object.keys(theObj.categories).length; i++) {
+            getID_left(theObj, i, "Organization_Categories", "category_id");
+          }
+        } else { console.log("No categories passed in..."); }
+
+        if("instruments" in theObj && typeof theObj.instruments !== "undefined" && typeof theObj.instruments !== "null") {
+          for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
+              getID_left(theObj, i, "Instrument_Types", "instrument_id");
+              
+              if(i == Object.keys(theObj.instruments).length - 1) {
+                getOrganizations();
+              }
+          }
+        } else { console.log("No instruments passed in..."); getOrganizations();}
+        
+    });
+}
+
+function getID_left(theObj, whichIndex, tableName, left_table_id) {
+  //console.log("1: ", tableName );
+
+	switch(tableName) {
+
+		case "Ethnicities":
+            checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
+      break;
+		case "Organization_Categories":
+            checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
+			break;
+		case "Tags":
+			checkIfTrue("tags", theObj, whichIndex, tableName, left_table_id);
+			break;
+		case "Languages":
+            checkIfTrue("languages", theObj, whichIndex, tableName, left_table_id);
+			break;
+    case "Instrument_Types":
+            checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
+			break;
+		default:
+			console.log("INVALID TABLE NAME SENT for ",tableName);
+			break;
+	}//end switch
+
+}
+
+function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
+  //console.log("2: ", tableName)
+  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
+  if(attributeName2 == "Other" || attributeName2 == "other") {
+      //insert into "other_text" column
+      var theOtherText = theObj[param1][attributeName2];
+
+      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
+
+ } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
+     attributeName2 = "false";
+     //console.log("False, insert nothing...");
+
+ } else {
+    console.log ("It's True for: ", attributeName2);
+    getLeftTableID(tableName, left_table_id, attributeName2);
+ }
+
+  //return attributeName2;
+}
+
+  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
+    //console.log("3: ", tableName);
+    var TorF = false;
+    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
+
+      if(!rows[0]) {
+        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
+        TorF = false;
+      }
+      else {
+        TorF = true;
+      }
+
+      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
+
+    });
+  }
+
+  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
+    //console.log("4: ", tableName);
+    if(TorF == false) {
+        var toInsert = {
+          name: "Other",
+          other_text: other_text
+        };
+        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
+        //insert!
+        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
+
+      }//end if
+      else {
+        var toGet = {
+          name: "Other",
+          other_text: other_text
+        }
+        //it exists already
+        getLeftTableID(tableName, left_table_id, toGet);
+      }
+
+  }
+
+  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
+    //console.log("5: ", tableName);
+
+    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
+  		if(err) { throw new Error(err); return; }
+
+  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
+
+      getLeftTableID(tableName, left_table_id, toInsert);
+    });
+  }
+
+//
+//
+//
+
+
+function getLeftTableID(tableName, left_table_id, attributeName) {
+
+  //console.log("6: ", tableName);
+  var mid_table_id = 0;
+
+  if(attributeName !== "false") {
+    	//2a
+      //NEED TO: if name= Other, then resort to 'other_text'
+    if(typeof attributeName == "object") {
+
+      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
+        attributeName.other_text, function (err, rows) {
+          if(err) { throw new Error(err); return; }
+
+          //console.log("=========================");
+          //console.log(query.sql);
+          //console.log("=========================");
+
+          try {
+            mid_table_id = rows[0].id;
+          } catch (err) {
+            // Handle the error here.
+            console.log("ERROR WITH RESULT: ", rows);
+            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+          }
+          //console.log("mid_table_id: ",mid_table_id);
+
+          if(mid_table_id != 0) {
+            insertMiddle(mid_table_id, tableName, left_table_id);
+          } else {
+            console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+          }
+
+        }); //end mysql connection
+      } else {
+        //if it's not "Other"...
+
+        //if it exists
+
+          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+          attributeName, function (err, rows) {
+            if(err) { throw new Error(err); return; }
+
+            //console.log("=========================");
+            //console.log(query.sql);
+            //console.log("=========================")
+
+
+            if(!rows[0]) {
+              //does not exist in db yet...
+              createNewAttribute(tableName, attributeName, left_table_id)
+            } else {
+              //it does exist!
+              mid_table_id = rows[0].id;
+
+              insertMiddle(mid_table_id, tableName, left_table_id)
+            }
+
+          });
+
+    }//end else (as in, if the attributeName is not == "object")
+  }//end if attribute name !== "false"
+}
+
+function createNewAttribute(tableName, attributeName, left_table_id) {
+
+  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
+
+  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
+    attributeName, function (err, rows) {
+      if(err) { throw new Error(err); return; }
+
+      getNewAttribute(tableName, attributeName, left_table_id);
+
+  }); //end mysql connection
+
+}
+
+function getNewAttribute(tableName, attributeName, left_table_id) {
+
+  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
+    attributeName, function (err, rows) {
+    if(err) { throw new Error(err); return; }
+
+    var mid_table_id = 0;
+
+    try {
+      mid_table_id = rows[0].id;
+    } catch (err) {
+      // Handle the error here.
+      console.log("ERROR WITH RESULT: ", rows);
+      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
+    }
+
+
+    //console.log("mid_table_id: ",mid_table_id);
+
+    if(mid_table_id != 0) {
+      insertMiddle(mid_table_id, tableName, left_table_id);
+    } else {
+      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
+    }
+
+  }); //end mysql connection
+
+}
+
+function insertMiddle(theID, tableName, left_table_id) {
+  //console.log("7: ", tableName);
+	//2b. insert into middle table
+	switch(tableName) {
+    case "Ethnicities":
+      var midTable = "organization_ethnicities";
+      var toInsert = {ethnicity_id: theID, organization_id: orgs[0].length};	break;
+    case "Organization_Categories":
+      var midTable = "organization_organization_categories";
+      var toInsert = {organization_category_id: theID, organization_id: orgs[0].length};	break;
+    case "Languages":
+      var midTable = "organization_languages";
+      var toInsert = {language_id: theID, organization_id: orgs[0].length};	break;
+    case "Tags":
+      var midTable = "organization_tags";
+      var toInsert = {tag_id: theID, organization_id: orgs[0].length};	break;
+    case "Instrument_Types":
+      var midTable = "organization_instrument_types";
+      var toInsert = {instrument_type_id: theID, organization_id: orgs[0].length};	break;
+
+		default:
+			console.log("INVALID TABLE NAME SENT for ",tableName);
+			break;
+	}
+	//console.log("\nTO INSERT: \n", toInsert);
+	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
+	toInsert, function (err, rows) {
+		if(err) { throw new Error(err); return; }
+
+
+	});
+}
+
+/*
+================================================================================
+================================================================================
+ - END OF INSERTING INTO ORGS AND MIDDLE TABLES
+================================================================================
+================================================================================
+*/
+
+
+
+//
+//Method for querying intermediate tables:
+//
 function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
 
     for(var varI = 1; varI <= numLoops; varI++) {
@@ -133,17 +485,14 @@ function formatOrg(actualIndex) {
     is_active:      orgs[0][actualIndex].is_active,
     high_level:     orgs[0][actualIndex].high_level,
     user_id:        orgs[0][actualIndex].user_id,
-    user:           orgs[0][actualIndex].user
-    //song types
-    //song_types:     orgSongTypes[actualIndex],
-    //instrument types
-    //instrument_types:orgInstr[actualIndex],
-    //worship types
-    //worship_types:  orgWorshipTypes[actualIndex],
-    //ethnicities
-    //ethnicities:   orgEth[actualIndex],
-    //congregations
-    //congregations:  orgCongs[actualIndex]
+    user:           orgs[0][actualIndex].user,
+
+    shape:          orgs[0][actualIndex].shape,
+    priest_attire:  orgs[0][actualIndex].priest_attire,
+    categories:     orgCategories[actualIndex],
+    instruments:    orgInstr[actualIndex],
+    ethnicities:    orgEth[actualIndex]
+  
 
 
   };
@@ -188,9 +537,26 @@ orgController.getConfig = {
       objToReturn.push(bob);
     }
 
-    reply(objToReturn);
+    return reply(objToReturn);
   }
 };
+//
+//BELOW is for the POST request
+//
+function insertFirst(toInsert, _callback){
+
+    insertOrganization(toInsert);
+
+    _callback();    
+}
+
+function insertAndGet(toInsert){
+
+    insertFirst(toInsert, function() {
+        getOrganizations();
+        //console.log("Done with post requst getOrg...");
+    });    
+}
 
 //ORG POST REQUEST
 orgController.postConfig = {
@@ -198,6 +564,7 @@ orgController.postConfig = {
   handler: function(req, reply) {
 
     getOrganizations();
+
 
     var newOrg = {
       name: req.payload.data.name,
@@ -216,105 +583,32 @@ orgController.postConfig = {
       //tag_id: req.payload.data.tag_id,
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
-      user_id:          req.payload.uid
-      //is_active: req.payload.data.is_active,
-      //high_level: req.payload.data.high_level
+      user_id:          req.payload.uid,
+      priest_attire:    req.payload.data.priest_attire,
+      shape:            req.payload.data.shape,
+      categories:       req.payload.data.categories,
+      instruments:      req.payload.data.instruments,
+      ethnicities:      req.payload.data.ethnicities
 
     };
 
-    if(typeof newOrg.membership_free !== "undefined") {
-      if(typeof newOrg.membership_free == "string") {
-        if(newOrg.membership_free == "Yes" || newOrg.membership_free == "yes") {
-          newOrg.membership_free = 1;
-        } else if(newOrg.membership_free == "No" || newOrg.membership_free == "no") {
-          newOrg.membership_free = 0;
-        } else {
-          newOrg.membership_free = 2;
-        }
-      } else if(typeof newOrg.membership_free !== "number") {
-        newOrg.membership_free = 2;
-      }
-    }//end if not undefined...
+    insertAndGet(newOrg);
 
-    if(typeof newOrg.hymn_soc_member !== "undefined") {
-      if(typeof newOrg.hymn_soc_member == "string") {
-        if(newOrg.hymn_soc_member == "Yes" || newOrg.hymn_soc_member == "yes") {
-          newOrg.hymn_soc_member = 1;
-        } else if(newOrg.hymn_soc_member == "No" || newOrg.hymn_soc_member == "no") {
-          newOrg.hymn_soc_member = 0;
-        } else {
-          newOrg.hymn_soc_member = 2;
-        }
-      } else if(typeof newOrg.hymn_soc_member !== "number") {
-        newOrg.hymn_soc_member = 2;
-      }
-    }//end if not undef...
+    var toReturn = {
+      org_id: orgs[0].length +1
+    }
 
-    if(typeof newOrg.is_free !== "undefined") {
-      if(typeof newOrg.is_free == "string") {
-        if(newOrg.is_free == "Yes" || newOrg.is_free == "yes") {
-          newOrg.is_free = 1;
-        } else if(newOrg.is_free == "No" || newOrg.is_free == "no"){
-          newOrg.is_free = 0;
-        } else {
-          newOrg.is_free = 2;
-        }
-      } else if(typeof newOrg.is_free !== "number") {
-        newOrg.is_free = 2;
-      }
-    }//end if not undefined
+    return reply(toReturn);
 
-    if(typeof newOrg.offers_free_events !== "undefined") {
-      if(typeof newOrg.offers_free_events == "string") {
-        if(newOrg.offers_free_events == "Yes" || newOrg.offers_free_events == "yes") {
-          newOrg.offers_free_events = 1;
-        } else if(newOrg.offers_free_events == "No" || newOrg.offers_free_events == "no"){
-          newOrg.offers_free_events = 0;
-        } else {
-          newOrg.offers_free_events = 2;
-        }
-      } else if(typeof newOrg.offers_free_events !== "number") {
-        newOrg.offers_free_events = 2;
-      }
-    }//end if not defined 
-
-    // mysql
-    //connection.connect();
-    connection.query(
-      'INSERT INTO organizations SET ?', newOrg,
-      function(err, rows) {
-        if(err) {
-          throw new Error(err);
-          return;
-        }
-
-        var JSObj = rowsToJS(newOrg);
-
-        orgs[0].push(JSObj);
-
-        var toReturn = {
-
-        	org_id: orgs[0].length /* +1 or not?... */
-        }
-
-        return reply(toReturn);
-
-      }
-    );
-    //end mysql
-
-
-    //reply(newRes);
-  }
+      
+  }//end handler  
   /* ADD COMMA ^
   validate: {
     payload: {
       name: Joi.string().required(),
       url: Joi.string().required()
 
-      cong_city: Joi.string().required(),
-      cong_state: Joi.string().required(),
-      cong_country: Joi.string().required(),
+   
       priest_attire: Joi.string().required(),
       denomination_id: Joi.number().required(),
       song_types_id: Joi.number().required(),
@@ -326,9 +620,10 @@ orgController.postConfig = {
 
     }
   }
-  */
+  */ 
 
-};
+  }//end postConfig
+  
 
 //delete
 orgController.deleteConfig = {

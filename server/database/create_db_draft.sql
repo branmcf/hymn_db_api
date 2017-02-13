@@ -16,6 +16,8 @@ DROP TABLE IF EXISTS congregation_congregation_categories;
 DROP TABLE IF EXISTS congregation_favorites;
 DROP TABLE IF EXISTS congregation_languages;
 
+DROP TABLE IF EXISTS event_ensembles;
+DROP TABLE IF EXISTS event_ethnicities;
 DROP TABLE IF EXISTS event_tags;
 DROP TABLE IF EXISTS event_event_types;
 DROP TABLE IF EXISTS event_favorites;
@@ -42,6 +44,7 @@ DROP TABLE IF EXISTS organization_worship_types;
 DROP TABLE IF EXISTS organization_ethnicities;
 DROP TABLE IF EXISTS organization_congregations;
 DROP TABLE IF EXISTS organization_denominations;
+DROP TABLE IF EXISTS organization_organization_categories;
 
 DROP TABLE IF EXISTS user_ethnicities;
 DROP TABLE IF EXISTS user_viewed_events;
@@ -73,6 +76,7 @@ DROP TABLE IF EXISTS Languages;
 DROP TABLE IF EXISTS Resource_Types;
 DROP TABLE IF EXISTS Authors;
 
+DROP TABLE IF EXISTS Organization_Categories;
 DROP TABLE IF EXISTS Congregation_Categories;
 DROP TABLE IF EXISTS Resource_Categories;
 DROP TABLE IF EXISTS Accompaniment;
@@ -97,6 +101,13 @@ SET FOREIGN_KEY_CHECKS=1;
 - ATTRIBUTE TABLES - SET FOREIGN_KEY_CHECKS=1;
 ===================================================
 */
+
+CREATE TABLE Organization_Categories (
+	id int unsigned not null auto_increment,
+	name varchar(128),
+  	other_text varchar(256),
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE Congregation_Categories (
 	id int unsigned not null auto_increment,
@@ -310,9 +321,12 @@ CREATE TABLE events(
 	event_end_time time,
 	views int unsigned default 0,
 	favorites int unsigned default 0,
-	expected_attendance varchar(64),
 	amount_going int unsigned default 0,
 	approved boolean default false,
+
+	shape varchar(128),
+	priest_attire varchar(64),
+	attendance varchar(64),
     
     user_id int unsigned,
     user varchar(64)
@@ -334,7 +348,7 @@ CREATE TABLE organizations (
 	charge decimal(6) default 0.00,
 	mission varchar(256),
 	the_process varchar(256),
-	hymn_soc_member boolean default false,
+	hymn_soc_member tinyint(3) default false,
 	is_active boolean default false,
     high_level boolean default false,
 
@@ -396,6 +410,15 @@ CREATE TABLE user_ethnicities(
 - INTERMEDIATE TABLES FOR CONGREGATIONS -
 ===================================================
 */
+
+CREATE TABLE organization_organization_categories (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	organization_id int unsigned,
+	FOREIGN KEY (organization_id) REFERENCES organizations (id),
+	organization_category_id int unsigned,
+	FOREIGN KEY (organization_category_id) REFERENCES Organization_Categories (id)
+);
 
 CREATE TABLE congregation_languages (
 	id int unsigned not null auto_increment,
@@ -500,6 +523,23 @@ CREATE TABLE event_event_types (
 	FOREIGN KEY (event_id) REFERENCES events (id),
 	event_type_id int unsigned,
 	FOREIGN KEY (event_type_id) REFERENCES Event_Types (id)
+);
+
+CREATE TABLE event_ensembles (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	ensemble_id int unsigned,
+	FOREIGN KEY (ensemble_id) REFERENCES Ensembles (id)
+);
+CREATE TABLE event_ethnicities (
+	id int unsigned not null auto_increment,
+	PRIMARY KEY (id),
+	event_id int unsigned,
+	FOREIGN KEY (event_id) REFERENCES events (id),
+	ethnicity_id int unsigned,
+	FOREIGN KEY (ethnicity_id) REFERENCES Ethnicities (id)
 );
 
 /*
@@ -624,6 +664,8 @@ CREATE TABLE resource_ethnicities (
 - INTERMEDIATE TABLES FOR ORGANIZATIONS -
 ===================================================
 */
+
+
 
 CREATE TABLE organization_tags (
 	id int unsigned not null auto_increment,

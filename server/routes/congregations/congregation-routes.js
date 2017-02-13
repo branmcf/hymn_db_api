@@ -62,7 +62,7 @@ function getCongregations() {
       //getInter("Cong_Types",    	"congregations", "congregation_types" ,				"congregation_type_id", "congregation_id", congCategories, numCongs);
       getInter("Instrument_Types", 	 "congregations", "congregation_instrument_types", 	      "instrument_type_id", 	"congregation_id", congInstr, numCongs);
       getInter("Ethnicities",  		   "congregations", "congregation_ethnicities",  		        "ethnicity_id", 			"congregation_id", congEth, numCongs);
-      getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
+      //getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
       getInter("Congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
 
 
@@ -431,15 +431,6 @@ function insertMiddle(theID, tableName, left_table_id) {
 	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
 	toInsert, function (err, rows) {
 		if(err) { throw new Error(err); return; }
-
-		//console.log("query: ", query.sql);
-    if(tableName == "Instrument_Types") {
-      //THIS IS VERY HARD-CODED IN
-      //but...
-      //since languages is the last middle table to be inserted, only call getResources() after its completion because nodejs asynchronous calls are incredibly painful
-      getCongregations();
-      
-    }
 
 	});
 }
