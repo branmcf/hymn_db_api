@@ -287,43 +287,73 @@ server.route({
   config: {
     handler: function(req, reply) {
 
-      getUsers();
+      ///getUsers();
 
-      if(users[0].length==0) { return reply(Boom.unauthorized('no users register right now because tyler doesnt know how to computer')); }
+      connection.query(`SELECT * from users`, function(err, rows, fields) {
+        if (!err) {
+          users = [];
+          eth = [];
+          numUsers = 0;
+          //console.log(">>>>>select from db");
+          var JSObj = rowsToJS(rows);
+          users.push(JSObj);
+          numUsers = users[0].length;
 
-      for(var i=0; i< users[0].length; i++) {
-        //console.log("trying...", users[0][i]);
-        if(users[0][i].email == req.payload.email ) {
+          if(users[0].length==0) { return reply(Boom.unauthorized('no users register right now because tyler doesnt know how to computer')); }
 
-          //console.log("found matching user email...");
+          console.log("length: ", users[0].length);
+          for(var i=0; i< users[0].length; i++) {
+            console.log("L: ", i);
+            //console.log("trying...", users[0][i]);
+            if(users[0][i].email == req.payload.email ) {
+              
+              //console.log("found matching user email...");
 
-          //var user = users[0][i];     
+              //var user = users[0][i];     
 
-          var checkThis = Bcrypt.compareSync(req.payload.password, users[0][i].password);
-          //console.log(checkThis);
+              var checkThis = Bcrypt.compareSync(req.payload.password, users[0][i].password);
+              //console.log(checkThis);
 
-          if(checkThis == true) {
-            var returnThis = {   
-              email:      users[0][i].email, 
-              first_name: users[0][i].first_name,
-              last_name:  users[0][i].last_name,
-              website:    users[0][i].website,
-              user_id:    users[0][i].id ,
-              is_admin:   users[0][i].is_admin
-            };
-            
-            server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+              if(checkThis == true) {
+                var returnThis = {   
+                  email:      users[0][i].email, 
+                  first_name: users[0][i].first_name,
+                  last_name:  users[0][i].last_name,
+                  website:    users[0][i].website,
+                  user_id:    users[0][i].id,
+                  is_admin:   users[0][i].is_admin
+                };
+                
+                //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
 
-            //return reply(returnThis).code(201);
+                return reply(returnThis).code(201);
 
-           }//end if password matches...
-           else {
-             console.log("NO MATCHING PASSWORD FOUND");
-             reply(Boom.unauthorized('invalid password'));
-           }
+              }//end if password matches...
+              else {
+                console.log("NO MATCHING PASSWORD FOUND");
+                return reply(Boom.unauthorized('invalid email/password'));
+              }
 
-      }//end matching email found
-    }
+            }//end matching email found
+            else if( i == users[0].length - 1){
+              console.log("invalid email...");
+              return reply(Boom.unauthorized('invalid email/password combination'));
+
+            }
+          }//end for loop
+          
+
+        }//end if statement
+        else
+          console.log('Error while performing users Query.');
+
+      }); //end connection.connect
+
+
+
+//
+
+    
 
         
 
