@@ -49,24 +49,15 @@ server.connection({
   //protocol: 'https'
 });
 
-function getUsersNew() {
-
-  var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
-    var JSObj = rowsToJS(rows);
-    users.push(JSObj);
-    numUsers = users[0].length;
-    console.log("done with getUsersNew");
-
-  });
-}
-
-/*
-
 var routesArray = [];
 
   //var routes = require('./routes.js')
   //routesArray.push(routes)
+  routes = require('./routes/resources/resource-routes');
+  routesArray.push(routes);
+  server.route(routesArray[0]);
 
+/*
   routes = require('./routes/congregations/congregation-routes');
   routesArray.push(routes);
 
@@ -103,10 +94,18 @@ var routesArray = [];
 
 var userController = {};
 var users = [];
-  var eth = [];
   var numUsers = 0;
 
-//getUsers();
+function getUsersNew() {
+
+  var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
+    var JSObj = rowsToJS(rows);
+    users.push(JSObj);
+    numUsers = users[0].length;
+    console.log("done with getUsersNew");
+
+  });
+}
 
 //bcrypt authentication
 
@@ -158,12 +157,9 @@ server.route({
   config: {
     handler: function(req, reply) {
 
-      ///getUsers();
-
       connection.query(`SELECT * from users`, function(err, rows, fields) {
         if (!err) {
           users = [];
-          eth = [];
           numUsers = 0;
           //console.log(">>>>>select from db");
           var JSObj = rowsToJS(rows);
@@ -174,7 +170,6 @@ server.route({
 
           console.log("length: ", users[0].length);
           for(var i=0; i< users[0].length; i++) {
-            console.log("L: ", i);
             //console.log("trying...", users[0][i]);
             if(users[0][i].email == req.payload.email ) {
               
@@ -192,10 +187,13 @@ server.route({
                   last_name:  users[0][i].last_name,
                   website:    users[0][i].website,
                   user_id:    users[0][i].id,
-                  is_admin:   users[0][i].is_admin
+                  is_admin:   users[0][i].is_admin,
+                  ethnicities:users[0][i].ethnicities
                 };
                 
                 //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
+                returnThis.ethnicities = JSON.parse(returnThis.ethnicities);
+
 
                 return reply(returnThis).code(201);
 
@@ -359,75 +357,9 @@ function rowsToJS(theArray) {
   return temp;
 }
 
-//get users from db
-function getUsers() {
-
-  //console.log(">>>>>getUsers()");
-
-  connection.query(`SELECT * from users`, function(err, rows, fields) {
-
-      if (!err) {
-
-        users = [];
-        eth = [];
-        numUsers = 0;
-
-        //console.log(">>>>>select from db");
-
-        var JSObj = rowsToJS(rows);
-
-        users.push(JSObj);
-
-        numUsers = users[0].length;
 
 
 
-        getInter("Ethnicities", "users", "user_ethnicities", "ethnicity_id", "user_id", eth, numUsers );
-
-        //console.log(`selected ${numUsers} users from db`);
-
-
-      }//end if statement
-      else
-        console.log('Error while performing users Query.');
-
-  }); //end connection.connect
-
-  console.log("end getUsers()");
-
-};//end get users from db
-
-//test: Method for querying intermediate tables:
-function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
-
-    //console.log(`>>>>>getInter()`);
-
-    for(var varI = 1; varI <= numLoops; varI++) {
-        connection.query(`
-          SELECT L.name
-          FROM ${leftTable} L
-          INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
-          INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
-          WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) {
-              console.log(`ERROR IN INTERMEDIATE TABLE for leftTable: ${leftTable}, middle: ${middleTable}, right: ${rightTable}`);
-              throw err;
-            }
-
-            //console.log(`>>>>>select id= ${varI} out of ${numLoops} from ${leftTable} from db`);
-
-            var JSObj = rowsToJS(rows);
-
-            arrayToUse.push(JSObj);
-
-            //console.log(`done selecting ${varI} from ${leftTable}`);
-        });
-
-    }//end for loop
-
-    //console.log(`end getInter()`);
-
-}//end function
 
 /*
 ===================================================
@@ -580,8 +512,6 @@ server.route({
           return;
         }
 
-        getUsers();
-
         reply([{
           statusCode: 200,
           message: 'Inserted Successfully',
@@ -617,84 +547,6 @@ server.route({
 //
 //
 //
-/*
-server.route({
-  
-  method: 'POST',
-  path: '/register',
-  config: {
-    //auth: 'simple',
-    handler: function(req, reply) {
-
-      getUsers();
-
-      var salt = Bcrypt.genSaltSync(10);
-      var hash = Bcrypt.hashSync(req.payload.password, salt);
-
-      //console.log(req.payload.password, " TURNED INTO : ", hash);
-      // Store hash in your password DB. 
-
-      //loop thru all emails and see if email is already in users_db
-      for(var i=0; i< users[0].length; i++) {
-        if(users[0][i].email == req.payload.email) {
-          return reply(Boom.badRequest('invalid query, email already exists!')); 
-        }
-      }
-      
-      var query = connection.query('INSERT INTO users SET ?', 
-      { 
-        email: req.payload.email, 
-        password: hash,
-        salt: salt,
-        iterations: 10,
-        first_name: req.payload.first_name,
-        last_name: req.payload.last_name,
-        city: req.payload.city,
-        state: req.payload.state,
-        country: req.payload.country,
-        website: req.payload.website
-      }, 
-      function(err, rows, fields) {
-          if(err) { 
-            console.log("Error with registering a user...");
-            return reply(Boom.badRequest('invalid query')); 
-          }
-          
-          users[0].push({email: req.payload.email, password:hash, salt: salt, iterations: 10});
-          console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n");
-          
-          getUsers();
-
-          return reply ({ 
-            email: req.payload.email,
-            user_id: users[0].length,
-            first_name: req.payload.first_name,
-            last_name: req.payload.last_name
-          }).code(200);
-      });
-    //console.log("done with genSalt");
-        
-  },//end handler
-  validate: {
-    payload: {
-      email: Joi.string().email().required(),
-      password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
-
-      first_name: Joi.string().alphanum(),
-      last_name: Joi.string().alphanum(),
-      city: Joi.string().alphanum(),
-      state: Joi.string().alphanum(),
-      country: Joi.string().alphanum(),
-      website: Joi.string().hostname()
-    }
-  }
-  }//end config
-});
-*/
-
-//
-//
-//
 
 server.route({
   
@@ -703,8 +555,6 @@ server.route({
   config: { 
 
     handler: function(request, reply) {
-
-      //getUsers();
 
       if (request.params.id) {
         if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -727,8 +577,6 @@ server.route({
             }
 
             console.log(`made user with id=${request.params.id} an admin...`);
-
-            getUsers(); //?
 
             reply([{
               statusCode: 200,
@@ -765,8 +613,6 @@ server.route({
 
     handler: function(request, reply) {
 
-      //getUsers();
-
       if (request.params.id) {
         if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
           //return reply('Not enough users in the database for your request').code(404);
@@ -786,8 +632,6 @@ server.route({
             }
 
             console.log(`Approved user with id=${request.params.id}...`);
-
-            getUsers();
 
             reply([{
               statusCode: 200,
@@ -824,8 +668,6 @@ server.route({
 
     handler: function(request, reply) {
 
-      getUsers();
-
       if (request.params.id) {
         if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
           //return reply('Not enough users in the database for your request').code(404);
@@ -845,8 +687,6 @@ server.route({
             }
 
             console.log(`Made user with id=${request.params.id} a high_level user...`);
-
-            getUsers();
 
             reply([{
               statusCode: 200,
@@ -881,7 +721,6 @@ server.route({
   config: {
 
     handler: function(request, reply) {
-        getUsers();
 
         if (request.params.id) {
             if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -901,8 +740,6 @@ server.route({
               } else {
                   console.log("set user #", request.params.id, " to innactive (is_active = false)");
               }
-
-              getUsers();
 
               reply([{
                 statusCode: 200,
@@ -928,8 +765,6 @@ server.route({
   config: {
 
     handler: function(request, reply) {
-        getUsers();
-
         if (request.params.id) {
             if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
               //return reply('Not enough users in the database for your request').code(404);
@@ -969,56 +804,3 @@ server.start(function (err) {
 
     server.log('info', 'Server running at: ' + server.info.uri);
 });
-
-
-/*
-server.register(Basic, (err) => {
-
-    if (err) {
-        throw err;
-    }
-
-    server.auth.strategy('simple', 'basic', { validateFunc: validate });
-    
-    //login!
-    server.route({
-
-      method: 'GET',
-      path: '/login',
-      config: {
-        auth: 'simple',
-        handler: function(req, reply) {
-
-          getUsers();
-
-          console.log("BEGIN LOGIN");
-
-     
-              console.log("CREDENTIALS: ", req.auth.credentials);
-              return reply(req.auth.credentials);
-
-            //}
-            //else if(i+1 == users[0].length) {
-              //console.log('no user in database with that email and/or password');
-              //return reply(Boom.notFound('Invalid username and/or password combination'));
-            //}
-          //}//end for loop
-
-        }
-
-        
-    }
-
-    });
-
-    server.start((err) => {
-
-        if (err) {
-            throw err;
-        }
-
-        console.log('server running at: ' + server.info.uri);
-    });
-});
-
-*/

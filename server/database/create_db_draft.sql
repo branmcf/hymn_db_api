@@ -5,95 +5,19 @@ DROP TABLE IF EXISTS event_table;
 DROP TABLE IF EXISTS Event_Table;
 */
 
-DROP TABLE IF EXISTS congregation_tags;
-DROP TABLE IF EXISTS congregation_denominations;
-DROP TABLE IF EXISTS congregation_song_types;
-DROP TABLE IF EXISTS congregation_instrument_types;
-DROP TABLE IF EXISTS congregation_worship_types;
-DROP TABLE IF EXISTS congregation_types;
-DROP TABLE IF EXISTS congregation_ethnicities;
-DROP TABLE IF EXISTS congregation_congregation_categories;
-DROP TABLE IF EXISTS congregation_favorites;
-DROP TABLE IF EXISTS congregation_languages;
-DROP TABLE IF EXISTS cong_favorites;
-DROP TABLE IF EXISTS resource_categories;
 
-DROP TABLE IF EXISTS event_ensembles;
-DROP TABLE IF EXISTS event_ethnicities;
-DROP TABLE IF EXISTS event_tags;
-DROP TABLE IF EXISTS event_event_types;
-DROP TABLE IF EXISTS event_favorites;
 
-DROP TABLE IF EXISTS resource_resource_category;
-DROP TABLE IF EXISTS resource_tags;
-DROP TABLE IF EXISTS resource_authors;
-DROP TABLE IF EXISTS resource_resource_types;
-DROP TABLE IF EXISTS resource_denominations;
-DROP TABLE IF EXISTS resource_instruments;
-DROP TABLE IF EXISTS resource_topics;
-DROP TABLE IF EXISTS resource_ensembles;
-DROP TABLE IF EXISTS resource_ethnicities;
-DROP TABLE IF EXISTS resource_accompaniment;
-DROP TABLE IF EXISTS resource_languages;
-DROP TABLE IF EXISTS resource_resource_categories;
-DROP TABLE IF EXISTS resource_favorites;
-DROP TABLE IF EXISTS resource_users;
-
-DROP TABLE IF EXISTS organization_tags;
-DROP TABLE IF EXISTS organization_song_types;
-DROP TABLE IF EXISTS organization_instrument_types;
-DROP TABLE IF EXISTS organization_worship_types;
-DROP TABLE IF EXISTS organization_ethnicities;
-DROP TABLE IF EXISTS organization_congregations;
-DROP TABLE IF EXISTS organization_denominations;
-DROP TABLE IF EXISTS organization_organization_categories;
-
-DROP TABLE IF EXISTS user_ethnicities;
-DROP TABLE IF EXISTS user_viewed_events;
-DROP TABLE IF EXISTS user_viewed_congs;
-DROP TABLE IF EXISTS user_viewed_resources;
-DROP TABLE IF EXISTS user_choices;
-DROP TABLE IF EXISTS user_questions;
-DROP TABLE IF EXISTS user_quizes;
-
-DROP TABLE IF EXISTS suggested_congregations;
-DROP TABLE IF EXISTS suggested_organizations;
-DROP TABLE IF EXISTS suggested_events;
-DROP TABLE IF EXISTS suggested_resources;
 
 DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS quizes;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS social_media_connections;
-DROP TABLE IF EXISTS Tags;
 
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS congregations;
 DROP TABLE IF EXISTS resources;
 DROP TABLE IF EXISTS organizations;
-DROP TABLE IF EXISTS Ensembles;
-DROP TABLE IF EXISTS Topics;
-DROP TABLE IF EXISTS Languages;
-DROP TABLE IF EXISTS Authors;
-
-DROP TABLE IF EXISTS Organization_Categories;
-DROP TABLE IF EXISTS Congregation_Categories;
-DROP TABLE IF EXISTS Accompaniment;
-
-DROP TABLE IF EXISTS Ethnicities;
-DROP TABLE IF EXISTS Cong_Types;
-DROP TABLE IF EXISTS Worship_Types;
-DROP TABLE IF EXISTS Instrument_Types;
-DROP TABLE IF EXISTS Song_Types;
-DROP TABLE IF EXISTS Denominations;
-DROP TABLE IF EXISTS Event_Types;
-DROP TABLE IF EXISTS Parent_Org;
-DROP TABLE IF EXISTS Person_Categories;
-
-DROP TABLE IF EXISTS cities;
-DROP TABLE IF EXISTS states;
-DROP TABLE IF EXISTS countries;
+DROP TABLE IF EXISTS persons;
 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -273,34 +197,6 @@ CREATE TABLE congregations (
 
 );
 
-
-
-/*
-===================================================
-- INTERMEDIATE TABLES FOR CONGREGATIONS -
-===================================================
-*/
-
-
-/*
-===================================================
-- INTERMEDIATE TABLES FOR EVENTS -
-===================================================
-*/
-
-
-/*
-===================================================
-- INTERMEDIATE TABLES FOR RESOURCES -
-===================================================
-*/
-
-/*
-===================================================
-- INTERMEDIATE TABLES FOR ORGANIZATIONS -
-===================================================
-*/
-
 /*
 ===================================================
 - QUIZ TEMPLATES -
@@ -342,32 +238,6 @@ CREATE TABLE choices (
 	tags JSON DEFAULT NULL,
 	text_field varchar(512) /*if 'other' is selected */
 );
-
-/*
-===================================================
-- USER SPECIFIC -
-===================================================
-*/
-
-/*
-===================================================
-- SUGGESTED -
-===================================================
-*/
-
-/*
-===================================================
-- PERSON -
-===================================================
-*/
-
-DROP TABLE IF EXISTS person_ethnicities;
-DROP TABLE IF EXISTS person_ensembles;
-DROP TABLE IF EXISTS person_topics;
-DROP TABLE IF EXISTS person_instrument_types;
-DROP TABLE IF EXISTS person_person_categories;
-
-DROP TABLE IF EXISTS persons;
 
 CREATE TABLE persons (
 	id int unsigned not null auto_increment,
