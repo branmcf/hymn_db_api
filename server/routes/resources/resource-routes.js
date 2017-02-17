@@ -67,6 +67,7 @@ function getResourcesJSON() {
 function insertResource(theObj) {
 
   var justResource = JSON.parse(JSON.stringify(theObj));
+
   justResource.categories = JSON.stringify(justResource.categories);
   justResource.topics = JSON.stringify(justResource.topics);
   justResource.accompaniment = JSON.stringify(justResource.accompaniment);
@@ -74,6 +75,8 @@ function insertResource(theObj) {
   justResource.tags = JSON.stringify(justResource.tags);
   justResource.ensembles = JSON.stringify(justResource.ensembles);
   justResource.languages = JSON.stringify(justResource.languages);
+  justResource.instruments = JSON.stringify(justResource.instruments);
+  justResource.denominations = JSON.stringify(justResource.denominations);
 
   //console.log("\n\nJUSTRESOURCE: \n\n", justResource);
 
@@ -127,21 +130,6 @@ function rowsToJS(theArray) {
   return temp;
 }
 
-/*
-===================================================
-- -
-===================================================
-*/
-
-
-
-
-/*
-===================================================
-- -
-===================================================
-*/
-
 function formatResource(actualIndex) {
   var resourceData = {};
 
@@ -150,6 +138,7 @@ function formatResource(actualIndex) {
     title:          resources[actualIndex].name,
     type:           resources[actualIndex].type,
     url:            resources[actualIndex].website,
+    author:         resources[actualIndex].author,
     resource_date:  resources[actualIndex].resource_date,
     description:    resources[actualIndex].description,
     parent:         resources[actualIndex].parent,
@@ -163,6 +152,7 @@ function formatResource(actualIndex) {
     user_id:        resources[actualIndex].user_id,
     user:           resources[actualIndex].user,
     pract_schol:    resources[actualIndex].pract_schol,
+    approved:       resources[actualIndex].approved,
 
     languages:      resources[actualIndex].languages,
     ethnicities:    resources[actualIndex].ethnicities,
@@ -170,7 +160,9 @@ function formatResource(actualIndex) {
     categories:     resources[actualIndex].categories,
     accompaniment: 	resources[actualIndex].accompaniment,
     topics:         resources[actualIndex].topics,
-    tags:           resources[actualIndex].tags
+    tags:           resources[actualIndex].tags,
+    denominations:  resources[actualIndex].denominations,
+    instruments:    resources[actualIndex].instruments
 
   };
 
@@ -311,6 +303,7 @@ resourceController.postConfig = {
       user_id:          req.payload.uid,
       user:             req.payload.user,
       pract_schol:      req.payload.data.pract_schol,
+      //approved not included because by default it is not approved
 
       categories:       req.payload.data.categories,
       topics:            req.payload.data.topics,
@@ -319,6 +312,8 @@ resourceController.postConfig = {
       ensembles:        req.payload.data.ensembles,
       ethnicities:      req.payload.data.ethnicities,
       tags:             req.payload.data.tags,
+      denominations:    req.payload.data.denominations,
+      instruments:      req.payload.data.instruments
 
     };    
     
