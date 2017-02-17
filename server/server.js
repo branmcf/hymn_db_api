@@ -57,12 +57,15 @@ var routesArray = [];
   routesArray.push(routes);
   server.route(routesArray[0]);
 
+  routes = require('./routes/events/event-routes');
+  routesArray.push(routes);
+  server.route(routesArray[1]);
+
 /*
   routes = require('./routes/congregations/congregation-routes');
   routesArray.push(routes);
 
-  routes = require('./routes/events/event-routes');
-  routesArray.push(routes);
+  
 
   routes = require('./routes/organizations/organization-routes');
   routesArray.push(routes);

@@ -99,10 +99,10 @@ CREATE TABLE events(
 	parent varchar(128),
 	theme varchar(128), /* aka topic */
 	description text(1024),
-	event_date date,
-	event_start_time time,
-	event_end_date date,
-	event_end_time time,
+
+	event_date DATETIME,
+	event_end_date DATETIME,
+	
 	cost varchar(64) default "$0.00",
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
@@ -114,6 +114,7 @@ CREATE TABLE events(
 	user_id int unsigned,
     user varchar(64),
 	
+	is_free tinyint(3),
 	is_active boolean default false,
 	high_level boolean default false,
 	approved boolean default false,

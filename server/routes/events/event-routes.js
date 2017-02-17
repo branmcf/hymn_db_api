@@ -1,6 +1,7 @@
 var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
+var Regex = require("regex");
 
 var options = require('../../config/config.js');
 
@@ -33,7 +34,92 @@ function rowsToJS(theArray) {
   return temp;
 }
 
+function getEventsJSON() {
+  //console.log("===== GETTING EVENTS =====");
+  connection.query(`SELECT * from events`, function(err, rows, fields) {
+    if (!err) {
 
+      	var JSObj = rowsToJS(rows);
+
+        events = [];
+        numEvents = 0;
+        eventTypes = [];
+        eventTags = [];
+        eventEnsembles = [];
+        eventEthnicities = [];
+
+      	//resources.push(JSObj);
+        events = JSObj;
+        //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nevents: ", resources);
+        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+      	numEvents = events.length;
+
+    }
+    else
+      console.log('Error while performing Resources Query.');
+
+  });
+}
+
+function insertEvent(theObj) {
+
+  var justEvent = JSON.parse(JSON.stringify(theObj));
+
+  justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
+  justEvent.tags = JSON.stringify(justEvent.tags);
+  justEvent.ensembles = JSON.stringify(justEvent.ensembles);
+
+  //console.log("\n\njustEvent: \n\n", justEvent);
+
+  // TYPE CONVERSION
+  if(typeof justEvent.hymn_soc_member == "string") {
+    if(justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
+      justEvent.hymn_soc_member = false;
+    } else {
+      justEvent.hymn_soc_member = true;
+    }
+  } else if(typeof justEvent.hymn_soc_member == "number") {
+    if(justEvent.hymn_soc_member == 0) {
+      justEvent.hymn_soc_member = false;
+    } else {
+      justEvent.hymn_soc_member = true;
+    }
+  } else {
+    //neither a string nor Number
+    justEvent.hymn_soc_member = false;
+  }
+
+  if(justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
+    if(typeof justEvent.is_free == "string") {
+      if(justEvent.is_free == "yes" || justEvent.is_free == "Yes") {
+        justEvent.is_free = 1;
+      } else if(justEvent.is_free == "no" || justEvent.is_free == "No"){
+        justEvent.is_free = 0;
+      } else {
+        justEvent.is_free = 2;
+      }
+    } else if(typeof justEvent.is_free !== "number") {
+      justEvent.is_free = 2;
+    }
+  }
+
+  if(typeof justEvent.cost !== "string") {
+    justEvent.cost = '' + justEvent.cost;
+  }  
+    
+
+  // END TYPE CONVERSION
+
+	connection.query(`INSERT INTO events set ?`, justEvent, function(err, rows, fields) {
+        if(err) { console.log(Boom.badRequest('invalid query inserting into events')); throw err; }
+
+        var JSObj = rowsToJS(theObj);
+        events.push(JSObj);
+
+
+        
+    });
+}
 
 /*
 ===================================================
@@ -50,6 +136,7 @@ function formatEvent(actualIndex) {
     frequency:      events[actualIndex].frequency,
     url:            events[actualIndex].website,
     parent:         events[actualIndex].parent_org_id,
+    theme:          events[actualIndex].theme,
     description:    events[actualIndex].description,
     event_date:     events[actualIndex].event_date,
     event_end_date: events[actualIndex].event_end_date,
@@ -59,13 +146,15 @@ function formatEvent(actualIndex) {
     country:     	  events[actualIndex].country,
     hymn_soc_member:events[actualIndex].hymn_soc_member,
     is_active:      events[actualIndex].is_active,
+    is_free:        events[actualIndex].is_free,
     high_level:     events[actualIndex].high_level,
     user_id:        events[actualIndex].user_id,
     user:           events[actualIndex].user,
-    theme:          events[actualIndex].theme,
     shape:          events[actualIndex].shape,
     clothing:       events[actualIndex].priest_attire,
     attendance:     events[actualIndex].attendance,
+    approved:       events[actualIndex].approved,
+    pract_schol:    events[actualIndex].pract_schol,
 
     ethnicities:    events[actualIndex].ethnicities,
     ensembles:      events[actualIndex].ensembles,
@@ -73,6 +162,10 @@ function formatEvent(actualIndex) {
 
 
   };
+
+  eventData.ethnicities = JSON.parse(eventData.ethnicities);
+  eventData.tags = JSON.parse(eventData.tags);
+  eventData.ensembles = JSON.parse(eventData.ensembles);
 
   var theUrl = "/event/" + Number(actualIndex+1);
 
@@ -88,7 +181,7 @@ function formatEvent(actualIndex) {
 eventController.getConfig = {
   handler: function (request, reply) {
 
-      getEvents();
+      getEventsJSON();
 
     if (request.params.id) {
       //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
@@ -111,7 +204,7 @@ eventController.getConfig = {
 
     var objToReturn = [];
 
-    for(var i=0; i < events[0].length; i++) {
+    for(var i=0; i < events.length; i++) {
       var bob = formatEvent(i);
       objToReturn.push(bob);
     }
@@ -131,7 +224,7 @@ function insertFirst(toInsert, _callback){
 function insertAndGet(toInsert){
 
     insertFirst(toInsert, function() {
-        getEvents();
+        getEventsJSON();
         //console.log("Done with post requst getEvents...");
     });    
 }
@@ -143,43 +236,71 @@ eventController.postConfig = {
 
     //console.log("\nRECEIVED :", req.payload.data);
 
-    getEvents();
+    //getEventsJSON();
 
     var theEventID = events.length+1;
 
     var newEvent = {
-      name: 		   req.payload.data.title,
-      frequency:   req.payload.data.occurance,
-      website: 		 req.payload.data.url,
-      parent:       req.payload.data.parent,
-      description: req.payload.data.description,
-      event_date:  req.payload.data.event_date,
+      name: 		      req.payload.data.title,
+      frequency:      req.payload.data.occurance,
+      website: 		    req.payload.data.url,
+      parent:         req.payload.data.parent,
+      description:    req.payload.data.description,
+      event_date:     req.payload.data.event_start_date,
       event_end_date: req.payload.data.event_end_date,
-      cost: 		    req.payload.data.cost,
-      city: 		    req.payload.data.city,
-      state: 		    req.payload.data.state,
-      country: 		  req.payload.data.country,
+      cost: 		      req.payload.data.cost,
+      city: 		      req.payload.data.city,
+      state: 		      req.payload.data.state,
+      country: 		    req.payload.data.country,
       hymn_soc_member:req.payload.data.hymn_soc_member,
-      user_id:      req.payload.uid,
-      user:         req.payload.user,
-      theme:        req.payload.data.theme,
-      shape:        req.payload.data.shape,
-      priest_attire:req.payload.data.clothing,
-      attendance:   req.payload.data.attendance,
-      ethnicities:  req.payload.data.ethnicities,
-      ensembles:    req.payload.data.ensembles
+      user_id:        req.payload.uid,
+      user:           req.payload.user,
+      theme:          req.payload.data.theme,
+      shape:          req.payload.data.shape,
+      priest_attire:  req.payload.data.clothing,
+      attendance:     req.payload.data.attendance,
+      approved:       req.payload.data.approved,
+      pract_schol:    req.payload.data.pract_schol,
+      is_free:        req.payload.data.is_free,
 
-    };
+      ethnicities:    req.payload.data.ethnicities,
+      ensembles:      req.payload.data.ensembles,
+      tags:           req.payload.data.tags
 
-    var fixedDate = new Date().toISOString().slice(0, 10);
+    };  
 
-    newEvent.event_date = fixedDate;
+// DATE FORMATTING
+    var fixed_date_1 = newEvent.event_date.toString().slice(0,4);
+    var fixed_date_2 = newEvent.event_date.toString().slice(5,7);
+    var fixed_date_3 = newEvent.event_date.toString().slice(8,10);
+    var fixed_date_4 = newEvent.event_date.toString().slice(11,13);
+    var fixed_date_5 = newEvent.event_date.toString().slice(14,16);
+    var fixed_date_6 = newEvent.event_date.toString().slice(17,19);
+
+    newEvent.event_date = "";
+    var str = newEvent.event_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+    fixed_date_4, fixed_date_5, fixed_date_6);
+    newEvent.event_date = str;
+    
+    fixed_date_1 = newEvent.event_end_date.toString().slice(0,4);
+    fixed_date_2 = newEvent.event_end_date.toString().slice(5,7);
+    fixed_date_3 = newEvent.event_end_date.toString().slice(8,10);
+    fixed_date_4 = newEvent.event_end_date.toString().slice(11,13);
+    fixed_date_5 = newEvent.event_end_date.toString().slice(14,16);
+    fixed_date_6 = newEvent.event_end_date.toString().slice(17,19);
+
+    newEvent.event_end_date = "";
+    var str = newEvent.event_end_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+    fixed_date_4, fixed_date_5, fixed_date_6);
+    newEvent.event_end_date = str;
+// END DATE FORMATTING
+
 
     insertAndGet(newEvent);
 
     var toReturn = {
 
-    	event_id: events[0].length +1 /* +1 or not?... */
+    	event_id: events.length +1 /* +1 or not?... */
     }
 
     return reply(toReturn);
@@ -204,7 +325,7 @@ eventController.postConfig = {
 //delete
 eventController.deleteConfig = {
   handler: function(request, reply) {
-        getEvents();
+        getEventsJSON();
 
         if (request.params.id) {
             if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -221,7 +342,7 @@ eventController.deleteConfig = {
                   console.log("set event #", request.params.id, " to innactive (is_active = false)");
               }
 
-              getEvents();
+              getEventsJSON();
 
               reply([{
                 statusCode: 200,

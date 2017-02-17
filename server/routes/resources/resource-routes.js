@@ -53,8 +53,8 @@ function getResourcesJSON() {
 
       	//resources.push(JSObj);
         resources = JSObj;
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nresources: ", resources);
-        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nresources: ", resources);
+        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       	numRes = resources.length;
 
     }
