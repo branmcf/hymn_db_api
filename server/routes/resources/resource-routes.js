@@ -71,11 +71,11 @@ function insertResource(theObj) {
   justResource.topics = JSON.stringify(justResource.topics);
   justResource.accompaniment = JSON.stringify(justResource.accompaniment);
   justResource.ethnicities = JSON.stringify(justResource.ethnicities);
-  //justResource.tags = JSON.stringify(justResource.tags);
+  justResource.tags = JSON.stringify(justResource.tags);
   justResource.ensembles = JSON.stringify(justResource.ensembles);
   justResource.languages = JSON.stringify(justResource.languages);
 
-  console.log("\n\nJUSTRESOURCE: \n\n", justResource);
+  //console.log("\n\nJUSTRESOURCE: \n\n", justResource);
 
   // TYPE CONVERSION
   if(typeof justResource.hymn_soc_member == "string") {
@@ -256,7 +256,7 @@ function insertAndGet(toInsert){
 
     insertFirst(toInsert, function() {
         getResourcesJSON();
-        console.log("Done with post requst getResources...");
+        
     });    
 }
 
@@ -302,18 +302,27 @@ resourceController.postConfig = {
       parent:           req.payload.data.parent,
       description:      req.payload.data.description,
       hymn_soc_member:  req.payload.data.hymn_soc_member,
-      is_free:          req.payload.data.is_free,
+      is_free:          req.payload.data.is_free,   
+      city:             req.payload.data.city,
+      state:            req.payload.data.state,
+      country:          req.payload.data.country,
+      high_level:       req.payload.data.high_level,
+      is_active:        req.payload.data.is_active,
+      user_id:          req.payload.uid,
+      user:             req.payload.user,
+      pract_schol:      req.payload.data.pract_schol,
+
       categories:       req.payload.data.categories,
       topics:            req.payload.data.topics,
       accompaniment:    req.payload.data.accompaniment,
       languages:        req.payload.data.languages,
       ensembles:        req.payload.data.ensembles,
       ethnicities:      req.payload.data.ethnicities,
-      user_id:          req.payload.uid,
-      user:             req.payload.user,
-      pract_schol:      req.payload.data.pract_schol
+      tags:             req.payload.data.tags,
 
-    };
+    };    
+    
+    
 
     //insertResource(theData);
 
