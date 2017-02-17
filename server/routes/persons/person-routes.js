@@ -14,19 +14,12 @@ var connection = mysql.createConnection({
 
 });
 
-
-
-
 personController = {};
 var persons = [];
   var numPersons = 0;
-  var personTopics = [];
-  var personEnsembles = [];
-  var personEthnicities =[];
-  var personInstruments = [];
-  var personCategories = [];
 
 getPersonsJSON();
+
 
 
 function rowsToJS(theArray) {
@@ -35,7 +28,72 @@ function rowsToJS(theArray) {
   //console.log(temp);
   return temp;
 }
-)
+
+
+
+function getPersonsJSON() {
+  //console.log("===== GETTING PERSONS =====");
+  connection.query(`SELECT * from persons`, function(err, rows, fields) {
+    if (!err) {
+
+      	var JSObj = rowsToJS(rows);
+
+        persons = [];
+
+        persons = JSObj;
+
+      	numPersons = persons.length;
+
+    }
+    else
+      console.log('Error while performing Persons Query.');
+
+  });
+}//end func
+
+
+
+function insertPerson(theObj) {
+
+  var justPerson = JSON.parse(JSON.stringify(theObj));
+
+  justPerson.categories = JSON.stringify(justPerson.categories);
+  justPerson.topics = JSON.stringify(justPerson.topics);
+  justPerson.ethnicities = JSON.stringify(justPerson.ethnicities);
+  justPerson.tags = JSON.stringify(justPerson.tags);
+  justPerson.ensembles = JSON.stringify(justPerson.ensembles);
+  justPerson.instruments = JSON.stringify(justPerson.instruments);
+
+  //console.log("\n\njustPerson: \n\n", justPerson);
+
+  // TYPE CONVERSION
+  if(typeof justPerson.hymn_soc_member == "string") {
+    if(justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
+      justPerson.hymn_soc_member = false;
+    } else {
+      justPerson.hymn_soc_member = true;
+    }
+  } else if(typeof justPerson.hymn_soc_member == "number") {
+    if(justPerson.hymn_soc_member == 0) {
+      justPerson.hymn_soc_member = false;
+    } else {
+      justPerson.hymn_soc_member = true;
+    }
+  } else {
+    //neither a string nor Number
+    justPerson.hymn_soc_member = false;
+  }
+
+
+  // END TYPE CONVERSION
+
+	connection.query(`INSERT INTO persons set ?`, justPerson, function(err, rows, fields) {
+        if(err) { throw err; }
+
+        var JSObj = rowsToJS(theObj);
+        persons.push(JSObj);  
+    });
+}
 
 /*
 ===================================================
@@ -43,32 +101,35 @@ function rowsToJS(theArray) {
 ===================================================
 */
 
+
+
 function formatPerson(actualIndex) {
   var personData = {};
 
   personData = {
-    id:             persons[0][actualIndex].id,
-    first_name:     persons[0][actualIndex].first_name,
-    last_name:      persons[0][actualIndex].last_name,
-    email:          persons[0][actualIndex].email,
-    city:           persons[0][actualIndex].city,
-    state:          persons[0][actualIndex].state,
-    country:        persons[0][actualIndex].country,
-    url:            persons[0][actualIndex].website,
-    social_facebook:persons[0][actualIndex].social_facebook,
-    social_twitter: persons[0][actualIndex].social_twitter,
-    social_other:   persons[0][actualIndex].social_other,
-    emphasis:       persons[0][actualIndex].emphasis,
-    hymn_soc_member:persons[0][actualIndex].hymn_soc_member,
-    topics:         personTopics[actualIndex],
-    ensembles:      personEnsembles[actualIndex],
-    ethnicities:    personEthnicities[actualIndex],
-    categories:     personCategories[actualIndex],
-    instruments:    personInstruments[actualIndex],
-    user_id:        persons[0][actualIndex].user_id,
-    user:           persons[0][actualIndex].user
+    id:             persons[actualIndex].id,
+    first_name:     persons[actualIndex].first_name,
+    last_name:      persons[actualIndex].last_name,
+    email:          persons[actualIndex].email,
+    city:           persons[actualIndex].city,
+    state:          persons[actualIndex].state,
+    country:        persons[actualIndex].country,
+    url:            persons[actualIndex].website,
+    social_facebook:persons[actualIndex].social_facebook,
+    social_twitter: persons[actualIndex].social_twitter,
+    social_other:   persons[actualIndex].social_other,
+    emphasis:       persons[actualIndex].emphasis,
+    hymn_soc_member:persons[actualIndex].hymn_soc_member,
+    user_id:        persons[actualIndex].user_id,
+    user:           persons[actualIndex].user,
 
-
+    instruments:    persons[actualIndex].instruments,
+    categories:     persons[actualIndex].categories,
+    ensembles:      persons[actualIndex].ensembles,
+    ethnicities:    persons[actualIndex].ethnicities,
+    topics:         persons[actualIndex].topics,
+    tags:           persons[actualIndex].tags
+    
   };
 
   var theUrl = "/person/" + String(actualIndex+1);
@@ -85,35 +146,36 @@ function formatPerson(actualIndex) {
 
 }
 
-//RESOURCE GET REQUEST
+
+
+//PERSON GET REQUEST
 personController.getConfig = {
 
   handler: function (request, reply) {
 
-    getPersons();
+    getPersonsJSON();
 
-    //console.log("\n\nETHS[", persons[0].length-1, "] => ",personEthnicities[persons[0].length-1]);
+    //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
 
     if (request.params.id) {
         if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
+          //return reply('Not enough Persons in the database for your request').code(404);
           return reply(Boom.notFound("Index out of range for Persons get request"));
         }
-        //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-        var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+        var actualIndex = Number(request.params.id -1 );  
 
         //create new object, convert to json
         var str = formatPerson(actualIndex);
 
         return reply(str);
 
-      //return reply(resources[actualId]);
+      //return reply(persons[actualId]);
     }
 
     //if no ID specified
     var objToReturn = [];
 
-    for(var i=0; i < persons[0].length; i++) {
+    for(var i=0; i < persons.length; i++) {
       var temp = formatPerson(i);
       objToReturn.push(temp);
     }
@@ -122,37 +184,16 @@ personController.getConfig = {
   }
 };
 
-//RESOURCE POST REQUEST
+
+
+//PERSON POST REQUEST
 personController.postConfig = {
 
   handler: function(req, reply) {
 
-  	getPersons();
+  	//getPersonsJSON();
 
   	var thePersonID = persons.length;
-/*
-    var theData = {
-      name: 			    req.payload.title,
-      website: 			  req.payload.url,
-      author: 			  req.payload.author,
-
-      parent: 			  req.payload.parent,
-
-      description: 		req.payload.description,
-      categories: 		req.payload.categories,
-      topic: 			    req.payload.topic,
-      accompaniment: 	req.payload.accompaniment,
-      languages: 		  req.payload.languages,
-      ensembles : 		req.payload.ensembles,
-      ethnicities : 	req.payload.ethnicities,
-      hymn_soc_member:req.payload.hymn_soc_member,
-      //city: 			req.payload.city,
-      //state: 			req.payload.state,
-      //country: 			req.payload.country
-
-    };
-*/
-    //console.log("\nRECEIVED :", req.payload.data);
 
     var theData = {
       first_name:             req.payload.data.first_name,
@@ -166,15 +207,16 @@ personController.postConfig = {
       social_twitter:          req.payload.data.social_twitter,
       social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
-      hymn_soc_member:            req.payload.data.hymn_soc_member,
-      topics:    req.payload.data.topics,
-      ensembles:        req.payload.data.ensembles,
-      ethnicities:      req.payload.data.ethnicities,
+      hymn_soc_member:            req.payload.data.hymn_soc_member,     
       user_id:          req.payload.uid,
       user:             req.payload.user,
       
       instruments:      req.payload.data.instruments,
-      categories:       req.payload.data.categories
+      categories:       req.payload.data.categories,
+      ensembles:        req.payload.data.ensembles,
+      ethnicities:      req.payload.data.ethnicities,
+      topics:           req.payload.data.topics,
+      tags:             req.payload.data.tags
 
     };
 
@@ -182,7 +224,7 @@ personController.postConfig = {
 
     var toReturn = {
 
-    	person_id: persons[0].length +1 /* +1 or not?... */
+    	person_id: thePersonID +1 /* +1 or not?... */
 
     }
 
@@ -218,7 +260,6 @@ personController.postConfig = {
 
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
-    { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
-  //{ path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  //{ path: '/resource/activate/{id}', method: 'PUT', config: resourceController.activateConfig}
+    { path: '/person/{id?}', method: 'GET', config: personController.getConfig }
+  
 ];

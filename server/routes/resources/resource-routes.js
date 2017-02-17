@@ -116,10 +116,7 @@ function insertResource(theObj) {
         if(err) { throw err; }
 
         var JSObj = rowsToJS(theObj);
-        resources.push(JSObj);
-
-
-        
+        resources.push(JSObj);    
     });
 }
 

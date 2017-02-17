@@ -61,6 +61,10 @@ var routesArray = [];
   routesArray.push(routes);
   server.route(routesArray[1]);
 
+  routes = require('./routes/persons/person-routes');
+  routesArray.push(routes);
+  server.route(routesArray[2]);
+
 /*
   routes = require('./routes/congregations/congregation-routes');
   routesArray.push(routes);
@@ -76,8 +80,7 @@ var routesArray = [];
   //routes = require('./routes/users/user-routes');
   //routesArray.push(routes);
 
-  routes = require('./routes/persons/person-routes');
-  routesArray.push(routes);
+  
 
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i]);
