@@ -55,23 +55,9 @@ var routesArray = [];
 
   routes = require('./routes/organizations/organization-routes');
   routesArray.push(routes);
-  
 
-/*
   routes = require('./routes/congregations/congregation-routes');
   routesArray.push(routes);
-
-  
-
-
-
-  routes = require('./routes/resources/resource-routes');
-  routesArray.push(routes);
-
-  //routes = require('./routes/users/user-routes');
-  //routesArray.push(routes);
-
- */ 
 
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i]);

@@ -13,24 +13,20 @@ var connection = mysql.createConnection({
   port     : options.port
 
 });
-
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
 
-connection.connect();
+//connection.connect();
 
 congController = {};
-var congs = [];
+var congregations = [];
   var numCongs = 0;
-  var congDen = [];
-  var congCategories = [];
-  var congInstr = [];
-  var congEth = [];
-  var congTags = [];
-  var congLanguages = [];
 
-getCongregations();
+
+getcongregationsJSON();
+
+
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -39,57 +35,33 @@ function rowsToJS(theArray) {
   return temp;
 }
 
-function getCongregations() {
-  //console.log("getting congregations...");
+function getcongregationsJSON() {
   //get congregations from db
   connection.query('SELECT * from congregations', function(err, rows, fields) {
-    if (!err) {
+    if(err) { console.log('Error while performing congregations Query.'); throw err;}
+    else {
+    
+    congregations = [];
 
-      congs = [];
-      numCongs = 0;
-      congDen = [];
-      congCategories = [];
-      congInstr = [];
-      congEth = [];
-      congTags = [];
-      congLanguages = [];
-
-      var JSObj = rowsToJS(rows);
-      congs.push(JSObj);
-      numCongs = congs[0].length;
-
-      getInter("Languages", 	"congregations", "congregation_languages", 		"language_id", 		"congregation_id", congLanguages, numCongs);
-      //getInter("Cong_Types",    	"congregations", "congregation_types" ,				"congregation_type_id", "congregation_id", congCategories, numCongs);
-      getInter("Instrument_Types", 	 "congregations", "congregation_instrument_types", 	      "instrument_type_id", 	"congregation_id", congInstr, numCongs);
-      getInter("Ethnicities",  		   "congregations", "congregation_ethnicities",  		        "ethnicity_id", 			"congregation_id", congEth, numCongs);
-      //getInter("Tags", 				"congregations", "congregation_tags", 				"tag_id", 				"congregation_id", congTags, numCongs);
-      getInter("Congregation_Categories","congregations", "congregation_congregation_categories", "congregation_category_id", "congregation_id",  congCategories, numCongs);
-
-
-    }
-    else
-      console.log('Error while performing Congregations Query.');
-
+    var JSObj = rowsToJS(rows);
+    congregations = JSObj;
+    
+    numCongs = congregations.length;
+ 
+    }      
+      
   });
-}//end getCongregations function
+}//end getcongregationsJSON function
 
-/*
-================================================================================
-================================================================================
- - FOR INSERTING INTO CONGS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
+
 function insertCongregation(theObj) {
 
   var justCongregation = JSON.parse(JSON.stringify(theObj));
 
-//delete columns not stored in the congregations table!
-  if(typeof justCongregation.tags !== "undefined") { delete justCongregation.tags; }
-  if(typeof justCongregation.categories !== "undefined") { delete justCongregation.categories; }
-  if(typeof justCongregation.instruments !== "undefined") { delete justCongregation.instruments; }
-  if(typeof justCongregation.languages !== "undefined") { delete justCongregation.languages; }
-  if(typeof justCongregation.ethnicities !== "undefined") { delete justCongregation.ethnicities; }
+  justCongregation.categories = JSON.stringify(justCongregation.categories);
+  justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
+  justCongregation.tags = JSON.stringify(justCongregation.tags);
+  justCongregation.instruments = JSON.stringify(justCongregation.instruments);
 
 // TYPE CONVERSION
   if(typeof justCongregation.hymn_soc_member == "string") {
@@ -121,17 +93,6 @@ function insertCongregation(theObj) {
     justCongregation.is_free = 2;
   }
 
-  if(typeof justCongregation.events_free == "string") {
-    if(justCongregation.events_free == "yes" || justCongregation.events_free == "Yes") {
-      justCongregation.events_free = 1;
-    } else if(justCongregation.events_free == "no" || justCongregation.events_free == "No") {
-      justCongregation.events_free = 0;
-    } else {
-      justCongregation.events_free = 2;
-    }
-  } else if(typeof justCongregation.events_free !== "number") {
-    justCongregation.events_free = 2;
-  }
 
 // END TYPE CONVERSION
 
@@ -140,413 +101,103 @@ function insertCongregation(theObj) {
 
         var JSObj = rowsToJS(theObj);
 
-        congs[0].push(JSObj);
+        congregations.push(JSObj);
 
-        //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
-
-        //console.log("FIRST KEY IN ETHNICITIES: ",Object.keys(theObj.ethnicities)[0]);
-
-        //var ethlength = Object.keys(theObj.ethnicities).length;
-
-      //for multiple ethnicities
-
-        if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
-          for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
-            getID_left(theObj, i, "Ethnicities", "ethnicity_id");
-          }
-        } else { console.log("No ethnicities passed in..."); }
-        
-        if("tags" in theObj && typeof theObj.tags !== "undefined" && typeof theObj.tags !== "null") {
-          for(var i=0; i< Object.keys(theObj.tags).length; i++) {
-            getID_left(theObj, i, "Tags", "topic_id");
-          }
-        } else { console.log("No tags passed in..."); }
-
-        if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") { 
-          for(var i=0; i< Object.keys(theObj.categories).length; i++) {
-            getID_left(theObj, i, "Congregation_Categories", "category_id");
-          }
-        } else { console.log("No categories passed in..."); }
-        
-        if("languages" in theObj && typeof theObj.languages !== "undefined" && typeof theObj.languages !== "null") { 
-          for(var i=0; i< Object.keys(theObj.languages).length; i++) {
-              getID_left(theObj, i, "Languages", "language_id");
-          }
-        } else { console.log("No languages passed in..."); }
-
-        if("instruments" in theObj && typeof theObj.instruments !== "undefined" && typeof theObj.instruments !== "null") {
-          for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
-              getID_left(theObj, i, "Instrument_Types", "instrument_id");
-              
-              if(i == Object.keys(theObj.instruments).length - 1) {
-                getCongregations();
-              }
-          }
-        } else { console.log("No instruments passed in..."); getCongregations();}
         
     });
-}
+}//end func
 
-function getID_left(theObj, whichIndex, tableName, left_table_id) {
-  //console.log("1: ", tableName );
-
-	switch(tableName) {
-
-		case "Ethnicities":
-      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
-      break;
-		case "Congregation_Categories":
-      checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
-			break;
-		case "Tags":
-			checkIfTrue("tags", theObj, whichIndex, tableName, left_table_id);
-			break;
-		case "Languages":
-      checkIfTrue("languages", theObj, whichIndex, tableName, left_table_id);
-			break;
-    case "Instrument_Types":
-      checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
-			break;
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}//end switch
-
-}
-
-function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
-  //console.log("2: ", tableName)
-  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
-  if(attributeName2 == "Other" || attributeName2 == "other") {
-      //insert into "other_text" column
-      var theOtherText = theObj[param1][attributeName2];
-
-      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
-
- } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
-     attributeName2 = "false";
-     //console.log("False, insert nothing...");
-
- } else {
-    console.log ("It's True for: ", attributeName2);
-    getLeftTableID(tableName, left_table_id, attributeName2);
- }
-
-  //return attributeName2;
-}
-
-  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
-    //console.log("3: ", tableName);
-    var TorF = false;
-    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
-
-      if(!rows[0]) {
-        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
-        TorF = false;
-      }
-      else {
-        TorF = true;
-      }
-
-      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
-
-    });
-  }
-
-  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
-    //console.log("4: ", tableName);
-    if(TorF == false) {
-        var toInsert = {
-          name: "Other",
-          other_text: other_text
-        };
-        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
-        //insert!
-        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
-
-      }//end if
-      else {
-        var toGet = {
-          name: "Other",
-          other_text: other_text
-        }
-        //it exists already
-        getLeftTableID(tableName, left_table_id, toGet);
-      }
-
-  }
-
-  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
-    //console.log("5: ", tableName);
-
-    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
-
-      getLeftTableID(tableName, left_table_id, toInsert);
-    });
-  }
-
-//
-//
-//
-
-
-function getLeftTableID(tableName, left_table_id, attributeName) {
-
-  //console.log("6: ", tableName);
-  var mid_table_id = 0;
-
-  if(attributeName !== "false") {
-    	//2a
-      //NEED TO: if name= Other, then resort to 'other_text'
-    if(typeof attributeName == "object") {
-
-      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
-        attributeName.other_text, function (err, rows) {
-          if(err) { throw new Error(err); return; }
-
-          //console.log("=========================");
-          //console.log(query.sql);
-          //console.log("=========================");
-
-          try {
-            mid_table_id = rows[0].id;
-          } catch (err) {
-            // Handle the error here.
-            console.log("ERROR WITH RESULT: ", rows);
-            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-          }
-          //console.log("mid_table_id: ",mid_table_id);
-
-          if(mid_table_id != 0) {
-            insertMiddle(mid_table_id, tableName, left_table_id);
-          } else {
-            console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-          }
-
-        }); //end mysql connection
-      } else {
-        //if it's not "Other"...
-
-        //if it exists
-
-          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-          attributeName, function (err, rows) {
-            if(err) { throw new Error(err); return; }
-
-            //console.log("=========================");
-            //console.log(query.sql);
-            //console.log("=========================")
-
-
-            if(!rows[0]) {
-              //does not exist in db yet...
-              createNewAttribute(tableName, attributeName, left_table_id)
-            } else {
-              //it does exist!
-              mid_table_id = rows[0].id;
-
-              insertMiddle(mid_table_id, tableName, left_table_id)
-            }
-
-          });
-
-    }//end else (as in, if the attributeName is not == "object")
-  }//end if attribute name !== "false"
-}
-
-function createNewAttribute(tableName, attributeName, left_table_id) {
-
-  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
-
-  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
-    attributeName, function (err, rows) {
-      if(err) { throw new Error(err); return; }
-
-      getNewAttribute(tableName, attributeName, left_table_id);
-
-  }); //end mysql connection
-
-}
-
-function getNewAttribute(tableName, attributeName, left_table_id) {
-
-  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-    attributeName, function (err, rows) {
-    if(err) { throw new Error(err); return; }
-
-    var mid_table_id = 0;
-
-    try {
-      mid_table_id = rows[0].id;
-    } catch (err) {
-      // Handle the error here.
-      console.log("ERROR WITH RESULT: ", rows);
-      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-    }
-
-
-    //console.log("mid_table_id: ",mid_table_id);
-
-    if(mid_table_id != 0) {
-      insertMiddle(mid_table_id, tableName, left_table_id);
-    } else {
-      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-    }
-
-  }); //end mysql connection
-
-}
-
-function insertMiddle(theID, tableName, left_table_id) {
-  //console.log("7: ", tableName);
-	//2b. insert into middle table
-	switch(tableName) {
-    case "Ethnicities":
-      var midTable = "congregation_ethnicities";
-      var toInsert = {ethnicity_id: theID, congregation_id: congs[0].length};	break;
-    case "Congregation_Categories":
-      var midTable = "congregation_congregation_categories";
-      var toInsert = {congregation_category_id: theID, congregation_id: congs[0].length};	break;
-    case "Languages":
-      var midTable = "congregation_languages";
-      var toInsert = {language_id: theID, congregation_id: congs[0].length};	break;
-    case "Tags":
-      var midTable = "congregation_tags";
-      var toInsert = {tag_id: theID, congregation_id: congs[0].length};	break;
-    case "Instrument_Types":
-      var midTable = "congregation_instrument_types";
-      var toInsert = {instrument_type_id: theID, congregation_id: congs[0].length};	break;
-
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}
-	//console.log("\nTO INSERT: \n", toInsert);
-	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
-	toInsert, function (err, rows) {
-		if(err) { throw new Error(err); return; }
-
-	});
-}
-
-/*
-================================================================================
-================================================================================
- - END OF INSERTING INTO CONGS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
-
-//test: Method for querying intermediate tables:
-function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
-
-    for(var varI = 1; varI <= numLoops; varI++) {
-        connection.query(`
-          SELECT L.name
-          FROM ${leftTable} L
-          INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
-          INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
-          WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) { throw err; }
-
-            var JSObj = rowsToJS(rows);
-
-            arrayToUse.push(JSObj);
-
-
-        });
-
-    }//end for loop
-}//end function
 
 /*
 ===================================================
-- CONGREGATION Controllers -
+- congregations -
 ===================================================
 */
 
-function formatCongregation(actualIndex) {
+function formatCong(actualIndex) {
   var congData = {};
 
   congData = {
-    id:             congs[0][actualIndex].id,
-    name:           congs[0][actualIndex].name,
-    url:            congs[0][actualIndex].website,
-    //denominations:  congDen[actualIndex],
-    denomination:   congs[0][actualIndex].denomination,
-    city:           congs[0][actualIndex].city,
-    state:          congs[0][actualIndex].state,
-    country:        congs[0][actualIndex].country,
-    hymn_soc_member:congs[0][actualIndex].hymn_soc_member,
-    shape:          congs[0][actualIndex].shape,
-    clothing:       congs[0][actualIndex].clothing,
-    geography:      congs[0][actualIndex].geography,
-    ethnicities:    congEth[actualIndex],
-    attendance:     congs[0][actualIndex].attendance,
-    is_active:      congs[0][actualIndex].is_active,
-    high_level:     congs[0][actualIndex].high_level,
-    user_id:        congs[0][actualIndex].user_id,
-    user:           congs[0][actualIndex].user,
+    id:             congregations[actualIndex].id,
+    name:           congregations[actualIndex].name,
+    url:            congregations[actualIndex].website,
+    parent:         congregations[actualIndex].parent,
+    denomination:   congregations[actualIndex].denomination,
+    city:        	  congregations[actualIndex].city,
+    state:       	  congregations[actualIndex].state,
+    country:     	  congregations[actualIndex].country,
+    geographic_area:congregations[actualIndex].geography,
+    is_free:        congregations[actualIndex].is_free,
+    attendance:     congregations[actualIndex].attendance,
+    hymn_soc_member:congregations[actualIndex].hymn_soc_member,
+    is_active:      congregations[actualIndex].is_active,
+    high_level:     congregations[actualIndex].high_level,
+    user_id:        congregations[actualIndex].user_id,
+    user:           congregations[actualIndex].user,
+    shape:          congregations[actualIndex].shape,
+    clothing:       congregations[actualIndex].priest_attire,    
+    description_of_worship_to_guests: congregations[actualIndex].description_of_worship_to_guests,
+    process:        congregations[actualIndex].process,
+    approved:       congregations[actualIndex].approved,
 
-    languages:      congLanguages[actualIndex],
-    categories:     congCategories[actualIndex],
-    instruments:    congInstr[actualIndex],
-    tags:           congTags[actualIndex],
-    ethnicities:    congEth[actualIndex]
-    
+    categories:     congregations[actualIndex].categories,
+    instruments:    congregations[actualIndex].instruments,
+    ethnicities:    congregations[actualIndex].ethnicities,
+    tags:           congregations[actualIndex].tags
 
   };
 
-  var theUrl = "/congregation/" + String(actualIndex+1);
+  //format 
+  congData.ethnicities = JSON.parse(congData.ethnicities);
+  congData.tags = JSON.parse(congData.tags);
+  congData.categories = JSON.parse(congData.categories);
+  congData.instruments = JSON.parse(congData.instruments);
+  //end formatting
+
+  var theUrl = "/congregations/" + String(actualIndex+1);
 
   var finalObj = {
     url: theUrl,
     data: congData
   };
 
+  //var str = JSON.stringify(finalObj);
+
   return finalObj;
 }
 
-//CONG GET REQUEST
+//CONGREGATION GET REQUEST
 congController.getConfig = {
   handler: function (request, reply) {
-
-    getCongregations();
-
     if (request.params.id) {
-      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+
+        getcongregationsJSON();
+        
       if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
-          return reply(Boom.notFound("Index out of range for Congregation get request"));
+          return reply(Boom.notFound("Index out of range for congregations get request"));
       }
 
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-      var finalObj = formatCongregation(actualIndex);
+
+      finalObj = formatCong(actualIndex);
 
       return reply(finalObj);
     }
-    //if no ID specified
-    //reply(JSON.stringify(congs[0]));
 
     var objToReturn = [];
 
-    for(var i=0; i < congs[0].length; i++) {
-      var bob = formatCongregation(i);
+    for(var i=0; i < congregations.length; i++) {
+      var bob = formatCong(i);
       objToReturn.push(bob);
     }
 
-    reply(objToReturn);
+    return reply(objToReturn);
   }
-};
-
+}
+//
 //BELOW is for the POST request
+//
 function insertFirst(toInsert, _callback){
 
     insertCongregation(toInsert);
@@ -557,80 +208,64 @@ function insertFirst(toInsert, _callback){
 function insertAndGet(toInsert){
 
     insertFirst(toInsert, function() {
-        getCongregations();
-        //console.log("Done with post requst getCongregations...");
+        getcongregationsJSON();
+        //console.log("Done with post requst getOrg...");
     });    
 }
 
-//CONG POST REQUEST
+//CONGREGATION POST REQUEST
 congController.postConfig = {
+
   handler: function(req, reply) {
 
-    getCongregations();
+    //getcongregationsJSON();
+
+    var theCongID = congregations.length+1;
 
     var newCong = {
-      name:           req.payload.data.name,
-      website:        req.payload.data.url,
-      denomination:   req.payload.data.denomination,
-      city:           req.payload.data.city,
-      state:          req.payload.data.state,
-      country:        req.payload.data.country,
-      hymn_soc_member:req.payload.data.hymn_soc_member,
-      categories:     req.payload.data.categories,
-      instruments:    req.payload.data.instruments,
-      shape:          req.payload.data.shape,
-      clothing:       req.payload.data.clothing,
-      geography:      req.payload.data.geography,
-      ethnicities:    req.payload.data.ethnicities,
-      attendance:     req.payload.data.attendance,
+      name: req.payload.data.name,
+      website: req.payload.data.url,
+      parent: req.payload.data.parent,
+      denomination: req.payload.data.denomination,
+      city: req.payload.data.city,
+      state: req.payload.data.state,
+      country: req.payload.data.country,
+      geography: req.payload.data.geographic_area,
+      is_free: req.payload.data.is_org_free,
+      attendance: req.payload.data.attendance,
+      process: req.payload.data.process,
+      hymn_soc_member: req.payload.data.hymn_soc_member,
+      user:             req.payload.user,
+      user_id:          req.payload.uid,
+      priest_attire:    req.payload.data.clothing,
+      shape:            req.payload.data.shape,
+      description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
 
-      languages:      req.payload.data.languages,
-      tags:           req.payload.data.tags,
-      user_id:        req.payload.uid,
-      user:           req.payload.user
+      categories:       req.payload.data.categories,
+      instruments:      req.payload.data.instruments,
+      ethnicities:      req.payload.data.ethnicities,
+      tags:             req.payload.data.tags
+
     };
-    
-    //insertCongregation(newCong);
-    //getCongregations();
 
     insertAndGet(newCong);
 
     var toReturn = {
-
-    	cong_id: congs[0].length +1 /* +1 or not?... */
+      cong_id: theCongID
     }
 
     return reply(toReturn);
 
+      
+  }//end handler  
 
-    //reply(newRes);
-  }
-  /* ADD COMMA ^
-  validate: {
-    payload: {
-      cong_name: Joi.string().required(),
-      website: Joi.string().required(),
-      cong_city: Joi.string().required(),
-      cong_state: Joi.string().required(),
-      cong_country: Joi.string().required(),
-      priest_attire: Joi.string().required(),
-      denomination_id: Joi.number().required(),
-      song_types_id: Joi.number().required(),
-      instrument_types_id: Joi.number().required(),
-      worship_types_id: Joi.number().required(),
-      ethnicity_types_id: Joi.number().required(),
-      cong_type_id: Joi.number().required()
-
-    }
-  }
-  */
-
-};
+}//end postConfig
+  
 
 //delete
 congController.deleteConfig = {
   handler: function(request, reply) {
-        getCongregations();
+        getcongregationsJSON();
 
         if (request.params.id) {
             if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -642,16 +277,16 @@ congController.deleteConfig = {
             UPDATE congregations SET is_active = false
             WHERE id = ${request.params.id}`, function(err, rows, fields) {
               if(err) {
-                  return reply(Boom.badRequest(`Error while trying to DELETE cong with id=${request.params.id}...`));
+                  return reply(Boom.badRequest(`Error while trying to DELETE organization with id=${request.params.id}...`));
               } else {
                   console.log("set cong #", request.params.id, " to innactive (is_active = false)");
               }
 
-              getCongregations();
+              getcongregationsJSON();
 
               reply([{
                 statusCode: 200,
-                message: `Congregation with id=${request.params.id} set to innactive`,
+                message: `cong with id=${request.params.id} set to innactive`,
               }]);
             });
 
@@ -661,10 +296,8 @@ congController.deleteConfig = {
     }//end handler
 }
 
-
 module.exports = [
-	{ path: '/congregation', method: 'POST', config: congController.postConfig },
- 	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
-   { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig }
-
-];
+  	{ path: '/congregation', method: 'POST', config: congController.postConfig},
+  	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
+    { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig }
+  ];

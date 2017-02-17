@@ -44,13 +44,9 @@ function getOrganizationsJSON() {
     orgs = [];
 
     var JSObj = rowsToJS(rows);
-    orgs = JSObj;
-
-    console.log("orgs: ", orgs);
-    
+    orgs = JSObj;    
     numOrgs = orgs.length;
  
-    console.log("GOD FUCKING DANIT");
     }      
       
   });
