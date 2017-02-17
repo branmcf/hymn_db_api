@@ -153,27 +153,36 @@ function formatResource(actualIndex) {
     resource_date:  resources[actualIndex].resource_date,
     description:    resources[actualIndex].description,
     parent:         resources[actualIndex].parent,
-    topics:         resTopics[actualIndex],
-    accompaniment: 	resAcc[actualIndex],
-    tags:           resTags[actualIndex],
-    //tags:           resTags[actualIndex],
-    categories:     resCategories[actualIndex],
-    is_active:      resource[actualIndex].is_active,
+    is_active:      resources[actualIndex].is_active,
     high_level:     resources[actualIndex].high_level,
     city:           resources[actualIndex].city,
     state:          resources[actualIndex].state,
     country:        resources[actualIndex].country,
     hymn_soc_member:resources[actualIndex].hymn_soc_member,
-    //ethnicities
-    ethnicities:    resEth[actualIndex],
-    //eth id
     is_free:        resources[actualIndex].is_free,
-    languages:      resLanguages[actualIndex],
     user_id:        resources[actualIndex].user_id,
     user:           resources[actualIndex].user,
-    pract_schol:    resources[actualIndex].pract_schol
+    pract_schol:    resources[actualIndex].pract_schol,
+
+    languages:      resources[actualIndex].languages,
+    ethnicities:    resources[actualIndex].ethnicities,
+    ensembles:      resources[actualIndex].ensembles,
+    categories:     resources[actualIndex].categories,
+    accompaniment: 	resources[actualIndex].accompaniment,
+    topics:         resources[actualIndex].topics,
+    tags:           resources[actualIndex].tags
 
   };
+
+  //format 
+  resourceData.ethnicities = JSON.parse(resourceData.ethnicities);
+  resourceData.tags = JSON.parse(resourceData.tags);
+  resourceData.topics = JSON.parse(resourceData.topics);
+  resourceData.languages = JSON.parse(resourceData.languages);
+  resourceData.ensembles = JSON.parse(resourceData.ensembles);
+  resourceData.accompaniment = JSON.parse(resourceData.accompaniment);
+  resourceData.categories = JSON.parse(resourceData.categories);
+  //end formatting
 
   var theUrl = "/resource/" + String(actualIndex+1);
 
@@ -202,7 +211,7 @@ resourceController.getConfig = {
 
   handler: function (request, reply) {
 
-    getResourcesJSON();
+    //getResourcesJSON();
 
     if (request.params.id) {
         if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -210,7 +219,7 @@ resourceController.getConfig = {
           return reply(Boom.notFound("Index out of range for Resources get request"));
         }
         //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-        var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+        var actualIndex = Number(request.params.id -1 );  
 
         //create new object, convert to json
         var str = formatResource(actualIndex);
@@ -224,7 +233,7 @@ resourceController.getConfig = {
     //if no ID specified
     var objToReturn = [];
 
-    for(var i=0; i < resources[0].length; i++) {
+    for(var i=0; i < resources.length; i++) {
       var bob = formatResource(i);
       objToReturn.push(bob);
     }
@@ -354,7 +363,7 @@ resourceController.deleteConfig = {
               return reply(Boom.notFound());
             }
             //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+            var actualIndex = Number(request.params.id -1 );  
 
             var mysqlIndex = Number(request.params.id);
 
