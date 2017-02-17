@@ -1,23 +1,11 @@
 var Hapi = require('hapi');
-var Good = require('good');
-var Vision = require('vision');
 var Bcrypt = require('bcryptjs');
-//var Users = require('./users-db')
-var Handlebars = require('handlebars');
-var BasicAuth = require('hapi-auth-basic');
-var CookieAuth = require('hapi-auth-cookie');
-const Basic = require('hapi-auth-basic');
-
 var Boom = require('boom');
-var users_db = require('./users-db');
-
 var Joi = require('joi');
 var mysql = require('mysql');
 var async = require('async');
 //const fs = require('fs');
 //const https = require('https');
-
-
 
 var options = require('./config/config.js');
 
@@ -55,15 +43,19 @@ var routesArray = [];
   //routesArray.push(routes)
   routes = require('./routes/resources/resource-routes');
   routesArray.push(routes);
-  server.route(routesArray[0]);
+  
 
   routes = require('./routes/events/event-routes');
   routesArray.push(routes);
-  server.route(routesArray[1]);
+  
 
   routes = require('./routes/persons/person-routes');
   routesArray.push(routes);
-  server.route(routesArray[2]);
+  
+
+  routes = require('./routes/organizations/organization-routes');
+  routesArray.push(routes);
+  
 
 /*
   routes = require('./routes/congregations/congregation-routes');
@@ -71,8 +63,7 @@ var routesArray = [];
 
   
 
-  routes = require('./routes/organizations/organization-routes');
-  routesArray.push(routes);
+
 
   routes = require('./routes/resources/resource-routes');
   routesArray.push(routes);
@@ -80,13 +71,13 @@ var routesArray = [];
   //routes = require('./routes/users/user-routes');
   //routesArray.push(routes);
 
-  
+ */ 
 
   for(var i=0; i < routesArray.length; i++) {
     server.route(routesArray[i]);
   };
 
-*/
+
 
 
 //

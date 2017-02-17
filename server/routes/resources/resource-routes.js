@@ -258,30 +258,6 @@ resourceController.postConfig = {
   	//getResources();
 
   	var theResourceID = resources.length+1;
-/*
-    var theData = {
-      name: 			    req.payload.title,
-      website: 			  req.payload.url,
-      author: 			  req.payload.author,
-
-      parent: 			  req.payload.parent,
-
-      description: 		req.payload.description,
-      categories: 		req.payload.categories,
-      topic: 			    req.payload.topic,
-      accompaniment: 	req.payload.accompaniment,
-      languages: 		  req.payload.languages,
-      ensembles : 		req.payload.ensembles,
-      ethnicities : 	req.payload.ethnicities,
-      hymn_soc_member:req.payload.hymn_soc_member,
-      is_free: 			  req.payload.is_free
-      //city: 			req.payload.city,
-      //state: 			req.payload.state,
-      //country: 			req.payload.country
-
-    };
-*/
-    //console.log("\nRECEIVED :", req.payload.data);
 
     var theData = {
       name:             req.payload.data.title,

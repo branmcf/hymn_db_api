@@ -1,7 +1,6 @@
 var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
-var Regex = require("regex");
 
 var options = require('../../config/config.js');
 
@@ -15,7 +14,7 @@ var connection = mysql.createConnection({
 
 });
 
-connection.connect();
+//connection.connect();
 
 eventController = {};
 var events = [];
@@ -300,7 +299,7 @@ eventController.postConfig = {
 
     var toReturn = {
 
-    	event_id: events.length +1 /* +1 or not?... */
+    	event_id: theEventID /* +1 or not?... */
     }
 
     return reply(toReturn);

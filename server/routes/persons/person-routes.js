@@ -193,7 +193,7 @@ personController.postConfig = {
 
   	//getPersonsJSON();
 
-  	var thePersonID = persons.length;
+  	var thePersonID = persons.length+1;
 
     var theData = {
       first_name:             req.payload.data.first_name,
@@ -224,7 +224,7 @@ personController.postConfig = {
 
     var toReturn = {
 
-    	person_id: thePersonID +1 /* +1 or not?... */
+    	person_id: thePersonID /* +1 or not?... */
 
     }
 
