@@ -126,7 +126,7 @@ function formatCong(actualIndex) {
     city:        	  congregations[actualIndex].city,
     state:       	  congregations[actualIndex].state,
     country:     	  congregations[actualIndex].country,
-    geographic_area:congregations[actualIndex].geography,
+    geography:      congregations[actualIndex].geography,
     is_free:        congregations[actualIndex].is_free,
     attendance:     congregations[actualIndex].attendance,
     hymn_soc_member:congregations[actualIndex].hymn_soc_member,
@@ -180,19 +180,35 @@ congController.getConfig = {
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
 
-      finalObj = formatCong(actualIndex);
+      if(congregations[actualIndex].approved == false || congregations[actualIndex].approved == 0) {
+          var str = formatCong(actualIndex);
+          return reply(str);
+        } else {
+           return reply(Boom.badRequest("The Resource you request is already approved"));
+        }
 
-      return reply(finalObj);
     }
 
     var objToReturn = [];
 
     for(var i=0; i < congregations.length; i++) {
-      var bob = formatCong(i);
-      objToReturn.push(bob);
-    }
+      //var bob = formatResource(i);
+      if(congregations[i].approved == false || congregations[i].approved == 0) {
+        var str = {
+          id:     congregations[i].id,
+          user:   congregations[i].user,
+          title:  congregations[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
 
-    return reply(objToReturn);
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All congregations already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
   }
 }
 //
@@ -230,7 +246,7 @@ congController.postConfig = {
       city: req.payload.data.city,
       state: req.payload.data.state,
       country: req.payload.data.country,
-      geography: req.payload.data.geographic_area,
+      geography: req.payload.data.geography,
       is_free: req.payload.data.is_org_free,
       attendance: req.payload.data.attendance,
       process: req.payload.data.process,
@@ -294,10 +310,50 @@ congController.deleteConfig = {
           return reply(Boom.notFound("You must specify an id as a parameter"));
         }
     }//end handler
-}
+};
+
+congController.activateConfig = {
+    handler: function(request, reply) {
+        getcongregationsJSON();
+
+        if (request.params.id) {
+            if (numCongs <= request.params.id - 1) {
+              //return reply('Not enough resources in the database for your request').code(404);
+              return reply(Boom.notFound("Entered invalid id for congregations activate endpoint"));
+            }
+            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            var theCol = request.params.what_var;
+            var theVal = request.params.what_val;
+
+            var query = connection.query(`
+            UPDATE congregations SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+              if(err) {
+                  console.log(query.sql);
+                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              } else {
+                console.log(query.sql);
+                console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+              }
+
+              return reply( {code: 201} );
+            });
+
+          //return reply(resources[actualId]);
+        }
+
+
+    }
+};
 
 module.exports = [
   	{ path: '/congregation', method: 'POST', config: congController.postConfig},
   	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
-    { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig }
+    { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
+    { path: '/congregation/{what_var}/{what_val}/{id}', method: 'PUT', config: congController.activateConfig}
+
   ];
