@@ -47,15 +47,12 @@ function getEventsJSON() {
         eventEnsembles = [];
         eventEthnicities = [];
 
-      	//resources.push(JSObj);
         events = JSObj;
-        //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nevents: ", resources);
-        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       	numEvents = events.length;
 
     }
     else
-      console.log('Error while performing Resources Query.');
+      console.log('Error while performing events Query.');
 
   });
 }
@@ -180,12 +177,12 @@ function formatEvent(actualIndex) {
 eventController.getConfig = {
   handler: function (request, reply) {
 
-      getEventsJSON();
+    getEventsJSON();
 
     if (request.params.id) {
-      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
       if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
+          //return reply('Not enough events in the database for your request').code(404);
           return reply(Boom.notFound("Index out of range for Events get request"));
       }
 
@@ -199,17 +196,29 @@ eventController.getConfig = {
       //return reply(events[actualId]);
     }
     //if no ID specified
-    //reply(JSON.stringify(events[0]));
-
     var objToReturn = [];
 
     for(var i=0; i < events.length; i++) {
-      var bob = formatEvent(i);
-      objToReturn.push(bob);
-    }
+      //var bob = formatevent(i);
+      if(events[i].approved == false || events[i].approved == 0) {
+        var str = {
+          id:     events[i].id,
+          user:   events[i].user,
+          title:  events[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
 
-    reply(objToReturn);
-  }
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All events already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }  
+  
+    
+  }//end handler
 };
 
 //BELOW is for the POST request
@@ -268,30 +277,41 @@ eventController.postConfig = {
 
     };  
 
+    if(newEvent.event_date == "" || newEvent.event_date == " ") {
+      newEvent.event_date = null;
+    }
+    if(newEvent.event_end_date == "" || newEvent.event_end_date == " ") {
+      newEvent.event_end_date = null;
+    }
+
 // DATE FORMATTING
-    var fixed_date_1 = newEvent.event_date.toString().slice(0,4);
-    var fixed_date_2 = newEvent.event_date.toString().slice(5,7);
-    var fixed_date_3 = newEvent.event_date.toString().slice(8,10);
-    var fixed_date_4 = newEvent.event_date.toString().slice(11,13);
-    var fixed_date_5 = newEvent.event_date.toString().slice(14,16);
-    var fixed_date_6 = newEvent.event_date.toString().slice(17,19);
+    if(newEvent.event_date !== null) {
+      var fixed_date_1 = newEvent.event_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_date.toString().slice(17,19);
 
-    newEvent.event_date = "";
-    var str = newEvent.event_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
-    fixed_date_4, fixed_date_5, fixed_date_6);
-    newEvent.event_date = str;
+      newEvent.event_date = "";
+      var str = newEvent.event_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_date = str;
+    }
     
-    fixed_date_1 = newEvent.event_end_date.toString().slice(0,4);
-    fixed_date_2 = newEvent.event_end_date.toString().slice(5,7);
-    fixed_date_3 = newEvent.event_end_date.toString().slice(8,10);
-    fixed_date_4 = newEvent.event_end_date.toString().slice(11,13);
-    fixed_date_5 = newEvent.event_end_date.toString().slice(14,16);
-    fixed_date_6 = newEvent.event_end_date.toString().slice(17,19);
+    if(newEvent.event_end_date !== null) {
+      var fixed_date_1 = newEvent.event_end_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_end_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_end_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_end_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_end_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_end_date.toString().slice(17,19);
 
-    newEvent.event_end_date = "";
-    var str = newEvent.event_end_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
-    fixed_date_4, fixed_date_5, fixed_date_6);
-    newEvent.event_end_date = str;
+      newEvent.event_end_date = "";
+      var str = newEvent.event_end_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_end_date = str;
+    }
 // END DATE FORMATTING
 
 
@@ -353,10 +373,49 @@ eventController.deleteConfig = {
           return reply(Boom.notFound("You must specify an id as a parameter"));
         }
     }//end handler
+};
+
+eventController.activateConfig = {
+    handler: function(request, reply) {
+        getEventsJSON();
+      	var theeventID = events.length+1;
+
+        if (request.params.id) {
+            if (numEvents <= request.params.id - 1) {
+              //return reply('Not enough events in the database for your request').code(404);
+              return reply(Boom.notFound("Not enough events"));
+            }
+            //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for events/1 you'll get events[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            var theCol = request.params.what_var;
+            var theVal = request.params.what_val;
+
+            var query = connection.query(`
+            UPDATE events SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+              if(err) {
+                  console.log(query.sql);
+                  return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              } else {
+                console.log(query.sql);
+                console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+              }
+
+              return reply( {code: 201} );
+            });
+
+          //return reply(events[actualId]);
+        }
+    }//handler
 }
+
 
 module.exports = [
   	{ path: '/event', method: 'POST', config: eventController.postConfig },
   	{ path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
-    { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig }
+    { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
+    { path: '/event/{what_var}/{what_val}/{id}', method: 'PUT', config: eventController.activateConfig}
 ];
