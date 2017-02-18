@@ -35,7 +35,7 @@ var resources = [];
 getResourcesJSON();
 
 function getResourcesJSON() {
-  console.log("===== GETTING RESOURCES =====");
+  //console.log("===== GETTING RESOURCES =====");
   connection.query(`SELECT * from resources`, function(err, rows, fields) {
     if (!err) {
 
@@ -196,8 +196,6 @@ function formatResource(actualIndex) {
 //RESOURCE GET REQUEST
 resourceController.getConfig = {
 
-
-
   handler: function (request, reply) {
 
     //getResourcesJSON();
@@ -223,14 +221,25 @@ resourceController.getConfig = {
     var objToReturn = [];
 
     for(var i=0; i < resources.length; i++) {
-      var bob = formatResource(i);
-      objToReturn.push(bob);
-    }
+      //var bob = formatResource(i);
+      if(resources[i].approved == false || resources[i].approved == 0) {
+        var str = {
+          id:     resources[i].id,
+          user:   resources[i].user,
+          title:  resources[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
 
     //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All resources already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
 
-    reply(objToReturn);
-  }
+  }//end handler
 };
 
 //BELOW is for the POST request
@@ -363,8 +372,7 @@ resourceController.deleteConfig = {
     }
 };
 
-//RESOURCE MAKE ACTIVE ENDPOINT
-//RESOURCE DELETE ENDPOINT
+//RESOURCE CHANGE VARIABLE ENDPOINT
 resourceController.activateConfig = {
     handler: function(request, reply) {
         getResourcesJSON();
@@ -380,16 +388,21 @@ resourceController.activateConfig = {
 
             var mysqlIndex = Number(request.params.id);
 
-            connection.query(`
-            UPDATE resources SET is_active = true
-            WHERE id = ${mysqlIndex}`, function(err, rows, fields) {
+            var theCol = request.params.what_var;
+            var theVal = request.params.what_val;
+
+            var query = connection.query(`
+            UPDATE resources SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
               if(err) {
-                  throw err;
+                  console.log(query.sql);
+                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
               } else {
-                  console.log("set resource #", mysqlIndex, " to active (is_active = true)");
+                console.log(query.sql);
+                console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
               }
 
-              return reply( {code: 200} );
+              return reply( {code: 201} );
             });
 
           //return reply(resources[actualId]);
@@ -401,9 +414,11 @@ resourceController.activateConfig = {
 
 
 
+
+
 module.exports = [
 	{ path: '/resource', method: 'POST', config: resourceController.postConfig },
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  { path: '/resource/activate/{id}', method: 'PUT', config: resourceController.activateConfig}
+  { path: '/resource/{what_var}/{what_val}/{id}', method: 'PUT', config: resourceController.activateConfig}
 ];
