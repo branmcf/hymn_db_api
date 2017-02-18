@@ -189,9 +189,12 @@ eventController.getConfig = {
       var actualIndex = Number(request.params.id) - 1;
       //
       //create new object, convert to json
-      var finalObj = formatEvent(actualIndex);
-
-      return reply(finalObj);
+      if(events[actualIndex].approved == false || events[actualIndex].approved == 0) {
+          var str = formatEvent(actualIndex);
+          return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Event you request is already approved"));
+      }
 
       //return reply(events[actualId]);
     }

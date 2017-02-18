@@ -165,9 +165,14 @@ personController.getConfig = {
         var actualIndex = Number(request.params.id -1 );  
 
         //create new object, convert to json
-        var str = formatPerson(actualIndex);
-
-        return reply(str);
+        
+        if(persons[actualIndex].approved == false || persons[actualIndex].approved == 0) {
+          var str = formatPerson(actualIndex);
+          return reply(str);
+        } else {
+           return reply(Boom.badRequest("The Person you request is already approved"));
+        }
+        
 
       //return reply(persons[actualId]);
     }

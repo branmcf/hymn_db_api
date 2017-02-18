@@ -209,9 +209,12 @@ resourceController.getConfig = {
         var actualIndex = Number(request.params.id -1 );  
 
         //create new object, convert to json
-        var str = formatResource(actualIndex);
-
-        return reply(str);
+        if(resources[actualIndex].approved == false || resources[actualIndex].approved == 0) {
+          var str = formatResource(actualIndex);
+          return reply(str);
+        } else {
+           return reply(Boom.badRequest("The Resource you request is already approved"));
+        }
 
 
       //return reply(resources[actualId]);

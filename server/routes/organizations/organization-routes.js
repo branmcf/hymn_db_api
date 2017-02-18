@@ -203,19 +203,34 @@ orgController.getConfig = {
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
 
-      finalObj = formatOrg(actualIndex);
+      if(orgs[actualIndex].approved == false || orgs[actualIndex].approved == 0) {
+          var str = formatOrg(actualIndex);
+          return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Org you request is already approved"));
+      }
 
-      return reply(finalObj);
     }
 
     var objToReturn = [];
 
     for(var i=0; i < orgs.length; i++) {
-      var bob = formatOrg(i);
-      objToReturn.push(bob);
-    }
+      //var bob = formatResource(i);
+      if(orgs[i].approved == false || orgs[i].approved == 0) {
+        var str = {
+          id:     orgs[i].id,
+          user:   orgs[i].user,
+          title:  orgs[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
 
-    return reply(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All orgs already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
   }
 }
 //
@@ -318,10 +333,50 @@ orgController.deleteConfig = {
           return reply(Boom.notFound("You must specify an id as a parameter"));
         }
     }//end handler
+};
+
+orgController.activateConfig = {
+    handler: function(request, reply) {
+        getOrganizationsJSON();
+      	
+        if (request.params.id) {
+            if (numOrgs <= request.params.id - 1) {
+              //return reply('Not enough orgs in the database for your request').code(404);
+              return reply(Boom.notFound());
+            }
+            //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for orgs/1 you'll get orgs[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            var theCol = request.params.what_var;
+            var theVal = request.params.what_val;
+
+            var query = connection.query(`
+            UPDATE organizations SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+              if(err) {
+                  console.log(query.sql);
+                  return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              } else {
+                console.log(query.sql);
+                console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+              }
+
+              return reply( {code: 201} );
+            });
+
+          //return reply(organizations[actualId]);
+        }
+
+
+    }
+
 }
 
 module.exports = [
   	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
   	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig },
-    { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig }
+    { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
+    { path: '/orgs/{what_var}/{what_val}/{id}', method: 'PUT', config: orgController.activateConfig}
   ];
