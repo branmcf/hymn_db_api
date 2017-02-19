@@ -270,3 +270,4 @@ CREATE TABLE persons (
 	categories json DEFAULT NULL
 
 );
+

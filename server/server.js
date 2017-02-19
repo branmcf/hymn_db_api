@@ -4,8 +4,10 @@ var Boom = require('boom');
 var Joi = require('joi');
 var mysql = require('mysql');
 var async = require('async');
-//const fs = require('fs');
+
+const fs = require('fs');
 //const https = require('https');
+var BasicAuth = require('hapi-auth-basic')
 
 var options = require('./config/config.js');
 
@@ -24,6 +26,8 @@ if (process.env.JAWSDB_URL) {
 }
 
 connection.connect();
+
+getUsersNew();
 //
 
 // create new server instance
@@ -88,47 +92,9 @@ function getUsersNew() {
     console.log("done with getUsersNew");
 
   });
-}
-
-//bcrypt authentication
-
-const validate = function (request, username, password, reply) {
-    
-    for(var i=0; i< users[0].length; i++) {
-      console.log("trying...", users[0][i]);
-      if(users[0][i].email == username ) {
-
-        console.log("found matching user email...");
+};//end getUsersNew
 
 
-        var user = users[0][i];
-        
-
-        var checkThis = Bcrypt.compareSync(password, user.password);
-           console.log(checkThis);
-           if(checkThis == true) {
-            var returnThis = {   
-                email:      user.email, 
-                first_name: user.first_name,
-                last_name:  user.last_name,
-                website:    user.website,
-                user_id:    user.id 
-            };
-            
-            server.inject(`/user/${i+1}`, (res) => { reply(res.result).code(201); });
-
-           }//end if password matches...
-           else {
-             console.log("NO MATCHING PASSWORD FOUND");
-             reply(Boom.unauthorized('invalid password'));
-           }
-
-      }//end matching email found
-    }
-
-    
-    
-};
 
 //
 // login (accepted email and password)
@@ -151,7 +117,7 @@ server.route({
 
           if(users[0].length==0) { return reply(Boom.unauthorized('no users register right now because tyler doesnt know how to computer')); }
 
-          console.log("length: ", users[0].length);
+          //console.log("length: ", users[0].length);
           for(var i=0; i< users[0].length; i++) {
             //console.log("trying...", users[0][i]);
             if(users[0][i].email == req.payload.email ) {
@@ -177,7 +143,7 @@ server.route({
                 //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
                 returnThis.ethnicities = JSON.parse(returnThis.ethnicities);
 
-
+                console.log("successfull login");
                 return reply(returnThis).code(201);
 
               }//end if password matches...
@@ -221,127 +187,12 @@ server.route({
   }
 
 });
-
-
-server.route({
-  
-  method: 'POST',
-  path: '/register',
-  config: {
-    //auth: 'simple',
-    handler: function(req, reply) {
-
-      async.series([
-        function(callback) {
-          var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
-            var JSObj = rowsToJS(rows);
-            users.push(JSObj);
-            numUsers = users[0].length;
-            console.log("done with getUsersNew");
-
-            callback(null, 'one');
-          });
-          
-        },
-        function(callback) {
-//
-
-          var salt = Bcrypt.genSaltSync(10);
-          var hash = Bcrypt.hashSync(req.payload.password, salt);
-
-          //console.log(req.payload.password, " TURNED INTO : ", hash);
-          // Store hash in your password DB. 
-
-          //loop thru all emails and see if email is already in users_db
-          if(users.length !== 0) {
-            console.log(users);
-            for(var i=0; i< users[0].length; i++) {
-              if(users[0][i].email == req.payload.email) {
-                return reply(Boom.badRequest('invalid query, email already exists!')); 
-              }
-            }
-          }
-          
-          console.log("ethnicities: ", req.payload.ethnicities);
-          var theEth = JSON.stringify(req.payload.ethnicities);
-          console.log("theEth: ", theEth);
-          var query = connection.query('INSERT INTO users SET ?', 
-          { 
-            email: req.payload.email, 
-            password: hash,
-            salt: salt,
-            iterations: 10,
-            first_name: req.payload.first_name,
-            last_name: req.payload.last_name,
-            website: req.payload.website,
-            is_admin: req.payload.is_admin,
-            ethnicities: theEth
-          }, 
-          function(err, rows, fields) {
-              if(err) { 
-                console.log("Error with registering a user...");
-                return reply(Boom.badRequest('invalid query')); 
-              }
-              
-              users[0].push({email: req.payload.email, password:hash, salt: salt, iterations: 10});
-              console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
-
-
-              return reply ({ 
-                email: req.payload.email,
-                user_id: users[0].length,
-                first_name: req.payload.first_name,
-                last_name: req.payload.last_name,
-                is_admin: req.payload.is_admin,
-                ethnicities: req.payload.ethnicities
-              }).code(201);
-          });
-          
-
-//
-          callback(null, 'two');
-        }
-
-      ], function(err, results) {
-        console.log("done with both");
-      });
-
-      
-      
-
-      
-        
-  },//end handler
-  validate: {
-    payload: {
-      email: Joi.string().email().required(),
-      password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
-
-      first_name: Joi.string().alphanum(),
-      last_name: Joi.string().alphanum(),
-      website: Joi.string().hostname(),
-      is_admin: Joi.number(),
-      ethnicities: Joi.any()
-
-    }
-  }
-  }//end config
-});
-
-
-
-
-//end authentication
-
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
   temp = JSON.parse(temp);
   //console.log(temp);
   return temp;
 }
-
-
-
 
 
 /*
@@ -777,6 +628,7 @@ server.route({
 
 });
 
+/*
 server.start(function (err) {
     if (err) {
       server.log('error', 'failed to start server');
@@ -786,4 +638,154 @@ server.start(function (err) {
   };
 
     server.log('info', 'Server running at: ' + server.info.uri);
+});
+*/
+
+server.register(BasicAuth, function (err) {  
+  if(err) { throw err; }
+
+  //
+  //
+  //
+  //bcrypt authentication
+  const basicValidation = function (request, username, password, callback) {
+      //below is hardcoded in right now, will change later
+      //if(username == options.email_admin && password == options.password_admin) {
+      connection.query(`SELECT * from users where email = ?`, [username], function(err, rows, fields) {
+        if(err) { throw err;}
+        console.log("rows: ", rows);
+        
+        var user = {
+          id: rows[0].id,
+          email: username,
+          password: rows[0].password
+        };
+        
+        Bcrypt.compare(password, user.password, function (err, isValid) {
+          callback(err, isValid, { id: user.id, email: user.email })
+        });
+      });  
+
+      //}//end matching email and pass found 
+
+  }//end basicValidation
+  //
+  //
+  //
+  server.auth.strategy('simple', 'basic', { validateFunc: basicValidation })
+
+  server.route({
+    
+    method: 'POST',
+    path: '/register',
+    config: {
+      auth: 'simple',
+      handler: function(req, reply) {
+
+        async.series([
+          function(callback) {
+            var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
+              var JSObj = rowsToJS(rows);
+              users.push(JSObj);
+              numUsers = users[0].length;
+              console.log("done with getUsersNew");
+
+              callback(null, 'one');
+            });
+            
+          },
+          function(callback) {
+  //
+
+            var salt = Bcrypt.genSaltSync(10);
+            var hash = Bcrypt.hashSync(req.payload.password, salt);
+
+            //console.log(req.payload.password, " TURNED INTO : ", hash);
+            // Store hash in your password DB. 
+
+            //loop thru all emails and see if email is already in users_db
+            if(users.length !== 0) {
+              //console.log(users);
+              for(var i=0; i< users[0].length; i++) {
+                if(users[0][i].email == req.payload.email) {
+                  return reply(Boom.badRequest('invalid query, email already exists!')); 
+                }
+              }
+            }
+            
+            //console.log("ethnicities: ", req.payload.ethnicities);
+            var theEth = JSON.stringify(req.payload.ethnicities);
+            //console.log("theEth: ", theEth);
+            var query = connection.query('INSERT INTO users SET ?', 
+            { 
+              email: req.payload.email, 
+              password: hash,
+              salt: salt,
+              iterations: 10,
+              first_name: req.payload.first_name,
+              last_name: req.payload.last_name,
+              website: req.payload.website,
+              is_admin: req.payload.is_admin,
+              ethnicities: theEth
+            }, 
+            function(err, rows, fields) {
+                if(err) { 
+                  console.log("Error with registering a user...");
+                  return reply(Boom.badRequest('invalid query')); 
+                }
+                
+                users[0].push({email: req.payload.email, password:hash, salt: salt, iterations: 10});
+                console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
+
+
+                return reply ({ 
+                  email: req.payload.email,
+                  user_id: users[0].length,
+                  first_name: req.payload.first_name,
+                  last_name: req.payload.last_name,
+                  is_admin: req.payload.is_admin,
+                  ethnicities: req.payload.ethnicities
+                }).code(201);
+            });
+            
+
+  //
+            callback(null, 'two');
+          }
+
+        ], function(err, results) {
+          console.log("done with both");
+        });
+
+        
+        
+
+        
+          
+    },//end handler
+    validate: {
+      payload: {
+        email: Joi.string().email().required(),
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
+
+        first_name: Joi.string().alphanum(),
+        last_name: Joi.string().alphanum(),
+        website: Joi.string().hostname(),
+        is_admin: Joi.number(),
+        ethnicities: Joi.any()
+
+      }
+    }
+    }//end config
+  });
+
+  // start your server after plugin registration
+  server.start(function (err) {
+    if (err) {
+      throw err
+    }
+
+    console.log('info', 'Server running at: ' + server.info.uri)
+  })
+
 });
