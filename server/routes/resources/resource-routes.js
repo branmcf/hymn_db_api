@@ -238,12 +238,12 @@ function formatResource(actualIndex) {
 
   };
 
-  resourceData.is_active = reformatTinyInt(resourceData.is_active);
-  resourceData.high_level = reformatTinyInt(resourceData.high_level);
-  resourceData.hymn_soc_member = reformatTinyInt(resourceData.hymn_soc_member);
-  resourceData.is_free = reformatTinyInt(resourceData.is_free);
-  resourceData.pract_schol = reformatTinyInt(resourceData.pract_schol);
-  resourceData.approved = reformatTinyInt(resourceData.approved);
+  resourceData.is_active = reformatTinyInt(resourceData.is_active, false);
+  resourceData.high_level = reformatTinyInt(resourceData.high_level, false);
+  resourceData.hymn_soc_member = reformatTinyInt(resourceData.hymn_soc_member, false);
+  resourceData.is_free = reformatTinyInt(resourceData.is_free, false);
+  resourceData.pract_schol = reformatTinyInt(resourceData.pract_schol, true);
+  resourceData.approved = reformatTinyInt(resourceData.approved, false);
 
   //format 
   /*
@@ -271,11 +271,13 @@ function formatResource(actualIndex) {
 
 };
 
-function reformatTinyInt(toFormat) {
+function reformatTinyInt(toFormat, pract_schol) {
   if(toFormat == 1) {
     return("true");
   } else if(toFormat == 0) {
     return("false");
+  } else if(pract_schol) {
+    return("both");
   } else {
     return("partially");
   }
@@ -378,7 +380,7 @@ resourceController.postConfig = {
       state:            req.payload.data.state,
       country:          req.payload.data.country,
       high_level:       req.payload.data.high_level,
-      is_active:        true,
+      is_active:        1,
       user_id:          req.payload.uid,
       user:             req.payload.user,
       pract_schol:      req.payload.data.pract_schol,

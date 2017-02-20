@@ -323,6 +323,7 @@ personController.postConfig = {
     };
 
     insertPerson(theData);
+    getPersonsJSON();
 
     var toReturn = {
 
