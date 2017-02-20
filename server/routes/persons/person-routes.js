@@ -181,11 +181,25 @@ personController.getConfig = {
     var objToReturn = [];
 
     for(var i=0; i < persons.length; i++) {
-      var temp = formatPerson(i);
-      objToReturn.push(temp);
-    }
+      //var bob = formatResource(i);
+      if(persons[i].approved == false || persons[i].approved == 0) {
+        var str = {
+          id:     persons[i].id,
+          user:   persons[i].user,
+          first_name:  persons[i].first_name,
+          first_name:  persons[i].last_name
 
-    return reply(objToReturn);
+        }
+        objToReturn.push(str);
+      }
+    }//end for
+
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All resources already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
   }
 };
 
