@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
 
 });
 
-connection.connect();
+//connection.connect();
 
 eventController = {};
 var events = [];
@@ -24,7 +24,7 @@ var events = [];
   var eventEnsembles = [];
   var eventEthnicities = [];
 
-getEvents();
+getEventsJSON();
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -33,48 +33,85 @@ function rowsToJS(theArray) {
   return temp;
 }
 
-function getEvents() {
-  //get events from db
-  connection.query('SELECT * FROM events', function(err, rows, fields) {
+function getEventsJSON() {
+  //console.log("===== GETTING EVENTS =====");
+  connection.query(`SELECT * from events`, function(err, rows, fields) {
     if (!err) {
 
-      eventEnsembles = [];
-      eventEthnicities = [];
+      	var JSObj = rowsToJS(rows);
 
-      var JSObj = rowsToJS(rows);
-      events.push(JSObj);
+        events = [];
+        numEvents = 0;
+        eventTypes = [];
+        eventTags = [];
+        eventEnsembles = [];
+        eventEthnicities = [];
 
-      numEvents = events[0].length;
+        events = JSObj;
+      	numEvents = events.length;
 
-      getInter("Ensembles",   "events", "event_ensembles", "ensemble_id", "event_id", eventEnsembles, numEvents );
-      getInter("Ethnicities", "events", "event_ethnicities", "ethnicity_id", "event_id", eventEthnicities, numEvents );
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], eventEthnicities);
+          popArray(JSObj[i]["ensembles"], eventEnsembles);
+          popArray(JSObj[i]["tags"], eventTags);
+          //popArray(JSObj[i]["types"], eventTypes);
 
+          //console.log("\nETH[",i, "] : ", resEth[i]);
+          //console.log("\nCAT[",i, "] : ", resCategories[i]);
+          //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+          //console.log("\nACC[",i, "] : ", resAcc[i]);
+          //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+          //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+          //console.log("\nresTags[",i, "] : ", resTags[i]);
+        }
 
     }
     else
-      console.log('Error while performing Events Query.');
+      console.log('Error while performing events Query.');
 
   });
-}//end getEvents function
-//
-//
+}
 
-/*
-================================================================================
-================================================================================
- - FOR INSERTING INTO EVENTS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
+//Object.keys(obj.ethnicities).length
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        key = key.replace(/_/g, " ");
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
+}
+
 function insertEvent(theObj) {
 
   var justEvent = JSON.parse(JSON.stringify(theObj));
 
-//delete columns not stored in the events table!
-  if(typeof justEvent.ethnicities !== "undefined") { delete justEvent.ethnicities; }
-  if(typeof justEvent.ensembles !== "undefined") { delete justEvent.ensembles; }
+  justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
+  justEvent.tags = JSON.stringify(justEvent.tags);
+  justEvent.ensembles = JSON.stringify(justEvent.ensembles);
 
-// TYPE CONVERSION
+  //console.log("\n\njustEvent: \n\n", justEvent);
+
+  // TYPE CONVERSION
   if(typeof justEvent.hymn_soc_member == "string") {
     if(justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
       justEvent.hymn_soc_member = false;
@@ -92,305 +129,37 @@ function insertEvent(theObj) {
     justEvent.hymn_soc_member = false;
   }
 
+  if(justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
+    if(typeof justEvent.is_free == "string") {
+      if(justEvent.is_free == "yes" || justEvent.is_free == "Yes") {
+        justEvent.is_free = 1;
+      } else if(justEvent.is_free == "no" || justEvent.is_free == "No"){
+        justEvent.is_free = 0;
+      } else {
+        justEvent.is_free = 2;
+      }
+    } else if(typeof justEvent.is_free !== "number") {
+      justEvent.is_free = 2;
+    }
+  }
 
-// END TYPE CONVERSION
+  if(typeof justEvent.cost !== "string") {
+    justEvent.cost = '' + justEvent.cost;
+  }  
+    
+
+  // END TYPE CONVERSION
 
 	connection.query(`INSERT INTO events set ?`, justEvent, function(err, rows, fields) {
-        if(err) { throw err; }
+        if(err) { console.log(Boom.badRequest('invalid query inserting into events')); throw err; }
 
         var JSObj = rowsToJS(theObj);
+        events.push(JSObj);
 
-        events[0].push(JSObj);
 
-        //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
-
-        //console.log("FIRST KEY IN ETHNICITIES: ",Object.keys(theObj.ethnicities)[0]);
-
-        //var ethlength = Object.keys(theObj.ethnicities).length;
-
-      //for multiple ethnicities
-
-        if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
-          for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
-            getID_left(theObj, i, "Ethnicities", "ethnicity_id");
-          }
-        } else { console.log("No ethnicities passed in..."); }
-        
-        if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
-          for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
-            getID_left(theObj, i, "Ensembles", "ensemble_id");
-
-            if(i == Object.keys(theObj.ensembles).length - 1) {
-                getEvents();
-              }
-          }
-        } else { console.log("No instruments passed in..."); getEvents();} 
-        
         
     });
 }
-
-function getID_left(theObj, whichIndex, tableName, left_table_id) {
-  //console.log("1: ", tableName );
-
-	switch(tableName) {
-
-		case "Ethnicities":
-      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
-      break;
-		case "Ensembles":
-      checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
-			break;
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}//end switch
-
-}
-
-function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
-  //console.log("2: ", tableName)
-  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
-  if(attributeName2 == "Other" || attributeName2 == "other") {
-      //insert into "other_text" column
-      var theOtherText = theObj[param1][attributeName2];
-
-      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
-
- } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
-     attributeName2 = "false";
-     //console.log("False, insert nothing...");
-
- } else {
-    console.log ("It's True for: ", attributeName2);
-    getLeftTableID(tableName, left_table_id, attributeName2);
- }
-
-  //return attributeName2;
-}
-
-  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
-    //console.log("3: ", tableName);
-    var TorF = false;
-    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
-
-      if(!rows[0]) {
-        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ NOT FOUND!", rows[0]);
-        TorF = false;
-      }
-      else {
-        TorF = true;
-      }
-
-      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
-
-    });
-  }
-
-  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
-    //console.log("4: ", tableName);
-    if(TorF == false) {
-        var toInsert = {
-          name: "Other",
-          other_text: other_text
-        };
-        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
-        //insert!
-        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
-
-      }//end if
-      else {
-        var toGet = {
-          name: "Other",
-          other_text: other_text
-        }
-        //it exists already
-        getLeftTableID(tableName, left_table_id, toGet);
-      }
-
-  }
-
-  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
-    //console.log("5: ", tableName);
-
-    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
-
-      getLeftTableID(tableName, left_table_id, toInsert);
-    });
-  }
-
-//
-//
-//
-
-
-function getLeftTableID(tableName, left_table_id, attributeName) {
-
-  //console.log("6: ", tableName);
-  var mid_table_id = 0;
-
-  if(attributeName !== "false") {
-    	//2a
-      //NEED TO: if name= Other, then resort to 'other_text'
-    if(typeof attributeName == "object") {
-
-      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
-        attributeName.other_text, function (err, rows) {
-          if(err) { throw new Error(err); return; }
-
-          //console.log("=========================");
-          //console.log(query.sql);
-          //console.log("=========================");
-
-          try {
-            mid_table_id = rows[0].id;
-          } catch (err) {
-            // Handle the error here.
-            console.log("ERROR WITH RESULT: ", rows);
-            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-          }
-          //console.log("mid_table_id: ",mid_table_id);
-
-          if(mid_table_id != 0) {
-            insertMiddle(mid_table_id, tableName, left_table_id);
-          } else {
-            console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-          }
-
-        }); //end mysql connection
-      } else {
-        //if it's not "Other"...
-
-        //if it exists
-
-          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-          attributeName, function (err, rows) {
-            if(err) { throw new Error(err); return; }
-
-            //console.log("=========================");
-            //console.log(query.sql);
-            //console.log("=========================")
-
-
-            if(!rows[0]) {
-              //does not exist in db yet...
-              createNewAttribute(tableName, attributeName, left_table_id)
-            } else {
-              //it does exist!
-              mid_table_id = rows[0].id;
-
-              insertMiddle(mid_table_id, tableName, left_table_id)
-            }
-
-          });
-
-    }//end else (as in, if the attributeName is not == "object")
-  }//end if attribute name !== "false"
-}
-
-function createNewAttribute(tableName, attributeName, left_table_id) {
-
-  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
-
-  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
-    attributeName, function (err, rows) {
-      if(err) { throw new Error(err); return; }
-
-      getNewAttribute(tableName, attributeName, left_table_id);
-
-  }); //end mysql connection
-
-}
-
-function getNewAttribute(tableName, attributeName, left_table_id) {
-
-  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-    attributeName, function (err, rows) {
-    if(err) { throw new Error(err); return; }
-
-    var mid_table_id = 0;
-
-    try {
-      mid_table_id = rows[0].id;
-    } catch (err) {
-      // Handle the error here.
-      console.log("ERROR WITH RESULT: ", rows);
-      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-    }
-
-
-    //console.log("mid_table_id: ",mid_table_id);
-
-    if(mid_table_id != 0) {
-      insertMiddle(mid_table_id, tableName, left_table_id);
-    } else {
-      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-    }
-
-  }); //end mysql connection
-
-}
-
-function insertMiddle(theID, tableName, left_table_id) {
-  //console.log("7: ", tableName);
-	//2b. insert into middle table
-	switch(tableName) {
-    case "Ethnicities":
-      var midTable = "event_ethnicities";
-      var toInsert = {ethnicity_id: theID, event_id: events[0].length}; break;
-    case "Ensembles":
-      var midTable = "event_ensembles";
-      var toInsert = {ensemble_id: theID, event_id: events[0].length}; break;
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}
-	//console.log("\nTO INSERT: \n", toInsert);
-	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
-	toInsert, function (err, rows) {
-		if(err) { throw new Error(err); return; }
-
-	});
-}
-
-/*
-================================================================================
-================================================================================
- - END OF INSERTING INTO EVENTS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
-
-
-//
-//test: Method for querying intermediate tables:
-//
-function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
-
-    for(var varI = 1; varI <= numLoops; varI++) {
-        connection.query(`
-          SELECT L.name
-          FROM ${leftTable} L
-          INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
-          INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
-          WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) { throw err; }
-
-            var JSObj = rowsToJS(rows);
-
-            arrayToUse.push(JSObj);
-
-
-        });
-
-    }//end for loop
-}//end function
 
 /*
 ===================================================
@@ -402,37 +171,42 @@ function formatEvent(actualIndex) {
   var eventData = {};
 
   eventData = {
-    id:             events[0][actualIndex].id,
-    title:          events[0][actualIndex].name,
-    frequency:      events[0][actualIndex].frequency,
-    url:            events[0][actualIndex].website,
-    parent:         events[0][actualIndex].parent_org_id,
-    //topic:          events[0][actualIndex].topic,
-    //topic:         eventTypes[actualIndex],
-    description:    events[0][actualIndex].description,
-    event_date:     events[0][actualIndex].event_date,
-    event_end_date:     events[0][actualIndex].event_end_date,
-    cost:           events[0][actualIndex].cost,
-    //tag id's
-    //tags:           eventTags[actualIndex],
-    city:        	events[0][actualIndex].city,
-    state:       	events[0][actualIndex].state,
-    country:     	events[0][actualIndex].country,
-    hymn_soc_member:events[0][actualIndex].hymn_soc_member,
-    is_active:      events[0][actualIndex].is_active,
-    high_level:     events[0][actualIndex].high_level,
-    user_id:        events[0][actualIndex].user_id,
-    user:           events[0][actualIndex].user,
-    theme:          events[0][actualIndex].theme,
-    shape:          events[0][actualIndex].shape,
-    clothing:  events[0][actualIndex].priest_attire,
-    attendance:     events[0][actualIndex].attendance,
+    id:             events[actualIndex].id,
+    title:          events[actualIndex].name,
+    frequency:      events[actualIndex].frequency,
+    url:            events[actualIndex].website,
+    parent:         events[actualIndex].parent_org_id,
+    theme:          events[actualIndex].theme,
+    description:    events[actualIndex].description,
+    event_date:     events[actualIndex].event_date,
+    event_end_date: events[actualIndex].event_end_date,
+    cost:           events[actualIndex].cost,
+    city:        	  events[actualIndex].city,
+    state:       	  events[actualIndex].state,
+    country:     	  events[actualIndex].country,
+    hymn_soc_member:events[actualIndex].hymn_soc_member,
+    is_active:      events[actualIndex].is_active,
+    is_free:        events[actualIndex].is_free,
+    high_level:     events[actualIndex].high_level,
+    user_id:        events[actualIndex].user_id,
+    user:           events[actualIndex].user,
+    shape:          events[actualIndex].shape,
+    clothing:       events[actualIndex].priest_attire,
+    attendance:     events[actualIndex].attendance,
+    approved:       events[actualIndex].approved,
+    pract_schol:    events[actualIndex].pract_schol,
+
     ethnicities:    eventEthnicities[actualIndex],
-    ensembles:      eventEnsembles[actualIndex]
+    ensembles:      eventEnsembles[actualIndex],
+    tags:           eventTags[actualIndex]
 
 
   };
-
+/*
+  eventData.ethnicities = JSON.parse(eventData.ethnicities);
+  eventData.tags = JSON.parse(eventData.tags);
+  eventData.ensembles = JSON.parse(eventData.ensembles);
+*/
   var theUrl = "/event/" + Number(actualIndex+1);
 
   var finalObj = {
@@ -447,36 +221,51 @@ function formatEvent(actualIndex) {
 eventController.getConfig = {
   handler: function (request, reply) {
 
-      getEvents();
+    getEventsJSON();
 
     if (request.params.id) {
-      //if (resources.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
       if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
+          //return reply('Not enough events in the database for your request').code(404);
           return reply(Boom.notFound("Index out of range for Events get request"));
       }
 
       var actualIndex = Number(request.params.id) - 1;
       //
       //create new object, convert to json
-      var finalObj = formatEvent(actualIndex);
-
-      return reply(finalObj);
+      if(events[actualIndex].approved == false || events[actualIndex].approved == 0) {
+          var str = formatEvent(actualIndex);
+          return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Event you request is already approved"));
+      }
 
       //return reply(events[actualId]);
     }
     //if no ID specified
-    //reply(JSON.stringify(events[0]));
-
     var objToReturn = [];
 
-    for(var i=0; i < events[0].length; i++) {
-      var bob = formatEvent(i);
-      objToReturn.push(bob);
-    }
+    for(var i=0; i < events.length; i++) {
+      //var bob = formatevent(i);
+      if(events[i].approved == false || events[i].approved == 0) {
+        var str = {
+          id:     events[i].id,
+          user:   events[i].user,
+          title:  events[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
 
-    reply(objToReturn);
-  }
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All events already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }  
+  
+    
+  }//end handler
 };
 
 //BELOW is for the POST request
@@ -490,7 +279,7 @@ function insertFirst(toInsert, _callback){
 function insertAndGet(toInsert){
 
     insertFirst(toInsert, function() {
-        getEvents();
+        getEventsJSON();
         //console.log("Done with post requst getEvents...");
     });    
 }
@@ -502,43 +291,82 @@ eventController.postConfig = {
 
     //console.log("\nRECEIVED :", req.payload.data);
 
-    getEvents();
+    //getEventsJSON();
 
     var theEventID = events.length+1;
 
     var newEvent = {
-      name: 		   req.payload.data.title,
-      frequency:   req.payload.data.occurance,
-      website: 		 req.payload.data.url,
-      parent:       req.payload.data.parent,
-      description: req.payload.data.description,
-      event_date:  req.payload.data.event_date,
+      name: 		      req.payload.data.title,
+      frequency:      req.payload.data.occurance,
+      website: 		    req.payload.data.url,
+      parent:         req.payload.data.parent,
+      description:    req.payload.data.description,
+      event_date:     req.payload.data.event_start_date,
       event_end_date: req.payload.data.event_end_date,
-      cost: 		    req.payload.data.cost,
-      city: 		    req.payload.data.city,
-      state: 		    req.payload.data.state,
-      country: 		  req.payload.data.country,
+      cost: 		      req.payload.data.cost,
+      city: 		      req.payload.data.city,
+      state: 		      req.payload.data.state,
+      country: 		    req.payload.data.country,
       hymn_soc_member:req.payload.data.hymn_soc_member,
-      user_id:      req.payload.uid,
-      user:         req.payload.user,
-      theme:        req.payload.data.theme,
-      shape:        req.payload.data.shape,
-      priest_attire:req.payload.data.clothing,
-      attendance:   req.payload.data.attendance,
-      ethnicities:  req.payload.data.ethnicities,
-      ensembles:    req.payload.data.ensembles
+      user_id:        req.payload.uid,
+      user:           req.payload.user,
+      theme:          req.payload.data.theme,
+      shape:          req.payload.data.shape,
+      priest_attire:  req.payload.data.clothing,
+      attendance:     req.payload.data.attendance,
+      approved:       req.payload.data.approved,
+      pract_schol:    req.payload.data.pract_schol,
+      is_free:        req.payload.data.is_free,
 
-    };
+      ethnicities:    req.payload.data.ethnicities,
+      ensembles:      req.payload.data.ensembles,
+      tags:           req.payload.data.tags
 
-    var fixedDate = new Date().toISOString().slice(0, 10);
+    };  
 
-    newEvent.event_date = fixedDate;
+    if(newEvent.event_date == "" || newEvent.event_date == " ") {
+      newEvent.event_date = null;
+    }
+    if(newEvent.event_end_date == "" || newEvent.event_end_date == " ") {
+      newEvent.event_end_date = null;
+    }
+
+// DATE FORMATTING
+    if(newEvent.event_date !== null) {
+      var fixed_date_1 = newEvent.event_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_date.toString().slice(17,19);
+
+      newEvent.event_date = "";
+      var str = newEvent.event_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_date = str;
+    }
+    
+    if(newEvent.event_end_date !== null) {
+      var fixed_date_1 = newEvent.event_end_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_end_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_end_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_end_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_end_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_end_date.toString().slice(17,19);
+
+      newEvent.event_end_date = "";
+      var str = newEvent.event_end_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_end_date = str;
+    }
+// END DATE FORMATTING
+
 
     insertAndGet(newEvent);
 
     var toReturn = {
 
-    	event_id: events[0].length +1 /* +1 or not?... */
+    	event_id: theEventID /* +1 or not?... */
     }
 
     return reply(toReturn);
@@ -563,7 +391,7 @@ eventController.postConfig = {
 //delete
 eventController.deleteConfig = {
   handler: function(request, reply) {
-        getEvents();
+        getEventsJSON();
 
         if (request.params.id) {
             if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -580,7 +408,7 @@ eventController.deleteConfig = {
                   console.log("set event #", request.params.id, " to innactive (is_active = false)");
               }
 
-              getEvents();
+              getEventsJSON();
 
               reply([{
                 statusCode: 200,
@@ -592,10 +420,49 @@ eventController.deleteConfig = {
           return reply(Boom.notFound("You must specify an id as a parameter"));
         }
     }//end handler
+};
+
+eventController.activateConfig = {
+    handler: function(request, reply) {
+        getEventsJSON();
+      	var theeventID = events.length+1;
+
+        if (request.params.id) {
+            if (numEvents <= request.params.id - 1) {
+              //return reply('Not enough events in the database for your request').code(404);
+              return reply(Boom.notFound("Not enough events"));
+            }
+            //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for events/1 you'll get events[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            var theCol = request.params.what_var;
+            var theVal = request.params.what_val;
+
+            var query = connection.query(`
+            UPDATE events SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+              if(err) {
+                  console.log(query.sql);
+                  return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              } else {
+                console.log(query.sql);
+                console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+              }
+
+              return reply( {code: 201} );
+            });
+
+          //return reply(events[actualId]);
+        }
+    }//handler
 }
+
 
 module.exports = [
   	{ path: '/event', method: 'POST', config: eventController.postConfig },
   	{ path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
-    { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig }
+    { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
+    { path: '/event/{what_var}/{what_val}/{id}', method: 'PUT', config: eventController.activateConfig}
 ];

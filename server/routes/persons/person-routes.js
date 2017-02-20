@@ -14,42 +14,119 @@ var connection = mysql.createConnection({
 
 });
 
-
-
-
 personController = {};
 var persons = [];
-  var numPersons = 0;
+var personNumPersons = 0;
   var personTopics = [];
   var personEnsembles = [];
-  var personEthnicities =[];
+  var personEthnicities = [];
   var personInstruments = [];
   var personCategories = [];
+  var personTags = [];
 
-getPersons();
+getPersonsJSON();
 
 
-/*
-================================================================================
-================================================================================
- - FOR INSERTING INTO PERSONS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
+
+function rowsToJS(theArray) {
+  var temp = JSON.stringify(theArray);
+  temp = JSON.parse(temp);
+  //console.log(temp);
+  return temp;
+}
+
+
+
+function getPersonsJSON() {
+  //console.log("===== GETTING PERSONS =====");
+  connection.query(`SELECT * from persons`, function(err, rows, fields) {
+    if (!err) {
+
+      	var JSObj = rowsToJS(rows);
+
+        persons = [];
+        personTopics = [];
+        personEnsembles = [];
+        personEthnicities = [];
+        personInstruments = [];
+        personCategories = [];
+        personTags = [];
+
+
+        persons = JSObj;
+
+      	numPersons = persons.length;
+
+        //console.log("\nT: ", rows[0]);
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], personEthnicities);
+          popArray(JSObj[i]["categories"], personCategories);
+          popArray(JSObj[i]["topics"], personTopics);
+          popArray(JSObj[i]["ensembles"], personEnsembles);
+          popArray(JSObj[i]["tags"], personTags);
+          popArray(JSObj[i]["instruments"], personInstruments);
+          //popArray(JSObj[i]["types"], resTypes);
+
+          //console.log("\nETH[",i, "] : ", resEth[i]);
+          //console.log("\nCAT[",i, "] : ", resCategories[i]);
+          //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+          //console.log("\nACC[",i, "] : ", resAcc[i]);
+          //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+          //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+          //console.log("\nresTags[",i, "] : ", resTags[i]);
+        }
+
+    }
+    else
+      console.log('Error while performing Persons Query.');
+
+  });
+}//end func
+
+
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        key = key.replace(/_/g, " ");
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
+}
+
 
 function insertPerson(theObj) {
 
   var justPerson = JSON.parse(JSON.stringify(theObj));
 
-//delete columns not stored in the persons table!
-  if(typeof justPerson.topics !== "undefined") { delete justPerson.topics; }
-  if(typeof justPerson.ensembles !== "undefined") { delete justPerson.ensembles; }
-  if(typeof justPerson.ethnicities !== "undefined") { delete justPerson.ethnicities; }
-  if(typeof justPerson.instruments !== "undefined") { delete justPerson.instruments; }
-  if(typeof justPerson.categories !== "undefined") { delete justPerson.categories; }
+  justPerson.categories = JSON.stringify(justPerson.categories);
+  justPerson.topics = JSON.stringify(justPerson.topics);
+  justPerson.ethnicities = JSON.stringify(justPerson.ethnicities);
+  justPerson.tags = JSON.stringify(justPerson.tags);
+  justPerson.ensembles = JSON.stringify(justPerson.ensembles);
+  justPerson.instruments = JSON.stringify(justPerson.instruments);
 
+  //console.log("\n\njustPerson: \n\n", justPerson);
 
-// TYPE CONVERSION
+  // TYPE CONVERSION
   if(typeof justPerson.hymn_soc_member == "string") {
     if(justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
       justPerson.hymn_soc_member = false;
@@ -67,424 +144,52 @@ function insertPerson(theObj) {
     justPerson.hymn_soc_member = false;
   }
 
-  
 
-// END TYPE CONVERSION
+  // END TYPE CONVERSION
 
-	connection.query(`INSERT INTO persons SET ?`, justPerson, function(err, rows, fields) {
+	connection.query(`INSERT INTO persons set ?`, justPerson, function(err, rows, fields) {
         if(err) { throw err; }
 
         var JSObj = rowsToJS(theObj);
-
-        persons[0].push(JSObj);
-
-        //console.log("ethnicities length: ", Object.keys(theObj.ethnicities).length);
-
-        //console.log("FIRST KEY IN ETHNICITIES: ",Object.keys(theObj.ethnicities)[0]);
-
-        //var ethlength = Object.keys(theObj.ethnicities).length;
-
-      //for multiple ethnicities
-      if("ethnicities" in theObj && typeof theObj.ethnicities !== "undefined" && typeof theObj.ethnicities !== "null") {
-        for(var i=0; i< Object.keys(theObj.ethnicities).length; i++) {
-            getID_left(theObj, i, "Ethnicities", "ethnicity_id");
-        }
-      }
-
-      if("topics" in theObj && typeof theObj.topics !== "undefined" && typeof theObj.topics !== "null") {
-        for(var i=0; i< Object.keys(theObj.topics).length; i++) {
-            getID_left(theObj, i, "Topics", "topic_id");
-        }
-      }
-
-      if("categories" in theObj && typeof theObj.categories !== "undefined" && typeof theObj.categories !== "null") {
-        for(var i=0; i< Object.keys(theObj.categories).length; i++) {
-            getID_left(theObj, i, "Person_Categories", "person_category_id");
-        }
-      }
-
-      if("instruments" in theObj && typeof theObj.instruments !== "undefined" && typeof theObj.instruments !== "null") {
-        for(var i=0; i< Object.keys(theObj.instruments).length; i++) {
-            getID_left(theObj, i, "Instrument_Types", "instrument_type_id");
-        }
-      }
-
-      if("ensembles" in theObj && typeof theObj.ensembles !== "undefined" && typeof theObj.ensembles !== "null") {
-    	  for(var i=0; i< Object.keys(theObj.ensembles).length; i++) {
-    		  getID_left(theObj, i, "Ensembles", "ensemble_id");
-
-          if(i == Object.keys(theObj.ensembles).length - 1) {
-              getPersons();
-          }
-    	  }
-      } else { getPersons(); }
-
+        persons.push(JSObj);  
     });
 }
 
-function getID_left(theObj, whichIndex, tableName, left_table_id) {
-  //console.log("1: ", tableName );
-
-	switch(tableName) {
-
-		case "Ethnicities":
-      checkIfTrue("ethnicities", theObj, whichIndex, tableName, left_table_id);
-			break;
-		case "Topics":
-      checkIfTrue("topics", theObj, whichIndex, tableName, left_table_id);
-			break;
-		case "Ensembles":
-			checkIfTrue("ensembles", theObj, whichIndex, tableName, left_table_id);
-			break;
-    case "Instrument_Types":
-      checkIfTrue("instruments", theObj, whichIndex, tableName, left_table_id);
-      break;
-    case "Person_Categories":
-      checkIfTrue("categories", theObj, whichIndex, tableName, left_table_id);
-      break;
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}//end switch
-
-}
-
-function checkIfTrue(param1, theObj, whichIndex, tableName, left_table_id) {
-  //console.log("2: ", tableName)
-  var attributeName2 = Object.keys(theObj[param1])[whichIndex];
-  if(attributeName2 == "Other" || attributeName2 == "other") {
-      //insert into "other_text" column
-      var theOtherText = theObj[param1][attributeName2];
-
-      checkIfExists(theOtherText, tableName, left_table_id, attributeName2);
-
- } else if(theObj[param1][attributeName2] == false || theObj[param1][attributeName2] == "false") {
-     attributeName2 = "false";
-     //console.log("False, insert nothing...");
-
- } else {
-    //console.log ("It's True for: ", attributeName2);
-    getLeftTableID(tableName, left_table_id, attributeName2);
- }
-
-  //return attributeName2;
-}
-
-  function checkIfExists(other_text, tableName, left_table_id, attributeName) {
-    //console.log("3: ", tableName);
-    var TorF = false;
-    var query = connection.query(`SELECT * FROM ${tableName} WHERE other_text = ?`, other_text, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-      //console.log(`SELECTED FROM ${tableName}... \n RESULT: `, query.sql);
-
-      if(!rows[0]) {
-        TorF = false;
-      }
-      else {
-        TorF = true;
-      }
-
-      checkTorF(TorF, other_text, tableName, left_table_id, attributeName);
-
-    });
-  }
-
-  function checkTorF(TorF, other_text, tableName, left_table_id, attributeName) {
-    //console.log("4: ", tableName);
-    if(TorF == false) {
-        var toInsert = {
-          name: "Other",
-          other_text: other_text
-        };
-        //console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n other_text: ", toInsert.other_text);
-        //insert!
-        insertIfNotExists(toInsert, tableName, left_table_id, attributeName);
-
-      }//end if
-      else {
-        var toGet = {
-          name: "Other",
-          other_text: other_text
-        }
-        //it exists already
-        getLeftTableID(tableName, left_table_id, toGet);
-      }
-
-  }
-
-  function insertIfNotExists(toInsert, tableName, left_table_id, attributeName) {
-    //console.log("5: ", tableName);
-
-    var query2 = connection.query(`INSERT INTO ${tableName} SET ?`,toInsert, function (err, rows) {
-  		if(err) { throw new Error(err); return; }
-
-  		//console.log(`INSERTED OTHER CATEGORY INTO ${tableName}... \nquery: `, query2.sql);
-
-      getLeftTableID(tableName, left_table_id, toInsert);
-    });
-  }
-
-//
-//
-//
-
-
-function getLeftTableID(tableName, left_table_id, attributeName) {
-
-  //console.log("6: ", tableName);
-  var mid_table_id = 0;
-
-  if(attributeName !== "false") {
-    	//2a
-      //NEED TO: if name= Other, then resort to 'other_text'
-    if(typeof attributeName == "object") {
-
-      var query = connection.query(`SELECT id FROM ${tableName} WHERE other_text = ?`,
-        attributeName.other_text, function (err, rows) {
-          if(err) { throw new Error(err); return; }
-
-          //console.log("=========================");
-          //console.log(query.sql);
-          //console.log("=========================");
-
-          try {
-            mid_table_id = rows[0].id;
-          } catch (err) {
-            // Handle the error here.
-            console.log("ERROR WITH RESULT: ", rows);
-            console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-          }
-          //console.log("mid_table_id: ",mid_table_id);
-
-          if(mid_table_id != 0) {
-            insertMiddle(mid_table_id, tableName, left_table_id);
-          } else {
-            console.log("ERROR, NO ROW FOUND IN ", tableName, " WITH name = ",attributeName);
-          }
-
-        }); //end mysql connection
-      } else {
-        //if it's not "Other"...
-
-        //if it exists
-
-          var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-          attributeName, function (err, rows) {
-            if(err) { throw new Error(err); return; }
-
-            //console.log("=========================");
-            //console.log(query.sql);
-            //console.log("=========================")
-
-
-            if(!rows[0]) {
-              //does not exist in db yet...
-              createNewAttribute(tableName, attributeName, left_table_id)
-            } else {
-              //it does exist!
-              mid_table_id = rows[0].id;
-
-              insertMiddle(mid_table_id, tableName, left_table_id)
-            }
-
-          });
-
-    }//end else (as in, if the attributeName is not == "object")
-  }//end if attribute name !== "false"
-}
-
-function createNewAttribute(tableName, attributeName, left_table_id) {
-
-  //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nCREATING NEW ROW IN ", tableName, " for ", attributeName);
-
-  var query = connection.query(`INSERT INTO ${tableName} SET name = ?`,
-    attributeName, function (err, rows) {
-      if(err) { throw new Error(err); return; }
-
-      getNewAttribute(tableName, attributeName, left_table_id);
-
-  }); //end mysql connection
-
-}
-
-function getNewAttribute(tableName, attributeName, left_table_id) {
-
-  var query = connection.query(`SELECT id FROM ${tableName} WHERE name = ?`,
-    attributeName, function (err, rows) {
-    if(err) { throw new Error(err); return; }
-
-    var mid_table_id = 0;
-
-    try {
-      mid_table_id = rows[0].id;
-    } catch (err) {
-      // Handle the error here.
-      console.log("ERROR WITH RESULT: ", rows);
-      console.log("CAUSED BY: ", attributeName, " to be used in ", tableName);
-    }
-
-
-    //console.log("mid_table_id: ",mid_table_id);
-
-    if(mid_table_id != 0) {
-      insertMiddle(mid_table_id, tableName, left_table_id);
-    } else {
-      console.log("ERROR, NO ROW FOUND IN ", tableName, " with name = ",attributeName);
-    }
-
-  }); //end mysql connection
-
-}
-
-function insertMiddle(theID, tableName, left_table_id) {
-  //console.log("7: ", tableName);
-	//2b. insert into middle table
-	switch(tableName) {
-		case "Ethnicities":
-			var midTable = "person_ethnicities";
-			var toInsert = {ethnicity_id: theID, person_id: persons[0].length};	break;
-		case "Topics":
-			var midTable = "person_topics";
-			var toInsert = {topic_id: theID, person_id: persons[0].length};	break;
-		case "Ensembles":
-			var midTable = "person_ensembles";
-			var toInsert = {ensemble_id: theID, person_id: persons[0].length};	break;
-    case "Instrument_Types":
-			var midTable = "person_instrument_types";
-			var toInsert = {instrument_type_id: theID, person_id: persons[0].length};	break;
-    case "Person_Categories":
-      var midTable = "person_person_categories";
-      var toInsert = {person_category_id: theID, person_id: persons[0].length};	break;
-
-		default:
-			console.log("INVALID TABLE NAME SENT for ",tableName);
-			break;
-	}
-	//console.log("\nTO INSERT: \n", toInsert);
-	var query = connection.query(`INSERT INTO ${midTable} SET ?`,
-	toInsert, function (err, rows) {
-		if(err) { throw new Error(err); return; }
-
-		//console.log("query: ", query.sql);
-
-	});
-}
-
-/*
-================================================================================
-================================================================================
- - END OF INSERTING INTO PERSONS AND MIDDLE TABLES
-================================================================================
-================================================================================
-*/
-
-function rowsToJS(theArray) {
-  var temp = JSON.stringify(theArray);
-  temp = JSON.parse(temp);
-  //console.log(temp);
-  return temp;
-}
-
-//test: Method for querying intermediate tables:
-function getInter(leftTable, rightTable, middleTable, left_table_id, right_table_id, arrayToUse, numLoops ) {
-
-    for(var varI = 1; varI <= numLoops; varI++) {
-        var query = connection.query(`
-          SELECT L.name
-          FROM ${leftTable} L
-          INNER JOIN ${middleTable} MT ON MT.${left_table_id} = L.id
-          INNER JOIN ${rightTable} RT on MT.${right_table_id} = RT.id
-          WHERE RT.id = ${varI}`, function(err, rows, fields) {
-            if(err) { throw err; }
-
-            var JSObj = rowsToJS(rows);
-
-            //console.log("=====MIDDLE TALBE=====");
-
-            arrayToUse.push(JSObj);
-
-
-        });
-
-    }//end for loop
-}//end getInter function
-
-//get Resources
-function getPersons() {
-
-  //get RESOURCES from db
-  connection.query(`SELECT * FROM persons`, function(err, rows, fields) {
-            //need type, topics, accompaniment, tags, ethnicities
-    if (!err) {
-
-      	var JSObj = rowsToJS(rows);
-
-        persons = [];
-        personTopics = [];
-        personEnsembles = [];
-        personEthnicities = [];
-        personInstruments = [];
-        personCategories = [];
-
-      	persons.push(JSObj);
-
-        //console.log("PERSON SIZE BEFORE INSERTION: ", persons[0].length);
-
-      	numPersons = persons[0].length;
-
 /*
 ===================================================
-- MIDDLE TABLES -
+- PERSON Controllers -
 ===================================================
 */
-        getInter("Ethnicities",  "persons", "person_ethnicities", "ethnicity_id", "person_id", personEthnicities, numPersons);
-        getInter("Topics",       "persons", "person_topics",         "topic_id",  "person_id", personTopics, numPersons);
-        getInter("Ensembles",    "persons", "person_ensembles",  "ensemble_id",   "person_id", personEnsembles, numPersons);
-        getInter("Instrument_Types",    "persons", "person_instrument_types",  "instrument_type_id",   "person_id", personInstruments, numPersons);
-        getInter("Person_Categories",    "persons", "person_person_categories",  "person_category_id",   "person_id", personCategories, numPersons);
 
 
-
-    }
-    else
-      console.log('Error while performing Persons Query.');
-
-  });
-} //end getResources()
-
-/*
-===================================================
-- RESOURCE Controllers -
-===================================================
-*/
 
 function formatPerson(actualIndex) {
   var personData = {};
 
   personData = {
-    id:             persons[0][actualIndex].id,
-    first_name:     persons[0][actualIndex].first_name,
-    last_name:      persons[0][actualIndex].last_name,
-    email:          persons[0][actualIndex].email,
-    city:           persons[0][actualIndex].city,
-    state:          persons[0][actualIndex].state,
-    country:        persons[0][actualIndex].country,
-    url:            persons[0][actualIndex].website,
-    social_facebook:persons[0][actualIndex].social_facebook,
-    social_twitter: persons[0][actualIndex].social_twitter,
-    social_other:   persons[0][actualIndex].social_other,
-    emphasis:       persons[0][actualIndex].emphasis,
-    hymn_soc_member:persons[0][actualIndex].hymn_soc_member,
-    topics:         personTopics[actualIndex],
+    id:             persons[actualIndex].id,
+    first_name:     persons[actualIndex].first_name,
+    last_name:      persons[actualIndex].last_name,
+    email:          persons[actualIndex].email,
+    city:           persons[actualIndex].city,
+    state:          persons[actualIndex].state,
+    country:        persons[actualIndex].country,
+    url:            persons[actualIndex].website,
+    social_facebook:persons[actualIndex].social_facebook,
+    social_twitter: persons[actualIndex].social_twitter,
+    social_other:   persons[actualIndex].social_other,
+    emphasis:       persons[actualIndex].emphasis,
+    hymn_soc_member:persons[actualIndex].hymn_soc_member,
+    user_id:        persons[actualIndex].user_id,
+    user:           persons[actualIndex].user,
+
+    instruments:    personInstruments[actualIndex],
+    categories:     personCategories[actualIndex],
     ensembles:      personEnsembles[actualIndex],
     ethnicities:    personEthnicities[actualIndex],
-    categories:     personCategories[actualIndex],
-    instruments:    personInstruments[actualIndex],
-    user_id:        persons[0][actualIndex].user_id,
-    user:           persons[0][actualIndex].user
-
-
+    topics:         personTopics[actualIndex],
+    tags:           personTags[actualIndex]
+    
   };
 
   var theUrl = "/person/" + String(actualIndex+1);
@@ -501,74 +206,73 @@ function formatPerson(actualIndex) {
 
 }
 
-//RESOURCE GET REQUEST
+
+
+//PERSON GET REQUEST
 personController.getConfig = {
 
   handler: function (request, reply) {
 
-    getPersons();
+    getPersonsJSON();
 
-    //console.log("\n\nETHS[", persons[0].length-1, "] => ",personEthnicities[persons[0].length-1]);
+    //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
 
     if (request.params.id) {
         if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
+          //return reply('Not enough Persons in the database for your request').code(404);
           return reply(Boom.notFound("Index out of range for Persons get request"));
         }
-        //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-        var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+        var actualIndex = Number(request.params.id -1 );  
 
         //create new object, convert to json
-        var str = formatPerson(actualIndex);
+        
+        if(persons[actualIndex].approved == false || persons[actualIndex].approved == 0) {
+          var str = formatPerson(actualIndex);
+          return reply(str);
+        } else {
+           return reply(Boom.badRequest("The Person you request is already approved"));
+        }
+        
 
-        return reply(str);
-
-      //return reply(resources[actualId]);
+      //return reply(persons[actualId]);
     }
 
     //if no ID specified
     var objToReturn = [];
 
-    for(var i=0; i < persons[0].length; i++) {
-      var temp = formatPerson(i);
-      objToReturn.push(temp);
-    }
+    for(var i=0; i < persons.length; i++) {
+      //var bob = formatResource(i);
+      if(persons[i].approved == false || persons[i].approved == 0) {
+        var str = {
+          id:     persons[i].id,
+          user:   persons[i].user,
+          first_name:  persons[i].first_name,
+          last_name:  persons[i].last_name
 
-    return reply(objToReturn);
+        }
+        objToReturn.push(str);
+      }
+    }//end for
+
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All resources already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
   }
 };
 
-//RESOURCE POST REQUEST
+
+
+//PERSON POST REQUEST
 personController.postConfig = {
 
   handler: function(req, reply) {
 
-  	getPersons();
+  	//getPersonsJSON();
 
-  	var thePersonID = persons.length;
-/*
-    var theData = {
-      name: 			    req.payload.title,
-      website: 			  req.payload.url,
-      author: 			  req.payload.author,
-
-      parent: 			  req.payload.parent,
-
-      description: 		req.payload.description,
-      categories: 		req.payload.categories,
-      topic: 			    req.payload.topic,
-      accompaniment: 	req.payload.accompaniment,
-      languages: 		  req.payload.languages,
-      ensembles : 		req.payload.ensembles,
-      ethnicities : 	req.payload.ethnicities,
-      hymn_soc_member:req.payload.hymn_soc_member,
-      //city: 			req.payload.city,
-      //state: 			req.payload.state,
-      //country: 			req.payload.country
-
-    };
-*/
-    //console.log("\nRECEIVED :", req.payload.data);
+  	var thePersonID = persons.length+1;
 
     var theData = {
       first_name:             req.payload.data.first_name,
@@ -582,15 +286,16 @@ personController.postConfig = {
       social_twitter:          req.payload.data.social_twitter,
       social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
-      hymn_soc_member:            req.payload.data.hymn_soc_member,
-      topics:    req.payload.data.topics,
-      ensembles:        req.payload.data.ensembles,
-      ethnicities:      req.payload.data.ethnicities,
+      hymn_soc_member:            req.payload.data.hymn_soc_member,     
       user_id:          req.payload.uid,
       user:             req.payload.user,
       
       instruments:      req.payload.data.instruments,
-      categories:       req.payload.data.categories
+      categories:       req.payload.data.categories,
+      ensembles:        req.payload.data.ensembles,
+      ethnicities:      req.payload.data.ethnicities,
+      topics:           req.payload.data.topics,
+      tags:             req.payload.data.tags
 
     };
 
@@ -598,7 +303,7 @@ personController.postConfig = {
 
     var toReturn = {
 
-    	person_id: persons[0].length +1 /* +1 or not?... */
+    	person_id: thePersonID /* +1 or not?... */
 
     }
 
@@ -634,7 +339,6 @@ personController.postConfig = {
 
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
-    { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
-  //{ path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  //{ path: '/resource/activate/{id}', method: 'PUT', config: resourceController.activateConfig}
+    { path: '/person/{id?}', method: 'GET', config: personController.getConfig }
+  
 ];
