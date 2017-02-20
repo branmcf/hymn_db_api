@@ -46,6 +46,10 @@ function getcongregationsJSON() {
     else {
     
       congregations = [];
+      congCategories = [];
+      congInstruments = [];
+      congEthnicities = [];
+      congTags = [];
 
       var JSObj = rowsToJS(rows);
       congregations = JSObj;

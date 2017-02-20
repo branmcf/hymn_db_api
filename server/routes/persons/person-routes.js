@@ -45,6 +45,13 @@ function getPersonsJSON() {
       	var JSObj = rowsToJS(rows);
 
         persons = [];
+        personTopics = [];
+        personEnsembles = [];
+        personEthnicities = [];
+        personInstruments = [];
+        personCategories = [];
+        personTags = [];
+
 
         persons = JSObj;
 

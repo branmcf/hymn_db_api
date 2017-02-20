@@ -46,6 +46,10 @@ function getOrganizationsJSON() {
     else {
     
     orgs = [];
+    orgCategories = [];
+    orgInstruments = [];
+    orgEthnicities = [];
+    orgTags = [];
 
     var JSObj = rowsToJS(rows);
     orgs = JSObj;    
