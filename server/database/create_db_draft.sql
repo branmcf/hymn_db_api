@@ -51,6 +51,8 @@ CREATE TABLE users (
 
 );
 
+
+
 CREATE TABLE resources (
 	id int unsigned auto_increment,
 	PRIMARY KEY (id),
