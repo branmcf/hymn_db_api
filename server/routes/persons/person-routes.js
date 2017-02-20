@@ -187,7 +187,7 @@ personController.getConfig = {
           id:     persons[i].id,
           user:   persons[i].user,
           first_name:  persons[i].first_name,
-          first_name:  persons[i].last_name
+          last_name:  persons[i].last_name
 
         }
         objToReturn.push(str);
