@@ -221,14 +221,14 @@ function formatResource(actualIndex) {
     instruments:    resources[actualIndex].instruments
 */
     languages:      resLanguages[actualIndex],
-    ethnicities:    resEth[actualIndex].ethnicities,
-    ensembles:      resEnsembles[actualIndex].ensembles,
-    categories:     resCategories[actualIndex].categories,
-    accompaniment: 	resAcc[actualIndex].accompaniment,
-    topics:         resTopics[actualIndex].topics,
-    tags:           resTags[actualIndex].tags,
+    ethnicities:    resEth[actualIndex],
+    ensembles:      resEnsembles[actualIndex],
+    categories:     resCategories[actualIndex],
+    accompaniment: 	resAcc[actualIndex],
+    topics:         resTopics[actualIndex],
+    tags:           resTags[actualIndex],
     denominations:  resDenominations[actualIndex],
-    instruments:    resInstruments[actualIndex].instruments
+    instruments:    resInstruments[actualIndex]
 
 
   };

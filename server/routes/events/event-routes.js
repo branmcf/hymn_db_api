@@ -50,11 +50,54 @@ function getEventsJSON() {
         events = JSObj;
       	numEvents = events.length;
 
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], eventEthnicities);
+          popArray(JSObj[i]["ensembles"], eventEnsembles);
+          popArray(JSObj[i]["tags"], eventTags);
+          //popArray(JSObj[i]["types"], eventTypes);
+
+          //console.log("\nETH[",i, "] : ", resEth[i]);
+          //console.log("\nCAT[",i, "] : ", resCategories[i]);
+          //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+          //console.log("\nACC[",i, "] : ", resAcc[i]);
+          //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+          //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+          //console.log("\nresTags[",i, "] : ", resTags[i]);
+        }
+
     }
     else
       console.log('Error while performing events Query.');
 
   });
+}
+
+//Object.keys(obj.ethnicities).length
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
 }
 
 function insertEvent(theObj) {
@@ -152,9 +195,9 @@ function formatEvent(actualIndex) {
     approved:       events[actualIndex].approved,
     pract_schol:    events[actualIndex].pract_schol,
 
-    ethnicities:    events[actualIndex].ethnicities,
-    ensembles:      events[actualIndex].ensembles,
-    tags:           events[actualIndex].tags
+    ethnicities:    eventEthnicities[actualIndex],
+    ensembles:      eventEnsembles[actualIndex],
+    tags:           eventTags[actualIndex]
 
 
   };
