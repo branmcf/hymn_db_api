@@ -95,7 +95,7 @@ function getResourcesJSON() {
   });
 }
 
-//Object.keys(obj.ethnicities).length
+
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
@@ -122,6 +122,7 @@ function popArray(obj, whichArray) {
   //console.log("whichArray: ", whichArray);
 
 }
+
 
 function insertResource(theObj) {
 

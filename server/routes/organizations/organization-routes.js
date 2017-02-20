@@ -46,6 +46,28 @@ function getOrganizationsJSON() {
     var JSObj = rowsToJS(rows);
     orgs = JSObj;    
     numOrgs = orgs.length;
+
+    //console.log("\nT: ", rows[0]);
+    for(var i=0; i<JSObj.length; i++) { 
+      popArray(JSObj[i]["ethnicities"], resEth);
+      popArray(JSObj[i]["categories"], resCategories);
+      popArray(JSObj[i]["topics"], resTopics);
+      popArray(JSObj[i]["accompaniment"], resAcc);
+      popArray(JSObj[i]["languages"], resLanguages);
+      popArray(JSObj[i]["ensembles"], resEnsembles);
+      popArray(JSObj[i]["tags"], resTags);
+      popArray(JSObj[i]["instruments"], resInstruments);
+      popArray(JSObj[i]["denominations"], resDenominations);
+      //popArray(JSObj[i]["types"], resTypes);
+
+      //console.log("\nETH[",i, "] : ", resEth[i]);
+      //console.log("\nCAT[",i, "] : ", resCategories[i]);
+      //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+      //console.log("\nACC[",i, "] : ", resAcc[i]);
+      //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+      //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+      //console.log("\nresTags[",i, "] : ", resTags[i]);
+    }
  
     }      
       
