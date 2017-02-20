@@ -110,6 +110,10 @@ function popArray(obj, whichArray) {
       if(key == 'Other' || key == 'other') {
         theKeys.push(obj[key]);
       } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+       
+        key = key.replace(/_/g, " ");
+        //console.log(key);
+
         theKeys.push(key);
       } else {
         //false, dont add...
@@ -233,6 +237,11 @@ function formatResource(actualIndex) {
 
 
   };
+
+  /*var regex1 = new Regex(/_/g);
+  var testMe = JSON.stringify(resourceData.categories);
+  resourceData.categories = testMe.replace(regex1, ' ');
+  */
 
   //format 
   /*

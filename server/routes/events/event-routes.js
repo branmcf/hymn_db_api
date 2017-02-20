@@ -87,6 +87,7 @@ function popArray(obj, whichArray) {
       if(key == 'Other' || key == 'other') {
         theKeys.push(obj[key]);
       } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        key = key.replace(/_/g, " ");
         theKeys.push(key);
       } else {
         //false, dont add...

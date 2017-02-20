@@ -792,6 +792,8 @@ server.register(BasicAuth, function (err) {
               var theCol = request.params.what_var;
               var theVal = request.params.what_val;
 
+              if(theCol == "password" || theCol == "salt" || theCol == "iterations") { return reply(Boom.unauthorized("cannot change the password you goofball..."));}
+
               var query = connection.query(`
               UPDATE users SET ?
               WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
