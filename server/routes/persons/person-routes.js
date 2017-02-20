@@ -359,7 +359,7 @@ personController.postConfig = {
 
 personController.activateConfig = {
   handler: function(request, reply) {
-    getEventsJSON();
+    getPersonsJSON();
     var theeventID = events.length+1;
 
     if (request.params.id) {
