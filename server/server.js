@@ -801,11 +801,12 @@ server.register(BasicAuth, function (err) {
                     console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
                 } else {
+                  getUsersNew();
                   console.log(query.sql);
                   console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
 
-                return reply( {code: 201} );
+                return reply( {statusCode: 200} );
               });
 
             //return reply(resources[actualId]);

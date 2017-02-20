@@ -217,6 +217,7 @@ function formatOrg(actualIndex) {
     user:           orgs[actualIndex].user,
     shape:          orgs[actualIndex].shape,
     clothing:       orgs[actualIndex].priest_attire,
+    approved:       orgs[actualIndex].approved,
 
     categories:     orgCategories[actualIndex],
     instruments:    orgInstruments[actualIndex],
@@ -224,6 +225,15 @@ function formatOrg(actualIndex) {
     tags:           orgTags[actualIndex]
 
   };
+
+  orgData.hymn_soc_member = reformatTinyInt(orgData.hymn_soc_member);
+  orgData.is_active = reformatTinyInt(orgData.is_active);
+  orgData.is_org_free = reformatTinyInt(orgData.is_org_free);
+  orgData.high_level = reformatTinyInt(orgData.high_level);
+  orgData.approved = reformatTinyInt(orgData.approved);
+  orgData.events_free = reformatTinyInt(orgData.events_free);
+  orgData.membership_free = reformatTinyInt(orgData.membership_free);
+  
 
   //format 
   /*
@@ -244,7 +254,21 @@ function formatOrg(actualIndex) {
   //var str = JSON.stringify(finalObj);
 
   return finalObj;
+};
+
+
+function reformatTinyInt(toFormat) {
+  if(toFormat == 1) {
+    return("true");
+  } else if(toFormat == 0) {
+    return("false");
+  } else if(toFormat == 2){
+    return("partially");
+  } else {
+    return(toFormat);
+  }
 }
+
 
 //ORG GET REQUEST
 orgController.getConfig = {
@@ -273,7 +297,7 @@ orgController.getConfig = {
 
     for(var i=0; i < orgs.length; i++) {
       //var bob = formatResource(i);
-      if(orgs[i].approved == false || orgs[i].approved == 0) {
+      if(orgs[i].approved == 0 && orgs[i].is_active == 1) {
         var str = {
           id:     orgs[i].id,
           user:   orgs[i].user,
@@ -340,7 +364,8 @@ orgController.postConfig = {
       categories:       req.payload.data.categories,
       instruments:      req.payload.data.instruments,
       ethnicities:      req.payload.data.ethnicities,
-      tags:             req.payload.data.tags
+      tags:             req.payload.data.tags,
+      is_active: 1
 
     };
 
@@ -409,6 +434,8 @@ orgController.activateConfig = {
             var theCol = request.params.what_var;
             var theVal = request.params.what_val;
 
+            if(theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
+
             var query = connection.query(`
             UPDATE organizations SET ?
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
@@ -416,11 +443,12 @@ orgController.activateConfig = {
                   console.log(query.sql);
                   return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.params.what_var} with value = ${request.params.what_val} `));
               } else {
+                getOrganizationsJSON();
                 console.log(query.sql);
                 console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
               }
 
-              return reply( {code: 201} );
+              return reply( {statusCode: 201} );
             });
 
           //return reply(organizations[actualId]);

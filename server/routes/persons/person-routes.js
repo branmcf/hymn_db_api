@@ -180,6 +180,9 @@ function formatPerson(actualIndex) {
     social_other:   persons[actualIndex].social_other,
     emphasis:       persons[actualIndex].emphasis,
     hymn_soc_member:persons[actualIndex].hymn_soc_member,
+    high_level:     persons[actualIndex].high_level,
+    is_active:      persons[actualIndex].is_active,
+    approved:       persons[actualIndex].approved,
     user_id:        persons[actualIndex].user_id,
     user:           persons[actualIndex].user,
 
@@ -191,6 +194,11 @@ function formatPerson(actualIndex) {
     tags:           personTags[actualIndex]
     
   };
+
+  personData.hymn_soc_member = reformatTinyInt(personData.hymn_soc_member);
+  personData.is_active = reformatTinyInt(personData.is_active);
+  personData.high_level = reformatTinyInt(personData.high_level);
+  personData.approved = reformatTinyInt(personData.approved);
 
   var theUrl = "/person/" + String(actualIndex+1);
 
@@ -204,6 +212,19 @@ function formatPerson(actualIndex) {
   return finalObj;
 
 
+};
+
+
+function reformatTinyInt(toFormat) {
+  if(toFormat == 1) {
+    return("true");
+  } else if(toFormat == 0) {
+    return("false");
+  } else if(toFormat == 2){
+    return("partially");
+  } else {
+    return(toFormat);
+  }
 }
 
 
@@ -242,7 +263,7 @@ personController.getConfig = {
 
     for(var i=0; i < persons.length; i++) {
       //var bob = formatResource(i);
-      if(persons[i].approved == false || persons[i].approved == 0) {
+      if(persons[i].approved == 0 && persons[i].is_active == 1) {
         var str = {
           id:     persons[i].id,
           user:   persons[i].user,
@@ -287,8 +308,10 @@ personController.postConfig = {
       social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
       hymn_soc_member:            req.payload.data.hymn_soc_member,     
+      high_level:       req.payload.data.high_level,
       user_id:          req.payload.uid,
       user:             req.payload.user,
+      is_active:        true,
       
       instruments:      req.payload.data.instruments,
       categories:       req.payload.data.categories,
@@ -333,12 +356,53 @@ personController.postConfig = {
 */
 };
 
+personController.activateConfig = {
+  handler: function(request, reply) {
+    getEventsJSON();
+    var theeventID = events.length+1;
+
+    if (request.params.id) {
+        if (numEvents <= request.params.id - 1) {
+          //return reply('Not enough events in the database for your request').code(404);
+          return reply(Boom.notFound("Not enough events"));
+        }
+        //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+        var actualIndex = Number(request.params.id -1 );  //if you request for events/1 you'll get events[0]
+
+        var mysqlIndex = Number(request.params.id);
+
+        var theCol = request.params.what_var;
+        var theVal = request.params.what_val;
+
+        if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
+
+        var query = connection.query(`
+        UPDATE events SET ?
+        WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+          if(err) {
+              console.log(query.sql);
+              return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
+          } else {
+            getPersonsJSON();
+            console.log(query.sql);
+            console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+          }
+
+          return reply( {statusCode: 200} );
+        });
+
+      //return reply(events[actualId]);
+    }
+  }//handler
+}
+
 
 
 
 
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
-    { path: '/person/{id?}', method: 'GET', config: personController.getConfig }
+    { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
+    { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.activateConfig}
   
 ];

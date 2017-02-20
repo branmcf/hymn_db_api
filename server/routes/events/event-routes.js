@@ -175,7 +175,7 @@ function formatEvent(actualIndex) {
     title:          events[actualIndex].name,
     frequency:      events[actualIndex].frequency,
     url:            events[actualIndex].website,
-    parent:         events[actualIndex].parent_org_id,
+    parent:         events[actualIndex].parent,
     theme:          events[actualIndex].theme,
     description:    events[actualIndex].description,
     event_date:     events[actualIndex].event_date,
@@ -202,6 +202,15 @@ function formatEvent(actualIndex) {
 
 
   };
+
+  eventData.hymn_soc_member = reformatTinyInt(eventData.hymn_soc_member);
+  eventData.is_active = reformatTinyInt(eventData.is_active);
+  eventData.is_free = reformatTinyInt(eventData.is_free);
+  eventData.high_level = reformatTinyInt(eventData.high_level);
+  eventData.approved = reformatTinyInt(eventData.approved);
+  eventData.pract_schol = reformatTinyInt(eventData.pract_schol);
+
+
 /*
   eventData.ethnicities = JSON.parse(eventData.ethnicities);
   eventData.tags = JSON.parse(eventData.tags);
@@ -215,6 +224,18 @@ function formatEvent(actualIndex) {
   };
 
   return finalObj;
+};
+
+function reformatTinyInt(toFormat) {
+  if(toFormat == 1) {
+    return("true");
+  } else if(toFormat == 0) {
+    return("false");
+  } else if(toFormat == 2){
+    return("partially");
+  } else {
+    return(toFormat);
+  }
 }
 
 //EVENT GET REQUEST
@@ -247,7 +268,7 @@ eventController.getConfig = {
 
     for(var i=0; i < events.length; i++) {
       //var bob = formatevent(i);
-      if(events[i].approved == false || events[i].approved == 0) {
+      if(events[i].approved == 0 && events[i].is_active == 1) {
         var str = {
           id:     events[i].id,
           user:   events[i].user,
@@ -317,6 +338,7 @@ eventController.postConfig = {
       approved:       req.payload.data.approved,
       pract_schol:    req.payload.data.pract_schol,
       is_free:        req.payload.data.is_free,
+      is_active:      true,
 
       ethnicities:    req.payload.data.ethnicities,
       ensembles:      req.payload.data.ensembles,
@@ -440,6 +462,8 @@ eventController.activateConfig = {
             var theCol = request.params.what_var;
             var theVal = request.params.what_val;
 
+            if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
+
             var query = connection.query(`
             UPDATE events SET ?
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
@@ -447,11 +471,12 @@ eventController.activateConfig = {
                   console.log(query.sql);
                   return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
               } else {
+                getEventsJSON();
                 console.log(query.sql);
                 console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
               }
 
-              return reply( {code: 201} );
+              return reply( {statusCode: 200} );
             });
 
           //return reply(events[actualId]);

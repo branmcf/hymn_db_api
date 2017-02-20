@@ -238,10 +238,12 @@ function formatResource(actualIndex) {
 
   };
 
-  /*var regex1 = new Regex(/_/g);
-  var testMe = JSON.stringify(resourceData.categories);
-  resourceData.categories = testMe.replace(regex1, ' ');
-  */
+  resourceData.is_active = reformatTinyInt(resourceData.is_active);
+  resourceData.high_level = reformatTinyInt(resourceData.high_level);
+  resourceData.hymn_soc_member = reformatTinyInt(resourceData.hymn_soc_member);
+  resourceData.is_free = reformatTinyInt(resourceData.is_free);
+  resourceData.pract_schol = reformatTinyInt(resourceData.pract_schol);
+  resourceData.approved = reformatTinyInt(resourceData.approved);
 
   //format 
   /*
@@ -267,6 +269,16 @@ function formatResource(actualIndex) {
   return finalObj;
 
 
+};
+
+function reformatTinyInt(toFormat) {
+  if(toFormat == 1) {
+    return("true");
+  } else if(toFormat == 0) {
+    return("false");
+  } else {
+    return("partially");
+  }
 }
 
 /*
@@ -280,7 +292,7 @@ resourceController.getConfig = {
 
   handler: function (request, reply) {
 
-    //getResourcesJSON();
+    getResourcesJSON();
 
     if (request.params.id) {
         if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
@@ -307,7 +319,7 @@ resourceController.getConfig = {
 
     for(var i=0; i < resources.length; i++) {
       //var bob = formatResource(i);
-      if(resources[i].approved == false || resources[i].approved == 0) {
+      if(resources[i].approved == 0 && resources[i].is_active == 1) {
         var str = {
           id:     resources[i].id,
           user:   resources[i].user,
@@ -366,7 +378,7 @@ resourceController.postConfig = {
       state:            req.payload.data.state,
       country:          req.payload.data.country,
       high_level:       req.payload.data.high_level,
-      is_active:        req.payload.data.is_active,
+      is_active:        true,
       user_id:          req.payload.uid,
       user:             req.payload.user,
       pract_schol:      req.payload.data.pract_schol,
@@ -485,11 +497,12 @@ resourceController.activateConfig = {
                   console.log(query.sql);
                   return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
               } else {
+                getResourcesJSON();
                 console.log(query.sql);
                 console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
               }
 
-              return reply( {code: 201} );
+              return reply( {statusCode: 201} );
             });
 
           //return reply(resources[actualId]);

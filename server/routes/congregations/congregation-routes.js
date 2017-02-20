@@ -202,6 +202,12 @@ function formatCong(actualIndex) {
 
   };
 
+  congData.hymn_soc_member = reformatTinyInt(congData.hymn_soc_member);
+  congData.is_active =       reformatTinyInt(congData.is_active);
+  congData.is_free =         reformatTinyInt(congData.is_free);
+  congData.high_level =      reformatTinyInt(congData.high_level);
+  congData.approved =        reformatTinyInt(congData.approved);
+
   //format 
 /*
   congData.ethnicities = JSON.parse(congData.ethnicities);
@@ -221,7 +227,21 @@ function formatCong(actualIndex) {
   //var str = JSON.stringify(finalObj);
 
   return finalObj;
+};
+
+
+function reformatTinyInt(toFormat) {
+  if(toFormat == 1) {
+    return("true");
+  } else if(toFormat == 0) {
+    return("false");
+  } else if(toFormat == 2){
+    return("partially");
+  } else {
+    return(toFormat);
+  }
 }
+
 
 //CONGREGATION GET REQUEST
 congController.getConfig = {
@@ -250,7 +270,7 @@ congController.getConfig = {
 
     for(var i=0; i < congregations.length; i++) {
       //var bob = formatResource(i);
-      if(congregations[i].approved == false || congregations[i].approved == 0) {
+      if(congregations[i].approved == 0 && congregations[i].is_active == 1) {
         var str = {
           id:     congregations[i].id,
           user:   congregations[i].user,
@@ -313,6 +333,7 @@ congController.postConfig = {
       priest_attire:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
       description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+      is_active:        true,
 
       categories:       req.payload.data.categories,
       instruments:      req.payload.data.instruments,
@@ -386,6 +407,8 @@ congController.activateConfig = {
             var theCol = request.params.what_var;
             var theVal = request.params.what_val;
 
+            if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
+
             var query = connection.query(`
             UPDATE congregations SET ?
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
@@ -393,11 +416,12 @@ congController.activateConfig = {
                   console.log(query.sql);
                   return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
               } else {
+                getcongregationsJSON();
                 console.log(query.sql);
                 console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
               }
 
-              return reply( {code: 201} );
+              return reply( {statusCode: 201} );
             });
 
           //return reply(resources[actualId]);
