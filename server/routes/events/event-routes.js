@@ -201,11 +201,11 @@ function formatEvent(actualIndex) {
 
 
   };
-
+/*
   eventData.ethnicities = JSON.parse(eventData.ethnicities);
   eventData.tags = JSON.parse(eventData.tags);
   eventData.ensembles = JSON.parse(eventData.ensembles);
-
+*/
   var theUrl = "/event/" + Number(actualIndex+1);
 
   var finalObj = {

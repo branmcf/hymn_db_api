@@ -198,10 +198,12 @@ function formatCong(actualIndex) {
   };
 
   //format 
+/*
   congData.ethnicities = JSON.parse(congData.ethnicities);
   congData.tags = JSON.parse(congData.tags);
   congData.categories = JSON.parse(congData.categories);
   congData.instruments = JSON.parse(congData.instruments);
+*/
   //end formatting
 
   var theUrl = "/congregations/" + String(actualIndex+1);

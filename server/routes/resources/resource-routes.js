@@ -235,6 +235,7 @@ function formatResource(actualIndex) {
   };
 
   //format 
+  /*
   resourceData.ethnicities = JSON.parse(resourceData.ethnicities);
   resourceData.tags = JSON.parse(resourceData.tags);
   resourceData.topics = JSON.parse(resourceData.topics);
@@ -242,6 +243,7 @@ function formatResource(actualIndex) {
   resourceData.ensembles = JSON.parse(resourceData.ensembles);
   resourceData.accompaniment = JSON.parse(resourceData.accompaniment);
   resourceData.categories = JSON.parse(resourceData.categories);
+  */
   //end formatting
 
   var theUrl = "/resource/" + String(actualIndex+1);

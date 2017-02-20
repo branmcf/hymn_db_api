@@ -21,7 +21,11 @@ if (process.env.JAWSDB_URL) {
 
 orgController = {};
 var orgs = [];
-  var numOrgs = 0;
+var numOrgs = 0;
+  var orgCategories = [];
+  var orgInstruments = [];
+  var orgEthnicities = [];
+  var orgTags = [];
 
 
 getOrganizationsJSON();
@@ -49,15 +53,10 @@ function getOrganizationsJSON() {
 
     //console.log("\nT: ", rows[0]);
     for(var i=0; i<JSObj.length; i++) { 
-      popArray(JSObj[i]["ethnicities"], resEth);
-      popArray(JSObj[i]["categories"], resCategories);
-      popArray(JSObj[i]["topics"], resTopics);
-      popArray(JSObj[i]["accompaniment"], resAcc);
-      popArray(JSObj[i]["languages"], resLanguages);
-      popArray(JSObj[i]["ensembles"], resEnsembles);
-      popArray(JSObj[i]["tags"], resTags);
-      popArray(JSObj[i]["instruments"], resInstruments);
-      popArray(JSObj[i]["denominations"], resDenominations);
+      popArray(JSObj[i]["ethnicities"], orgEthnicities);
+      popArray(JSObj[i]["categories"], orgCategories);
+      popArray(JSObj[i]["tags"], orgTags);
+      popArray(JSObj[i]["instruments"], orgInstruments);
       //popArray(JSObj[i]["types"], resTypes);
 
       //console.log("\nETH[",i, "] : ", resEth[i]);
@@ -73,6 +72,35 @@ function getOrganizationsJSON() {
       
   });
 }//end getOrganizationsJSON function
+
+
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
+}
+
 
 
 function insertOrganization(theObj) {
@@ -185,18 +213,20 @@ function formatOrg(actualIndex) {
     shape:          orgs[actualIndex].shape,
     clothing:       orgs[actualIndex].priest_attire,
 
-    categories:     orgs[actualIndex].categories,
-    instruments:    orgs[actualIndex].instruments,
-    ethnicities:    orgs[actualIndex].ethnicities,
-    tags:           orgs[actualIndex].tags
+    categories:     orgCategories[actualIndex],
+    instruments:    orgInstruments[actualIndex],
+    ethnicities:    orgEthnicities[actualIndex],
+    tags:           orgTags[actualIndex]
 
   };
 
   //format 
+  /*
   orgData.ethnicities = JSON.parse(orgData.ethnicities);
   orgData.tags = JSON.parse(orgData.tags);
   orgData.categories = JSON.parse(orgData.categories);
   orgData.instruments = JSON.parse(orgData.instruments);
+  */
   //end formatting
 
   var theUrl = "/orgs/" + String(actualIndex+1);
