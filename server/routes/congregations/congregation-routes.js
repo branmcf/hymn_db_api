@@ -21,7 +21,11 @@ if (process.env.JAWSDB_URL) {
 
 congController = {};
 var congregations = [];
-  var numCongs = 0;
+var numCongs = 0;
+  var congCategories = [];
+  var congInstruments = [];
+  var congEthnicities = [];
+  var congTags = [];
 
 
 getcongregationsJSON();
@@ -41,17 +45,63 @@ function getcongregationsJSON() {
     if(err) { console.log('Error while performing congregations Query.'); throw err;}
     else {
     
-    congregations = [];
+      congregations = [];
 
-    var JSObj = rowsToJS(rows);
-    congregations = JSObj;
-    
-    numCongs = congregations.length;
+      var JSObj = rowsToJS(rows);
+      congregations = JSObj;
+      
+      numCongs = congregations.length;
+
+      //console.log("\nT: ", rows[0]);
+      for(var i=0; i<JSObj.length; i++) { 
+        popArray(JSObj[i]["ethnicities"], congEthnicities);
+        popArray(JSObj[i]["categories"], congCategories);
+        popArray(JSObj[i]["tags"], congTags);
+        popArray(JSObj[i]["instruments"], congInstruments);
+        //popArray(JSObj[i]["types"], resTypes);
+
+        //console.log("\nETH[",i, "] : ", resEth[i]);
+        //console.log("\nCAT[",i, "] : ", resCategories[i]);
+        //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+        //console.log("\nACC[",i, "] : ", resAcc[i]);
+        //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+        //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+        //console.log("\nresTags[",i, "] : ", resTags[i]);
+      }
  
     }      
       
   });
 }//end getcongregationsJSON function
+
+
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
+}
+
 
 
 function insertCongregation(theObj) {
@@ -140,10 +190,10 @@ function formatCong(actualIndex) {
     process:        congregations[actualIndex].process,
     approved:       congregations[actualIndex].approved,
 
-    categories:     congregations[actualIndex].categories,
-    instruments:    congregations[actualIndex].instruments,
-    ethnicities:    congregations[actualIndex].ethnicities,
-    tags:           congregations[actualIndex].tags
+    categories:     congCategories[actualIndex],
+    instruments:    congInstruments[actualIndex],
+    ethnicities:    congEthnicities[actualIndex],
+    tags:           congTags[actualIndex]
 
   };
 
