@@ -360,12 +360,12 @@ personController.postConfig = {
 personController.activateConfig = {
   handler: function(request, reply) {
     getPersonsJSON();
-    var theeventID = events.length+1;
+    var thePersonID = persons.length+1;
 
     if (request.params.id) {
-        if (numEvents <= request.params.id - 1) {
+        if (numPersons <= request.params.id - 1) {
           //return reply('Not enough events in the database for your request').code(404);
-          return reply(Boom.notFound("Not enough events"));
+          return reply(Boom.notFound("Not enough persons"));
         }
         //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
         var actualIndex = Number(request.params.id -1 );  //if you request for events/1 you'll get events[0]
@@ -378,21 +378,21 @@ personController.activateConfig = {
         if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
 
         var query = connection.query(`
-        UPDATE events SET ?
+        UPDATE persons SET ?
         WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
           if(err) {
               console.log(query.sql);
-              return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              return reply(Boom.badRequest(`invalid query when updating persons on column ${request.params.what_var} with value = ${request.params.what_val} `));
           } else {
             getPersonsJSON();
             console.log(query.sql);
-            console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+            console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
           }
 
           return reply( {statusCode: 200} );
         });
 
-      //return reply(events[actualId]);
+      //return reply(persons[actualId]);
     }
   }//handler
 }
