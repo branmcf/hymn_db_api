@@ -275,6 +275,7 @@ server.route({
 });
 
 
+/*
 //USER POST REQUEST
 server.route({
   
@@ -293,13 +294,13 @@ server.route({
       last_name: req.payload.last_name,
       //salt: null,
       //high_level: req.payload.high_level,
-      /*
+      
       city_name: req.payload.city_name,
       state_name: req.payload.state_name,
       country_name: req.payload.country_name,
       website: req.payload.website,
       hymn_soc_member: req.payload.hymn_soc_member
-      */
+      
       is_active:        req.payload.is_active,
       reg_date:         req.payload.reg_date,
       high_level:       req.payload.high_level,
@@ -307,23 +308,7 @@ server.route({
       ethnicities:      req.payload.ethnicities
 
     };
-
-    /*
-    var returnedUser = hashAndStoreSync(newUser);
-
-    //below line for testing
-    testUser = returnedUser;
-
-    if(returnedUser.password != undefined) {
-      newUser.password = returnedUser.password;
-      newUser.salt = returnedUser.salt;
-      console.log("hashed pass:", newUser.password, " with salt: ", newUser.salt);
-    }
-    else {
-      console.log("error with hash function, new password will default to \"password123\". ");
-      newUser.password = "password123";
-    }
-    */
+    
 
 
 // mysql
@@ -364,8 +349,7 @@ server.route({
 
 
 
-  }//end handler
-  /* COMMA ^
+  },//end handler
   validate: {
     payload: {
       email:      Joi.string().email(),
@@ -374,14 +358,16 @@ server.route({
       last_name:  Joi.string().required()
     }
   }
-  */
+  
   }//end config
-});
+});//end user POST
+*/
 
 //
 //
 //
 
+/*
 server.route({
   
   method: 'POST',
@@ -434,11 +420,13 @@ server.route({
   }
   }//end config
 });
+*/
 
 //
 //
 //
 
+/*
 server.route({
   
   method: 'POST',
@@ -544,11 +532,13 @@ server.route({
   }
   }//end config
 });
+*/
 
 //
 //
 //
 
+/*
 server.route({
   method: 'DELETE',
   path: '/user/delete/{id}',
@@ -588,11 +578,12 @@ server.route({
   }
 
 });
+*/
 
 //
 //
 //
-
+/*
 server.route({
   method: 'PUT',
   path: '/user/activate/{id}',
@@ -627,6 +618,7 @@ server.route({
   }
 
 });
+*/
 
 /*
 server.start(function (err) {
@@ -777,7 +769,51 @@ server.register(BasicAuth, function (err) {
       }
     }
     }//end config
+  });//end post /register
+
+  server.route({
+  method: 'PUT',
+    path: '/user/{what_var}/{what_val}/{id}',
+    config: {
+      auth: 'simple',
+      handler: function(request, reply) {
+          getUsersNew();
+
+          if (request.params.id) {
+              if (numUsers <= request.params.id - 1) {
+                //return reply('Not enough resources in the database for your request').code(404);
+                return reply(Boom.notFound("Entered invalid id for congregations activate endpoint"));
+              }
+              //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+              var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+
+              var mysqlIndex = Number(request.params.id);
+
+              var theCol = request.params.what_var;
+              var theVal = request.params.what_val;
+
+              var query = connection.query(`
+              UPDATE users SET ?
+              WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+                if(err) {
+                    console.log(query.sql);
+                    return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
+                } else {
+                  console.log(query.sql);
+                  console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                }
+
+                return reply( {code: 201} );
+              });
+
+            //return reply(resources[actualId]);
+          }//end if
+
+      }//end handler
+    }//end config
   });
+    
+  
 
   // start your server after plugin registration
   server.start(function (err) {
