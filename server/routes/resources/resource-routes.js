@@ -1,6 +1,7 @@
 var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
+var async = require('async');
 
 var options = require('../../config/config.js');
 
@@ -22,8 +23,8 @@ if (process.env.JAWSDB_URL) {
 
 resourceController = {};
 var resources = [];
-  var numRes = 0;
-  var resTypes = [];
+var numRes = 0;
+  //var resTypes = [];
   var resCategories = [];
   var resTopics =[];
   var resAcc = [];
@@ -31,6 +32,8 @@ var resources = [];
   var resTags = [];
   var resEnsembles = [];
   var resEth = [];
+  var resDenominations = [];
+  var resInstruments = [];
 
 getResourcesJSON();
 
@@ -40,9 +43,10 @@ function getResourcesJSON() {
     if (!err) {
 
       	var JSObj = rowsToJS(rows);
+        //var JSObj = rows;
 
         resources = [];
-        resTypes = [];
+        //resTypes = [];
         resCategories = [];
         resTopics =[];
         resAcc = [];
@@ -50,18 +54,73 @@ function getResourcesJSON() {
         resTags = [];
         resEnsembles = [];
         resEth = [];
+        resDenominations = [];
+        resInstruments = [];
 
       	//resources.push(JSObj);
         resources = JSObj;
-        //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nresources: ", resources);
-        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       	numRes = resources.length;
+        //console.log("rows[0]: ", JSObj[0]);
+
+        //console.log("\nT: ", rows[0]);
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], resEth);
+          popArray(JSObj[i]["categories"], resCategories);
+          popArray(JSObj[i]["topics"], resTopics);
+          popArray(JSObj[i]["accompaniment"], resAcc);
+          popArray(JSObj[i]["languages"], resLanguages);
+          popArray(JSObj[i]["ensembles"], resEnsembles);
+          popArray(JSObj[i]["tags"], resTags);
+          popArray(JSObj[i]["instruments"], resInstruments);
+          popArray(JSObj[i]["denominations"], resDenominations);
+          //popArray(JSObj[i]["types"], resTypes);
+
+          //console.log("\nETH[",i, "] : ", resEth[i]);
+          //console.log("\nCAT[",i, "] : ", resCategories[i]);
+          //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+          //console.log("\nACC[",i, "] : ", resAcc[i]);
+          //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+          //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+          //console.log("\nresTags[",i, "] : ", resTags[i]);
+        }
+        
+        
+        //popArray(JSObj[0].categories, resCategories);
+
 
     }
     else
       console.log('Error while performing Resources Query.');
 
   });
+}
+
+//Object.keys(obj.ethnicities).length
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+
+  whichArray.push(theKeys);
+  //console.log("whichArray: ", whichArray);
+
 }
 
 function insertResource(theObj) {
@@ -150,7 +209,7 @@ function formatResource(actualIndex) {
     user:           resources[actualIndex].user,
     pract_schol:    resources[actualIndex].pract_schol,
     approved:       resources[actualIndex].approved,
-
+/*
     languages:      resources[actualIndex].languages,
     ethnicities:    resources[actualIndex].ethnicities,
     ensembles:      resources[actualIndex].ensembles,
@@ -160,6 +219,17 @@ function formatResource(actualIndex) {
     tags:           resources[actualIndex].tags,
     denominations:  resources[actualIndex].denominations,
     instruments:    resources[actualIndex].instruments
+*/
+    languages:      resLanguages[actualIndex],
+    ethnicities:    resEth[actualIndex].ethnicities,
+    ensembles:      resEnsembles[actualIndex].ensembles,
+    categories:     resCategories[actualIndex].categories,
+    accompaniment: 	resAcc[actualIndex].accompaniment,
+    topics:         resTopics[actualIndex].topics,
+    tags:           resTags[actualIndex].tags,
+    denominations:  resDenominations[actualIndex],
+    instruments:    resInstruments[actualIndex].instruments
+
 
   };
 
@@ -393,6 +463,8 @@ resourceController.activateConfig = {
 
             var theCol = request.params.what_var;
             var theVal = request.params.what_val;
+
+            if(theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
 
             var query = connection.query(`
             UPDATE resources SET ?
