@@ -67,7 +67,7 @@ function getcongregationsJSON() {
         popArray(JSObj[i]["tags"], congTags);
         popArray(JSObj[i]["instruments"], congInstruments);
         popArray(JSObj[i]["shape"], congShape);
-        popArray(JSObj[i]["priest_attire"], congAttire);
+        popArray(JSObj[i]["clothing"], congAttire);
 
         //console.log("\nETH[",i, "] : ", resEth[i]);
         //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -335,7 +335,7 @@ congController.postConfig = {
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
       user_id:          req.payload.uid,
-      priest_attire:    req.payload.data.clothing,
+      clothing:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
       description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
       is_active:        true,

@@ -145,10 +145,9 @@ CREATE TABLE organizations (
 	promotions varchar(256),
     is_active boolean default false,
     high_level boolean default false,
-    clothing varchar(128),
     approved boolean default false,
 
-	priest_attire json NOT NULL,
+	clothing json NOT NULL,
 	shape json NOT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
@@ -170,7 +169,6 @@ CREATE TABLE congregations (
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default false,
-	clothing varchar(128),
 	geography varchar(128),
 	attendance varchar(64) default "under 50",
 	is_active boolean default false,
@@ -185,7 +183,7 @@ CREATE TABLE congregations (
 	approved boolean default false,
 
 	shape json NOT NULL,
-	priest_attire json NOT NULL,
+	clothing json NOT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
 	ethnicities JSON DEFAULT NULL,

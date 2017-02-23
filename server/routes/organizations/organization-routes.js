@@ -66,7 +66,7 @@ function getOrganizationsJSON() {
       popArray(JSObj[i]["tags"], orgTags);
       popArray(JSObj[i]["instruments"], orgInstruments);
       popArray(JSObj[i]["shape"], orgShape);
-      popArray(JSObj[i]["priest_attire"], orgAttire);
+      popArray(JSObj[i]["clothing"], orgAttire);
 
       //console.log("\nETH[",i, "] : ", resEth[i]);
       //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -363,7 +363,7 @@ orgController.postConfig = {
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
       user_id:          req.payload.uid,
-      priest_attire:    req.payload.data.clothing,
+      clothing:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
 
       categories:       req.payload.data.categories,
