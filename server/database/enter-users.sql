@@ -1,3 +1,5 @@
+INSERT INTO users(first_name, last_name, email, password, salt, is_admin) VALUES("Brian","Hehn", "brian@thehymnsociety.org", "$2a$10$fPWs6bC1gzni1bNanRE8ceCPARqOJXy/XtqY1ZozxWBwh7bWh1LSq", "$2a$10$fPWs6bC1gzni1bNanRE8ce", true);
+
 INSERT INTO users
 (first_name,    last_name,  email,                          password,                                                       salt,                           high_level) VALUES
 ("Jakob",       "Sensenig", "Jacob_Sensenig@baylor.edu",    "$2a$10$eH5ak4W6f88V.RE0MDfWkecEa/1siG687Eu/luzsefQ1r5Z9VP2..", "$2a$10$eH5ak4W6f88V.RE0MDfWke", true),
