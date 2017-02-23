@@ -23,6 +23,7 @@ var events = [];
   var eventTags = [];
   var eventEnsembles = [];
   var eventEthnicities = [];
+  var eventShape = [];
 
 getEventsJSON();
 
@@ -46,6 +47,7 @@ function getEventsJSON() {
         eventTags = [];
         eventEnsembles = [];
         eventEthnicities = [];
+        eventShape = [];
 
         events = JSObj;
       	numEvents = events.length;
@@ -54,7 +56,7 @@ function getEventsJSON() {
           popArray(JSObj[i]["ethnicities"], eventEthnicities);
           popArray(JSObj[i]["ensembles"], eventEnsembles);
           popArray(JSObj[i]["tags"], eventTags);
-          //popArray(JSObj[i]["types"], eventTypes);
+          popArray(JSObj[i]["shape"], eventShape);
 
           //console.log("\nETH[",i, "] : ", resEth[i]);
           //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -190,12 +192,12 @@ function formatEvent(actualIndex) {
     high_level:     events[actualIndex].high_level,
     user_id:        events[actualIndex].user_id,
     user:           events[actualIndex].user,
-    shape:          events[actualIndex].shape,
-    clothing:       events[actualIndex].priest_attire,
+    clothing:       events[actualIndex].clothing,
     attendance:     events[actualIndex].attendance,
     approved:       events[actualIndex].approved,
     pract_schol:    events[actualIndex].pract_schol,
 
+    shape:          events[eventShape],
     ethnicities:    eventEthnicities[actualIndex],
     ensembles:      eventEnsembles[actualIndex],
     tags:           eventTags[actualIndex]
@@ -333,7 +335,7 @@ eventController.postConfig = {
       user:           req.payload.user,
       theme:          req.payload.data.theme,
       shape:          req.payload.data.shape,
-      priest_attire:  req.payload.data.clothing,
+      clothing:       req.payload.data.clothing,
       attendance:     req.payload.data.attendance,
       approved:       req.payload.data.approved,
       pract_schol:    req.payload.data.pract_schol,

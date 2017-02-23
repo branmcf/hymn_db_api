@@ -23,6 +23,7 @@ var personNumPersons = 0;
   var personInstruments = [];
   var personCategories = [];
   var personTags = [];
+  var personLangs = [];
 
 getPersonsJSON();
 
@@ -51,6 +52,7 @@ function getPersonsJSON() {
         personInstruments = [];
         personCategories = [];
         personTags = [];
+        personLangs = [];
 
 
         persons = JSObj;
@@ -65,7 +67,7 @@ function getPersonsJSON() {
           popArray(JSObj[i]["ensembles"], personEnsembles);
           popArray(JSObj[i]["tags"], personTags);
           popArray(JSObj[i]["instruments"], personInstruments);
-          //popArray(JSObj[i]["types"], resTypes);
+          popArray(JSObj[i]["languages"], personLangs);
 
           //console.log("\nETH[",i, "] : ", resEth[i]);
           //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -186,6 +188,7 @@ function formatPerson(actualIndex) {
     user_id:        persons[actualIndex].user_id,
     user:           persons[actualIndex].user,
 
+    languages:      personLangs[actualIndex],
     instruments:    personInstruments[actualIndex],
     categories:     personCategories[actualIndex],
     ensembles:      personEnsembles[actualIndex],
@@ -313,6 +316,7 @@ personController.postConfig = {
       user:             req.payload.user,
       is_active:        true,
       
+      languages:        req.payload.data.languages,
       instruments:      req.payload.data.instruments,
       categories:       req.payload.data.categories,
       ensembles:        req.payload.data.ensembles,

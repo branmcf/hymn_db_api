@@ -4,14 +4,9 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS event_table;
 DROP TABLE IF EXISTS Event_Table;
 */
-
-
-
-
 DROP TABLE IF EXISTS choices;
 DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS quizes;
-
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS congregations;
@@ -26,7 +21,6 @@ SET FOREIGN_KEY_CHECKS=1;
 - USERS, ORGS, EVENTS, RESOURCES, CONGS -
 ===================================================
 */
-
 
 CREATE TABLE users (
 	id int unsigned not null auto_increment,
@@ -109,19 +103,18 @@ CREATE TABLE events(
 	city varchar(64) default "Dallas",
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
-	hymn_soc_member boolean default false,
-	shape varchar(128),
-	priest_attire varchar(64),
+	hymn_soc_member boolean default false,	
 	attendance varchar(64),
 	user_id int unsigned,
     user varchar(64),
-	
 	is_free tinyint(3),
 	is_active boolean default false,
 	high_level boolean default false,
 	approved boolean default false,
 	pract_schol varchar(32),
     
+	clothing json NOT NULL,
+	shape json NOT NULL,
 	tags json DEFAULT NULL,
 	ensembles json DEFAULT NULL,
 	ethnicities json DEFAULT NULL
@@ -146,8 +139,6 @@ CREATE TABLE organizations (
 	mission varchar(256),
 	process varchar(256),
 	hymn_soc_member tinyint(3) default false,
-	shape varchar(128),
-	priest_attire varchar(64),
 	user_id int unsigned,
     user varchar(64),
 
@@ -157,6 +148,8 @@ CREATE TABLE organizations (
     clothing varchar(128),
     approved boolean default false,
 
+	priest_attire json NOT NULL,
+	shape json NOT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
 	ethnicities JSON DEFAULT NULL,
@@ -177,7 +170,6 @@ CREATE TABLE congregations (
 	state varchar(64) default "Texas",
 	country varchar(128) default "United States",
 	hymn_soc_member boolean default false,
-	shape varchar(128),
 	clothing varchar(128),
 	geography varchar(128),
 	attendance varchar(64) default "under 50",
@@ -186,13 +178,14 @@ CREATE TABLE congregations (
 	user_id int unsigned,
     user varchar(64),
 
-	priest_attire varchar(64),
 	description_of_worship_to_guests text(512),
 	is_free TINYINT(3) default 0,
 	events_free TINYINT(3) default 0,
 	process varchar(128),
 	approved boolean default false,
 
+	shape json NOT NULL,
+	priest_attire json NOT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
 	ethnicities JSON DEFAULT NULL,
@@ -264,6 +257,7 @@ CREATE TABLE persons (
 	is_active boolean default false,
 	high_level boolean default false,
 
+	languages json NOT NULL,
 	topics json DEFAULT NULL,
 	ensembles json DEFAULT NULL,
 	tags json DEFAULT NULL,

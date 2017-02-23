@@ -26,6 +26,8 @@ var numCongs = 0;
   var congInstruments = [];
   var congEthnicities = [];
   var congTags = [];
+  var congShape = [];
+  var congAttire = [];
 
 
 getcongregationsJSON();
@@ -50,6 +52,8 @@ function getcongregationsJSON() {
       congInstruments = [];
       congEthnicities = [];
       congTags = [];
+      congShape = [];
+      congAttire = [];
 
       var JSObj = rowsToJS(rows);
       congregations = JSObj;
@@ -62,7 +66,8 @@ function getcongregationsJSON() {
         popArray(JSObj[i]["categories"], congCategories);
         popArray(JSObj[i]["tags"], congTags);
         popArray(JSObj[i]["instruments"], congInstruments);
-        //popArray(JSObj[i]["types"], resTypes);
+        popArray(JSObj[i]["shape"], congShape);
+        popArray(JSObj[i]["priest_attire"], congAttire);
 
         //console.log("\nETH[",i, "] : ", resEth[i]);
         //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -188,13 +193,13 @@ function formatCong(actualIndex) {
     is_active:      congregations[actualIndex].is_active,
     high_level:     congregations[actualIndex].high_level,
     user_id:        congregations[actualIndex].user_id,
-    user:           congregations[actualIndex].user,
-    shape:          congregations[actualIndex].shape,
-    clothing:       congregations[actualIndex].priest_attire,    
+    user:           congregations[actualIndex].user,     
     description_of_worship_to_guests: congregations[actualIndex].description_of_worship_to_guests,
     process:        congregations[actualIndex].process,
     approved:       congregations[actualIndex].approved,
 
+    clothing:       congAttire[actualIndex],
+    shape:          congShape[actualIndex],
     categories:     congCategories[actualIndex],
     instruments:    congInstruments[actualIndex],
     ethnicities:    congEthnicities[actualIndex],
