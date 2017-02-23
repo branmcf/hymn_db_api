@@ -202,7 +202,7 @@ function formatEvent(actualIndex) {
     pract_schol:    events[actualIndex].pract_schol,
 
     clothing:       eventsAttire[actualIndex],
-    shape:          eventShape[eventShape],
+    shape:          eventShape[actualIndex],
     ethnicities:    eventEthnicities[actualIndex],
     ensembles:      eventEnsembles[actualIndex],
     tags:           eventTags[actualIndex]
