@@ -24,6 +24,7 @@ var events = [];
   var eventEnsembles = [];
   var eventEthnicities = [];
   var eventShape = [];
+  var eventsAttire = [];
 
 getEventsJSON();
 
@@ -48,6 +49,7 @@ function getEventsJSON() {
         eventEnsembles = [];
         eventEthnicities = [];
         eventShape = [];
+        eventsAttire = [];
 
         events = JSObj;
       	numEvents = events.length;
@@ -57,6 +59,7 @@ function getEventsJSON() {
           popArray(JSObj[i]["ensembles"], eventEnsembles);
           popArray(JSObj[i]["tags"], eventTags);
           popArray(JSObj[i]["shape"], eventShape);
+          popArray(JSObj[i]["clothing"], eventsAttire);
 
           //console.log("\nETH[",i, "] : ", resEth[i]);
           //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -110,7 +113,9 @@ function insertEvent(theObj) {
   justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
   justEvent.tags = JSON.stringify(justEvent.tags);
   justEvent.ensembles = JSON.stringify(justEvent.ensembles);
-
+  justEvent.shape = JSON.stringify(justEvent.shape);
+  justEvent.clothing = JSON.stringify(justEvent.clothing);
+  
   //console.log("\n\njustEvent: \n\n", justEvent);
 
   // TYPE CONVERSION
@@ -192,11 +197,11 @@ function formatEvent(actualIndex) {
     high_level:     events[actualIndex].high_level,
     user_id:        events[actualIndex].user_id,
     user:           events[actualIndex].user,
-    clothing:       events[actualIndex].clothing,
     attendance:     events[actualIndex].attendance,
     approved:       events[actualIndex].approved,
     pract_schol:    events[actualIndex].pract_schol,
 
+    clothing:       eventsAttire[actualIndex],
     shape:          eventShape[eventShape],
     ethnicities:    eventEthnicities[actualIndex],
     ensembles:      eventEnsembles[actualIndex],

@@ -122,6 +122,8 @@ function insertCongregation(theObj) {
   justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
   justCongregation.tags = JSON.stringify(justCongregation.tags);
   justCongregation.instruments = JSON.stringify(justCongregation.instruments);
+  justCongregation.clothing = JSON.stringify(justCongregation.clothing);
+  justCongregation.shape = JSON.stringify(justCongregation.shape);
 
 // TYPE CONVERSION
   if(typeof justCongregation.hymn_soc_member == "string") {
@@ -157,11 +159,11 @@ function insertCongregation(theObj) {
 // END TYPE CONVERSION
 
 	connection.query(`INSERT INTO congregations set ?`, justCongregation, function(err, rows, fields) {
-        if(err) { throw err; }
+    if(err) { throw err; }
 
-        var JSObj = rowsToJS(theObj);
+    var JSObj = rowsToJS(theObj);
 
-        congregations.push(JSObj);
+    congregations.push(JSObj);
 
         
     });

@@ -125,6 +125,7 @@ function insertPerson(theObj) {
   justPerson.tags = JSON.stringify(justPerson.tags);
   justPerson.ensembles = JSON.stringify(justPerson.ensembles);
   justPerson.instruments = JSON.stringify(justPerson.instruments);
+  justPerson.languages = JSON.stringify(justPerson.languages);
 
   //console.log("\n\njustPerson: \n\n", justPerson);
 
@@ -310,7 +311,7 @@ personController.postConfig = {
       social_twitter:          req.payload.data.social_twitter,
       social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
-      hymn_soc_member:            req.payload.data.hymn_soc_member,     
+      hymn_soc_member:  req.payload.data.hymn_soc_member,     
       high_level:       req.payload.data.high_level,
       user_id:          req.payload.uid,
       user:             req.payload.user,

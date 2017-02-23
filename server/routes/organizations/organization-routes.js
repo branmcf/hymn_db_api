@@ -121,6 +121,9 @@ function insertOrganization(theObj) {
   justOrganization.ethnicities = JSON.stringify(justOrganization.ethnicities);
   justOrganization.tags = JSON.stringify(justOrganization.tags);
   justOrganization.instruments = JSON.stringify(justOrganization.instruments);
+  justOrganization.clothing = JSON.stringify(justOrganization.clothing);
+  justOrganization.shape = JSON.stringify(justOrganization.shape);
+
 
 // TYPE CONVERSION
   if(typeof justOrganization.hymn_soc_member == "string") {

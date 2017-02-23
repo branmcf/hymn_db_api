@@ -113,8 +113,8 @@ CREATE TABLE events(
 	approved boolean default false,
 	pract_schol varchar(32),
     
-	clothing json NOT NULL,
-	shape json NOT NULL,
+	clothing json DEFAULT NULL,
+	shape json DEFAULT NULL,
 	tags json DEFAULT NULL,
 	ensembles json DEFAULT NULL,
 	ethnicities json DEFAULT NULL
@@ -147,8 +147,8 @@ CREATE TABLE organizations (
     high_level boolean default false,
     approved boolean default false,
 
-	clothing json NOT NULL,
-	shape json NOT NULL,
+	clothing json DEFAULT NULL,
+	shape json DEFAULT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
 	ethnicities JSON DEFAULT NULL,
@@ -182,8 +182,8 @@ CREATE TABLE congregations (
 	process varchar(128),
 	approved boolean default false,
 
-	shape json NOT NULL,
-	clothing json NOT NULL,
+	shape json DEFAULT NULL,
+	clothing json DEFAULT NULL,
 	categories JSON DEFAULT NULL, 
 	instruments JSON DEFAULT NULL, 
 	ethnicities JSON DEFAULT NULL,
@@ -255,7 +255,7 @@ CREATE TABLE persons (
 	is_active boolean default false,
 	high_level boolean default false,
 
-	languages json NOT NULL,
+	languages json DEFAULT NULL,
 	topics json DEFAULT NULL,
 	ensembles json DEFAULT NULL,
 	tags json DEFAULT NULL,
