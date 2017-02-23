@@ -197,7 +197,7 @@ function formatEvent(actualIndex) {
     approved:       events[actualIndex].approved,
     pract_schol:    events[actualIndex].pract_schol,
 
-    shape:          events[eventShape],
+    shape:          eventShape[eventShape],
     ethnicities:    eventEthnicities[actualIndex],
     ensembles:      eventEnsembles[actualIndex],
     tags:           eventTags[actualIndex]
