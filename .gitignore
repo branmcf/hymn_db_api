@@ -40,5 +40,5 @@ jspm_packages
 
 /server/config/*
 
-/server/database/enter-users.sql
+/server/database/profile-creation/*
 
