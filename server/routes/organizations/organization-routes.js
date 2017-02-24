@@ -26,6 +26,8 @@ var numOrgs = 0;
   var orgInstruments = [];
   var orgEthnicities = [];
   var orgTags = [];
+  var orgShape = [];
+  var orgAttire = [];
 
 
 getOrganizationsJSON();
@@ -50,6 +52,8 @@ function getOrganizationsJSON() {
     orgInstruments = [];
     orgEthnicities = [];
     orgTags = [];
+    orgAttire = [];
+    orgShape = [];
 
     var JSObj = rowsToJS(rows);
     orgs = JSObj;    
@@ -61,7 +65,8 @@ function getOrganizationsJSON() {
       popArray(JSObj[i]["categories"], orgCategories);
       popArray(JSObj[i]["tags"], orgTags);
       popArray(JSObj[i]["instruments"], orgInstruments);
-      //popArray(JSObj[i]["types"], resTypes);
+      popArray(JSObj[i]["shape"], orgShape);
+      popArray(JSObj[i]["clothing"], orgAttire);
 
       //console.log("\nETH[",i, "] : ", resEth[i]);
       //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -116,6 +121,9 @@ function insertOrganization(theObj) {
   justOrganization.ethnicities = JSON.stringify(justOrganization.ethnicities);
   justOrganization.tags = JSON.stringify(justOrganization.tags);
   justOrganization.instruments = JSON.stringify(justOrganization.instruments);
+  justOrganization.clothing = JSON.stringify(justOrganization.clothing);
+  justOrganization.shape = JSON.stringify(justOrganization.shape);
+
 
 // TYPE CONVERSION
   if(typeof justOrganization.hymn_soc_member == "string") {
@@ -215,10 +223,10 @@ function formatOrg(actualIndex) {
     high_level:     orgs[actualIndex].high_level,
     user_id:        orgs[actualIndex].user_id,
     user:           orgs[actualIndex].user,
-    shape:          orgs[actualIndex].shape,
-    clothing:       orgs[actualIndex].priest_attire,
     approved:       orgs[actualIndex].approved,
 
+    clothing:       orgAttire[actualIndex],
+    shape:          orgShape[actualIndex],
     categories:     orgCategories[actualIndex],
     instruments:    orgInstruments[actualIndex],
     ethnicities:    orgEthnicities[actualIndex],
@@ -358,7 +366,7 @@ orgController.postConfig = {
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
       user_id:          req.payload.uid,
-      priest_attire:    req.payload.data.clothing,
+      clothing:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
 
       categories:       req.payload.data.categories,

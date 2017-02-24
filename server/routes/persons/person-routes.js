@@ -23,6 +23,7 @@ var personNumPersons = 0;
   var personInstruments = [];
   var personCategories = [];
   var personTags = [];
+  var personLangs = [];
 
 getPersonsJSON();
 
@@ -51,6 +52,7 @@ function getPersonsJSON() {
         personInstruments = [];
         personCategories = [];
         personTags = [];
+        personLangs = [];
 
 
         persons = JSObj;
@@ -65,7 +67,7 @@ function getPersonsJSON() {
           popArray(JSObj[i]["ensembles"], personEnsembles);
           popArray(JSObj[i]["tags"], personTags);
           popArray(JSObj[i]["instruments"], personInstruments);
-          //popArray(JSObj[i]["types"], resTypes);
+          popArray(JSObj[i]["languages"], personLangs);
 
           //console.log("\nETH[",i, "] : ", resEth[i]);
           //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -123,6 +125,7 @@ function insertPerson(theObj) {
   justPerson.tags = JSON.stringify(justPerson.tags);
   justPerson.ensembles = JSON.stringify(justPerson.ensembles);
   justPerson.instruments = JSON.stringify(justPerson.instruments);
+  justPerson.languages = JSON.stringify(justPerson.languages);
 
   //console.log("\n\njustPerson: \n\n", justPerson);
 
@@ -186,6 +189,7 @@ function formatPerson(actualIndex) {
     user_id:        persons[actualIndex].user_id,
     user:           persons[actualIndex].user,
 
+    languages:      personLangs[actualIndex],
     instruments:    personInstruments[actualIndex],
     categories:     personCategories[actualIndex],
     ensembles:      personEnsembles[actualIndex],
@@ -307,12 +311,13 @@ personController.postConfig = {
       social_twitter:          req.payload.data.social_twitter,
       social_other:          req.payload.data.social_other,
       emphasis:       req.payload.data.emphasis,
-      hymn_soc_member:            req.payload.data.hymn_soc_member,     
+      hymn_soc_member:  req.payload.data.hymn_soc_member,     
       high_level:       req.payload.data.high_level,
       user_id:          req.payload.uid,
       user:             req.payload.user,
       is_active:        true,
       
+      languages:        req.payload.data.languages,
       instruments:      req.payload.data.instruments,
       categories:       req.payload.data.categories,
       ensembles:        req.payload.data.ensembles,

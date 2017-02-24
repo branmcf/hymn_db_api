@@ -650,11 +650,17 @@ server.register(BasicAuth, function (err) {
         var user = {
           id: rows[0].id,
           email: username,
-          password: rows[0].password
+          password: rows[0].password,
+          is_admin: rows[0].is_admin
         };
         
         Bcrypt.compare(password, user.password, function (err, isValid) {
-          callback(err, isValid, { id: user.id, email: user.email })
+          if(user.is_admin == true) {
+            callback(err, isValid, { id: user.id, email: user.email })
+          } else {
+            callback(err, false, { id: user.id, email: user.email })
+          }
+          
         });
       });  
 

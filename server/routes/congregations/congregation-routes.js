@@ -26,6 +26,8 @@ var numCongs = 0;
   var congInstruments = [];
   var congEthnicities = [];
   var congTags = [];
+  var congShape = [];
+  var congAttire = [];
 
 
 getcongregationsJSON();
@@ -50,6 +52,8 @@ function getcongregationsJSON() {
       congInstruments = [];
       congEthnicities = [];
       congTags = [];
+      congShape = [];
+      congAttire = [];
 
       var JSObj = rowsToJS(rows);
       congregations = JSObj;
@@ -62,7 +66,8 @@ function getcongregationsJSON() {
         popArray(JSObj[i]["categories"], congCategories);
         popArray(JSObj[i]["tags"], congTags);
         popArray(JSObj[i]["instruments"], congInstruments);
-        //popArray(JSObj[i]["types"], resTypes);
+        popArray(JSObj[i]["shape"], congShape);
+        popArray(JSObj[i]["clothing"], congAttire);
 
         //console.log("\nETH[",i, "] : ", resEth[i]);
         //console.log("\nCAT[",i, "] : ", resCategories[i]);
@@ -117,6 +122,8 @@ function insertCongregation(theObj) {
   justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
   justCongregation.tags = JSON.stringify(justCongregation.tags);
   justCongregation.instruments = JSON.stringify(justCongregation.instruments);
+  justCongregation.clothing = JSON.stringify(justCongregation.clothing);
+  justCongregation.shape = JSON.stringify(justCongregation.shape);
 
 // TYPE CONVERSION
   if(typeof justCongregation.hymn_soc_member == "string") {
@@ -152,11 +159,11 @@ function insertCongregation(theObj) {
 // END TYPE CONVERSION
 
 	connection.query(`INSERT INTO congregations set ?`, justCongregation, function(err, rows, fields) {
-        if(err) { throw err; }
+    if(err) { throw err; }
 
-        var JSObj = rowsToJS(theObj);
+    var JSObj = rowsToJS(theObj);
 
-        congregations.push(JSObj);
+    congregations.push(JSObj);
 
         
     });
@@ -188,13 +195,13 @@ function formatCong(actualIndex) {
     is_active:      congregations[actualIndex].is_active,
     high_level:     congregations[actualIndex].high_level,
     user_id:        congregations[actualIndex].user_id,
-    user:           congregations[actualIndex].user,
-    shape:          congregations[actualIndex].shape,
-    clothing:       congregations[actualIndex].priest_attire,    
+    user:           congregations[actualIndex].user,     
     description_of_worship_to_guests: congregations[actualIndex].description_of_worship_to_guests,
     process:        congregations[actualIndex].process,
     approved:       congregations[actualIndex].approved,
 
+    clothing:       congAttire[actualIndex],
+    shape:          congShape[actualIndex],
     categories:     congCategories[actualIndex],
     instruments:    congInstruments[actualIndex],
     ethnicities:    congEthnicities[actualIndex],
@@ -330,7 +337,7 @@ congController.postConfig = {
       hymn_soc_member: req.payload.data.hymn_soc_member,
       user:             req.payload.user,
       user_id:          req.payload.uid,
-      priest_attire:    req.payload.data.clothing,
+      clothing:    req.payload.data.clothing,
       shape:            req.payload.data.shape,
       description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
       is_active:        true,
