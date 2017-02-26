@@ -1,1 +1,1 @@
-SELECT * from users;
+describe persons;
