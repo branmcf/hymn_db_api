@@ -188,6 +188,7 @@ function formatPerson(actualIndex) {
     approved:       persons[actualIndex].approved,
     user_id:        persons[actualIndex].user_id,
     user:           persons[actualIndex].user,
+    pract_schol:    persons[actualIndex].pract_schol,
 
     languages:      personLangs[actualIndex],
     instruments:    personInstruments[actualIndex],
@@ -316,6 +317,7 @@ personController.postConfig = {
       user_id:          req.payload.uid,
       user:             req.payload.user,
       is_active:        true,
+      pract_schol:      req.payload.data.pract_schol,
       
       languages:        req.payload.data.languages,
       instruments:      req.payload.data.instruments,
