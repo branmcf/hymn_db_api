@@ -19,7 +19,6 @@ var connection = mysql.createConnection({
 eventController = {};
 var events = [];
   var numEvents = 0;
-  var eventTypes = [];
   var eventTags = [];
   var eventEnsembles = [];
   var eventEthnicities = [];
@@ -44,7 +43,6 @@ function getEventsJSON() {
 
         events = [];
         numEvents = 0;
-        eventTypes = [];
         eventTags = [];
         eventEnsembles = [];
         eventEthnicities = [];
@@ -200,6 +198,7 @@ function formatEvent(actualIndex) {
     attendance:     events[actualIndex].attendance,
     approved:       events[actualIndex].approved,
     pract_schol:    events[actualIndex].pract_schol,
+    type:           events[actualIndex].type,
 
     clothing:       eventsAttire[actualIndex],
     shape:          eventShape[actualIndex],
@@ -346,6 +345,7 @@ eventController.postConfig = {
       pract_schol:    req.payload.data.pract_schol,
       is_free:        req.payload.data.is_free,
       is_active:      true,
+      type:           req.payload.data.type,
 
       ethnicities:    req.payload.data.ethnicities,
       ensembles:      req.payload.data.ensembles,
