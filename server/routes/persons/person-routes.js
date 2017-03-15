@@ -364,7 +364,7 @@ personController.postConfig = {
 */
 };
 
-personController.activateConfig = {
+personController.updateConfig = {
   handler: function(request, reply) {
     getPersonsJSON();
     var thePersonID = persons.length+1;
@@ -379,8 +379,8 @@ personController.activateConfig = {
 
         var mysqlIndex = Number(request.params.id);
 
-        var theCol = request.params.what_var;
-        var theVal = request.params.what_val;
+        var theCol = request.payload.column;
+        var theVal = request.payload.value;
 
         if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
 
@@ -389,7 +389,7 @@ personController.activateConfig = {
         WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
           if(err) {
               console.log(query.sql);
-              return reply(Boom.badRequest(`invalid query when updating persons on column ${request.params.what_var} with value = ${request.params.what_val} `));
+              return reply(Boom.badRequest(`invalid query when updating persons on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
           } else {
             getPersonsJSON();
             console.log(query.sql);
@@ -411,6 +411,6 @@ personController.activateConfig = {
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
     { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
-    { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.activateConfig}
+    { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.updateConfig}
   
 ];

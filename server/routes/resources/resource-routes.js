@@ -472,10 +472,15 @@ resourceController.deleteConfig = {
 };
 
 //RESOURCE CHANGE VARIABLE ENDPOINT
-resourceController.activateConfig = {
+/* receive in body:
+  {
+    "column": "column_to_update",
+    "value": "value_to_place"
+  }
+*/
+resourceController.updateConfig = {
     handler: function(request, reply) {
         getResourcesJSON();
-      	var theResourceID = resources.length+1;
 
         if (request.params.id) {
             if (numRes <= request.params.id - 1) {
@@ -487,8 +492,8 @@ resourceController.activateConfig = {
 
             var mysqlIndex = Number(request.params.id);
 
-            var theCol = request.params.what_var;
-            var theVal = request.params.what_val;
+            var theCol = request.payload.column;
+            var theVal = request.payload.value;
 
             if(theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
 
@@ -497,7 +502,7 @@ resourceController.activateConfig = {
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
               if(err) {
                   console.log(query.sql);
-                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
+                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
               } else {
                 getResourcesJSON();
                 console.log(query.sql);
@@ -522,5 +527,5 @@ module.exports = [
 	{ path: '/resource', method: 'POST', config: resourceController.postConfig },
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  { path: '/resource/{what_var}/{what_val}/{id}', method: 'PUT', config: resourceController.activateConfig}
+  { path: '/resource/{what_var}/{what_val}/{id}', method: 'PUT', config: resourceController.updateConfig}
 ];

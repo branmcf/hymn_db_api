@@ -397,7 +397,7 @@ congController.deleteConfig = {
     }//end handler
 };
 
-congController.activateConfig = {
+congController.updateConfig = {
     handler: function(request, reply) {
         getcongregationsJSON();
 
@@ -411,8 +411,8 @@ congController.activateConfig = {
 
             var mysqlIndex = Number(request.params.id);
 
-            var theCol = request.params.what_var;
-            var theVal = request.params.what_val;
+            var theCol = request.payload.column;
+            var theVal = request.payload.value;
 
             if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
 
@@ -421,7 +421,7 @@ congController.activateConfig = {
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
               if(err) {
                   console.log(query.sql);
-                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
+                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
               } else {
                 getcongregationsJSON();
                 console.log(query.sql);
@@ -442,6 +442,6 @@ module.exports = [
   	{ path: '/congregation', method: 'POST', config: congController.postConfig},
   	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
     { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
-    { path: '/congregation/{what_var}/{what_val}/{id}', method: 'PUT', config: congController.activateConfig}
+    { path: '/congregation/{what_var}/{what_val}/{id}', method: 'PUT', config: congController.updateConfig}
 
   ];

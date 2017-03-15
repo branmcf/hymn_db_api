@@ -451,10 +451,9 @@ eventController.deleteConfig = {
     }//end handler
 };
 
-eventController.activateConfig = {
+eventController.updateConfig = {
     handler: function(request, reply) {
         getEventsJSON();
-      	var theeventID = events.length+1;
 
         if (request.params.id) {
             if (numEvents <= request.params.id - 1) {
@@ -466,8 +465,8 @@ eventController.activateConfig = {
 
             var mysqlIndex = Number(request.params.id);
 
-            var theCol = request.params.what_var;
-            var theVal = request.params.what_val;
+            var theCol = request.payload.column;
+            var theVal = request.payload.value;
 
             if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
 
@@ -476,7 +475,7 @@ eventController.activateConfig = {
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
               if(err) {
                   console.log(query.sql);
-                  return reply(Boom.badRequest(`invalid query when updating events on column ${request.params.what_var} with value = ${request.params.what_val} `));
+                  return reply(Boom.badRequest(`invalid query when updating events on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
               } else {
                 getEventsJSON();
                 console.log(query.sql);
@@ -496,5 +495,5 @@ module.exports = [
   	{ path: '/event', method: 'POST', config: eventController.postConfig },
   	{ path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
     { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
-    { path: '/event/{what_var}/{what_val}/{id}', method: 'PUT', config: eventController.activateConfig}
+    { path: '/event/{what_var}/{what_val}/{id}', method: 'PUT', config: eventController.updateConfig}
 ];

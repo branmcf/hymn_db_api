@@ -425,7 +425,7 @@ orgController.deleteConfig = {
     }//end handler
 };
 
-orgController.activateConfig = {
+orgController.updateConfig = {
     handler: function(request, reply) {
         getOrganizationsJSON();
       	
@@ -439,8 +439,8 @@ orgController.activateConfig = {
 
             var mysqlIndex = Number(request.params.id);
 
-            var theCol = request.params.what_var;
-            var theVal = request.params.what_val;
+            var theCol = request.payload.column;
+            var theVal = request.payload.value;
 
             if(theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
@@ -449,7 +449,7 @@ orgController.activateConfig = {
             WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
               if(err) {
                   console.log(query.sql);
-                  return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.params.what_var} with value = ${request.params.what_val} `));
+                  return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
               } else {
                 getOrganizationsJSON();
                 console.log(query.sql);
@@ -471,5 +471,5 @@ module.exports = [
   	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
   	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig },
     { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
-    { path: '/orgs/{what_var}/{what_val}/{id}', method: 'PUT', config: orgController.activateConfig}
+    { path: '/orgs/{what_var}/{what_val}/{id}', method: 'PUT', config: orgController.updateConfig}
   ];
