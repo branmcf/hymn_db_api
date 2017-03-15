@@ -667,6 +667,8 @@ server.register(BasicAuth, function (err) {
   //
   //
   server.auth.strategy('admin_only', 'basic', { validateFunc: basicValidation });
+  server.auth.strategy('high_or_admin', 'basic', { validateFunc: highLevelValidation });
+
 
   server.route({
     

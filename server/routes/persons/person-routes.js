@@ -293,7 +293,7 @@ personController.getConfig = {
 
 //PERSON POST REQUEST
 personController.postConfig = {
-
+  auth: 'high_or_admin',
   handler: function(req, reply) {
 
   	//getPersonsJSON();
@@ -366,6 +366,7 @@ personController.postConfig = {
 
 //delete
 personController.deleteConfig = {
+  auth: 'admin_only',
   handler: function(request, reply) {
       var query = connection.query(`DELETE FROM persons WHERE id=${req.params.id}`, function(err, rows, fields) {
         if(err) { return reply(Boom.badRequest("error when deleting from persons")); }
@@ -378,6 +379,7 @@ personController.deleteConfig = {
 };
 
 personController.updateConfig = {
+  auth: 'admin_only',
   handler: function(request, reply) {
     getPersonsJSON();
     var thePersonID = persons.length+1;

@@ -315,7 +315,7 @@ function insertAndGet(toInsert){
 
 //CONGREGATION POST REQUEST
 congController.postConfig = {
-
+  auth: 'high_or_admin',
   handler: function(req, reply) {
 
     //getcongregationsJSON();
@@ -365,6 +365,7 @@ congController.postConfig = {
 
 //delete
 congController.deleteConfig = {
+  auth: 'admin_only',
   handler: function(request, reply) {
       var query = connection.query(`DELETE FROM congregations WHERE id=${req.params.id}`, function(err, rows, fields) {
           if(err) { return reply(Boom.badRequest("error when deleting from congregations")); }
@@ -377,6 +378,7 @@ congController.deleteConfig = {
 };
 
 congController.updateConfig = {
+    auth: 'admin_only',
     handler: function(request, reply) {
         getcongregationsJSON();
 

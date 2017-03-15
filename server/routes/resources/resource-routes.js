@@ -360,7 +360,7 @@ function insertAndGet(toInsert){
 
 //RESOURCE POST REQUEST
 resourceController.postConfig = {
-
+  auth: 'high_or_admin',
   handler: function(req, reply) {
 
   	//getResources();
@@ -438,6 +438,7 @@ resourceController.postConfig = {
 
 //RESOURCE DELETE ENDPOINT
 resourceController.deleteConfig = {
+    auth: 'admin_only',
     handler: function(request, reply) {
         
         var query = connection.query(`DELETE FROM resources WHERE id=${req.params.id}`, function(err, rows, fields) {
@@ -459,6 +460,7 @@ resourceController.deleteConfig = {
   }
 */
 resourceController.updateConfig = {
+    auth: 'admin_only',
     handler: function(request, reply) {
         getResourcesJSON();
 
