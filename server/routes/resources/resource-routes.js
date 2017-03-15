@@ -93,7 +93,7 @@ function getResourcesJSON() {
       console.log('Error while performing Resources Query.');
 
   });
-}
+}//end func
 
 
 function popArray(obj, whichArray) {
@@ -294,49 +294,95 @@ resourceController.getConfig = {
 
   handler: function (request, reply) {
 
-    getResourcesJSON();
+    connection.query(`SELECT * from resources`, function(err, rows, fields) {
+    if (!err) {
 
-    if (request.params.id) {
-        if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough resources in the database for your request').code(404);
-          return reply(Boom.notFound("Index out of range for Resources get request"));
-        }
-        //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-        var actualIndex = Number(request.params.id -1 );  
+      var JSObj = rowsToJS(rows);
+      //var JSObj = rows;
 
-        //create new object, convert to json
-        if(resources[actualIndex].approved == false || resources[actualIndex].approved == 0) {
-          var str = formatResource(actualIndex);
-          return reply(str);
-        } else {
-           return reply(Boom.badRequest("The Resource you request is already approved"));
-        }
+      resources = [];
+      //resTypes = [];
+      resCategories = [];
+      resTopics =[];
+      resAcc = [];
+      resLanguages = [];
+      resTags = [];
+      resEnsembles = [];
+      resEth = [];
+      resDenominations = [];
+      resInstruments = [];
 
+      resources = JSObj;
+      numRes = resources.length;
 
-      //return reply(resources[actualId]);
-    }
+      for(var i=0; i<JSObj.length; i++) { 
+        popArray(JSObj[i]["ethnicities"], resEth);
+        popArray(JSObj[i]["categories"], resCategories);
+        popArray(JSObj[i]["topics"], resTopics);
+        popArray(JSObj[i]["accompaniment"], resAcc);
+        popArray(JSObj[i]["languages"], resLanguages);
+        popArray(JSObj[i]["ensembles"], resEnsembles);
+        popArray(JSObj[i]["tags"], resTags);
+        popArray(JSObj[i]["instruments"], resInstruments);
+        popArray(JSObj[i]["denominations"], resDenominations);
+        //popArray(JSObj[i]["types"], resTypes);
 
-    //if no ID specified
-    var objToReturn = [];
-
-    for(var i=0; i < resources.length; i++) {
-      //var bob = formatResource(i);
-      if(resources[i].approved == 0 && resources[i].is_active == 1) {
-        var str = {
-          id:     resources[i].id,
-          user:   resources[i].user,
-          title:  resources[i].name
-        }
-        objToReturn.push(str);
       }
-    }//end for
+      
+      if (request.params.id) {
+          if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
+            //return reply('Not enough resources in the database for your request').code(404);
+            return reply(Boom.notFound("Index out of range for Resources get request"));
+          }
+          //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+          var actualIndex = Number(request.params.id -1 );  
 
-    //console.log(objToReturn);
-    if(objToReturn.length <= 0) {
-      return reply(Boom.badRequest("All resources already approved, nothing to return"));
-    } else {
-      reply(objToReturn);
-    }
+          //create new object, convert to json
+          //only get resources that are NOT approved
+          
+          if(resources[actualIndex].approved == false || resources[actualIndex].approved == 0) {
+            var str = formatResource(actualIndex);
+            return reply(str);
+          } else {
+            return reply(Boom.badRequest("The Resource you request is already approved"));
+          }
+          
+
+
+        //return reply(resources[actualId]);
+      }
+
+      //if no ID specified
+      var objToReturn = [];
+
+      for(var i=0; i < resources.length; i++) {
+        //var bob = formatResource(i);   
+        if(resources[i].approved == 0) {
+          var str = {
+            id:     resources[i].id,
+            user:   resources[i].user,
+            title:  resources[i].name
+          }
+          objToReturn.push(str);
+        }
+        
+      }//end for
+
+      //console.log(objToReturn);
+      if(objToReturn.length <= 0) {
+        return reply(Boom.badRequest("nothing to return"));
+      } else {
+        reply(objToReturn);
+      }  
+
+
+    }//end if no error...
+    else
+      console.log('Error while performing Resources Query.');
+
+    });
+
+    
 
   }//end handler
 };
@@ -501,13 +547,104 @@ resourceController.updateConfig = {
     }
 };
 
+resourceController.getApprovedConfig = {
 
+  handler: function (request, reply) {
+
+    connection.query(`SELECT * from resources`, function(err, rows, fields) {
+    if (!err) {
+
+      var JSObj = rowsToJS(rows);
+      //var JSObj = rows;
+
+      resources = [];
+      //resTypes = [];
+      resCategories = [];
+      resTopics =[];
+      resAcc = [];
+      resLanguages = [];
+      resTags = [];
+      resEnsembles = [];
+      resEth = [];
+      resDenominations = [];
+      resInstruments = [];
+
+      resources = JSObj;
+      numRes = resources.length;
+
+      for(var i=0; i<JSObj.length; i++) { 
+        popArray(JSObj[i]["ethnicities"], resEth);
+        popArray(JSObj[i]["categories"], resCategories);
+        popArray(JSObj[i]["topics"], resTopics);
+        popArray(JSObj[i]["accompaniment"], resAcc);
+        popArray(JSObj[i]["languages"], resLanguages);
+        popArray(JSObj[i]["ensembles"], resEnsembles);
+        popArray(JSObj[i]["tags"], resTags);
+        popArray(JSObj[i]["instruments"], resInstruments);
+        popArray(JSObj[i]["denominations"], resDenominations);
+        //popArray(JSObj[i]["types"], resTypes);
+
+      }
+      
+      if (request.params.id) {
+          console.log(request.path[2,5]);
+          if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
+            //return reply('Not enough resources in the database for your request').code(404);
+            return reply(Boom.notFound("Index out of range for Resources get request"));
+          }
+          //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+          var actualIndex = Number(request.params.id -1 );  
+
+          if(resources[actualIndex].approved == true || resources[actualIndex].approved == 1) {
+            var str = formatResource(actualIndex);
+            return reply(str);
+          } else {
+            return reply(Boom.badRequest("The Resource you request is NOT approved"));
+          }
+
+        //return reply(resources[actualId]);
+      }
+
+      //if no ID specified
+      var objToReturn = [];
+
+      for(var i=0; i < resources.length; i++) {
+        //var bob = formatResource(i);
+        if(resources[i].approved == 1) {
+          var str = {
+            id:     resources[i].id,
+            user:   resources[i].user,
+            title:  resources[i].name
+          }
+          objToReturn.push(str);
+        }
+      }//end for
+
+      //console.log(objToReturn);
+      if(objToReturn.length <= 0) {
+        return reply(Boom.badRequest("nothing to return"));
+      } else {
+        reply(objToReturn);
+      }  
+
+
+    }//end if no error...
+    else
+      console.log('Error while performing Resources Query.');
+
+    });
+
+    
+
+  }//end handler
+};
 
 
 
 module.exports = [
 	{ path: '/resource', method: 'POST', config: resourceController.postConfig },
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
+  { path: '/resource/approved/{id?}', method: 'GET', config: resourceController.getApprovedConfig },
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  { path: '/resource/{what_var}/{what_val}/{id}', method: 'PUT', config: resourceController.updateConfig}
+  { path: '/resource/{id}', method: 'PUT', config: resourceController.updateConfig}
 ];

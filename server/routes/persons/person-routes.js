@@ -252,14 +252,14 @@ personController.getConfig = {
 
         //create new object, convert to json
         
-        if(persons[actualIndex].approved == false || persons[actualIndex].approved == 0) {
+        if(persons[actualIndex].approved == 0) {
           var str = formatPerson(actualIndex);
           return reply(str);
         } else {
-           return reply(Boom.badRequest("The Person you request is already approved"));
+          return reply(Boom.badRequest("The Person you request is already approved"));
         }
         
-
+        
       //return reply(persons[actualId]);
     }
 
@@ -268,7 +268,8 @@ personController.getConfig = {
 
     for(var i=0; i < persons.length; i++) {
       //var bob = formatResource(i);
-      if(persons[i].approved == 0 && persons[i].is_active == 1) {
+      
+      if(persons[i].approved == 0) {
         var str = {
           id:     persons[i].id,
           user:   persons[i].user,
@@ -277,7 +278,7 @@ personController.getConfig = {
 
         }
         objToReturn.push(str);
-      }
+      } 
     }//end for
 
     //console.log(objToReturn);
@@ -419,6 +420,62 @@ personController.updateConfig = {
   }//handler
 }
 
+//PERSON GET REQUEST
+personController.getApprovedConfig = {
+
+  handler: function (request, reply) {
+
+    getPersonsJSON();
+
+    //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
+
+    if (request.params.id) {
+        if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough Persons in the database for your request').code(404);
+          return reply(Boom.notFound("Index out of range for Persons get request"));
+        }
+        var actualIndex = Number(request.params.id -1 );  
+
+        //create new object, convert to json
+        
+        if(persons[actualIndex].approved == 1) {
+          var str = formatPerson(actualIndex);
+          return reply(str);
+        } else {
+          return reply(Boom.badRequest("The Person you request is already approved"));
+        }
+        
+        
+      //return reply(persons[actualId]);
+    }
+
+    //if no ID specified
+    var objToReturn = [];
+
+    for(var i=0; i < persons.length; i++) {
+      //var bob = formatResource(i);
+      
+      if(persons[i].approved == 1) {
+        var str = {
+          id:     persons[i].id,
+          user:   persons[i].user,
+          first_name:  persons[i].first_name,
+          last_name:  persons[i].last_name
+
+        }
+        objToReturn.push(str);
+      } 
+    }//end for
+
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All resources already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
+  }
+};
+
 
 
 
@@ -426,7 +483,8 @@ personController.updateConfig = {
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
   { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
+  { path: '/person/approved/{id?}', method: 'GET', config: personController.getApprovedConfig },
   { path: '/person/{id}', method: 'DELETE', config: personController.deleteConfig },
-  { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.updateConfig}
+  { path: '/person/{id}', method: 'PUT', config: personController.updateConfig}
   
 ];

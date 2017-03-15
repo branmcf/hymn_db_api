@@ -1,1 +1,1 @@
-describe persons;
+select * from resources;

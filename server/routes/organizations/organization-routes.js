@@ -291,21 +291,21 @@ orgController.getConfig = {
 
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-
-      if(orgs[actualIndex].approved == false || orgs[actualIndex].approved == 0) {
+      
+      if(orgs[actualIndex].approved == 0 ) {
           var str = formatOrg(actualIndex);
           return reply(str);
       } else {
           return reply(Boom.badRequest("The Org you request is already approved"));
-      }
-
+      }  
+      
     }
 
     var objToReturn = [];
 
     for(var i=0; i < orgs.length; i++) {
       //var bob = formatResource(i);
-      if(orgs[i].approved == 0 && orgs[i].is_active == 1) {
+      if(orgs[i].approved == 0) {
         var str = {
           id:     orgs[i].id,
           user:   orgs[i].user,
@@ -448,9 +448,55 @@ orgController.updateConfig = {
 
 }
 
+//ORG GET REQUEST
+orgController.getApprovedConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+
+        getOrganizationsJSON();
+        
+      if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          return reply(Boom.notFound("Index out of range for Orgs get request"));
+      }
+
+      var actualIndex = Number(request.params.id) - 1;
+      //create new object, convert to json
+      
+      if(orgs[actualIndex].approved == 1) {
+          var str = formatOrg(actualIndex);
+          return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Org you request is already approved"));
+      }  
+      
+    }
+
+    var objToReturn = [];
+
+    for(var i=0; i < orgs.length; i++) {
+      //var bob = formatResource(i);
+      if(orgs[i].approved == 1) {
+        var str = {
+          id:     orgs[i].id,
+          user:   orgs[i].user,
+          title:  orgs[i].name
+        }
+        objToReturn.push(str);
+      }
+    }//end for
+
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All orgs already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
+  }
+}
+
 module.exports = [
   	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
   	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig },
+    { path: '/orgs/approved/{id?}', method: 'GET', config: orgController.getApprovedConfig },
     { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
-    { path: '/orgs/{what_var}/{what_val}/{id}', method: 'PUT', config: orgController.updateConfig}
+    { path: '/orgs/{id}', method: 'PUT', config: orgController.updateConfig}
   ];

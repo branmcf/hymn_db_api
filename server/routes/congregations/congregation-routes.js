@@ -255,7 +255,7 @@ congController.getConfig = {
   handler: function (request, reply) {
     if (request.params.id) {
 
-        getcongregationsJSON();
+      getcongregationsJSON();
         
       if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
           return reply(Boom.notFound("Index out of range for congregations get request"));
@@ -263,21 +263,22 @@ congController.getConfig = {
 
       var actualIndex = Number(request.params.id) - 1;
       //create new object, convert to json
-
-      if(congregations[actualIndex].approved == false || congregations[actualIndex].approved == 0) {
-          var str = formatCong(actualIndex);
-          return reply(str);
-        } else {
-           return reply(Boom.badRequest("The Resource you request is already approved"));
-        }
-
+      
+      if(congregations[actualIndex].approved == 0) {
+        var str = formatCong(actualIndex);
+        return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Resource you request is already approved"));
+      }
+      
     }
 
     var objToReturn = [];
 
     for(var i=0; i < congregations.length; i++) {
       //var bob = formatResource(i);
-      if(congregations[i].approved == 0 && congregations[i].is_active == 1) {
+      
+      if(congregations[i].approved == 0) {
         var str = {
           id:     congregations[i].id,
           user:   congregations[i].user,
@@ -285,6 +286,8 @@ congController.getConfig = {
         }
         objToReturn.push(str);
       }
+      
+      
     }//end for
 
     //console.log(objToReturn);
@@ -419,10 +422,60 @@ congController.updateConfig = {
     }
 };
 
+//CONGREGATION GET REQUEST
+congController.getApprovedConfig = {
+  handler: function (request, reply) {
+    if (request.params.id) {
+
+      getcongregationsJSON();
+        
+      if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          return reply(Boom.notFound("Index out of range for congregations get request"));
+      }
+
+      var actualIndex = Number(request.params.id) - 1;
+      //create new object, convert to json
+      
+      if(congregations[actualIndex].approved == 1) {
+        var str = formatCong(actualIndex);
+        return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Resource you request is already approved"));
+      }
+      
+    }
+
+    var objToReturn = [];
+
+    for(var i=0; i < congregations.length; i++) {
+      //var bob = formatResource(i);
+      
+      if(congregations[i].approved == 1) {
+        var str = {
+          id:     congregations[i].id,
+          user:   congregations[i].user,
+          title:  congregations[i].name
+        }
+        objToReturn.push(str);
+      }
+      
+      
+    }//end for
+
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All congregations already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }
+  }
+}
+
 module.exports = [
   	{ path: '/congregation', method: 'POST', config: congController.postConfig},
   	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
+    { path: '/congregation/approved/{id?}', method: 'GET', config: congController.getApprovedConfig },
     { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
-    { path: '/congregation/{what_var}/{what_val}/{id}', method: 'PUT', config: congController.updateConfig}
+    { path: '/congregation/{id}', method: 'PUT', config: congController.updateConfig}
 
   ];

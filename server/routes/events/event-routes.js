@@ -259,7 +259,7 @@ eventController.getConfig = {
 
       var actualIndex = Number(request.params.id) - 1;
       //
-      //create new object, convert to json
+      //create new object, convert to json  
       if(events[actualIndex].approved == false || events[actualIndex].approved == 0) {
           var str = formatEvent(actualIndex);
           return reply(str);
@@ -274,7 +274,7 @@ eventController.getConfig = {
 
     for(var i=0; i < events.length; i++) {
       //var bob = formatevent(i);
-      if(events[i].approved == 0 && events[i].is_active == 1) {
+      if(events[i].approved == 0) {
         var str = {
           id:     events[i].id,
           user:   events[i].user,
@@ -282,6 +282,8 @@ eventController.getConfig = {
         }
         objToReturn.push(str);
       }
+      
+      
     }//end for
 
     //console.log(objToReturn);
@@ -469,12 +471,66 @@ eventController.updateConfig = {
           //return reply(events[actualId]);
         }
     }//handler
-}
+};
+
+//EVENT GET REQUEST
+eventController.getApprovedConfig = {
+  handler: function (request, reply) {
+
+    getEventsJSON();
+
+    if (request.params.id) {
+      //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+      if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
+          //return reply('Not enough events in the database for your request').code(404);
+          return reply(Boom.notFound("Index out of range for Events get request"));
+      }
+
+      var actualIndex = Number(request.params.id) - 1;
+      //
+      //create new object, convert to json  
+      if(events[actualIndex].approved == 1) {
+          var str = formatEvent(actualIndex);
+          return reply(str);
+      } else {
+          return reply(Boom.badRequest("The Event you request is already approved"));
+      }
+
+      //return reply(events[actualId]);
+    }
+    //if no ID specified
+    var objToReturn = [];
+
+    for(var i=0; i < events.length; i++) {
+      //var bob = formatevent(i);
+      if(events[i].approved == 1) {
+        var str = {
+          id:     events[i].id,
+          user:   events[i].user,
+          title:  events[i].name
+        }
+        objToReturn.push(str);
+      }
+      
+      
+    }//end for
+
+    //console.log(objToReturn);
+    if(objToReturn.length <= 0) {
+      return reply(Boom.badRequest("All events already approved, nothing to return"));
+    } else {
+      reply(objToReturn);
+    }  
+  
+    
+  }//end handler
+};
 
 
 module.exports = [
   	{ path: '/event', method: 'POST', config: eventController.postConfig },
   	{ path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
+    { path: '/event/approved/{id?}', method: 'GET', config: eventController.getApprovedConfig },
     { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
-    { path: '/event/{what_var}/{what_val}/{id}', method: 'PUT', config: eventController.updateConfig}
+    { path: '/event/{id}', method: 'PUT', config: eventController.updateConfig}
 ];
