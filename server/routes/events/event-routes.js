@@ -420,34 +420,13 @@ eventController.postConfig = {
 //delete
 eventController.deleteConfig = {
   handler: function(request, reply) {
-        getEventsJSON();
-
-        if (request.params.id) {
-            if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-              //return reply('Not enough users in the database for your request').code(404);
-              return reply(Boom.notFound("Error with events DELETE endpoint"));
-            }
-
-            var query = connection.query(`
-            UPDATE events SET is_active = false
-            WHERE id = ${request.params.id}`, function(err, rows, fields) {
-              if(err) {
-                  return reply(Boom.badRequest(`Error while trying to DELETE events with id=${request.params.id}...`));
-              } else {
-                  console.log("set event #", request.params.id, " to innactive (is_active = false)");
-              }
-
-              getEventsJSON();
-
-              reply([{
-                statusCode: 200,
-                message: `Event with id=${request.params.id} set to innactive`,
-              }]);
-            });
-
-        } else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
+      var query = connection.query(`DELETE FROM events WHERE id=${req.params.id}`, function(err, rows, fields) {
+        if(err) { return reply(Boom.badRequest("error when deleting from events")); }
+        return reply ({ 
+          code: 202,
+          message: `Successfully deleted events with id=${req.params.id}`
+        });
+      });
     }//end handler
 };
 

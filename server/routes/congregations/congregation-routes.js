@@ -366,34 +366,13 @@ congController.postConfig = {
 //delete
 congController.deleteConfig = {
   handler: function(request, reply) {
-        getcongregationsJSON();
-
-        if (request.params.id) {
-            if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-              //return reply('Not enough users in the database for your request').code(404);
-              return reply(Boom.notFound("Error with congregations DELETE endpoint"));
-            }
-
-            var query = connection.query(`
-            UPDATE congregations SET is_active = false
-            WHERE id = ${request.params.id}`, function(err, rows, fields) {
-              if(err) {
-                  return reply(Boom.badRequest(`Error while trying to DELETE organization with id=${request.params.id}...`));
-              } else {
-                  console.log("set cong #", request.params.id, " to innactive (is_active = false)");
-              }
-
-              getcongregationsJSON();
-
-              reply([{
-                statusCode: 200,
-                message: `cong with id=${request.params.id} set to innactive`,
-              }]);
-            });
-
-        } else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
+      var query = connection.query(`DELETE FROM congregations WHERE id=${req.params.id}`, function(err, rows, fields) {
+          if(err) { return reply(Boom.badRequest("error when deleting from congregations")); }
+          return reply ({ 
+            code: 202,
+            message: `Successfully deleted congregations with id=${req.params.id}`
+          });
+        });
     }//end handler
 };
 

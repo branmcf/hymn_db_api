@@ -41,35 +41,6 @@ server.connection({
   //protocol: 'https'
 });
 
-var routesArray = [];
-
-  //var routes = require('./routes.js')
-  //routesArray.push(routes)
-  routes = require('./routes/resources/resource-routes');
-  routesArray.push(routes);
-  
-
-  routes = require('./routes/events/event-routes');
-  routesArray.push(routes);
-  
-
-  routes = require('./routes/persons/person-routes');
-  routesArray.push(routes);
-  
-
-  routes = require('./routes/organizations/organization-routes');
-  routesArray.push(routes);
-
-  routes = require('./routes/congregations/congregation-routes');
-  routesArray.push(routes);
-
-  for(var i=0; i < routesArray.length; i++) {
-    server.route(routesArray[i]);
-  };
-
-
-
-
 //
 //
 //
@@ -667,17 +638,42 @@ server.register(BasicAuth, function (err) {
       //}//end matching email and pass found 
 
   }//end basicValidation
+
+  const highLevelValidation = function (request, username, password, callback) {
+    connection.query(`SELECT * from users where email = ?`, [username], function(err, rows, fields) {
+        if(err) { throw err;}
+        console.log("rows: ", rows);
+        
+        var user = {
+          id: rows[0].id,
+          email: username,
+          password: rows[0].password,
+          is_admin: rows[0].is_admin
+        };
+        
+        Bcrypt.compare(password, user.password, function (err, isValid) {
+          //check to see if they're an admin OR high_level user
+          if(user.is_admin == true || user.high_level == true) {
+            callback(err, isValid, { id: user.id, email: user.email })
+          } else {
+            callback(err, false, { id: user.id, email: user.email })
+          }
+          
+        });
+      });  
+
+  }
   //
   //
   //
-  server.auth.strategy('simple', 'basic', { validateFunc: basicValidation })
+  server.auth.strategy('admin_only', 'basic', { validateFunc: basicValidation });
 
   server.route({
     
     method: 'POST',
     path: '/register',
     config: {
-      auth: 'simple',
+      auth: 'admin_only',
       handler: function(req, reply) {
 
         async.series([
@@ -781,7 +777,7 @@ server.register(BasicAuth, function (err) {
   method: 'PUT',
     path: '/user/{what_var}/{what_val}/{id}',
     config: {
-      auth: 'simple',
+      auth: 'admin_only',
       handler: function(request, reply) {
           getUsersNew();
 
@@ -821,6 +817,32 @@ server.register(BasicAuth, function (err) {
       }//end handler
     }//end config
   });
+
+  var routesArray = [];
+
+  //var routes = require('./routes.js')
+  //routesArray.push(routes)
+  routes = require('./routes/resources/resource-routes');
+  routesArray.push(routes);
+  
+
+  routes = require('./routes/events/event-routes');
+  routesArray.push(routes);
+  
+
+  routes = require('./routes/persons/person-routes');
+  routesArray.push(routes);
+  
+
+  routes = require('./routes/organizations/organization-routes');
+  routesArray.push(routes);
+
+  routes = require('./routes/congregations/congregation-routes');
+  routesArray.push(routes);
+
+  for(var i=0; i < routesArray.length; i++) {
+    server.route(routesArray[i]);
+  };
     
   
 

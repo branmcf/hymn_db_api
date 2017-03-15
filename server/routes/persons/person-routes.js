@@ -364,6 +364,19 @@ personController.postConfig = {
 */
 };
 
+//delete
+personController.deleteConfig = {
+  handler: function(request, reply) {
+      var query = connection.query(`DELETE FROM persons WHERE id=${req.params.id}`, function(err, rows, fields) {
+        if(err) { return reply(Boom.badRequest("error when deleting from persons")); }
+        return reply ({ 
+          code: 202,
+          message: `Successfully deleted persons with id=${req.params.id}`
+        });
+      });
+  }//end handler
+};
+
 personController.updateConfig = {
   handler: function(request, reply) {
     getPersonsJSON();
@@ -410,7 +423,8 @@ personController.updateConfig = {
 
 module.exports = [
 	{ path: '/person', method: 'POST', config: personController.postConfig },
-    { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
-    { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.updateConfig}
+  { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
+  { path: '/person/{id}', method: 'DELETE', config: personController.deleteConfig },
+  { path: '/person/{what_var}/{what_val}/{id}', method: 'PUT', config: personController.updateConfig}
   
 ];

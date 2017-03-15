@@ -439,34 +439,14 @@ resourceController.postConfig = {
 //RESOURCE DELETE ENDPOINT
 resourceController.deleteConfig = {
     handler: function(request, reply) {
-        getResourcesJSON();
-      	var theResourceID = resources.length+1;
-
-        if (request.params.id) {
-            if (numRes <= request.params.id - 1) {
-              //return reply('Not enough resources in the database for your request').code(404);
-              return reply(Boom.notFound());
-            }
-            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-            var actualIndex = Number(request.params.id -1 );  
-
-            var mysqlIndex = Number(request.params.id);
-
-            connection.query(`
-            UPDATE resources SET is_active = false
-            WHERE id = ${mysqlIndex}`, function(err, rows, fields) {
-              if(err) {
-                  throw err;
-              } else {
-                  console.log("set resource #", mysqlIndex, " to innactive (is_active = false)");
-              }
-
-              return reply( {code: 200} );
-            });
-
-          //return reply(resources[actualId]);
-        }
-
+        
+        var query = connection.query(`DELETE FROM resources WHERE id=${req.params.id}`, function(err, rows, fields) {
+          if(err) { return reply(Boom.badRequest("error when deleting from resources")); }
+          return reply ({ 
+            code: 202,
+            message: `Successfully deleted resource with id=${req.params.id}`
+          });
+        });
 
     }
 };
