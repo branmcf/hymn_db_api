@@ -209,38 +209,43 @@ server.route({
     handler: function (request, reply) {
       //console.log("eth[x]: ", eth[Number(request.params.id-1)]);
 
-      getUsersNew();
+      var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
+          var JSObj = rowsToJS(rows);
+          users.push(JSObj);
+          numUsers = users[0].length;
+          console.log("done with getUsersNew");
 
-      //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+          //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
-      if (request.params.id) {
-        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough users in the database for your request').code(404);
-          return reply(Boom.notFound());
-        }
+          if (request.params.id) {
+            if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
+              //return reply('Not enough users in the database for your request').code(404);
+              return reply(Boom.notFound());
+            }
 
-        var actualIndex = Number(request.params.id) - 1;
+            var actualIndex = Number(request.params.id) - 1;
 
-        var userData = formatUser(actualIndex);
-        delete userData.password;
+            var userData = formatUser(actualIndex);
+            delete userData.password;
 
-        //var str = JSON.stringify(userData);
+            //var str = JSON.stringify(userData);
 
-        return reply(userData);
-
-
-      }
-      //if no ID specified
-      var objToReturn = [];
-
-      for(var i=0; i < users[0].length; i++) {
-        var temp = formatUser(i);
-        delete temp.password;
-        objToReturn.push(temp);
-      }
+            return reply(userData);
 
 
-      reply(objToReturn);
+          }
+          //if no ID specified
+          var objToReturn = [];
+
+          for(var i=0; i < users[0].length; i++) {
+            var temp = formatUser(i);
+            delete temp.password;
+            objToReturn.push(temp);
+          }
+
+
+          reply(objToReturn);
+      });
     }//end handler
   }
 });
@@ -777,44 +782,49 @@ server.register(BasicAuth, function (err) {
 
   server.route({
   method: 'PUT',
-    path: '/user/{what_var}/{what_val}/{id}',
+    path: '/user/{id}',
     config: {
       //auth: 'admin_only',
       handler: function(request, reply) {
-          getUsersNew();
+          var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
+            var JSObj = rowsToJS(rows);
+            users.push(JSObj);
+            numUsers = users[0].length;
+            console.log("done with getUsersNew");
 
-          if (request.params.id) {
-              if (numUsers <= request.params.id - 1) {
-                //return reply('Not enough resources in the database for your request').code(404);
-                return reply(Boom.notFound("Entered invalid id for congregations activate endpoint"));
-              }
-              //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-              var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
-
-              var mysqlIndex = Number(request.params.id);
-
-              var theCol = request.params.what_var;
-              var theVal = request.params.what_val;
-
-              if(theCol == "password" || theCol == "salt" || theCol == "iterations") { return reply(Boom.unauthorized("cannot change the password you goofball..."));}
-
-              var query = connection.query(`
-              UPDATE users SET ?
-              WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
-                if(err) {
-                    console.log(query.sql);
-                    return reply(Boom.badRequest(`invalid query when updating resources on column ${request.params.what_var} with value = ${request.params.what_val} `));
-                } else {
-                  getUsersNew();
-                  console.log(query.sql);
-                  console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+            if (request.params.id) {
+                if (numUsers <= request.params.id - 1) {
+                  //return reply('Not enough resources in the database for your request').code(404);
+                  return reply(Boom.notFound("Entered invalid id for congregations activate endpoint"));
                 }
+                //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+                var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
 
-                return reply( {statusCode: 200} );
-              });
+                var mysqlIndex = Number(request.params.id);
 
-            //return reply(resources[actualId]);
-          }//end if
+                var theCol = request.payload.column;
+                var theVal = request.payload.value;
+
+                if(theCol == "password" || theCol == "salt" || theCol == "iterations" || theCol == "id") { return reply(Boom.unauthorized("cannot change the password you goofball..."));}
+
+                var query = connection.query(`
+                UPDATE users SET ?
+                WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+                  if(err) {
+                      console.log(query.sql);
+                      return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+                  } else {
+                    //getUsersNew();
+                    console.log(query.sql);
+                    console.log("set user #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                  }
+
+                  return reply( {statusCode: 200} );
+                });
+
+              //return reply(resources[actualId]);
+            }//end if
+          });
 
       }//end handler
     }//end config
