@@ -342,7 +342,7 @@ function insertAndGet(toInsert){
 
 //ORG POST REQUEST
 orgController.postConfig = {
-  auth: 'high_or_admin',
+  //auth: 'high_or_admin',
   handler: function(req, reply) {
 
     //getOrganizationsJSON();
@@ -393,7 +393,7 @@ orgController.postConfig = {
 
 //delete
 orgController.deleteConfig = {
-    auth: 'admin_only',
+    //auth: 'admin_only',
     handler: function(request, reply) {
         var query = connection.query(`DELETE FROM organizations WHERE id=${req.params.id}`, function(err, rows, fields) {
           if(err) { return reply(Boom.badRequest("error when deleting from organizations")); }
@@ -406,7 +406,7 @@ orgController.deleteConfig = {
 };
 
 orgController.updateConfig = {
-    auth: 'admin_only',
+    //auth: 'admin_only',
     handler: function(request, reply) {
         getOrganizationsJSON();
       	

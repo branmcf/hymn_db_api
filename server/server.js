@@ -675,7 +675,7 @@ server.register(BasicAuth, function (err) {
     method: 'POST',
     path: '/register',
     config: {
-      auth: 'admin_only',
+      //auth: 'admin_only',
       handler: function(req, reply) {
 
         async.series([
@@ -779,7 +779,7 @@ server.register(BasicAuth, function (err) {
   method: 'PUT',
     path: '/user/{what_var}/{what_val}/{id}',
     config: {
-      auth: 'admin_only',
+      //auth: 'admin_only',
       handler: function(request, reply) {
           getUsersNew();
 
