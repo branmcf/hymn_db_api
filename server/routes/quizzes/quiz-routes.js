@@ -34,48 +34,50 @@ var getUserAnswers = function(err, data) {
 
 //================================================================
 
+function popArray(obj, whichArray) {
+  
+  obj = JSON.parse(obj);
+  //console.log("after: ",  typeof obj, ": ", obj);
+  var theKeys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+
+      var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
+
+      if(key == 'Other' || key == 'other') {
+        theKeys.push(obj[key]);
+      } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+       
+        key = key.replace(/_/g, " ");
+        //console.log(key);
+
+        theKeys.push(key);
+      } else {
+        //false, dont add...
+        //console.log("false for ", key, ", dont push");
+      }
+    }
+  }
+}
+
 //RESOURCE GET REQUEST
-quizController.getConfig = {
-	/*
-	================================================== 
-	IMPORTANT: THE ID IS THE ID OF THE USER, NOT THE QUIZ!
-	==================================================
-	*/
-  handler: function (request, reply) {
+var getAnswersController = require('../../controllers/get-answers').getAnswers;
 
-		if(!request.params.id) {
-			connection.query(`SELECT id, JSON_EXTRACT(answers, '$[*]') AS answers FROM users`, (err, rows) => {
-				if(err) { return reply(Boom.badRequest("error selecting answers array")); }
-				tesquizAnswers = JSON.parse(JSON.stringify(rows));
-				AnswersArr = [];
-				for(var i = 0; i < tesquizAnswers.length; i++) {			
-					tempObj = {
-						id: tesquizAnswers[i]["id"],
-						answers: tesquizAnswers[i]["answers"]
-					}
-					AnswersArr.push(tempObj);
-				}
-				
-				//console.log(JSON.stringify(AnswersArr));
-				reply(AnswersArr);
-			});
-		} else {
-			connection.query(`SELECT JSON_EXTRACT(answers, '$[*]') AS answers FROM users WHERE id = ?`, [request.params.id], (err, rows) => {
-				if(err) { return reply(Boom.badRequest("error selecting answers array")); }
-				tesquizAnswers = JSON.parse(JSON.stringify(rows[0]));												
-				
-				//console.log(JSON.stringify(AnswersArr));
-				reply(tesquizAnswers);
-			});
-		}
-		
+var getRecResourcesController = require('../../controllers/get-rec-resources').getRecRes;
 
-  }//end handler
-};
+
+/*
+================================================== 
+BELOW: RECOMMENDATIONS!
+==================================================
+*/
+
+
 
 module.exports = [
 	//{ path: '/quiz', method: 'POST', config: quizController.postConfig },
-  	{ path: '/quiz/{id?}', method: 'GET', config: quizController.getConfig }
-  	//{ path: '/quiz/{id}', method: 'DELETE', config: quizController.deleteConfig},
+  	{ path: '/quiz/{id?}', method: 'GET', config: getAnswersController },
+  	{ path: '/quiz/rec/{id}', method: 'GET', config: getRecResourcesController}
   	//{ path: '/quiz/{id}', method: 'PUT', config: quizController.updateConfig}
 ];
