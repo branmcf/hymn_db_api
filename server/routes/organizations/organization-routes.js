@@ -388,7 +388,7 @@ orgController.postConfig = {
       
   }//end handler  
 
-}//end postConfig
+};//end postConfig
   
 
 //delete
@@ -491,12 +491,132 @@ orgController.getApprovedConfig = {
       reply(objToReturn);
     }
   }
-}
+};
+
+orgController.editConfig = {
+  //auth: 'high_or_admin',
+  handler: function(req, reply) {
+
+    var newOrg = {
+      name: req.payload.data.name,
+      website: req.payload.data.url,
+      parent: req.payload.data.parent,
+      denomination: req.payload.data.denomination,
+      city: req.payload.data.city,
+      state: req.payload.data.state,
+      country: req.payload.data.country,
+      geography: req.payload.data.geographic_area,
+      is_free: req.payload.data.is_org_free,
+      events_free: req.payload.data.events_free,
+      membership_free: req.payload.data.membership_free,
+      mission: req.payload.data.mission,
+      process: req.payload.data.process,
+      hymn_soc_member: req.payload.data.hymn_soc_member,
+      user:             req.payload.user,
+      user_id:          req.payload.uid,
+      clothing:    req.payload.data.clothing,
+      shape:            req.payload.data.shape,
+
+      approved:         false,
+      categories:       req.payload.data.categories,
+      instruments:      req.payload.data.instruments,
+      ethnicities:      req.payload.data.ethnicities,
+      tags:             req.payload.data.tags,
+      is_active: 1
+
+    };
+
+    var justOrganization = JSON.parse(JSON.stringify(theObj));
+
+    justOrganization.categories = JSON.stringify(justOrganization.categories);
+    justOrganization.ethnicities = JSON.stringify(justOrganization.ethnicities);
+    justOrganization.tags = JSON.stringify(justOrganization.tags);
+    justOrganization.instruments = JSON.stringify(justOrganization.instruments);
+    justOrganization.clothing = JSON.stringify(justOrganization.clothing);
+    justOrganization.shape = JSON.stringify(justOrganization.shape);
+
+
+  // TYPE CONVERSION
+    if(typeof justOrganization.hymn_soc_member == "string") {
+      if(justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
+        justOrganization.hymn_soc_member = false;
+      } else {
+        justOrganization.hymn_soc_member = true;
+      }
+    } else if(typeof justOrganization.hymn_soc_member == "number") {
+      if(justOrganization.hymn_soc_member == 0) {
+        justOrganization.hymn_soc_member = false;
+      } else {
+        justOrganization.hymn_soc_member = true;
+      }
+    } else {
+      //neither a string nor Number
+      justOrganization.hymn_soc_member = false;
+    }
+
+    if(typeof justOrganization.is_free == "string") {
+      if(justOrganization.is_free == "yes" || justOrganization.is_free == "Yes") {
+        justOrganization.is_free = 1;
+      } else if(justOrganization.is_free == "no" || justOrganization.is_free == "No") {
+        justOrganization.is_free = 0;
+      } else {
+        justOrganization.is_free = 2;
+      }
+    } else if(typeof justOrganization.is_free !== "number") {
+      justOrganization.is_free = 2;
+    }
+
+    if(typeof justOrganization.events_free == "string") {
+      if(justOrganization.events_free == "yes" || justOrganization.events_free == "Yes") {
+        justOrganization.events_free = 1;
+      } else if(justOrganization.events_free == "no" || justOrganization.events_free == "No") {
+        justOrganization.events_free = 0;
+      } else {
+        justOrganization.events_free = 2;
+      }
+    } else if(typeof justOrganization.events_free !== "number") {
+      justOrganization.events_free = 2;
+    }
+
+    if(typeof justOrganization.membership_free == "string") {
+      if(justOrganization.membership_free == "yes" || justOrganization.membership_free == "Yes") {
+        justOrganization.membership_free = 1;
+      } else if(justOrganization.membership_free == "no" || justOrganization.membership_free == "No") {
+        justOrganization.membership_free = 0;
+      } else {
+        justOrganization.membership_free = 2;
+      }
+    } else if(typeof justOrganization.membership_free !== "number") {
+      justOrganization.membership_free = 2;
+    }
+
+// END TYPE CONVERSION
+    //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
+
+    var query = connection.query(`
+    UPDATE organizations SET ?
+    WHERE ?`, [justOrganization, {id: req.params.id}],function(err, rows, fields) {
+      if(err) {
+          return reply(Boom.badRequest(`invalid query when updating organizations with id = ${req.params.id} `));
+      } else {
+        //console.log(query.sql);
+      }
+
+      return reply( {statusCode: 201} );
+    });
+
+
+      
+  }//end handler  
+};
+
+
 
 module.exports = [
   	{ path: '/orgs', method: 'POST', config: orgController.postConfig},
   	{ path: '/orgs/{id?}', method: 'GET', config: orgController.getConfig },
     { path: '/orgs/approved/{id?}', method: 'GET', config: orgController.getApprovedConfig },
     { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
-    { path: '/orgs/{id}', method: 'PUT', config: orgController.updateConfig}
+    { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig},
+    { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig}
   ];

@@ -469,6 +469,100 @@ congController.getApprovedConfig = {
       reply(objToReturn);
     }
   }
+};
+
+congController.editConfig = {
+  //auth: 'high_or_admin',
+  handler: function(req, reply) {
+
+    //getcongregationsJSON();
+
+    var theCongID = congregations.length+1;
+
+    var newCong = {
+      name: req.payload.data.name,
+      website: req.payload.data.url,
+      parent: req.payload.data.parent,
+      denomination: req.payload.data.denomination,
+      city: req.payload.data.city,
+      state: req.payload.data.state,
+      country: req.payload.data.country,
+      geography: req.payload.data.geography,
+      is_free: req.payload.data.is_org_free,
+      attendance: req.payload.data.attendance,
+      process: req.payload.data.process,
+      hymn_soc_member: req.payload.data.hymn_soc_member,
+      user:             req.payload.user,
+      user_id:          req.payload.uid,
+      clothing:    req.payload.data.clothing,
+      shape:            req.payload.data.shape,
+      description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+      is_active:        true,
+
+      approved:         false,
+      categories:       req.payload.data.categories,
+      instruments:      req.payload.data.instruments,
+      ethnicities:      req.payload.data.ethnicities,
+      tags:             req.payload.data.tags
+
+    };
+
+    var justCongregation = JSON.parse(JSON.stringify(theObj));
+
+    justCongregation.categories = JSON.stringify(justCongregation.categories);
+    justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
+    justCongregation.tags = JSON.stringify(justCongregation.tags);
+    justCongregation.instruments = JSON.stringify(justCongregation.instruments);
+    justCongregation.clothing = JSON.stringify(justCongregation.clothing);
+    justCongregation.shape = JSON.stringify(justCongregation.shape);
+
+    // TYPE CONVERSION
+    if(typeof justCongregation.hymn_soc_member == "string") {
+      if(justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No") {
+        justCongregation.hymn_soc_member = false;
+      } else {
+        justCongregation.hymn_soc_member = true;
+      }
+    } else if(typeof justCongregation.hymn_soc_member == "number") {
+      if(justCongregation.hymn_soc_member == 0) {
+        justCongregation.hymn_soc_member = false;
+      } else {
+        justCongregation.hymn_soc_member = true;
+      }
+    } else {
+      //neither a string nor Number
+      justCongregation.hymn_soc_member = false;
+    }
+
+    if(typeof justCongregation.is_free == "string") {
+      if(justCongregation.is_free == "yes" || justCongregation.is_free == "Yes") {
+        justCongregation.is_free = 1;
+      } else if(justCongregation.is_free == "no" || justCongregation.is_free == "No") {
+        justCongregation.is_free = 0;
+      } else {
+        justCongregation.is_free = 2;
+      }
+    } else if(typeof justCongregation.is_free !== "number") {
+      justCongregation.is_free = 2;
+    }
+// END TYPE CONVERSION
+    
+    var query = connection.query(`
+    UPDATE congregations SET ?
+    WHERE ?`, [justCongregation, {id: req.params.id}],function(err, rows, fields) {
+      if(err) {
+          return reply(Boom.badRequest(`invalid query when updating congregations with id = ${req.params.id} `));
+      } else {
+        console.log("edited cong #", req.params.id);
+      }
+
+      return reply( {statusCode: 201} );
+    });
+
+
+
+      
+  }//end handler  
 }
 
 module.exports = [
@@ -476,6 +570,7 @@ module.exports = [
   	{ path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
     { path: '/congregation/approved/{id?}', method: 'GET', config: congController.getApprovedConfig },
     { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
-    { path: '/congregation/{id}', method: 'PUT', config: congController.updateConfig}
+    { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig},
+    { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig}
 
   ];

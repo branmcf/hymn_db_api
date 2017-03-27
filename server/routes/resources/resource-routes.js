@@ -498,53 +498,123 @@ resourceController.deleteConfig = {
     }
 };
 
-//RESOURCE CHANGE VARIABLE ENDPOINT
-/* receive in body:
-  {
-    "column": "column_to_update",
-    "value": "value_to_place"
-  }
-*/
-resourceController.updateConfig = {
-    //auth: 'admin_only',
-    handler: function(request, reply) {
-        getResourcesJSON();
+resourceController.editConfig = {
+  //auth: 'high_or_admin',
+  handler: function(req, reply) {
 
-        if (request.params.id) {
-            if (numRes <= request.params.id - 1) {
-              //return reply('Not enough resources in the database for your request').code(404);
-              return reply(Boom.notFound());
-            }
-            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+  	//getResources();
 
-            var mysqlIndex = Number(request.params.id);
+  	var theResourceID = resources.length+1;
 
-            var theCol = request.payload.column;
-            var theVal = request.payload.value;
+    var theData = {
+      name:             req.payload.data.title,
+      type:             req.payload.data.type,
+      website:          req.payload.data.url,
+      author:           req.payload.data.author,
+      parent:           req.payload.data.parent,
+      description:      req.payload.data.description,
+      hymn_soc_member:  req.payload.data.hymn_soc_member,
+      is_free:          req.payload.data.is_free,   
+      city:             req.payload.data.city,
+      state:            req.payload.data.state,
+      country:          req.payload.data.country,
+      high_level:       req.payload.data.high_level,
+      is_active:        1,
+      user_id:          req.payload.uid,
+      user:             req.payload.user,
+      pract_schol:      req.payload.data.pract_schol,
+      //approved not included because by default it is not approved
 
-            if(theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+      approved:         false,
+      categories:       req.payload.data.categories,
+      topics:           req.payload.data.topics,
+      accompaniment:    req.payload.data.accompaniment,
+      languages:        req.payload.data.languages,
+      ensembles:        req.payload.data.ensembles,
+      ethnicities:      req.payload.data.ethnicities,
+      tags:             req.payload.data.tags,
+      denominations:    req.payload.data.denominations,
+      instruments:      req.payload.data.instruments
 
-            var query = connection.query(`
-            UPDATE resources SET ?
-            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
-              if(err) {
-                  console.log(query.sql);
-                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
-              } else {
-                getResourcesJSON();
-                console.log(query.sql);
-                console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
-              }
+    };    
 
-              return reply( {statusCode: 201} );
-            });
+    var justResource = JSON.parse(JSON.stringify(theData));
 
-          //return reply(resources[actualId]);
+    justResource.categories = JSON.stringify(justResource.categories);
+    justResource.topics = JSON.stringify(justResource.topics);
+    justResource.accompaniment = JSON.stringify(justResource.accompaniment);
+    justResource.ethnicities = JSON.stringify(justResource.ethnicities);
+    justResource.tags = JSON.stringify(justResource.tags);
+    justResource.ensembles = JSON.stringify(justResource.ensembles);
+    justResource.languages = JSON.stringify(justResource.languages);
+    justResource.instruments = JSON.stringify(justResource.instruments);
+    justResource.denominations = JSON.stringify(justResource.denominations);
+
+    // TYPE CONVERSION
+    if(typeof justResource.hymn_soc_member == "string") {
+      if(justResource.hymn_soc_member == "no" || justResource.hymn_soc_member == "No") {
+        justResource.hymn_soc_member = false;
+      } else {
+        justResource.hymn_soc_member = true;
+      }
+    } else if(typeof justResource.hymn_soc_member == "number") {
+      if(justResource.hymn_soc_member == 0) {
+        justResource.hymn_soc_member = false;
+      } else {
+        justResource.hymn_soc_member = true;
+      }
+    } else {
+      //neither a string nor Number
+      justResource.hymn_soc_member = false;
+    }
+
+    if(typeof justResource.is_free == "string") {
+      if(justResource.is_free == "yes" || justResource.is_free == "Yes") {
+        justResource.is_free = 1;
+      } else if(justResource.is_free == "no" || justResource.is_free == "No"){
+        justResource.is_free = 0;
+      } else {
+        justResource.is_free = 2;
+      }
+    } else if(typeof justResource.is_free !== "number") {
+      justResource.is_free = 2;
+    }
+    
+    var query = connection.query(`
+      UPDATE resources SET ?
+      WHERE ?`, [ justResource, {id: req.params.id}],function(err, rows, fields) {
+        if(err) {
+            return reply(Boom.badRequest(`invalid query when updating resources with id= ${req.params.id} `));
+        } else {
+          console.log("set resource #", req.params.id);
         }
 
+        return reply( {statusCode: 201} );
+    });
+
+  }
+  /* ADD COMMA ^
+  validate: {
+    payload: {
+      title: 	Joi.string().required(),
+      url: 	Joi.string().required(),
+      description: Joi.string().required(),
+      author: 	Joi.string().allow(''),
+
+      ethnicities: Joi.array().allow(''),
+      categories: Joi.array().allow(''),
+      topic: 	Joi.array().allow(''),
+      accompaniment: Joi.array().allow(''),
+      languages: Joi.array().allow(''),
+      ensembles: Joi.array().allow(''),
+      //is_free: Joi.string().required()
+      parent: 	Joi.string().allow(''),
+      hymn_soc_member: Joi.string().allow(''),
+      is_free: Joi.string().allow('')
 
     }
+  }
+*/
 };
 
 resourceController.getApprovedConfig = {
@@ -639,6 +709,44 @@ resourceController.getApprovedConfig = {
   }//end handler
 };
 
+resourceController.updateConfig = {
+    //auth: 'admin_only',
+    handler: function(request, reply) {
+
+        if (request.params.id) {
+            if (numRes <= request.params.id - 1) {
+              //return reply('Not enough resources in the database for your request').code(404);
+              return reply(Boom.notFound());
+            }
+            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
+
+            var mysqlIndex = Number(request.params.id);
+
+            var theCol = request.payload.column;
+            var theVal = request.payload.value;
+
+            if(theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+
+            var query = connection.query(`
+            UPDATE resources SET ?
+            WHERE ?`, [{ [theCol]: theVal}, {id: mysqlIndex}],function(err, rows, fields) {
+              if(err) {
+                  return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+              } else {
+                console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+              }
+
+              return reply( {statusCode: 201} );
+            });
+
+          //return reply(resources[actualId]);
+        }
+
+
+    }
+};
+
 
 
 module.exports = [
@@ -646,5 +754,6 @@ module.exports = [
   { path: '/resource/{id?}', method: 'GET', config: resourceController.getConfig },
   { path: '/resource/approved/{id?}', method: 'GET', config: resourceController.getApprovedConfig },
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
-  { path: '/resource/{id}', method: 'PUT', config: resourceController.updateConfig}
+  { path: '/resource/{id}', method: 'PUT', config: resourceController.editConfig },
+  { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig }
 ];

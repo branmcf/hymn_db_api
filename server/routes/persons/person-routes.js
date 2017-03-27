@@ -476,6 +476,115 @@ personController.getApprovedConfig = {
   }
 };
 
+personController.editConfig = {
+//auth: 'high_or_admin',
+  handler: function(req, reply) {
+
+    var theData = {
+      first_name:             req.payload.data.first_name,
+      last_name:             req.payload.data.last_name,
+      email:          req.payload.data.email,
+      city:           req.payload.data.city,
+      state:           req.payload.data.state,
+      country:      req.payload.data.country,
+      website:          req.payload.data.url,
+      social_facebook:          req.payload.data.social_facebook,
+      social_twitter:          req.payload.data.social_twitter,
+      social_other:          req.payload.data.social_other,
+      emphasis:       req.payload.data.emphasis,
+      hymn_soc_member:  req.payload.data.hymn_soc_member,     
+      high_level:       req.payload.data.high_level,
+      user_id:          req.payload.uid,
+      user:             req.payload.user,
+      is_active:        true,
+      pract_schol:      req.payload.data.pract_schol,
+      
+      approved:         false,
+      languages:        req.payload.data.languages,
+      instruments:      req.payload.data.instruments,
+      categories:       req.payload.data.categories,
+      ensembles:        req.payload.data.ensembles,
+      ethnicities:      req.payload.data.ethnicities,
+      topics:           req.payload.data.topics,
+      tags:             req.payload.data.tags
+
+    };
+
+    var justPerson = JSON.parse(JSON.stringify(theObj));
+
+    justPerson.categories = JSON.stringify(justPerson.categories);
+    justPerson.topics = JSON.stringify(justPerson.topics);
+    justPerson.ethnicities = JSON.stringify(justPerson.ethnicities);
+    justPerson.tags = JSON.stringify(justPerson.tags);
+    justPerson.ensembles = JSON.stringify(justPerson.ensembles);
+    justPerson.instruments = JSON.stringify(justPerson.instruments);
+    justPerson.languages = JSON.stringify(justPerson.languages);
+
+    // TYPE CONVERSION
+    if(typeof justPerson.hymn_soc_member == "string") {
+      if(justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
+        justPerson.hymn_soc_member = false;
+      } else {
+        justPerson.hymn_soc_member = true;
+      }
+    } else if(typeof justPerson.hymn_soc_member == "number") {
+      if(justPerson.hymn_soc_member == 0) {
+        justPerson.hymn_soc_member = false;
+      } else {
+        justPerson.hymn_soc_member = true;
+      }
+    } else {
+      //neither a string nor Number
+      justPerson.hymn_soc_member = false;
+    }
+
+    //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+
+    if(theCol == "id") { return reply(Boom.unauthorized("cannot change that..."));}
+
+    var query = connection.query(`
+    UPDATE persons SET ?
+    WHERE ?`, [ justPerson, {id: req.params.id}],function(err, rows, fields) {
+      if(err) {
+          console.log(query.sql);
+          return reply(Boom.badRequest(`invalid query when updating persons with id = ${req.payload.id} `));
+      } else {
+        getPersonsJSON();
+        console.log(query.sql);
+        console.log("set person #", req.params.id);
+      }
+
+      return reply( {statusCode: 201} );
+    });
+
+    
+
+    
+
+  }
+  /* ADD COMMA ^
+  validate: {
+    payload: {
+      title: 	Joi.string().required(),
+      url: 	Joi.string().required(),
+      description: Joi.string().required(),
+      author: 	Joi.string().allow(''),
+
+      ethnicities: Joi.array().allow(''),
+      categories: Joi.array().allow(''),
+      topic: 	Joi.array().allow(''),
+      accompaniment: Joi.array().allow(''),
+      languages: Joi.array().allow(''),
+      ensembles: Joi.array().allow(''),
+      parent: 	Joi.string().allow(''),
+      hymn_soc_member: Joi.string().allow('')
+
+    }
+  }
+*/
+
+}
+
 
 
 
@@ -485,6 +594,7 @@ module.exports = [
   { path: '/person/{id?}', method: 'GET', config: personController.getConfig },
   { path: '/person/approved/{id?}', method: 'GET', config: personController.getApprovedConfig },
   { path: '/person/{id}', method: 'DELETE', config: personController.deleteConfig },
-  { path: '/person/{id}', method: 'PUT', config: personController.updateConfig}
+  { path: '/person/{id}', method: 'PUT', config: personController.editConfig},
+  { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig}
   
 ];

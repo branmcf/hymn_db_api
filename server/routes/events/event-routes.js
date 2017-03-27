@@ -526,11 +526,148 @@ eventController.getApprovedConfig = {
   }//end handler
 };
 
+eventController.editConfig = {
+  //auth: 'high_or_admin',
+  handler: function(req, reply) {
+
+    var newEvent = {
+      name: 		      req.payload.data.title,
+      frequency:      req.payload.data.occurance,
+      website: 		    req.payload.data.url,
+      parent:         req.payload.data.parent,
+      description:    req.payload.data.description,
+      event_date:     req.payload.data.event_start_date,
+      event_end_date: req.payload.data.event_end_date,
+      cost: 		      req.payload.data.cost,
+      city: 		      req.payload.data.city,
+      state: 		      req.payload.data.state,
+      country: 		    req.payload.data.country,
+      hymn_soc_member:req.payload.data.hymn_soc_member,
+      user_id:        req.payload.uid,
+      user:           req.payload.user,
+      theme:          req.payload.data.theme,
+      shape:          req.payload.data.shape,
+      clothing:       req.payload.data.clothing,
+      attendance:     req.payload.data.attendance,
+      approved:       req.payload.data.approved,
+      pract_schol:    req.payload.data.pract_schol,
+      is_free:        req.payload.data.is_free,
+      is_active:      true,
+      type:           req.payload.data.type,
+
+      approved:       false,
+      ethnicities:    req.payload.data.ethnicities,
+      ensembles:      req.payload.data.ensembles,
+      tags:           req.payload.data.tags
+
+    };  
+
+    if(newEvent.event_date == "" || newEvent.event_date == " ") {
+      newEvent.event_date = null;
+    }
+    if(newEvent.event_end_date == "" || newEvent.event_end_date == " ") {
+      newEvent.event_end_date = null;
+    }
+
+// DATE FORMATTING
+    if(newEvent.event_date !== null) {
+      var fixed_date_1 = newEvent.event_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_date.toString().slice(17,19);
+
+      newEvent.event_date = "";
+      var str = newEvent.event_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_date = str;
+    }
+    
+    if(newEvent.event_end_date !== null) {
+      var fixed_date_1 = newEvent.event_end_date.toString().slice(0,4);
+      var fixed_date_2 = newEvent.event_end_date.toString().slice(5,7);
+      var fixed_date_3 = newEvent.event_end_date.toString().slice(8,10);
+      var fixed_date_4 = newEvent.event_end_date.toString().slice(11,13);
+      var fixed_date_5 = newEvent.event_end_date.toString().slice(14,16);
+      var fixed_date_6 = newEvent.event_end_date.toString().slice(17,19);
+
+      newEvent.event_end_date = "";
+      var str = newEvent.event_end_date.concat(fixed_date_1, fixed_date_2, fixed_date_3, 
+      fixed_date_4, fixed_date_5, fixed_date_6);
+      newEvent.event_end_date = str;
+    }
+    // END DATE FORMATTING
+
+    var justEvent = JSON.parse(JSON.stringify(theObj));
+
+    justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
+    justEvent.tags = JSON.stringify(justEvent.tags);
+    justEvent.ensembles = JSON.stringify(justEvent.ensembles);
+    justEvent.shape = JSON.stringify(justEvent.shape);
+    justEvent.clothing = JSON.stringify(justEvent.clothing);
+    
+    //console.log("\n\njustEvent: \n\n", justEvent);
+
+    // TYPE CONVERSION
+    if(typeof justEvent.hymn_soc_member == "string") {
+      if(justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
+        justEvent.hymn_soc_member = false;
+      } else {
+        justEvent.hymn_soc_member = true;
+      }
+    } else if(typeof justEvent.hymn_soc_member == "number") {
+      if(justEvent.hymn_soc_member == 0) {
+        justEvent.hymn_soc_member = false;
+      } else {
+        justEvent.hymn_soc_member = true;
+      }
+    } else {
+      //neither a string nor Number
+      justEvent.hymn_soc_member = false;
+    }
+
+    if(justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
+      if(typeof justEvent.is_free == "string") {
+        if(justEvent.is_free == "yes" || justEvent.is_free == "Yes") {
+          justEvent.is_free = 1;
+        } else if(justEvent.is_free == "no" || justEvent.is_free == "No"){
+          justEvent.is_free = 0;
+        } else {
+          justEvent.is_free = 2;
+        }
+      } else if(typeof justEvent.is_free !== "number") {
+        justEvent.is_free = 2;
+      }
+    }
+
+    if(typeof justEvent.cost !== "string") {
+      justEvent.cost = '' + justEvent.cost;
+    }  
+    
+  // END TYPE CONVERSION
+    var query = connection.query(`
+      UPDATE events SET ?
+      WHERE ?`, [justEvent, {id: req.params.id}],function(err, rows, fields) {
+        if(err) {
+            return reply(Boom.badRequest(`invalid query when updating events with id = ${req.params.id} `));
+        } else {
+          console.log("edited event #", req.params.id);
+        }
+
+        return reply( {statusCode: 201} );
+    });
+
+    
+  }
+}
+
 
 module.exports = [
   	{ path: '/event', method: 'POST', config: eventController.postConfig },
   	{ path: '/event/{id?}', method: 'GET', config: eventController.getConfig },
     { path: '/event/approved/{id?}', method: 'GET', config: eventController.getApprovedConfig },
     { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
-    { path: '/event/{id}', method: 'PUT', config: eventController.updateConfig}
+    { path: '/event/{id}', method: 'PUT', config: eventController.editConfig},
+    { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig}
 ];

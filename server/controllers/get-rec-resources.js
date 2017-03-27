@@ -31,6 +31,7 @@ var quizAnswers = [];
 var answers_array = []; //contains choice_id's, NOT TEXT
 
 var answer_resID_dict = {};
+var resID_freq_dict = {};
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -40,11 +41,12 @@ function rowsToJS(theArray) {
 }
 
 
-function populateDictionary(rows, callback) {
+function populateAnswersDictionary(rows, callback) {
 	// ^ rows: rows containing id, tags of APPROVED resources
 	//loop thru each resource
 	for(var i=0; i<rows.length; i++) { 
 		tag_array = JSON.parse(rows[i].tags);
+		if(tag_array == null) { continue; }
 		//loop thru each tag within each resource
 		for(var j=0; j < tag_array.length; j++) {
 			//loop thru each answer_text to see if there is a match 
@@ -64,7 +66,7 @@ function populateDictionary(rows, callback) {
 				}
 			}
 		}
-		if(i == rows.length -1) { console.log("end of populateDictionary"); }
+		//if(i == rows.length -1) { console.log("end of populateAnswersDictionary"); }
 	}
 	callback();
 	
@@ -72,6 +74,37 @@ function populateDictionary(rows, callback) {
 
 function getBestMatches() {
 	//now for the 3rd step, getting the best matching resources based on the user's answers
+	// use resID_freq_dict to store resource_id: frequency pairs
+
+	//loop through every element of every array in answer_resID_dict 
+		//and create keys for every resource ID, then increment the value for that key when the key is found
+		//dict to populate: resID_freq_dict
+
+	//loop thru every key's corresponding value (which is an array of resource_id's)
+	for(k in Object.keys(answer_resID_dict)) {
+		//var temp_answer = Object.keys(answer_resID_dict)[k].toLowerCase();
+		//var res_id = answer_resID_dict[temp_answer];
+		var tempKey = Object.keys(answer_resID_dict)[k];
+
+		//loop through every element of the array
+		for(j in answer_resID_dict[tempKey]) {
+			if(resID_freq_dict[answer_resID_dict[tempKey][j]] >= 1) {
+				console.log("already exists...");
+				
+				resID_freq_dict[answer_resID_dict[tempKey][j]] = resID_freq_dict[answer_resID_dict[tempKey][j]] + 1;
+			} else {
+				resID_freq_dict[answer_resID_dict[tempKey][j]] = 1;
+			}
+			
+		}
+		
+		
+		//console.log("test this: ", answer_resID_dict[tempKey]);
+
+		
+	}
+	console.log("testtt, ", resID_freq_dict);
+
 }
 
 module.exports.getRecRes = {
@@ -127,10 +160,12 @@ module.exports.getRecRes = {
 							NOW GET ALL RESOURCES, THEN SEE IF THEY HAVE MATCHING TAGS WITH THE USER'S ANSWERS
 							================================================
 							*/
-							connection.query(`SELECT id, tags from resources WHERE approved = 1`,function(err, rows, fields) {
+							var query = connection.query(`SELECT id, tags from resources WHERE approved = 1`,function(err, rows, fields) {
 								if (!err) {
+									
 									var JSObj = rowsToJS(rows);
-									populateDictionary(JSObj, getBestMatches);
+									console.log("Q: ", JSObj);
+									populateAnswersDictionary(JSObj, getBestMatches);
 
 
 									return reply("ey");
