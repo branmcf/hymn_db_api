@@ -66,6 +66,8 @@ var getAnswersController = require('../../controllers/get-answers').getAnswers;
 
 var getRecResourcesController = require('../../controllers/get-rec-resources').getRecRes;
 
+var postQuizController = require('../../controllers/post-quiz').postQuiz;
+
 
 /*
 ================================================== 
@@ -76,7 +78,7 @@ BELOW: RECOMMENDATIONS!
 
 
 module.exports = [
-	//{ path: '/quiz', method: 'POST', config: quizController.postConfig },
+	  { path: '/quiz', method: 'POST', config: postQuizController },
   	{ path: '/quiz/{id?}', method: 'GET', config: getAnswersController },
   	{ path: '/quiz/rec/{id}', method: 'GET', config: getRecResourcesController}
   	//{ path: '/quiz/{id}', method: 'PUT', config: quizController.updateConfig}

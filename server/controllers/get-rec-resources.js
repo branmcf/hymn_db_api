@@ -66,10 +66,10 @@ function populateAnswersDictionary(rows, callback) {
 				//console.log("\nDoes ", temp_answer, " match ", temp_tag, " ?");
 				//if(Object.keys(answer_resID_dict)[k] == tag_array[j]) {		
 				if(temp_answer == temp_tag)	 {		
-					console.log("found a match!");
+					//console.log("found a match!");
 					//NOW, for the corresponding user specific answer dictionary, add the resource ID
 					answer_resID_dict[Object.keys(answer_resID_dict)[k]].push(rows[i].id);
-					console.log("now= ", answer_resID_dict[Object.keys(answer_resID_dict)[k]]);
+					//console.log("now= ", answer_resID_dict[Object.keys(answer_resID_dict)[k]]);
 				} else {
 					//console.log("no...");
 				}
@@ -98,7 +98,7 @@ function getBestMatches() {
 		//loop through every element of the array and create the resID_freq_dict that maps resourceID to frequency
 		for(j in answer_resID_dict[tempKey]) {
 			if(resID_freq_dict[answer_resID_dict[tempKey][j]] >= 1) {
-				console.log("already exists...");				
+				//console.log("already exists...");				
 				resID_freq_dict[answer_resID_dict[tempKey][j]] = resID_freq_dict[answer_resID_dict[tempKey][j]] + 1;
 			} else {
 				resID_freq_dict[answer_resID_dict[tempKey][j]] = 1;
@@ -130,7 +130,6 @@ function getBestMatches() {
 		//below for loop just initializes the top_5_array to the default values of the current top_5 (top of the file)
 		for (var top5_key in top_5) {
 			if (top_5.hasOwnProperty(top5_key)) { 
-				console.log("===ONE ITERATION=== for key: ", key);
 				//currentFreq = top_5[top5_key];
 				//console.log("[top5_key]: ", top5_key);
 				//console.log("top_5[top5_key]: ", top_5[top5_key]);
@@ -261,7 +260,6 @@ module.exports.getRecRes = {
 									
 								} else {
 									return reply(Boom.badRequest("bad request when getting resource tags for id=", red_id));
-									console.log('Error while performing Resources Query.');
 								}
 								
 
