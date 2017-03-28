@@ -33,7 +33,14 @@ var answers_array = []; //contains choice_id's, NOT TEXT
 var answer_resID_dict = {};
 var resID_freq_dict = {};
 
-var top_5 = [];	//stores the top 5 resources
+var top_5 = {'1': 0, 
+	'2': 0,
+	'3': 0,
+	'4': 0,
+	'5': 0
+};	//stores the top 5 resources by mapping resource_ID => frequency
+
+var top_5_array = []; //to be used later to store individual top_5 objects
 
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
@@ -117,33 +124,72 @@ function getBestMatches() {
 			}
 		}
 	} else {
-		var num1, num2, num3, num4, num5 = 0; //will store the top 5 results here
+		
+		top_5_array = []; 
+
+		//below for loop just initializes the top_5_array to the default values of the current top_5 (top of the file)
+		for (var top5_key in top_5) {
+			if (top_5.hasOwnProperty(top5_key)) { 
+				console.log("===ONE ITERATION=== for key: ", key);
+				//currentFreq = top_5[top5_key];
+				//console.log("[top5_key]: ", top5_key);
+				//console.log("top_5[top5_key]: ", top_5[top5_key]);
+				//console.log({ [top5_key] : top_5[top5_key]})
+				top_5_array.push({ [top5_key] : top_5[top5_key]});
+			}
+			
+		} //top_5_array has been initialized
+
+		//loop thru every VALUE in resID_freq_dict to get the frequency, and check to see if that frequency is higher than an element in the current top_t_array
 		for (var key in resID_freq_dict) {
 			if (resID_freq_dict.hasOwnProperty(key)) {
 				//console.log(key + " -> " + resID_freq_dict[key]);
-				freqNum = resID_freq_dict[key];
-				if(freqNum > num1) {
-					num1 = freqNum;
+				var freqNum = resID_freq_dict[key]; //number to check
+				
+				//now we want to loop through the 5 elements in the top_5 dictionary
+				//start by making an array that we'll push all of the top_5 keys:value pairs into
+				
+				var key1, key2, key3, key4, key5;
+
+				key1 = Object.keys(top_5_array[0]);
+				key2 = Object.keys(top_5_array[1]);
+				key3 = Object.keys(top_5_array[2]);
+				key4 = Object.keys(top_5_array[3]);
+				key5 = Object.keys(top_5_array[4]);
+
+				if(freqNum > top_5_array[0][key1]) {
+					top_5_array[4] = top_5_array[3]; 	//last element is popped off, replace with 2nd to last element
+					top_5_array[3] = top_5_array[2];	//and continue...
+					top_5_array[2] = top_5_array[1];
+					top_5_array[1] = top_5_array[0];
+					top_5_array[0] = {[key]: freqNum};	//store the KEY, not the freNum because top_5 is keeping track
 					continue;
-				} else if(freqNum > num2) {
-					num2 = freqNum;
+				} else if(freqNum > top_5_array[1][key2]) {
+					top_5_array[4] = top_5_array[3];
+					top_5_array[3] = top_5_array[2];
+					top_5_array[2] = top_5_array[1];
+					top_5_array[1] = {[key]: freqNum};
 					continue;
-				} else if(freqNum > num3) {
-					num3 = freqNum;
+				} else if(freqNum > top_5_array[2][key3]) {
+					top_5_array[4] = top_5_array[3];
+					top_5_array[3] = top_5_array[2];
+					top_5_array[2] = {[key]: freqNum};
 					continue;
-				} else if(freqNum > num4) {
-					num4 = freqNum;
+				} else if(freqNum > top_5_array[3][key4]) {
+					top_5_array[4] = top_5_array[3];
+					top_5_array[3] = {[key]: freqNum};
 					continue;
-				} else if(freqNum > num5) {
-					num5 = freqNum;
+				} else if(freqNum > top_5_array[4][key5]) {
+					top_5_array[4] = {[key]: freqNum};
 					continue;
 				} else {
-					//do nothing
+					//do nothing because the number to check is smaller than OR OR EQUAL TO any of those in the top_5 array
 				}
 			}
 		}
 
-	}
+		console.log("top_5: ", top_5_array);
+	}//end else
 	
 	
 

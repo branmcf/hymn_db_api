@@ -2,6 +2,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS user_quizes;
+DROP TABLE IF EXISTS user_quizzes;
 DROP TABLE IF EXISTS user_quiz_questions;
 DROP TABLE IF EXISTS user_quiz_choices;
 DROP TABLE IF EXISTS user_question_answers;
@@ -10,6 +11,14 @@ DROP TABLE IF EXISTS user_quiz_answers;
 
 SET FOREIGN_KEY_CHECKS=1;
 
+CREATE TABLE user_quizzes(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id),
+    user_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    text JSON DEFAULT NULL,
+    date_created TIMESTAMP
+);
 /*
 CREATE TABLE user_quizes(
 	id int unsigned not null auto_increment,
