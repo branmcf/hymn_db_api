@@ -96,7 +96,7 @@ function popArray(obj, whichArray) {
     whichArray.push([]);
     return; 
   }
-  
+
   var theKeys = [];
 
   if(obj[0] !== undefined) { 
@@ -270,7 +270,6 @@ function formatResource(actualIndex) {
   //var str = JSON.stringify(finalObj);
 
   return finalObj;
-
 
 };
 
