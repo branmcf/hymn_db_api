@@ -22,12 +22,12 @@ if (process.env.JAWSDB_URL) {
 orgController = {};
 var orgs = [];
 var numOrgs = 0;
-  var orgCategories = [];
-  var orgInstruments = [];
-  var orgEthnicities = [];
-  var orgTags = [];
-  var orgShape = [];
-  var orgAttire = [];
+  var orgCategories, orgCategories_all = [];
+  var orgInstruments, orgInstruments_all = [];
+  var orgEthnicities, orgEthnicities_all = [];
+  var orgTags, orgTags_all = [];
+  var orgShape, orgShape_all = [];
+  var orgAttire, orgAttire_all = [];
 
 
 getOrganizationsJSON();
@@ -47,35 +47,35 @@ function getOrganizationsJSON() {
     if(err) { console.log('Error while performing orgs Query.'); throw err;}
     else {
     
-    orgs = [];
-    orgCategories = [];
-    orgInstruments = [];
-    orgEthnicities = [];
-    orgTags = [];
-    orgAttire = [];
-    orgShape = [];
+      orgs = [];
+      orgCategories = [];
+      orgInstruments = [];
+      orgEthnicities = [];
+      orgTags = [];
+      orgAttire = [];
+      orgShape = [];
 
-    var JSObj = rowsToJS(rows);
-    orgs = JSObj;    
-    numOrgs = orgs.length;
+      var JSObj = rowsToJS(rows);
+      orgs = JSObj;    
+      numOrgs = orgs.length;
 
-    //console.log("\nT: ", rows[0]);
-    for(var i=0; i<JSObj.length; i++) { 
-      popArray(JSObj[i]["ethnicities"], orgEthnicities);
-      popArray(JSObj[i]["categories"], orgCategories);
-      popArray(JSObj[i]["tags"], orgTags);
-      popArray(JSObj[i]["instruments"], orgInstruments);
-      popArray(JSObj[i]["shape"], orgShape);
-      popArray(JSObj[i]["clothing"], orgAttire);
+      //console.log("\nT: ", rows[0]);
+      for(var i=0; i<JSObj.length; i++) { 
+        popArray(JSObj[i]["ethnicities"], orgEthnicities);
+        popArray(JSObj[i]["categories"], orgCategories);
+        popArray(JSObj[i]["tags"], orgTags);
+        popArray(JSObj[i]["instruments"], orgInstruments);
+        popArray(JSObj[i]["shape"], orgShape);
+        popArray(JSObj[i]["clothing"], orgAttire);
 
-      //console.log("\nETH[",i, "] : ", resEth[i]);
-      //console.log("\nCAT[",i, "] : ", resCategories[i]);
-      //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-      //console.log("\nACC[",i, "] : ", resAcc[i]);
-      //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-      //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-      //console.log("\nresTags[",i, "] : ", resTags[i]);
-    }
+        //console.log("\nETH[",i, "] : ", resEth[i]);
+        //console.log("\nCAT[",i, "] : ", resCategories[i]);
+        //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
+        //console.log("\nACC[",i, "] : ", resAcc[i]);
+        //console.log("\nLANG[",i, "] : ", resLanguages[i]);
+        //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
+        //console.log("\nresTags[",i, "] : ", resTags[i]);
+      }
  
     }      
       
@@ -86,8 +86,19 @@ function getOrganizationsJSON() {
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
-  //console.log("after: ",  typeof obj, ": ", obj);
+  if(obj == null ) { 
+    whichArray.push([]);
+    return; 
+  }
   var theKeys = [];
+
+  if(obj[0] !== undefined) { 
+    for(i in obj) {
+      theKeys.push(obj[i]);
+    }
+    whichArray.push(theKeys);    
+    return;
+  }
 
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -225,12 +236,12 @@ function formatOrg(actualIndex) {
     user:           orgs[actualIndex].user,
     approved:       orgs[actualIndex].approved,
 
-    clothing:       orgAttire[actualIndex],
-    shape:          orgShape[actualIndex],
-    categories:     orgCategories[actualIndex],
-    instruments:    orgInstruments[actualIndex],
-    ethnicities:    orgEthnicities[actualIndex],
-    tags:           orgTags[actualIndex]
+    clothing:       orgAttire_all[0][actualIndex],
+    shape:          orgShape_all[0][actualIndex],
+    categories:     orgCategories_all[0][actualIndex],
+    instruments:    orgInstruments_all[0][actualIndex],
+    ethnicities:    orgEthnicities_all[0][actualIndex],
+    tags:           orgTags_all[0][actualIndex]
 
   };
 
@@ -252,7 +263,7 @@ function formatOrg(actualIndex) {
   */
   //end formatting
 
-  var theUrl = "/orgs/" + String(actualIndex+1);
+  var theUrl = "/orgs/" + String(orgs[actualIndex].id);
 
   var finalObj = {
     url: theUrl,
@@ -451,36 +462,62 @@ orgController.updateConfig = {
 //ORG GET REQUEST
 orgController.getApprovedConfig = {
   handler: function (request, reply) {
-    if (request.params.id) {
 
-        getOrganizationsJSON();
+      connection.query('SELECT * from organizations', function(err, rows, fields) {
+        if(err) { console.log('Error while performing orgs Query.'); throw err;}
+
+          orgs = [];
+          orgCategories = [];
+          orgInstruments = [];
+          orgEthnicities = [];
+          orgTags = [];
+          orgAttire = [];
+          orgShape = [];
+
+          var JSObj = rowsToJS(rows);
+          orgs = JSObj;    
+          numOrgs = orgs.length;
+
+          //console.log("\nT: ", rows[0]);
+          for(var i=0; i<JSObj.length; i++) { 
+            popArray(JSObj[i]["ethnicities"], orgEthnicities);
+            popArray(JSObj[i]["categories"], orgCategories);
+            popArray(JSObj[i]["tags"], orgTags);
+            popArray(JSObj[i]["instruments"], orgInstruments);
+            popArray(JSObj[i]["shape"], orgShape);
+            popArray(JSObj[i]["clothing"], orgAttire);
+
+            orgEthnicities_all.push(orgEthnicities);
+            orgCategories_all.push(orgCategories);
+            orgTags_all.push(orgTags);
+            orgInstruments_all.push(orgInstruments);
+            orgShape_all.push(orgShape);
+            orgAttire_all.push(orgAttire);
+          }
+ 
+            
+      if (request.params.id) {
+        if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+            return reply(Boom.notFound("Index out of range for Orgs get request"));
+        }
+
+        var actualIndex = Number(request.params.id) - 1;
+        //create new object, convert to json
         
-      if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          return reply(Boom.notFound("Index out of range for Orgs get request"));
+        if(orgs[actualIndex].approved == 1) {
+            var str = formatOrg(actualIndex);
+            return reply(str);
+        } else {
+            return reply(Boom.badRequest("The Org you request is already approved"));
+        }  
       }
-
-      var actualIndex = Number(request.params.id) - 1;
-      //create new object, convert to json
-      
-      if(orgs[actualIndex].approved == 1) {
-          var str = formatOrg(actualIndex);
-          return reply(str);
-      } else {
-          return reply(Boom.badRequest("The Org you request is already approved"));
-      }  
-      
-    }
 
     var objToReturn = [];
 
     for(var i=0; i < orgs.length; i++) {
       //var bob = formatResource(i);
       if(orgs[i].approved == 1) {
-        var str = {
-          id:     orgs[i].id,
-          user:   orgs[i].user,
-          title:  orgs[i].name
-        }
+        var str = formatOrg(i);
         objToReturn.push(str);
       }
     }//end for
@@ -490,6 +527,7 @@ orgController.getApprovedConfig = {
     } else {
       reply(objToReturn);
     }
+    });
   }
 };
 

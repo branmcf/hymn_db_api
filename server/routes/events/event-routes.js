@@ -18,12 +18,12 @@ var connection = mysql.createConnection({
 
 eventController = {};
 var events = [];
-  var numEvents = 0;
-  var eventTags = [];
-  var eventEnsembles = [];
-  var eventEthnicities = [];
-  var eventShape = [];
-  var eventsAttire = [];
+var numEvents = 0;
+  var eventTags, eventTags_all  = [];
+  var eventEnsembles, eventEnsembles_all = [];
+  var eventEthnicities, eventEthnicities_all = [];
+  var eventShape, eventShape_all = [];
+  var eventsAttire, eventsAttire_all = [];
 
 getEventsJSON();
 
@@ -79,8 +79,20 @@ function getEventsJSON() {
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
+  if(obj == null ) { 
+    whichArray.push([]);
+    return; 
+  }
   //console.log("after: ",  typeof obj, ": ", obj);
   var theKeys = [];
+
+  if(obj[0] !== undefined) { 
+    for(i in obj) {
+      theKeys.push(obj[i]);
+    }
+    whichArray.push(theKeys);    
+    return;
+  }
 
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -200,11 +212,11 @@ function formatEvent(actualIndex) {
     pract_schol:    events[actualIndex].pract_schol,
     type:           events[actualIndex].type,
 
-    clothing:       eventsAttire[actualIndex],
-    shape:          eventShape[actualIndex],
-    ethnicities:    eventEthnicities[actualIndex],
-    ensembles:      eventEnsembles[actualIndex],
-    tags:           eventTags[actualIndex]
+    clothing:       eventsAttire_all[0][actualIndex],
+    shape:          eventShape_all[0][actualIndex],
+    ethnicities:    eventEthnicities_all[0][actualIndex],
+    ensembles:      eventEnsembles_all[0][actualIndex],
+    tags:           eventTags_all[0][actualIndex]
 
 
   };
@@ -222,7 +234,7 @@ function formatEvent(actualIndex) {
   eventData.tags = JSON.parse(eventData.tags);
   eventData.ensembles = JSON.parse(eventData.ensembles);
 */
-  var theUrl = "/event/" + Number(actualIndex+1);
+  var theUrl = "/event/" + String(events[actualIndex].id);
 
   var finalObj = {
     url: theUrl,
@@ -477,52 +489,78 @@ eventController.updateConfig = {
 eventController.getApprovedConfig = {
   handler: function (request, reply) {
 
-    getEventsJSON();
+    connection.query(`SELECT * from events`, function(err, rows, fields) {
+      if(err) { return reply(Boom.badRequest());}
+      if (!err) {
 
-    if (request.params.id) {
-      //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-      if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough events in the database for your request').code(404);
-          return reply(Boom.notFound("Index out of range for Events get request"));
-      }
+        var JSObj = rowsToJS(rows);
 
-      var actualIndex = Number(request.params.id) - 1;
-      //
-      //create new object, convert to json  
-      if(events[actualIndex].approved == 1) {
-          var str = formatEvent(actualIndex);
-          return reply(str);
-      } else {
-          return reply(Boom.badRequest("The Event you request is already approved"));
-      }
+        events = [];
+        numEvents = 0;
+        eventTags = [];
+        eventEnsembles = [];
+        eventEthnicities = [];
+        eventShape = [];
+        eventsAttire = [];
 
-      //return reply(events[actualId]);
-    }
-    //if no ID specified
-    var objToReturn = [];
+        events = JSObj;
+        numEvents = events.length;
 
-    for(var i=0; i < events.length; i++) {
-      //var bob = formatevent(i);
-      if(events[i].approved == 1) {
-        var str = {
-          id:     events[i].id,
-          user:   events[i].user,
-          title:  events[i].name
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], eventEthnicities);
+          popArray(JSObj[i]["ensembles"], eventEnsembles);
+          popArray(JSObj[i]["tags"], eventTags);
+          popArray(JSObj[i]["shape"], eventShape);
+          popArray(JSObj[i]["clothing"], eventsAttire);
+
+          eventShape_all.push(eventShape);
+          eventTags_all.push(eventTags);
+          eventEnsembles_all.push(eventEnsembles);
+          eventEthnicities_all.push(eventEthnicities);
+          eventsAttire_all.push(eventsAttire);
         }
-        objToReturn.push(str);
-      }
-      
-      
-    }//end for
 
-    //console.log(objToReturn);
-    if(objToReturn.length <= 0) {
-      return reply(Boom.badRequest("All events already approved, nothing to return"));
-    } else {
-      reply(objToReturn);
-    }  
-  
-    
+
+        if (request.params.id) {
+          //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+          if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
+              //return reply('Not enough events in the database for your request').code(404);
+              return reply(Boom.notFound("Index out of range for Events get request"));
+          }
+
+          var actualIndex = Number(request.params.id) - 1;
+          //
+          //create new object, convert to json  
+          if(events[actualIndex].approved == 1) {
+              var str = formatEvent(actualIndex);
+              return reply(str);
+          } else {
+              return reply(Boom.badRequest("The Event you request is already approved"));
+          }
+
+          //return reply(events[actualId]);
+        }
+        //if no ID specified
+        var objToReturn = [];
+
+        for(var i=0; i < events.length; i++) {
+          //var bob = formatevent(i);
+          if(events[i].approved == 1) {
+          var str = formatEvent(i);
+            objToReturn.push(str);
+          }
+          
+          
+        }//end for
+
+        //console.log(objToReturn);
+        if(objToReturn.length <= 0) {
+          return reply(Boom.badRequest("nothing to return, nothing is approved"));
+        } else {
+          reply(objToReturn);
+        }  
+      } 
+    });
   }//end handler
 };
 

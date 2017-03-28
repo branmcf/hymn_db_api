@@ -33,6 +33,8 @@ var answers_array = []; //contains choice_id's, NOT TEXT
 var answer_resID_dict = {};
 var resID_freq_dict = {};
 
+var top_5 = [];	//stores the top 5 resources
+
 function rowsToJS(theArray) {
   var temp = JSON.stringify(theArray);
   temp = JSON.parse(temp);
@@ -86,11 +88,10 @@ function getBestMatches() {
 		//var res_id = answer_resID_dict[temp_answer];
 		var tempKey = Object.keys(answer_resID_dict)[k];
 
-		//loop through every element of the array
+		//loop through every element of the array and create the resID_freq_dict that maps resourceID to frequency
 		for(j in answer_resID_dict[tempKey]) {
 			if(resID_freq_dict[answer_resID_dict[tempKey][j]] >= 1) {
-				console.log("already exists...");
-				
+				console.log("already exists...");				
 				resID_freq_dict[answer_resID_dict[tempKey][j]] = resID_freq_dict[answer_resID_dict[tempKey][j]] + 1;
 			} else {
 				resID_freq_dict[answer_resID_dict[tempKey][j]] = 1;
@@ -103,7 +104,48 @@ function getBestMatches() {
 
 		
 	}
-	console.log("testtt, ", resID_freq_dict);
+	//now you have a filled resID_freq_dict, mapping resourceID's to frequency
+	//console.log("testtt, ", resID_freq_dict);
+	//now loop thru resID_freq_dict values, get top 5 numbers
+
+	//first check to see if there are even 5 keys inside resID_freq_dict...
+	if(Object.keys(resID_freq_dict).length <= 5) {
+		for (var key in resID_freq_dict) {
+			if (resID_freq_dict.hasOwnProperty(key)) {
+				//console.log(key + " -> " + resID_freq_dict[key]);
+				top_5.push(key);
+			}
+		}
+	} else {
+		var num1, num2, num3, num4, num5 = 0; //will store the top 5 results here
+		for (var key in resID_freq_dict) {
+			if (resID_freq_dict.hasOwnProperty(key)) {
+				//console.log(key + " -> " + resID_freq_dict[key]);
+				freqNum = resID_freq_dict[key];
+				if(freqNum > num1) {
+					num1 = freqNum;
+					continue;
+				} else if(freqNum > num2) {
+					num2 = freqNum;
+					continue;
+				} else if(freqNum > num3) {
+					num3 = freqNum;
+					continue;
+				} else if(freqNum > num4) {
+					num4 = freqNum;
+					continue;
+				} else if(freqNum > num5) {
+					num5 = freqNum;
+					continue;
+				} else {
+					//do nothing
+				}
+			}
+		}
+
+	}
+	
+	
 
 }
 
@@ -164,8 +206,8 @@ module.exports.getRecRes = {
 								if (!err) {
 									
 									var JSObj = rowsToJS(rows);
-									console.log("Q: ", JSObj);
-									populateAnswersDictionary(JSObj, getBestMatches);
+									//console.log("Q: ", JSObj);
+									populateAnswersDictionary(JSObj, getBestMatches); //first run populateAnswersDictionary(), then getBestMatches()
 
 
 									return reply("ey");

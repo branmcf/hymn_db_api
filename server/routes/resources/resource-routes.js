@@ -25,15 +25,15 @@ resourceController = {};
 var resources = [];
 var numRes = 0;
   //var resTypes = [];
-  var resCategories = [];
-  var resTopics =[];
-  var resAcc = [];
-  var resLanguages = [];
-  var resTags = [];
-  var resEnsembles = [];
-  var resEth = [];
-  var resDenominations = [];
-  var resInstruments = [];
+  var resCategories, resCategories_all = [];
+  var resTopics, resTopics_all =[];
+  var resAcc, resAcc_all = [];
+  var resLanguages, resLanguages_all = [];
+  var resTags, resTags_all = [];
+  var resEnsembles, resEnsembles_all = [];
+  var resEth, resEth_all = [];
+  var resDenominations, resDenominations_all = [];
+  var resInstruments, resInstruments_all = [];
 
 getResourcesJSON();
 
@@ -75,13 +75,6 @@ function getResourcesJSON() {
           popArray(JSObj[i]["denominations"], resDenominations);
           //popArray(JSObj[i]["types"], resTypes);
 
-          //console.log("\nETH[",i, "] : ", resEth[i]);
-          //console.log("\nCAT[",i, "] : ", resCategories[i]);
-          //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-          //console.log("\nACC[",i, "] : ", resAcc[i]);
-          //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-          //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-          //console.log("\nresTags[",i, "] : ", resTags[i]);
         }
         
         
@@ -99,27 +92,37 @@ function getResourcesJSON() {
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
-  //console.log("after: ",  typeof obj, ": ", obj);
+  if(obj == null ) { 
+    whichArray.push([]);
+    return; 
+  }
+  
   var theKeys = [];
 
+  if(obj[0] !== undefined) { 
+    for(i in obj) {
+      theKeys.push(obj[i]);
+    }
+    whichArray.push(theKeys);    
+    return;
+  }
+  
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-
       var theVal = obj[key];  //the corresponding value to the key:value pair that is either true, false, or a string
 
       if(key == 'Other' || key == 'other') {
         theKeys.push(obj[key]);
       } else if(theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
-       
         key = key.replace(/_/g, " ");
         //console.log(key);
 
         theKeys.push(key);
       } else {
         //false, dont add...
-        //console.log("false for ", key, ", dont push");
+        //console.log("false for ", key, ", dont push");         
       }
-    }
+    } 
   }
 
   whichArray.push(theKeys);
@@ -225,15 +228,15 @@ function formatResource(actualIndex) {
     denominations:  resources[actualIndex].denominations,
     instruments:    resources[actualIndex].instruments
 */
-    languages:      resLanguages[actualIndex],
-    ethnicities:    resEth[actualIndex],
-    ensembles:      resEnsembles[actualIndex],
-    categories:     resCategories[actualIndex],
-    accompaniment: 	resAcc[actualIndex],
-    topics:         resTopics[actualIndex],
-    tags:           resTags[actualIndex],
-    denominations:  resDenominations[actualIndex],
-    instruments:    resInstruments[actualIndex]
+    languages:      resLanguages_all[0][actualIndex],
+    ethnicities:    resEth_all[0][actualIndex],
+    ensembles:      resEnsembles_all[0][actualIndex],
+    categories:     resCategories_all[0][actualIndex],
+    accompaniment: 	resAcc_all[0][actualIndex],
+    topics:         resTopics_all[0][actualIndex],
+    tags:           resTags_all[0][actualIndex],
+    denominations:  resDenominations_all[0][actualIndex],
+    instruments:    resInstruments_all[0][actualIndex]
 
 
   };
@@ -257,7 +260,7 @@ function formatResource(actualIndex) {
   */
   //end formatting
 
-  var theUrl = "/resource/" + String(actualIndex+1);
+  var theUrl = "/resource/" + String(resources[actualIndex].id);
 
   var finalObj = {
     url: theUrl,
@@ -271,6 +274,13 @@ function formatResource(actualIndex) {
 
 };
 
+/* ---------- TODO: ----------
+hymn_soc_mem involved: Yes, No, Unknown
+
+free: Yes, No, Partially with Paywall
+
+pract_schol: Practical, Scholarly, Both
+*/
 function reformatTinyInt(toFormat, pract_schol) {
   if(toFormat == 1) {
     return("true");
@@ -279,7 +289,7 @@ function reformatTinyInt(toFormat, pract_schol) {
   } else if(pract_schol) {
     return("both");
   } else {
-    return("partially");
+    return("Partially");
   }
 }
 
@@ -642,7 +652,7 @@ resourceController.getApprovedConfig = {
       resources = JSObj;
       numRes = resources.length;
 
-      for(var i=0; i<JSObj.length; i++) { 
+      for(var i=0; i < JSObj.length; i++) { 
         popArray(JSObj[i]["ethnicities"], resEth);
         popArray(JSObj[i]["categories"], resCategories);
         popArray(JSObj[i]["topics"], resTopics);
@@ -652,9 +662,20 @@ resourceController.getApprovedConfig = {
         popArray(JSObj[i]["tags"], resTags);
         popArray(JSObj[i]["instruments"], resInstruments);
         popArray(JSObj[i]["denominations"], resDenominations);
+
+        resEth_all.push(resEth);
+        resCategories_all.push(resCategories);
+        resTopics_all.push(resTopics);
+        resAcc_all.push(resAcc);
+        resLanguages_all.push(resLanguages);
+        resEnsembles_all.push(resEnsembles);
+        resTags_all.push(resTags);
+        resInstruments_all.push(resInstruments);
+        resDenominations_all.push(resDenominations);
         //popArray(JSObj[i]["types"], resTypes);
 
       }
+      //console.log(resEth_all);
       
       if (request.params.id) {
           console.log(request.path[2,5]);
@@ -681,18 +702,15 @@ resourceController.getApprovedConfig = {
       for(var i=0; i < resources.length; i++) {
         //var bob = formatResource(i);
         if(resources[i].approved == 1) {
-          var str = {
-            id:     resources[i].id,
-            user:   resources[i].user,
-            title:  resources[i].name
-          }
+    
+          var str = formatResource(i);
           objToReturn.push(str);
         }
       }//end for
 
       //console.log(objToReturn);
       if(objToReturn.length <= 0) {
-        return reply(Boom.badRequest("nothing to return"));
+        return reply(Boom.badRequest("nothing to return, nothing is approved"));
       } else {
         reply(objToReturn);
       }  

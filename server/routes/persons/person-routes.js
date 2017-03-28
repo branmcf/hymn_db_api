@@ -17,13 +17,14 @@ var connection = mysql.createConnection({
 personController = {};
 var persons = [];
 var personNumPersons = 0;
-  var personTopics = [];
-  var personEnsembles = [];
-  var personEthnicities = [];
-  var personInstruments = [];
-  var personCategories = [];
-  var personTags = [];
-  var personLangs = [];
+  var personTopics, personTopics_all = [];
+  var personEnsembles, personEnsembles_all = [];
+  var personEthnicities, personEthnicities_all = [];
+  var personInstruments, personInstruments_all = [];
+  var personCategories, personCategories_all = [];
+  var personTags, personTags_all = [];
+  var personLangs, personLangs_all = [];
+
 
 getPersonsJSON();
 
@@ -89,8 +90,19 @@ function getPersonsJSON() {
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
-  //console.log("after: ",  typeof obj, ": ", obj);
+  if(obj == null ) { 
+    whichArray.push([]);
+    return; 
+  }
   var theKeys = [];
+
+  if(obj[0] !== undefined) { 
+    for(i in obj) {
+      theKeys.push(obj[i]);
+    }
+    whichArray.push(theKeys);    
+    return;
+  }
 
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -190,13 +202,13 @@ function formatPerson(actualIndex) {
     user:           persons[actualIndex].user,
     pract_schol:    persons[actualIndex].pract_schol,
 
-    languages:      personLangs[actualIndex],
-    instruments:    personInstruments[actualIndex],
-    categories:     personCategories[actualIndex],
-    ensembles:      personEnsembles[actualIndex],
-    ethnicities:    personEthnicities[actualIndex],
-    topics:         personTopics[actualIndex],
-    tags:           personTags[actualIndex]
+    languages:      personLangs_all[0][actualIndex],
+    instruments:    personInstruments_all[0][actualIndex],
+    categories:     personCategories_all[0][actualIndex],
+    ensembles:      personEnsembles_all[0][actualIndex],
+    ethnicities:    personEthnicities_all[0][actualIndex],
+    topics:         personTopics_all[0][actualIndex],
+    tags:           personTags_all[0][actualIndex]
     
   };
 
@@ -205,7 +217,7 @@ function formatPerson(actualIndex) {
   personData.high_level = reformatTinyInt(personData.high_level);
   personData.approved = reformatTinyInt(personData.approved);
 
-  var theUrl = "/person/" + String(actualIndex+1);
+  var theUrl = "/person/" + String(persons[actualIndex].id);
 
   var finalObj = {
     url: theUrl,
@@ -425,54 +437,84 @@ personController.getApprovedConfig = {
 
   handler: function (request, reply) {
 
-    getPersonsJSON();
+    connection.query(`SELECT * from persons`, function(err, rows, fields) {
+      if (!err) {
+          var JSObj = rowsToJS(rows);
+          persons = [];
+          personTopics = [];
+          personEnsembles = [];
+          personEthnicities = [];
+          personInstruments = [];
+          personCategories = [];
+          personTags = [];
+          personLangs = [];
+          persons = JSObj;
+          numPersons = persons.length;
+          //console.log("\nT: ", rows[0]);
+          for(var i=0; i<JSObj.length; i++) { 
+            popArray(JSObj[i]["ethnicities"], personEthnicities);
+            popArray(JSObj[i]["categories"], personCategories);
+            popArray(JSObj[i]["topics"], personTopics);
+            popArray(JSObj[i]["ensembles"], personEnsembles);
+            popArray(JSObj[i]["tags"], personTags);
+            popArray(JSObj[i]["instruments"], personInstruments);
+            popArray(JSObj[i]["languages"], personLangs);
 
-    //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
+            personEthnicities_all.push(personEthnicities);
+            personCategories_all.push(personCategories);
+            personTopics_all.push(personTopics);
+            personEnsembles_all.push(personEnsembles);
+            personTags_all.push(personTags);
+            personInstruments_all.push(personInstruments);
+            personLangs_all.push(personLangs);
+          }
 
-    if (request.params.id) {
-        if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough Persons in the database for your request').code(404);
-          return reply(Boom.notFound("Index out of range for Persons get request"));
-        }
-        var actualIndex = Number(request.params.id -1 );  
+      }
+      else {
+        return reply(Boom.badRequest()); 
+      }
 
-        //create new object, convert to json
+      //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
+
+      if (request.params.id) {
+          if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
+            //return reply('Not enough Persons in the database for your request').code(404);
+            return reply(Boom.notFound("Index out of range for Persons get request"));
+          }
+          var actualIndex = Number(request.params.id -1 );  
+
+          //create new object, convert to json
+          
+          if(persons[actualIndex].approved == 1) {
+            var str = formatPerson(actualIndex);
+            return reply(str);
+          } else {
+            return reply(Boom.badRequest("The Person you request is already approved"));
+          }
+          
+          
+        //return reply(persons[actualId]);
+      }
+
+      //if no ID specified
+      var objToReturn = [];
+
+      for(var i=0; i < persons.length; i++) {
+        //var bob = formatResource(i);
         
-        if(persons[actualIndex].approved == 1) {
-          var str = formatPerson(actualIndex);
-          return reply(str);
-        } else {
-          return reply(Boom.badRequest("The Person you request is already approved"));
-        }
-        
-        
-      //return reply(persons[actualId]);
-    }
+        if(persons[i].approved == 1) {
+          var str = formatPerson(i);
+          objToReturn.push(str);
+        } 
+      }//end for
 
-    //if no ID specified
-    var objToReturn = [];
-
-    for(var i=0; i < persons.length; i++) {
-      //var bob = formatResource(i);
-      
-      if(persons[i].approved == 1) {
-        var str = {
-          id:     persons[i].id,
-          user:   persons[i].user,
-          first_name:  persons[i].first_name,
-          last_name:  persons[i].last_name
-
-        }
-        objToReturn.push(str);
-      } 
-    }//end for
-
-    //console.log(objToReturn);
-    if(objToReturn.length <= 0) {
-      return reply(Boom.badRequest("All resources already approved, nothing to return"));
-    } else {
-      reply(objToReturn);
-    }
+      //console.log(objToReturn);
+      if(objToReturn.length <= 0) {
+        return reply(Boom.badRequest("All resources already approved, nothing to return"));
+      } else {
+        reply(objToReturn);
+      }
+    });
   }
 };
 

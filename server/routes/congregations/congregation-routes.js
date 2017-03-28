@@ -22,12 +22,12 @@ if (process.env.JAWSDB_URL) {
 congController = {};
 var congregations = [];
 var numCongs = 0;
-  var congCategories = [];
-  var congInstruments = [];
-  var congEthnicities = [];
-  var congTags = [];
-  var congShape = [];
-  var congAttire = [];
+  var congCategories, congCategories_all = [];
+  var congInstruments, congInstruments_all = [];
+  var congEthnicities, congEthnicities_all = [];
+  var congTags, congTags_all = [];
+  var congShape, congShape_all = [];
+  var congAttire, congAttire_all = [];
 
 
 getcongregationsJSON();
@@ -69,13 +69,7 @@ function getcongregationsJSON() {
         popArray(JSObj[i]["shape"], congShape);
         popArray(JSObj[i]["clothing"], congAttire);
 
-        //console.log("\nETH[",i, "] : ", resEth[i]);
-        //console.log("\nCAT[",i, "] : ", resCategories[i]);
-        //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-        //console.log("\nACC[",i, "] : ", resAcc[i]);
-        //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-        //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-        //console.log("\nresTags[",i, "] : ", resTags[i]);
+        
       }
  
     }      
@@ -87,8 +81,20 @@ function getcongregationsJSON() {
 function popArray(obj, whichArray) {
   
   obj = JSON.parse(obj);
-  //console.log("after: ",  typeof obj, ": ", obj);
+  if(obj == null ) { 
+    whichArray.push([]);
+    return; 
+  }
+
   var theKeys = [];
+
+  if(obj[0] !== undefined) { 
+    for(i in obj) {
+      theKeys.push(obj[i]);
+    }
+    whichArray.push(theKeys);    
+    return;
+  }
 
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -200,12 +206,12 @@ function formatCong(actualIndex) {
     process:        congregations[actualIndex].process,
     approved:       congregations[actualIndex].approved,
 
-    clothing:       congAttire[actualIndex],
-    shape:          congShape[actualIndex],
-    categories:     congCategories[actualIndex],
-    instruments:    congInstruments[actualIndex],
-    ethnicities:    congEthnicities[actualIndex],
-    tags:           congTags[actualIndex]
+    clothing:       congAttire_all[0][actualIndex],
+    shape:          congShape_all[0][actualIndex],
+    categories:     congCategories_all[0][actualIndex],
+    instruments:    congInstruments_all[0][actualIndex],
+    ethnicities:    congEthnicities_all[0][actualIndex],
+    tags:           congTags_all[0][actualIndex]
 
   };
 
@@ -425,50 +431,79 @@ congController.updateConfig = {
 //CONGREGATION GET REQUEST
 congController.getApprovedConfig = {
   handler: function (request, reply) {
-    if (request.params.id) {
+    
 
-      getcongregationsJSON();
+      connection.query('SELECT * from congregations', function(err, rows, fields) {
+        if(err) { return reply(Boom.badRequest("error getting congregations in approveCongregations")); }
         
-      if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          return reply(Boom.notFound("Index out of range for congregations get request"));
-      }
+        congregations = [];
+        congCategories = [];
+        congInstruments = [];
+        congEthnicities = [];
+        congTags = [];
+        congShape = [];
+        congAttire = [];
 
-      var actualIndex = Number(request.params.id) - 1;
-      //create new object, convert to json
-      
-      if(congregations[actualIndex].approved == 1) {
-        var str = formatCong(actualIndex);
-        return reply(str);
-      } else {
-          return reply(Boom.badRequest("The Resource you request is already approved"));
-      }
-      
-    }
+        var JSObj = rowsToJS(rows);
+        congregations = JSObj;
+        
+        numCongs = congregations.length;
 
-    var objToReturn = [];
+        //console.log("\nT: ", rows[0]);
+        for(var i=0; i<JSObj.length; i++) { 
+          popArray(JSObj[i]["ethnicities"], congEthnicities);
+          popArray(JSObj[i]["categories"], congCategories);
+          popArray(JSObj[i]["tags"], congTags);
+          popArray(JSObj[i]["instruments"], congInstruments);
+          popArray(JSObj[i]["shape"], congShape);
+          popArray(JSObj[i]["clothing"], congAttire);
 
-    for(var i=0; i < congregations.length; i++) {
-      //var bob = formatResource(i);
-      
-      if(congregations[i].approved == 1) {
-        var str = {
-          id:     congregations[i].id,
-          user:   congregations[i].user,
-          title:  congregations[i].name
+          congAttire_all.push(congAttire);
+          congEthnicities_all.push(congEthnicities);
+          congCategories_all.push(congCategories);
+          congTags_all.push(congTags);
+          congInstruments_all.push(congInstruments);
+          congShape_all.push(congShape);
+          
         }
-        objToReturn.push(str);
-      }
-      
-      
-    }//end for
+    
+        if (request.params.id) { 
+          if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+              return reply(Boom.notFound("Index out of range for congregations get request"));
+          }
 
-    //console.log(objToReturn);
-    if(objToReturn.length <= 0) {
-      return reply(Boom.badRequest("All congregations already approved, nothing to return"));
-    } else {
-      reply(objToReturn);
-    }
-  }
+          var actualIndex = Number(request.params.id) - 1;
+          //create new object, convert to json
+          
+          if(congregations[actualIndex].approved == 1) {
+            var str = formatCong(actualIndex);
+            return reply(str);
+          } else {
+              return reply(Boom.badRequest("The Resource you request is already approved"));
+          }
+        }
+
+        var objToReturn = [];
+
+        for(var i=0; i < congregations.length; i++) {
+          //var bob = formatResource(i);
+          
+          if(congregations[i].approved == 1) {
+            var str = formatCong(i);
+            objToReturn.push(str);
+          }
+          
+          
+        }//end for
+
+        //console.log(objToReturn);
+        if(objToReturn.length <= 0) {
+          return reply(Boom.badRequest("All congregations already approved, nothing to return"));
+        } else {
+          reply(objToReturn);
+        }
+    });
+  }//end handler
 };
 
 congController.editConfig = {
