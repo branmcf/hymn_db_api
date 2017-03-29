@@ -248,6 +248,7 @@ function formatResource(actualIndex) {
   resourceData.pract_schol = reformatTinyInt(resourceData.pract_schol, true);
   resourceData.approved = reformatTinyInt(resourceData.approved, false);
 
+  
   //format 
   /*
   resourceData.ethnicities = JSON.parse(resourceData.ethnicities);
@@ -792,6 +793,7 @@ resourceController.getApprovedConfig = {
           //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
           var actualIndex = Number(request.params.id -1 );  
 
+          console.log("RESOURCE: ", resources[actualIndex]);
           if(resources[actualIndex].approved == true || resources[actualIndex].approved == 1) {
             var str = formatResource(actualIndex);
             return reply(str);
@@ -867,6 +869,85 @@ resourceController.updateConfig = {
     }
 };
 
+resourceController.getApprovedTypeConfig = {
+  handler: function (request, reply) {
+
+    connection.query(`SELECT * from resources`, function(err, rows, fields) {
+    if (err) { return reply(Boom.badRequest());}
+
+      var JSObj = rowsToJS(rows);
+      //var JSObj = rows;
+
+      resources = [];
+      //resTypes = [];
+      resCategories = [];
+      resTopics =[];
+      resAcc = [];
+      resLanguages = [];
+      resTags = [];
+      resEnsembles = [];
+      resEth = [];
+      resDenominations = [];
+      resInstruments = [];
+
+      resources = JSObj;
+      numRes = resources.length;
+
+      for(var i=0; i < JSObj.length; i++) { 
+        popArray(JSObj[i]["ethnicities"], resEth);
+        popArray(JSObj[i]["categories"], resCategories);
+        popArray(JSObj[i]["topics"], resTopics);
+        popArray(JSObj[i]["accompaniment"], resAcc);
+        popArray(JSObj[i]["languages"], resLanguages);
+        popArray(JSObj[i]["ensembles"], resEnsembles);
+        popArray(JSObj[i]["tags"], resTags);
+        popArray(JSObj[i]["instruments"], resInstruments);
+        popArray(JSObj[i]["denominations"], resDenominations);
+
+        resEth_all.push(resEth);
+        resCategories_all.push(resCategories);
+        resTopics_all.push(resTopics);
+        resAcc_all.push(resAcc);
+        resLanguages_all.push(resLanguages);
+        resEnsembles_all.push(resEnsembles);
+        resTags_all.push(resTags);
+        resInstruments_all.push(resInstruments);
+        resDenominations_all.push(resDenominations);
+        //popArray(JSObj[i]["types"], resTypes);
+
+      }
+      //console.log(resEth_all);
+
+      //if no ID specified
+      var objToReturn = [];
+      var theType = request.params.type.toLowerCase();
+
+      for(var i=0; i < resources.length; i++) {
+        //var bob = formatResource(i);
+        if(resources[i].type == null ) { continue; }
+        if(resources[i].approved == 1 &&  resources[i].type.toLowerCase()== theType) {
+          
+          var str = formatResource(i);
+          objToReturn.push(str);
+        }
+      }//end for
+
+      //console.log(objToReturn);
+      if(objToReturn.length <= 0) {
+        return reply(Boom.badRequest("nothing to return, nothing is approved"));
+      } else {
+        reply(objToReturn);
+      }  
+    
+
+    });
+
+    
+
+  }//end handler
+
+}
+
 var postQuizController = require('../../controllers/post-quiz-resource').postQuiz;
 
 module.exports = [
@@ -876,5 +957,6 @@ module.exports = [
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
   { path: '/resource/{id}', method: 'PUT', config: resourceController.editConfig },
   { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig },
-  { path: '/quiz/resource', method: 'POST', config: postQuizController }
+  { path: '/quiz/resource', method: 'POST', config: postQuizController },
+  { path: '/resource/approved/type/{type}', method: 'GET', config: resourceController.getApprovedTypeConfig }
 ];

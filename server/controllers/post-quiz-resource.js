@@ -1,3 +1,5 @@
+"use strict";
+
 var Hapi = require('hapi');
 var Bcrypt = require('bcryptjs');
 var Boom = require('boom');
