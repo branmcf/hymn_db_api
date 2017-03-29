@@ -26,6 +26,7 @@ if (process.env.JAWSDB_URL) {
 connection.connect();
 
 var relEventID = [];
+var temp = null;
 
 var answers_categories = [];
 var answers_instruments = [];
@@ -36,7 +37,7 @@ var answers_ethnicities = [];
 var answers_size = [];
 
 var events = [];
-var numEvents = 0;
+var numEvent = 0;
   //var eventTypes = [];
   var eventCategories, eventCategories_all = [];
   var eventTopics, eventTopics_all =[];
@@ -134,7 +135,9 @@ function formatevent(actualIndex) {
     ethnicities:    eventEth_all[0][actualIndex],
     ensembles:      eventEnsembles_all[0][actualIndex],
     categories:     eventCategories_all[0][actualIndex],
-    instruments:    eventInstruments_all[0][actualIndex]
+    accompaniment:    eventInstruments_all[0][actualIndex],
+	topics:				EventTopics_all[0][actualIndex],
+	languages:			EventLanguages_all[0][actualIndex]
 
 
   };
@@ -186,6 +189,8 @@ function reformatTinyInt(toFormat, pract_schol) {
 module.exports.postQuiz = {
 	
 	handler: function (req, reply) { 
+
+		relEventID = [];
 		
 		var theData = {
 			//type:          req.payload.type,
@@ -193,26 +198,8 @@ module.exports.postQuiz = {
 
 		};    
 
-		//theData.text = JSON.stringify(theData.text);
-
-/*
-		//question 1
-		console.log(theData.text['Which types of song/hymn(s) has your congregation sung in the last 2 months?']);
-		console.log("\n\n");
-		//question 2
-		console.log(theData.text['Select instrumental leadership do you use in worship?'])
-		console.log("\n\n");
-		console.log(theData.text["What vocal leadership do you use in worship?"])
-		console.log("\n\n");
-		console.log(theData.text["Which best describes the shape of your worship?"]);
-		console.log("\n\n");
-		console.log(theData.text["What does your pastor/priest wear when he/she preaches?"]);
-		console.log("\n\n");
-		console.log(theData.text["What ethnicities/races make up at least 20% of your congregation?"]);
-		console.log("\n\n");
-		console.log(theData.text["On average, how many people attend your weekly worship services?"]);
-*/
 		var p = null;
+
 		p = theData.text.categories;
 		for (var key in p) {
 			if (p.hasOwnProperty(key)) {
@@ -254,22 +241,25 @@ module.exports.postQuiz = {
 
 		//console.log("answers_size: ", answers_size, "\nanswers_ethnicities: ", answers_ethnicities);
 		
-		relEventID = [];
+		
 
 		connection.query(`SELECT id, 
 		categories, accompaniment, ensembles, ethnicities, instruments 
-		from events`, function(err, rows, fields) {
+		from events WHERE approved = 1`, function(err, rows, fields) {
 			if (err) { 
 				return reply(Boom.badRequest()); 
 			}
 			else {
+				
 				var JSObj = rowsToJS(rows);
 				events = JSObj;
-				numEvents = events.length;
+				numEvent = events.length;
+				
+				console.log("One: ", relEventID.length, "\n");
 				
 				//loop thru each event			
 				for(var i=0; i < JSObj.length; i++) { 
-					var temp = JSON.parse(JSObj[i].categories);
+					temp = JSON.parse(JSObj[i].categories);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -286,7 +276,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].instruments);
+					temp = JSON.parse(JSObj[i].instruments);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -303,7 +293,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].ensembles);
+					temp = JSON.parse(JSObj[i].ensembles);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -320,7 +310,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].ethnicities);
+					temp = JSON.parse(JSObj[i].ethnicities);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -340,15 +330,16 @@ module.exports.postQuiz = {
 
 				
 			
-		
+					
 				}//end for (events)
 
-				console.log("relEventID: ", relEventID, "\n\n\n");
+				console.log("Two: ", relEventID.length, "\n");
 
 				//now we have relEventID filled, loop thru and find the most frequent occurances
 				var eventID_freq = {};
 				var eventID_array = [];
 				var temp = 0;
+				
 				for(a1 in relEventID) {
 					if(a1 == 0) {
 						//initialize first one
@@ -371,39 +362,25 @@ module.exports.postQuiz = {
 					
 
 				}//done looping thru
-
+				
 				//console.log("array: ", eventID_freq);
-
-				//find top 5 in eventID_freq
-				/*
-				var top_5_array = [];
-				var top1, top2, top3, top4, top5 = 0;
-
-				for( var i in eventID_freq) {
-					if (EventID_freq.hasOwnProperty(i)) {							
-						if(top1 < eventID_freq[i])	{
-							top1 = eventID_freq[i];
-							
-						}													
-					}
-				}
-				*/
 
 				//for now: just use eventID_freq...
 				var toUse = [];
 				for(var k in eventID_freq) {
+					console.log(k);
 					toUse.push(k);
-					if(k >= 4) {
+					if(toUse.length >= 5) {
 						break;
 					}
 				}
 
-				connection.query(`SELECT * from events`, function(err, rows, fields) {
+				connection.query(`SELECT * from events where id in (?)`, [toUse], function(err, rows, fields) {
 					if (err) { return reply(Boom.badRequest()); }
 
 					var JSObj = rowsToJS(rows);
 					//var JSObj = rows;
-
+					
 					events = [];
 					//EventTypes = [];
 					EventCategories = [];
@@ -417,14 +394,19 @@ module.exports.postQuiz = {
 					EventInstruments = [];
 
 					events = JSObj;
-					numEvents = events.length;
+					numEvent = events.length;
 
 					for(var i=0; i < JSObj.length; i++) { 
 						popArray(JSObj[i]["ethnicities"], eventEth);
 						popArray(JSObj[i]["categories"], eventCategories);
 						popArray(JSObj[i]["ensembles"], eventEnsembles);
-						popArray(JSObj[i]["instruments"], eventInstruments);
+						popArray(JSObj[i]["accompaniment"], eventInstruments);
+						popArray(JSObj[i]["topics"], eventTopics);
+						popArray(JSObj[i]["languages"], eventLanguages);
 
+						// lang , topics
+						EventTopics_all.push(EventTopics);
+						EventLanguages_all.push(EventLanguages);
 						EventEth_all.push(EventEth);
 						EventCategories_all.push(EventCategories);
 						EventEnsembles_all.push(EventEnsembles);
@@ -446,6 +428,8 @@ module.exports.postQuiz = {
 							}
 							
 							
+						} else {
+							console.log("Not approved for event #",events[i].id );
 						}
 					}//end for
 

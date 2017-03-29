@@ -26,6 +26,7 @@ if (process.env.JAWSDB_URL) {
 connection.connect();
 
 var relResID = [];
+var temp = null;
 
 var answers_categories = [];
 var answers_instruments = [];
@@ -188,6 +189,8 @@ function reformatTinyInt(toFormat, pract_schol) {
 module.exports.postQuiz = {
 	
 	handler: function (req, reply) { 
+
+		relResID = [];
 		
 		var theData = {
 			//type:          req.payload.type,
@@ -195,25 +198,6 @@ module.exports.postQuiz = {
 
 		};    
 
-		//theData.text = JSON.stringify(theData.text);
-
-/*
-		//question 1
-		console.log(theData.text['Which types of song/hymn(s) has your congregation sung in the last 2 months?']);
-		console.log("\n\n");
-		//question 2
-		console.log(theData.text['Select instrumental leadership do you use in worship?'])
-		console.log("\n\n");
-		console.log(theData.text["What vocal leadership do you use in worship?"])
-		console.log("\n\n");
-		console.log(theData.text["Which best describes the shape of your worship?"]);
-		console.log("\n\n");
-		console.log(theData.text["What does your pastor/priest wear when he/she preaches?"]);
-		console.log("\n\n");
-		console.log(theData.text["What ethnicities/races make up at least 20% of your congregation?"]);
-		console.log("\n\n");
-		console.log(theData.text["On average, how many people attend your weekly worship services?"]);
-*/
 		var p = null;
 
 		p = theData.text.categories;
@@ -271,10 +255,11 @@ module.exports.postQuiz = {
 				resources = JSObj;
 				numRes = resources.length;
 				
+				console.log("One: ", relResID.length, "\n");
 				
 				//loop thru each resource			
 				for(var i=0; i < JSObj.length; i++) { 
-					var temp = JSON.parse(JSObj[i].categories);
+					temp = JSON.parse(JSObj[i].categories);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -291,7 +276,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].instruments);
+					temp = JSON.parse(JSObj[i].instruments);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -308,7 +293,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].ensembles);
+					temp = JSON.parse(JSObj[i].ensembles);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -325,7 +310,7 @@ module.exports.postQuiz = {
 							}
 						}
 					}
-					var temp = JSON.parse(JSObj[i].ethnicities);
+					temp = JSON.parse(JSObj[i].ethnicities);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -348,12 +333,13 @@ module.exports.postQuiz = {
 					
 				}//end for (resources)
 
-				console.log("Danh help me: ", relResID.length, "\n");
+				console.log("Two: ", relResID.length, "\n");
 
 				//now we have relResID filled, loop thru and find the most frequent occurances
 				var resID_freq = {};
 				var resID_array = [];
 				var temp = 0;
+				
 				for(a1 in relResID) {
 					if(a1 == 0) {
 						//initialize first one
@@ -377,10 +363,7 @@ module.exports.postQuiz = {
 
 				}//done looping thru
 				
-
 				//console.log("array: ", resID_freq);
-
-				//find top 5 in resID_freq
 
 				//for now: just use resID_freq...
 				var toUse = [];
@@ -397,8 +380,7 @@ module.exports.postQuiz = {
 
 					var JSObj = rowsToJS(rows);
 					//var JSObj = rows;
-					console.log(toUse, ": ", JSObj)
-
+					
 					resources = [];
 					//resTypes = [];
 					resCategories = [];
