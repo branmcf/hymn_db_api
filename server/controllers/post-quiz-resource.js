@@ -215,7 +215,7 @@ module.exports.postQuiz = {
 		console.log(theData.text["On average, how many people attend your weekly worship services?"]);
 */
 		var p = null;
-		console.log("length: ", answers_categories.length);
+
 		p = theData.text.categories;
 		for (var key in p) {
 			if (p.hasOwnProperty(key)) {
@@ -257,18 +257,20 @@ module.exports.postQuiz = {
 
 		//console.log("answers_size: ", answers_size, "\nanswers_ethnicities: ", answers_ethnicities);
 		
-		relResID = [];
+		
 
 		connection.query(`SELECT id, 
 		categories, accompaniment, ensembles, ethnicities, instruments 
-		from resources`, function(err, rows, fields) {
+		from resources WHERE approved = 1`, function(err, rows, fields) {
 			if (err) { 
 				return reply(Boom.badRequest()); 
 			}
 			else {
+				
 				var JSObj = rowsToJS(rows);
 				resources = JSObj;
 				numRes = resources.length;
+				
 				
 				//loop thru each resource			
 				for(var i=0; i < JSObj.length; i++) { 
@@ -343,10 +345,10 @@ module.exports.postQuiz = {
 
 				
 			
-		
+					
 				}//end for (resources)
 
-				console.log("relResID: ", relResID, "\n\n\n");
+				console.log("Danh help me: ", relResID.length, "\n");
 
 				//now we have relResID filled, loop thru and find the most frequent occurances
 				var resID_freq = {};
@@ -374,38 +376,28 @@ module.exports.postQuiz = {
 					
 
 				}//done looping thru
+				
 
 				//console.log("array: ", resID_freq);
 
 				//find top 5 in resID_freq
-				/*
-				var top_5_array = [];
-				var top1, top2, top3, top4, top5 = 0;
-
-				for( var i in resID_freq) {
-					if (resID_freq.hasOwnProperty(i)) {							
-						if(top1 < resID_freq[i])	{
-							top1 = resID_freq[i];
-							
-						}													
-					}
-				}
-				*/
 
 				//for now: just use resID_freq...
 				var toUse = [];
 				for(var k in resID_freq) {
+					console.log(k);
 					toUse.push(k);
-					if(k >= 4) {
+					if(toUse.length >= 5) {
 						break;
 					}
 				}
 
-				connection.query(`SELECT * from resources`, function(err, rows, fields) {
+				connection.query(`SELECT * from resources where id in (?)`, [toUse], function(err, rows, fields) {
 					if (err) { return reply(Boom.badRequest()); }
 
 					var JSObj = rowsToJS(rows);
 					//var JSObj = rows;
+					console.log(toUse, ": ", JSObj)
 
 					resources = [];
 					//resTypes = [];
@@ -454,6 +446,8 @@ module.exports.postQuiz = {
 							}
 							
 							
+						} else {
+							console.log("Not approved for resource #",resources[i].id );
 						}
 					}//end for
 
