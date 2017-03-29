@@ -336,6 +336,17 @@ resourceController.getConfig = {
         popArray(JSObj[i]["denominations"], resDenominations);
         //popArray(JSObj[i]["types"], resTypes);
 
+        resEth_all.push(resEth);
+        resCategories_all.push(resCategories);
+        resTopics_all.push(resTopics);
+        resAcc_all.push(resAcc);
+        resLanguages_all.push(resLanguages);
+        resEnsembles_all.push(resEnsembles);
+        resTags_all.push(resTags);
+        resInstruments_all.push(resInstruments);
+        resDenominations_all.push(resDenominations);
+        //popArray(JSObj[i]["types"], resTypes);
+
       }
       
       if (request.params.id) {

@@ -69,6 +69,12 @@ function getcongregationsJSON() {
         popArray(JSObj[i]["shape"], congShape);
         popArray(JSObj[i]["clothing"], congAttire);
 
+        congAttire_all.push(congAttire);
+        congEthnicities_all.push(congEthnicities);
+        congCategories_all.push(congCategories);
+        congTags_all.push(congTags);
+        congInstruments_all.push(congInstruments);
+        congShape_all.push(congShape);
         
       }
  

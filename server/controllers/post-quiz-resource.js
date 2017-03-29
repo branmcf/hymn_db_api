@@ -399,7 +399,7 @@ module.exports.postQuiz = {
 				}
 
 				connection.query(`SELECT * from resources`, function(err, rows, fields) {
-					if (err) { }
+					if (err) { return reply(Boom.badRequest()); }
 
 					var JSObj = rowsToJS(rows);
 					//var JSObj = rows;

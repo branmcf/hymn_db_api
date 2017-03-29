@@ -75,6 +75,13 @@ function getOrganizationsJSON() {
         //console.log("\nLANG[",i, "] : ", resLanguages[i]);
         //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
         //console.log("\nresTags[",i, "] : ", resTags[i]);
+
+        orgEthnicities_all.push(orgEthnicities);
+            orgCategories_all.push(orgCategories);
+            orgTags_all.push(orgTags);
+            orgInstruments_all.push(orgInstruments);
+            orgShape_all.push(orgShape);
+            orgAttire_all.push(orgAttire);
       }
  
     }      

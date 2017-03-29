@@ -66,6 +66,12 @@ function getEventsJSON() {
           //console.log("\nLANG[",i, "] : ", resLanguages[i]);
           //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
           //console.log("\nresTags[",i, "] : ", resTags[i]);
+
+          eventShape_all.push(eventShape);
+          eventTags_all.push(eventTags);
+          eventEnsembles_all.push(eventEnsembles);
+          eventEthnicities_all.push(eventEthnicities);
+          eventsAttire_all.push(eventsAttire);
         }
 
     }

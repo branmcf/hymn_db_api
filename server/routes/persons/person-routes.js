@@ -77,6 +77,14 @@ function getPersonsJSON() {
           //console.log("\nLANG[",i, "] : ", resLanguages[i]);
           //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
           //console.log("\nresTags[",i, "] : ", resTags[i]);
+
+          personEthnicities_all.push(personEthnicities);
+            personCategories_all.push(personCategories);
+            personTopics_all.push(personTopics);
+            personEnsembles_all.push(personEnsembles);
+            personTags_all.push(personTags);
+            personInstruments_all.push(personInstruments);
+            personLangs_all.push(personLangs);
         }
 
     }
