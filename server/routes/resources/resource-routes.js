@@ -764,7 +764,7 @@ resourceController.updateConfig = {
     }
 };
 
-
+var postQuizController = require('../../controllers/post-quiz-resource').postQuiz;
 
 module.exports = [
 	{ path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -772,5 +772,6 @@ module.exports = [
   { path: '/resource/approved/{id?}', method: 'GET', config: resourceController.getApprovedConfig },
   { path: '/resource/{id}', method: 'DELETE', config: resourceController.deleteConfig},
   { path: '/resource/{id}', method: 'PUT', config: resourceController.editConfig },
-  { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig }
+  { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig },
+  { path: '/quiz/resource', method: 'POST', config: postQuizController }
 ];
