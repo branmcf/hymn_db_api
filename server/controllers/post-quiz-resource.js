@@ -26,7 +26,7 @@ if (process.env.JAWSDB_URL) {
 connection.connect();
 
 
-var temp = null;
+
 
 
 
@@ -258,6 +258,8 @@ module.exports.postQuiz = {
 				var JSObj = rowsToJS(rows);
 				resources = JSObj;
 				numRes = resources.length;
+
+				var temp = null;
 								
 				//loop thru each resource			
 				for(var i=0; i < JSObj.length; i++) { 
