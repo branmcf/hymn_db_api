@@ -25,16 +25,10 @@ if (process.env.JAWSDB_URL) {
 
 connection.connect();
 
-var relResID = [];
+
 var temp = null;
 
-var answers_categories = [];
-var answers_instruments = [];
-var answers_ensembles = [];
-var answers_shape = [];
-var answers_clothing = [];
-var answers_ethnicities = [];
-var answers_size = [];
+
 
 var resources = [];
 var numRes = 0;
@@ -190,7 +184,17 @@ module.exports.postQuiz = {
 	
 	handler: function (req, reply) { 
 
-		relResID = [];
+		var relResID = [];
+		
+		var answers_categories = [];
+		var answers_instruments = [];
+		var answers_ensembles = [];
+		var answers_shape = [];
+		var answers_clothing = [];
+		var answers_ethnicities = [];
+		var answers_size = [];
+
+		answers_categories, answers_instruments, answers_ensembles, answers_ethnicities = [];
 		
 		var theData = {
 			//type:          req.payload.type,
@@ -198,7 +202,7 @@ module.exports.postQuiz = {
 
 		};    
 
-		var p = null;
+		var p = 0;
 
 		p = theData.text.categories;
 		for (var key in p) {
@@ -259,6 +263,7 @@ module.exports.postQuiz = {
 				
 				//loop thru each resource			
 				for(var i=0; i < JSObj.length; i++) { 
+					
 					temp = JSON.parse(JSObj[i].categories);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
@@ -266,17 +271,19 @@ module.exports.postQuiz = {
 					//loop thru each item within each resource
 						//categories, accompaniment, ensembles, ethnicities, instruments
 					for (var key in temp) {
-						if (temp.hasOwnProperty(key)) {							
+						if (temp.hasOwnProperty(key)) {	
+							console.log(i, "-> ", "temp: ", temp);						
 							if(temp[key] == true) {
 								for( var j in answers_categories) {
 									if(key == answers_categories[j]) {
-										relResID.push(JSObj[i].id)
+										relResID.push(JSObj[i].id);
 									}
 								}															
 							}
 						}
 					}
-					temp = JSON.parse(JSObj[i].instruments);
+
+					temp = JSON.parse(JSObj[i].accompaniment);
 					//console.log(JSObj[i].id, ": ", temp);
 					if(temp == null) { continue; }
 
@@ -287,7 +294,7 @@ module.exports.postQuiz = {
 							if(temp[key2] == true) {
 								for( var j in answers_instruments) {
 									if(key2 == answers_instruments[j]) {
-										relResID.push(JSObj[i].id)
+										relResID.push(JSObj[i].id);
 									}
 								}															
 							}
@@ -304,7 +311,7 @@ module.exports.postQuiz = {
 							if(temp[key3] == true) {
 								for( var j in answers_ensembles) {
 									if(key3 == answers_ensembles[j]) {
-										relResID.push(JSObj[i].id)
+										relResID.push(JSObj[i].id);
 									}
 								}															
 							}
@@ -321,7 +328,7 @@ module.exports.postQuiz = {
 							if(temp[key4] == true) {
 								for( var j in answers_ethnicities) {
 									if(key4 == answers_ethnicities[j]) {
-										relResID.push(JSObj[i].id)
+										relResID.push(JSObj[i].id);
 									}
 								}															
 							}
@@ -340,16 +347,16 @@ module.exports.postQuiz = {
 				var resID_array = [];
 				var temp = 0;
 				
-				for(a1 in relResID) {
-					if(a1 == 0) {
+				for(var i = 0; i < relResID.length; i++) {
+					if(i == 0) {
 						//initialize first one
 						temp = relResID[0];
 						resID_freq[temp] = 1;
 						resID_array.push(temp);
 					} else {
 						//if you find a new resourceID
-						if(relResID[a1] !== resID_freq[temp]) {
-							temp = relResID[a1];
+						if(relResID[i] !== resID_freq[temp]) {
+							temp = relResID[i];
 							resID_freq[temp] = 1; //add to object
 							resID_array.push(temp);
 						} else {
@@ -362,8 +369,11 @@ module.exports.postQuiz = {
 					
 
 				}//done looping thru
+
+				relResID = [];
 				
-				//console.log("array: ", resID_freq);
+				//console.log("dict: ", resID_freq);
+				console.log("array: ",resID_array);
 
 				//for now: just use resID_freq...
 				var toUse = [];

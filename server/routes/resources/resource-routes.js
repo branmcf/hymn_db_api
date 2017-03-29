@@ -621,7 +621,6 @@ resourceController.editConfig = {
 
   	//getResources();
 
-  	var theResourceID = resources.length+1;
 
     var theData = {
       name:             req.payload.data.title,
