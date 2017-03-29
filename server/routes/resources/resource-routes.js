@@ -739,7 +739,7 @@ resourceController.getApprovedConfig = {
   handler: function (request, reply) {
 
     connection.query(`SELECT * from resources`, function(err, rows, fields) {
-    if (!err) {
+    if (err) { return reply(Boom.badRequest());}
 
       var JSObj = rowsToJS(rows);
       //var JSObj = rows;
@@ -821,11 +821,7 @@ resourceController.getApprovedConfig = {
       } else {
         reply(objToReturn);
       }  
-
-
-    }//end if no error...
-    else
-      console.log('Error while performing Resources Query.');
+    
 
     });
 

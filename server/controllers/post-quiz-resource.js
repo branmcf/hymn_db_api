@@ -423,8 +423,13 @@ module.exports.postQuiz = {
 						popArray(JSObj[i]["ethnicities"], resEth);
 						popArray(JSObj[i]["categories"], resCategories);
 						popArray(JSObj[i]["ensembles"], resEnsembles);
-						popArray(JSObj[i]["instruments"], resInstruments);
+						popArray(JSObj[i]["accompaniment"], resInstruments);
+						popArray(JSObj[i]["topics"], resTopics);
+						popArray(JSObj[i]["languages"], resLanguages);
 
+						// lang , topics
+						resTopics_all.push(resTopics);
+						resLanguages_all.push(resLanguages);
 						resEth_all.push(resEth);
 						resCategories_all.push(resCategories);
 						resEnsembles_all.push(resEnsembles);
