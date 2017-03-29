@@ -185,7 +185,7 @@ module.exports.postQuiz = {
 	handler: function (req, reply) { 
 
 		var relResID = [];
-		
+
 		var answers_categories = [];
 		var answers_instruments = [];
 		var answers_ensembles = [];
@@ -258,9 +258,7 @@ module.exports.postQuiz = {
 				var JSObj = rowsToJS(rows);
 				resources = JSObj;
 				numRes = resources.length;
-				
-				console.log("One: ", relResID.length, "\n");
-				
+								
 				//loop thru each resource			
 				for(var i=0; i < JSObj.length; i++) { 
 					
@@ -272,7 +270,6 @@ module.exports.postQuiz = {
 						//categories, accompaniment, ensembles, ethnicities, instruments
 					for (var key in temp) {
 						if (temp.hasOwnProperty(key)) {	
-							console.log(i, "-> ", "temp: ", temp);						
 							if(temp[key] == true) {
 								for( var j in answers_categories) {
 									if(key == answers_categories[j]) {
@@ -340,7 +337,7 @@ module.exports.postQuiz = {
 					
 				}//end for (resources)
 
-				console.log("Two: ", relResID.length, "\n");
+				//console.log("Two: ", relResID.length, "\n");
 
 				//now we have relResID filled, loop thru and find the most frequent occurances
 				var resID_freq = {};
@@ -373,12 +370,11 @@ module.exports.postQuiz = {
 				relResID = [];
 				
 				//console.log("dict: ", resID_freq);
-				console.log("array: ",resID_array);
+				//console.log("array: ",resID_array);
 
 				//for now: just use resID_freq...
 				var toUse = [];
 				for(var k in resID_freq) {
-					console.log(k);
 					toUse.push(k);
 					if(toUse.length >= 5) {
 						break;
