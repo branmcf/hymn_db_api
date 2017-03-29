@@ -407,9 +407,14 @@ resourceController.getConfig = {
 
             popArray(JSObj["ethnicities"], resEth);
             popArray(JSObj["categories"], resCategories);
+            popArray(JSObj["topics"], resTopics);
+            popArray(JSObj["accompaniment"], resAcc);
+            popArray(JSObj["languages"], resLanguages);
             popArray(JSObj["ensembles"], resEnsembles);
+            popArray(JSObj["tags"], resTags);
             popArray(JSObj["instruments"], resInstruments);
-            //popArray(JSObj[i]["types"], resTypes);
+            popArray(JSObj["denominations"], resDenominations);
+            //popArray(JSObj["types"], resTypes);
 
           if(JSObj.approved == false || JSObj.approved == 0) {
             
