@@ -134,7 +134,9 @@ function formatResource(actualIndex) {
     ethnicities:    resEth_all[0][actualIndex],
     ensembles:      resEnsembles_all[0][actualIndex],
     categories:     resCategories_all[0][actualIndex],
-    instruments:    resInstruments_all[0][actualIndex]
+    accompaniment:    resInstruments_all[0][actualIndex],
+	topics:				resTopics_all[0][actualIndex],
+	languages:			resLanguages_all[0][actualIndex]
 
 
   };
@@ -213,6 +215,7 @@ module.exports.postQuiz = {
 		console.log(theData.text["On average, how many people attend your weekly worship services?"]);
 */
 		var p = null;
+		console.log("length: ", answers_categories.length);
 		p = theData.text.categories;
 		for (var key in p) {
 			if (p.hasOwnProperty(key)) {
