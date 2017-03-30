@@ -327,8 +327,6 @@ resourceController.postConfig = {
 
             //getResources();
 
-            var theResourceID = resources.length + 1;
-
             var theData = {
                 name: req.payload.data.title,
                 type: req.payload.data.type,
@@ -532,103 +530,6 @@ resourceController.editConfig = {
 */
 };
 
-resourceController.getApprovedConfig = {
-
-    handler: function(request, reply) {
-
-            connection.query(`SELECT * from resources`, function(err, rows, fields) {
-                if (err) { return reply(Boom.badRequest()); }
-
-                var JSObj = rowsToJS(rows);
-                //var JSObj = rows;
-
-                resources = [];
-                //resTypes = [];
-                resCategories = [];
-                resTopics = [];
-                resAcc = [];
-                resLanguages = [];
-                resTags = [];
-                resEnsembles = [];
-                resEth = [];
-                resDenominations = [];
-                resInstruments = [];
-
-                resources = JSObj;
-                numRes = resources.length;
-
-                for (var i = 0; i < JSObj.length; i++) {
-                    popArray(JSObj[i]["ethnicities"], resEth);
-                    popArray(JSObj[i]["categories"], resCategories);
-                    popArray(JSObj[i]["topics"], resTopics);
-                    popArray(JSObj[i]["accompaniment"], resAcc);
-                    popArray(JSObj[i]["languages"], resLanguages);
-                    popArray(JSObj[i]["ensembles"], resEnsembles);
-                    popArray(JSObj[i]["tags"], resTags);
-                    popArray(JSObj[i]["instruments"], resInstruments);
-                    popArray(JSObj[i]["denominations"], resDenominations);
-
-                    resEth_all.push(resEth);
-                    resCategories_all.push(resCategories);
-                    resTopics_all.push(resTopics);
-                    resAcc_all.push(resAcc);
-                    resLanguages_all.push(resLanguages);
-                    resEnsembles_all.push(resEnsembles);
-                    resTags_all.push(resTags);
-                    resInstruments_all.push(resInstruments);
-                    resDenominations_all.push(resDenominations);
-                    //popArray(JSObj[i]["types"], resTypes);
-
-                }
-                //console.log(resEth_all);
-
-                if (request.params.id) {
-                    console.log(request.path[2, 5]);
-                    if ((numRes <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                        //return reply('Not enough resources in the database for your request').code(404);
-                        return reply(Boom.notFound("Index out of range for Resources get request"));
-                    }
-                    //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-                    var actualIndex = Number(request.params.id - 1);
-
-                    console.log("RESOURCE: ", resources[actualIndex]);
-                    if (resources[actualIndex].approved == true || resources[actualIndex].approved == 1) {
-                        var str = formatResource(actualIndex);
-                        return reply(str);
-                    } else {
-                        return reply(Boom.badRequest("The Resource you request is NOT approved"));
-                    }
-
-                    //return reply(resources[actualId]);
-                }
-
-                //if no ID specified
-                var objToReturn = [];
-
-                for (var i = 0; i < resources.length; i++) {
-                    //var bob = formatResource(i);
-                    if (resources[i].approved == 1) {
-
-                        var str = formatResource(i);
-                        objToReturn.push(str);
-                    }
-                } //end for
-
-                //console.log(objToReturn);
-                if (objToReturn.length <= 0) {
-                    return reply(Boom.badRequest("nothing to return, nothing is approved"));
-                } else {
-                    reply(objToReturn);
-                }
-
-
-            });
-
-
-
-        } //end handler
-};
-
 resourceController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
@@ -748,10 +649,10 @@ resourceController.getApprovedTypeConfig = {
 
 }
 
-var postQuizController = require('../../controllers/post-quiz-resource').postQuiz;
-var getUnapprovedRes = require('../../controllers/get-resources').getUnapprovedResources;
-var getApprovedRes = require('../../controllers/get-resources').getApprovedResources;
-var getApprovedByType = require('../../controllers/get-resources').getApprovedByType;
+var postQuizController = require('../../controllers/resources/post-quiz-resource').postQuiz;
+var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
+var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
+var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
 
 
 module.exports = [

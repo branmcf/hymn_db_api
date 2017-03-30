@@ -3,7 +3,7 @@ var mysql = require('mysql');
 var Boom = require('boom');
 var async = require('async');
 
-var options = require('../config/config.js');
+var options = require('../../config/config.js');
 
 //mysql connection
 var connection = mysql.createConnection({
@@ -30,8 +30,8 @@ module.exports.getUnapprovedResources = {
     handler: function(request, reply) {
 
             if (!request.params.id) {
-                connection.query(`SELECT * from resources where approved = 0`, function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where approved = 0`, function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
 
                     var resources = rowsToJS(rows);
                     /*
@@ -81,12 +81,12 @@ module.exports.getUnapprovedResources = {
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where unapproved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
                     var resource = rowsToJS(rows);
 
                     if (resource.length <= 0) {
-                        return reply(Boom.badRequest(`resources is not approved`));
+                        return reply(Boom.badRequest(`events is not approved`));
                     } else {
                         return reply(resource);
                     }
@@ -102,8 +102,8 @@ module.exports.getApprovedResources = {
     handler: function(request, reply) {
 
             if (!request.params.id) {
-                connection.query(`SELECT * from resources where approved = 1`, function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where approved = 1`, function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
 
                     var resources = rowsToJS(rows);
                     /*
@@ -146,19 +146,19 @@ module.exports.getApprovedResources = {
                     */
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply(Boom.badRequest("nothing to return for events"));
                     } else {
                         return reply(resources);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where unapproved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
                     var resource = rowsToJS(rows);
 
                     if (resource.length <= 0) {
-                        return reply(Boom.badRequest(`resources is not approved`));
+                        return reply(Boom.badRequest(`events is not approved`));
                     } else {
                         return reply(resource);
                     }
@@ -175,8 +175,8 @@ module.exports.getApprovedByType = {
     handler: function(request, reply) {
 
             if (!request.params.id) {
-                connection.query(`SELECT * from resources where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
 
                     var resources = rowsToJS(rows);
                     /*
@@ -219,19 +219,19 @@ module.exports.getApprovedByType = {
                     */
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply(Boom.badRequest("nothing to return for events"));
                     } else {
                         return reply(resources);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 1 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`SELECT * from events where unapproved = 1 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
                     var resource = rowsToJS(rows);
 
                     if (resource.length <= 0) {
-                        return reply(Boom.badRequest(`Either resources is not approved, type DNE or id DNE`));
+                        return reply(Boom.badRequest(`Either events is not approved, type DNE or id DNE`));
                     } else {
                         return reply(resource);
                     }
