@@ -309,6 +309,28 @@ personController.getConfig = {
     }
 };
 
+//BELOW is for the POST request
+function insertFirst(toInsert, _callback) {
+
+    insertPerson(toInsert);
+
+    _callback();
+}
+
+function insertAndGet(toInsert, callback) {
+
+    insertFirst(toInsert, function() {
+        connection.query(`SELECT * from persons`, function(err, rows, fields) {
+            if (err) { callback(err, null); }
+
+            var JSObj = rowsToJS(rows);
+
+            callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
+
+        });
+
+    });
+}
 
 
 //PERSON POST REQUEST
@@ -349,17 +371,14 @@ personController.postConfig = {
 
             };
 
-            insertPerson(theData);
-            getPersonsJSON();
+            insertAndGet(theData, (err, theID) => {
+                var toReturn = {
 
-            var toReturn = {
+                    person_id: theID
+                }
 
-                person_id: thePersonID /* +1 or not?... */
-
-            }
-
-
-            return reply(toReturn);
+                return reply(toReturn);
+            });
 
         }
         /* ADD COMMA ^

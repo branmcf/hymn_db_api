@@ -297,51 +297,50 @@ function reformatTinyInt(toFormat) {
 
 //ORG GET REQUEST
 orgController.getConfig = {
-        handler: function(request, reply) {
-            if (request.params.id) {
+    handler: function(request, reply) {
+        if (request.params.id) {
 
-                getOrganizationsJSON();
+            getOrganizationsJSON();
 
-                if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                    return reply(Boom.notFound("Index out of range for Orgs get request"));
-                }
-
-                var actualIndex = Number(request.params.id) - 1;
-                //create new object, convert to json
-
-                if (orgs[actualIndex].approved == 0) {
-                    var str = formatOrg(actualIndex);
-                    return reply(str);
-                } else {
-                    return reply(Boom.badRequest("The Org you request is already approved"));
-                }
-
+            if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+                return reply(Boom.notFound("Index out of range for Orgs get request"));
             }
 
-            var objToReturn = [];
+            var actualIndex = Number(request.params.id) - 1;
+            //create new object, convert to json
 
-            for (var i = 0; i < orgs.length; i++) {
-                //var bob = formatResource(i);
-                if (orgs[i].approved == 0) {
-                    var str = {
-                        id: orgs[i].id,
-                        user: orgs[i].user,
-                        title: orgs[i].name
-                    }
-                    objToReturn.push(str);
-                }
-            } //end for
-
-            if (objToReturn.length <= 0) {
-                return reply(Boom.badRequest("All orgs already approved, nothing to return"));
+            if (orgs[actualIndex].approved == 0) {
+                var str = formatOrg(actualIndex);
+                return reply(str);
             } else {
-                reply(objToReturn);
+                return reply(Boom.badRequest("The Org you request is already approved"));
             }
+
+        }
+
+        var objToReturn = [];
+
+        for (var i = 0; i < orgs.length; i++) {
+            //var bob = formatResource(i);
+            if (orgs[i].approved == 0) {
+                var str = {
+                    id: orgs[i].id,
+                    user: orgs[i].user,
+                    title: orgs[i].name
+                }
+                objToReturn.push(str);
+            }
+        } //end for
+
+        if (objToReturn.length <= 0) {
+            return reply(Boom.badRequest("All orgs already approved, nothing to return"));
+        } else {
+            reply(objToReturn);
         }
     }
-    //
-    //BELOW is for the POST request
-    //
+}
+
+//BELOW is for the POST request
 function insertFirst(toInsert, _callback) {
 
     insertOrganization(toInsert);
@@ -349,11 +348,18 @@ function insertFirst(toInsert, _callback) {
     _callback();
 }
 
-function insertAndGet(toInsert) {
+function insertAndGet(toInsert, callback) {
 
     insertFirst(toInsert, function() {
-        getOrganizationsJSON();
-        //console.log("Done with post requst getOrg...");
+        connection.query(`SELECT * from organizations`, function(err, rows, fields) {
+            if (err) { callback(err, null); }
+
+            var JSObj = rowsToJS(rows);
+
+            callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
+
+        });
+
     });
 }
 
@@ -394,13 +400,15 @@ orgController.postConfig = {
 
             };
 
-            insertAndGet(newOrg);
+            insertAndGet(newOrg, (err, theID) => {
+                var toReturn = {
+                    org_id: theID
+                }
 
-            var toReturn = {
-                org_id: theOrgID
-            }
+                return reply(toReturn);
+            });
 
-            return reply(toReturn);
+
 
 
         } //end handler  

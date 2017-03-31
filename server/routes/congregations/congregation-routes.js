@@ -263,55 +263,54 @@ function reformatTinyInt(toFormat) {
 
 //CONGREGATION GET REQUEST
 congController.getConfig = {
-        handler: function(request, reply) {
-            if (request.params.id) {
+    handler: function(request, reply) {
+        if (request.params.id) {
 
-                getcongregationsJSON();
+            getcongregationsJSON();
 
-                if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                    return reply(Boom.notFound("Index out of range for congregations get request"));
-                }
-
-                var actualIndex = Number(request.params.id) - 1;
-                //create new object, convert to json
-
-                if (congregations[actualIndex].approved == 0) {
-                    var str = formatCong(actualIndex);
-                    return reply(str);
-                } else {
-                    return reply(Boom.badRequest("The Resource you request is already approved"));
-                }
-
+            if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
+                return reply(Boom.notFound("Index out of range for congregations get request"));
             }
 
-            var objToReturn = [];
+            var actualIndex = Number(request.params.id) - 1;
+            //create new object, convert to json
 
-            for (var i = 0; i < congregations.length; i++) {
-                //var bob = formatResource(i);
-
-                if (congregations[i].approved == 0) {
-                    var str = {
-                        id: congregations[i].id,
-                        user: congregations[i].user,
-                        title: congregations[i].name
-                    }
-                    objToReturn.push(str);
-                }
-
-
-            } //end for
-
-            //console.log(objToReturn);
-            if (objToReturn.length <= 0) {
-                return reply(Boom.badRequest("All congregations already approved, nothing to return"));
+            if (congregations[actualIndex].approved == 0) {
+                var str = formatCong(actualIndex);
+                return reply(str);
             } else {
-                reply(objToReturn);
+                return reply(Boom.badRequest("The Resource you request is already approved"));
             }
+
+        }
+
+        var objToReturn = [];
+
+        for (var i = 0; i < congregations.length; i++) {
+            //var bob = formatResource(i);
+
+            if (congregations[i].approved == 0) {
+                var str = {
+                    id: congregations[i].id,
+                    user: congregations[i].user,
+                    title: congregations[i].name
+                }
+                objToReturn.push(str);
+            }
+
+
+        } //end for
+
+        //console.log(objToReturn);
+        if (objToReturn.length <= 0) {
+            return reply(Boom.badRequest("All congregations already approved, nothing to return"));
+        } else {
+            reply(objToReturn);
         }
     }
-    //
-    //BELOW is for the POST request
-    //
+}
+
+//BELOW is for the POST request
 function insertFirst(toInsert, _callback) {
 
     insertCongregation(toInsert);
@@ -319,13 +318,21 @@ function insertFirst(toInsert, _callback) {
     _callback();
 }
 
-function insertAndGet(toInsert) {
+function insertAndGet(toInsert, callback) {
 
     insertFirst(toInsert, function() {
-        //getcongregationsJSON();
-        //console.log("Done with post requst getOrg...");
+        connection.query(`SELECT * from congregations`, function(err, rows, fields) {
+            if (err) { callback(err, null); }
+
+            var JSObj = rowsToJS(rows);
+
+            callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
+
+        });
+
     });
 }
+
 
 //CONGREGATION POST REQUEST
 congController.postConfig = {
@@ -363,13 +370,15 @@ congController.postConfig = {
 
                 };
 
-                insertAndGet(newCong);
+                insertAndGet(newCong, (err, theID) => {
+                    var toReturn = {
+                        cong_id: theID
+                    }
 
-                var toReturn = {
-                    cong_id: newCong.id
-                }
+                    return reply(toReturn);
+                });
 
-                return reply("okay");
+
 
 
             } //end handler  

@@ -311,10 +311,19 @@ function insertFirst(toInsert, _callback) {
     _callback();
 }
 
-function insertAndGet(toInsert) {
+function insertAndGet(toInsert, callback) {
 
     insertFirst(toInsert, function() {
-        getResourcesJSON();
+        connection.query(`SELECT * from resources`, function(err, rows, fields) {
+            if (err) { callback(err, null); }
+
+            var JSObj = rowsToJS(rows);
+
+            console.log("debug: ", JSObj[JSObj.length - 1].id);
+
+            callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
+
+        });
 
     });
 }
@@ -362,14 +371,15 @@ resourceController.postConfig = {
 
             //insertResource(theData);
 
-            insertAndGet(theData);
+            var theID = insertAndGet(theData, (err, theID) => {
+                var toReturn = {
+                    resource_id: theID
+                }
 
-            var toReturn = {
+                return reply(toReturn);
+            });
 
-                resource_id: resources.length + 1 /* +1 or not?... */
-            }
 
-            return reply(toReturn);
 
         }
         /* ADD COMMA ^

@@ -314,6 +314,7 @@ eventController.getConfig = {
         } //end handler
 };
 
+
 //BELOW is for the POST request
 function insertFirst(toInsert, _callback) {
 
@@ -322,13 +323,21 @@ function insertFirst(toInsert, _callback) {
     _callback();
 }
 
-function insertAndGet(toInsert) {
+function insertAndGet(toInsert, callback) {
 
     insertFirst(toInsert, function() {
-        getEventsJSON();
-        //console.log("Done with post requst getEvents...");
+        connection.query(`SELECT * from events`, function(err, rows, fields) {
+            if (err) { callback(err, null); }
+
+            var JSObj = rowsToJS(rows);
+
+            callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
+
+        });
+
     });
 }
+
 
 //EVENT POST REQUEST
 eventController.postConfig = {
@@ -410,16 +419,14 @@ eventController.postConfig = {
             // END DATE FORMATTING
 
 
-            insertAndGet(newEvent);
+            insertAndGet(newEvent, (err, theID) => {
+                var toReturn = {
 
-            var toReturn = {
+                    event_id: theID
+                }
 
-                event_id: theEventID /* +1 or not?... */
-            }
-
-            return reply(toReturn);
-
-
+                return reply(toReturn);
+            });
 
             //reply(newRes);
         }
