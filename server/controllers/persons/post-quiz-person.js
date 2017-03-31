@@ -53,11 +53,11 @@ module.exports.postQuiz = {
 
             //2. create seperate arrays for 
             //categories, instruments, ensembles and ethnicities which will be
-            //cross-referenced with resources' attributes
+            //cross-referenced with persons' attributes
 
-            //3. A dictionary will be created that maps the resourceID -> number of matches from step 2)
+            //3. A dictionary will be created that maps the personID -> number of matches from step 2)
 
-            //4. After all resources have been checked, loop thru dict (from step 4), return top 5 matches
+            //4. After all persons have been checked, loop thru dict (from step 4), return top 5 matches
 
             //1,2:
             var receivedQuiz = request.payload.quiz;
@@ -126,19 +126,19 @@ module.exports.postQuiz = {
             //console.log("ensembles: ", quiz_ensembles);
 
             //now step 1 and 2 are complete, commence step 2b, which is
-            //select * approved resources, go through rows, parse categories, topics, etc
+            //select * approved persons, go through rows, parse categories, topics, etc
             //into temporary arrays which will be cross-referenced with quiz_categories, etc.
 
             var query = connection.query(`SELECT 
-			id, categories, topics, accompaniment, ensembles, ethnicities 
-			FROM resources WHERE approved = 1`, (err, rows, fields) => {
-                if (err) { return reply(Boom.badRequest("error getting resources in post-quiz-resource")); }
-                if (rows.length <= 0) { return reply(Boom.badRequest("There are no approved resources")); }
+			id, topics, ensembles, ethnicities, instruments, categories 
+			FROM persons WHERE approved = 1`, (err, rows, fields) => {
+                if (err) { return reply(Boom.badRequest("error getting persons in post-quiz-person")); }
+                if (rows.length <= 0) { return reply(Boom.badRequest("There are no approved persons")); }
                 var jsobj = rowsToJS(rows);
 
                 var tempArray = [];
-                var toCheck = ["categories", "topics", "accompaniment", "ensembles", "ethnicities"];
-                for (var i in jsobj) { //loop thru every resource
+                var toCheck = ["categories", "topics", "instruments", "ensembles", "ethnicities"];
+                for (var i in jsobj) { //loop thru every person
                     for (var whichCol in toCheck) { //loop through every column (see the array 2 lines above...)
                         var currentCol = toCheck[whichCol];
                         jsobj[i][currentCol] = JSON.parse(jsobj[i][currentCol]);
@@ -158,20 +158,7 @@ module.exports.postQuiz = {
                                     if (currentCol == "categories" || currentCol == "topics") {
                                         for (var j in quiz_categories) {
                                             if (quiz_categories[j] == key) {
-                                                console.log("matching ", currentCol);
                                                 if (jsobj[i].id in resID_dict) {
-                                                    resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
-                                                } else {
-                                                    console.log("doesn't exist yet, so create...");
-                                                    resID_dict[jsobj[i].id] = 1;
-                                                }
-                                            }
-                                        }
-                                    } else if (currentCol == "accompaniment") {
-                                        for (var j in quiz_instruments) {
-                                            if (quiz_instruments[j] == key) {
-                                                if (jsobj[i].id in resID_dict) {
-                                                    console.log("matching instrument");
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
                                                     console.log("doesn't exist yet, so create...");
@@ -183,7 +170,6 @@ module.exports.postQuiz = {
                                         for (var j in quiz_ensembles) {
                                             if (quiz_ensembles[j] == key) {
                                                 if (jsobj[i].id in resID_dict) {
-                                                    console.log("matching ensemble");
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
                                                     console.log("doesn't exist yet, so create...");
@@ -194,7 +180,17 @@ module.exports.postQuiz = {
                                     } else if (currentCol == "ethnicities") {
                                         for (var j in quiz_ethnicities) {
                                             if (quiz_ethnicities[j] == key) {
-                                                console.log("matching ethnicity");
+                                                if (jsobj[i].id in resID_dict) {
+                                                    resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                                } else {
+                                                    console.log("doesn't exist yet, so create...");
+                                                    resID_dict[jsobj[i].id] = 1;
+                                                }
+                                            }
+                                        }
+                                    } else if (currentCol == "instruments") {
+                                        for (var j in quiz_instruments) {
+                                            if (quiz_instruments[j] == key) {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
@@ -205,11 +201,12 @@ module.exports.postQuiz = {
                                         }
                                     }
 
+
                                 } else {
                                     //false, dont add...
                                 }
                             }
-                        } //now we are done looping thru a certain column for a single resource
+                        } //now we are done looping thru a certain column for a single person
                         //tempArray = [];
 
 
@@ -217,7 +214,7 @@ module.exports.postQuiz = {
                     } //done looping thru a column
                     //tempArray = [];
 
-                } //end looping thru every resource
+                } //end looping thru every person
 
                 console.log("dict: ", resID_dict);
 
@@ -246,6 +243,9 @@ module.exports.postQuiz = {
 
 
                 for (var key in resID_dict) {
+
+                    if (resID_dict.length < 5) { console.log("less than 5 to choose from!"); }
+
                     if (resID_dict.hasOwnProperty(key)) {
                         var freqNum = resID_dict[key]; //number to check
 
@@ -315,7 +315,7 @@ module.exports.postQuiz = {
 
                 //console.log("toReturn: ", toReturn);
 
-                var query = connection.query(`SELECT * FROM resources WHERE id in ?`, [
+                var query = connection.query(`SELECT * FROM persons WHERE id in ?`, [
                     [toReturn]
                 ], (err, rows, fields) => {
                     if (err) { return reply(Boom.badRequest()); }
