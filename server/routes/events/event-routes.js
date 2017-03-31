@@ -707,6 +707,7 @@ eventController.editConfig = {
     }
 }
 
+var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
 var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedResources;
 
@@ -716,5 +717,7 @@ module.exports = [
     { path: '/event/approved/{id?}', method: 'GET', config: getApprovedRes },
     { path: '/event/{id}', method: 'DELETE', config: eventController.deleteConfig },
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
-    { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig }
+    { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
+    { path: '/quiz/event', method: 'POST', config: postQuizController },
+
 ];

@@ -7,7 +7,7 @@ var Joi = require('joi');
 var mysql = require('mysql');
 var async = require('async');
 const fs = require('fs');
-var BasicAuth = require('hapi-auth-basic')
+var BasicAuth = require('hapi-auth-basic');
 var options = require('../../config/config.js');
 
 
@@ -68,7 +68,7 @@ module.exports.postQuiz = {
             var quiz_ethnicities = [];
 
             var quiz_shape = [];
-            var quiz_cloth
+            var quiz_clothing = [];
             var quiz_size = [];
 
             var resID_dict = {};
@@ -161,7 +161,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -172,7 +172,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -183,7 +183,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -194,7 +194,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -205,7 +205,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -216,7 +216,7 @@ module.exports.postQuiz = {
                                                 if (jsobj[i].id in resID_dict) {
                                                     resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
                                                 } else {
-                                                    console.log("doesn't exist yet, so create...");
+                                                    //console.log("doesn't exist yet, so create...");
                                                     resID_dict[jsobj[i].id] = 1;
                                                 }
                                             }
@@ -238,7 +238,7 @@ module.exports.postQuiz = {
 
                 } //end looping thru every event
 
-                console.log("dict: ", resID_dict);
+                //console.log("dict: ", resID_dict);
 
                 //loop thru resID_dict, get top 5
                 var top_5_dict = {
@@ -261,7 +261,7 @@ module.exports.postQuiz = {
 
                 } //top_5_array has been initialized
 
-                console.log("initial array: ", top_5_array);
+                //console.log("initial array: ", top_5_array);
 
 
                 for (var key in resID_dict) {
@@ -332,17 +332,25 @@ module.exports.postQuiz = {
 
                 var toReturn = [];
                 for (var i = 0; i < top_5_array.length; i++) {
-                    toReturn.push(Number(Object.keys(top_5_array[i])));
+                    //check to see if the current key's value is greater than 0 (why? because,
+                    //we initialized the array to contain values of 0)..
+                    if (top_5_array[i][Object.keys(top_5_array[i])] > 0) {
+                        toReturn.push(Number(Object.keys(top_5_array[i])));
+
+                    }
                 }
 
-                //console.log("toReturn: ", toReturn);
+                //if there are 0 matching resources
+                if (toReturn.length <= 0) {
+                    return reply(Boom.notFound("No matching resources found"));
+                }
 
                 var query = connection.query(`SELECT * FROM events WHERE id in ?`, [
                     [toReturn]
                 ], (err, rows, fields) => {
                     if (err) { return reply(Boom.badRequest()); }
                     var jsobj = rowsToJS(rows);
-                    console.log(jsobj);
+                    //console.log(jsobj);
                     return reply(jsobj);
                 });
 

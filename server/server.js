@@ -859,9 +859,6 @@ server.register(BasicAuth, function(err) {
     routes = require('./routes/congregations/congregation-routes');
     routesArray.push(routes);
 
-    routes = require('./routes/quizzes/quiz-routes');
-    routesArray.push(routes);
-
     for (var i = 0; i < routesArray.length; i++) {
         server.route(routesArray[i]);
     };

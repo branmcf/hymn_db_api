@@ -322,7 +322,7 @@ function insertFirst(toInsert, _callback) {
 function insertAndGet(toInsert) {
 
     insertFirst(toInsert, function() {
-        getcongregationsJSON();
+        //getcongregationsJSON();
         //console.log("Done with post requst getOrg...");
     });
 }
@@ -334,7 +334,7 @@ congController.postConfig = {
 
                 //getcongregationsJSON();
 
-                var theCongID = congregations.length + 1;
+                //var theCongID = congregations.length + 1;
 
                 var newCong = {
                     name: req.payload.data.name,
@@ -366,10 +366,10 @@ congController.postConfig = {
                 insertAndGet(newCong);
 
                 var toReturn = {
-                    cong_id: theCongID
+                    cong_id: newCong.id
                 }
 
-                return reply(toReturn);
+                return reply("okay");
 
 
             } //end handler  
@@ -607,15 +607,18 @@ congController.editConfig = {
         } //end handler  
 };
 
+var postQuizController = require('../../controllers/congregations/post-quiz-congregation').postQuiz;
 var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedResources;
 
 module.exports = [
-    { path: '/congregation', method: 'POST', config: getUnapprovedRes },
+    { path: '/congregation', method: 'POST', config: congController.postConfig },
     { path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
     { path: '/congregation/approved/{id?}', method: 'GET', config: getApprovedRes },
     { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
-    { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig }
+    { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
+    { path: '/quiz/congregation', method: 'POST', config: postQuizController },
+
 
 ];

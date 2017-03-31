@@ -656,6 +656,7 @@ orgController.editConfig = {
         } //end handler  
 };
 
+var postQuizController = require('../../controllers/organizations/post-quiz-organization').postQuiz;
 var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedResources;
 
@@ -665,5 +666,7 @@ module.exports = [
     { path: '/orgs/approved/{id?}', method: 'GET', config: getApprovedRes },
     { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
-    { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig }
+    { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
+    { path: '/quiz/orgs', method: 'POST', config: postQuizController }
+
 ];

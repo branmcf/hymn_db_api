@@ -635,6 +635,7 @@ personController.editConfig = {
 
 }
 
+var postQuizController = require('../../controllers/persons/post-quiz-person').postQuiz;
 var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedResources;
 
@@ -645,6 +646,7 @@ module.exports = [
     { path: '/person/approved/{id?}', method: 'GET', config: getApprovedRes },
     { path: '/person/{id}', method: 'DELETE', config: personController.deleteConfig },
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
-    { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig }
+    { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
+    { path: '/quiz/person', method: 'POST', config: postQuizController }
 
 ];
