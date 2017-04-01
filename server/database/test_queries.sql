@@ -1,40 +1,42 @@
 /*
 INSERT INTO() VALUES();
 */
+alter table resources auto_increment = 1;
 
-SET FOREIGN_KEY_CHECKS=0;
+INSERT INTO resources(name, author, approved, categories, type) VALUES
+("name 1", "author 1", 1, '["A hymn written prior to 1970", "category 1b"]', "book"),
+("name 2", "author 2", 1, '["category 2a", "category 2b"]', "book"),
+("name 3", "author 3", 0, '["category 3a", "category 3b"]', "blog"),
+("name 3", "author 3", 1, '["category 4a", "category 4b"]', "blog");
 
-DELETE FROM quizes;
-DELETE FROM questions;
-DELETE FROM CHOICES;
+alter table events auto_increment = 1;
 
-SET FOREIGN_KEY_CHECKS=1;
+INSERT INTO events(name, approved, tags) VALUES
+("name 1", 1, '["category 1a", "category 1b"]'),
+("name 2", 1, '["category 2a", "category 2b"]'),
+("name 3", 0, '["category 3a", "category 3b"]'),
+("name 3", 1, '["category 4a", "category 4b"]');
 
-ALTER TABLE quizes AUTO_INCREMENT = 1;
-ALTER TABLE questions AUTO_INCREMENT = 1;
-ALTER TABLE choices AUTO_INCREMENT = 1;
+alter table organizations auto_increment = 1;
 
-INSERT INTO quizes(quiz_title) VALUES("Quiz Template 1");
+INSERT INTO organizations(name, approved, tags) VALUES
+("name 1",  1, '["category 1a", "category 1b"]'),
+("name 2",  1, '["category 2a", "category 2b"]'),
+("name 3",  0, '["category 3a", "category 3b"]'),
+("name 3",  1, '["category 4a", "category 4b"]');
 
-INSERT INTO questions(quiz_id, question_text, question_weight) VALUES
-(1, "Question Template 1", 1),
-(1, "Question Template 2", 1),
-(1, "Question Template 3", 1);
+alter table congregations auto_increment = 1;
 
-INSERT INTO choices(question_id, choice_text, tags) VALUES
-(1, "Choice Template 1", '["protestant", "baptist", "rural"]'),
-(1, "Choice Template 2", '["catholic", "urban"]'),
-(1, "Choice Template 3", '["anglican", "urban"]'),
+INSERT INTO congregations(name, approved, tags) VALUES
+("name 1",  1, '["category 1a", "category 1b"]'),
+("name 2",  1, '["category 2a", "category 2b"]'),
+("name 3",  0, '["category 3a", "category 3b"]'),
+("name 3", 1, '["category 4a", "category 4b"]');
 
-(2, "Choice Template 1", '["protestant", "baptist", "rural"]'), /* 4 */
-(2, "Choice Template 2", '["catholic", "urban"]'),
-(2, "Choice Template 3", '["anglican", "urban"]'),
+alter table persons auto_increment = 1;
 
-(3, "Choice Template 1", '["protestant", "baptist", "rural"]'), /* 7 */
-(3, "Choice Template 2", '["catholic", "urban"]'),
-(3, "Choice Template 3", '["anglican", "urban"]');
-
-/* Add/ update user answers */
-UPDATE users SET answers = '[1, 4, 7]' WHERE id = 1;
-UPDATE users SET answers = '[2, 5, 8]' WHERE id = 2;
-
+INSERT INTO persons(first_name, approved, tags) VALUES
+("name 1",  1, '["category 1a", "category 1b"]'),
+("name 2",  1, '["category 2a", "category 2b"]'),
+("name 3",  0, '["category 3a", "category 3b"]'),
+("name 3",  1, '["category 4a", "category 4b"]');
