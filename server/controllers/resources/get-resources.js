@@ -26,6 +26,22 @@ function rowsToJS(theArray) {
     return temp;
 }
 
+
+function formatJSON(resource) {
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
+    for (var i in json_columns) {
+        if (resource[json_columns[i]]) {
+            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+        } else {
+            //console.log("error, ", json_columns[i], " doesn't exist in resource");
+        }
+
+
+    }
+
+    return resource;
+}
+
 module.exports.getUnapprovedResources = {
     handler: function(request, reply) {
 
@@ -46,49 +62,54 @@ module.exports.getUnapprovedResources = {
                     var resInstruments = [];
                     */
                     var numUnApprovedRes = resources.length;
-                    /*
-                    for (var i = 0; i < JSObj.length; i++) {
-                        popArray(JSObj[i]["ethnicities"], resEth);
-                        popArray(JSObj[i]["categories"], resCategories);
-                        popArray(JSObj[i]["topics"], resTopics);
-                        popArray(JSObj[i]["accompaniment"], resAcc);
-                        popArray(JSObj[i]["languages"], resLanguages);
-                        popArray(JSObj[i]["ensembles"], resEnsembles);
-                        popArray(JSObj[i]["tags"], resTags);
-                        popArray(JSObj[i]["instruments"], resInstruments);
-                        popArray(JSObj[i]["denominations"], resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
+                    var toReturn = [];
 
-                        var resEth_all.push(resEth);
-                        var resCategories_all.push(resCategories);
-                        var resTopics_all.push(resTopics);
-                        var resAcc_all.push(resAcc);
-                        var resLanguages_all.push(resLanguages);
-                        var resEnsembles_all.push(resEnsembles);
-                        var resTags_all.push(resTags);
-                        var resInstruments_all.push(resInstruments);
-                        var resDenominations_all.push(resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
-                        
+                    for (var i in resources) {
+                        toReturn.push(formatJSON(resources[i]));
                     }
-                    */
 
-                    if (resources.length <= 0) {
+                    if (toReturn.length <= 0) {
                         return reply(Boom.badRequest("nothing to return"));
                     } else {
-                        return reply(resources);
+                        return reply(toReturn);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
+                connection.query(`SELECT * from resources where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
-                    var resource = rowsToJS(rows);
+                    //console.log(rows[0]);
+                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    var resource = rowsToJS(rows[0]);
+
+                    resource["url"] = resource.website;
+                    resource["title"] = resource.name;
+                    delete resource["website"];
+                    delete resource["name"];
+
+                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
+                    for (var i in json_columns) {
+                        if (resource[json_columns[i]]) {
+                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                        } else {
+                            console.log("error, ", i, " doesn't exist in resource");
+                        }
+
+
+                    }
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
                     } else {
-                        return reply(resource);
+                        //
+                        var theUrl = "/resource/" + String(resource.id);
+
+                        var finalObj = {
+                            url: theUrl,
+                            data: resource
+                        };
+
+                        return reply(finalObj);
                     }
 
 
@@ -118,49 +139,54 @@ module.exports.getApprovedResources = {
                     var resInstruments = [];
                     */
                     var numUnApprovedRes = resources.length;
-                    /*
-                    for (var i = 0; i < JSObj.length; i++) {
-                        popArray(JSObj[i]["ethnicities"], resEth);
-                        popArray(JSObj[i]["categories"], resCategories);
-                        popArray(JSObj[i]["topics"], resTopics);
-                        popArray(JSObj[i]["accompaniment"], resAcc);
-                        popArray(JSObj[i]["languages"], resLanguages);
-                        popArray(JSObj[i]["ensembles"], resEnsembles);
-                        popArray(JSObj[i]["tags"], resTags);
-                        popArray(JSObj[i]["instruments"], resInstruments);
-                        popArray(JSObj[i]["denominations"], resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
+                    var toReturn = [];
 
-                        var resEth_all.push(resEth);
-                        var resCategories_all.push(resCategories);
-                        var resTopics_all.push(resTopics);
-                        var resAcc_all.push(resAcc);
-                        var resLanguages_all.push(resLanguages);
-                        var resEnsembles_all.push(resEnsembles);
-                        var resTags_all.push(resTags);
-                        var resInstruments_all.push(resInstruments);
-                        var resDenominations_all.push(resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
-                        
+                    for (var i in resources) {
+                        toReturn.push(formatJSON(resources[i]));
                     }
-                    */
 
                     if (resources.length <= 0) {
                         return reply(Boom.badRequest("nothing to return"));
                     } else {
-                        return reply(resources);
+                        return reply(toReturn);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
-                    var resource = rowsToJS(rows);
+                connection.query(`SELECT * from resources where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting approved resource`)); }
+                    //console.log(rows[0]);
+                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    var resource = rowsToJS(rows[0]);
+
+                    resource["url"] = resource.website;
+                    resource["title"] = resource.name;
+                    delete resource["website"];
+                    delete resource["name"];
+
+                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
+                    for (var i in json_columns) {
+                        if (resource[json_columns[i]]) {
+                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                        } else {
+                            console.log("error, ", i, " doesn't exist in resource");
+                        }
+
+
+                    }
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
                     } else {
-                        return reply(resource);
+                        //
+                        var theUrl = "/resource/" + String(resource.id);
+
+                        var finalObj = {
+                            url: theUrl,
+                            data: resource
+                        };
+
+                        return reply(finalObj);
                     }
 
 
@@ -191,49 +217,54 @@ module.exports.getApprovedByType = {
                     var resInstruments = [];
                     */
                     var numUnApprovedRes = resources.length;
-                    /*
-                    for (var i = 0; i < JSObj.length; i++) {
-                        popArray(JSObj[i]["ethnicities"], resEth);
-                        popArray(JSObj[i]["categories"], resCategories);
-                        popArray(JSObj[i]["topics"], resTopics);
-                        popArray(JSObj[i]["accompaniment"], resAcc);
-                        popArray(JSObj[i]["languages"], resLanguages);
-                        popArray(JSObj[i]["ensembles"], resEnsembles);
-                        popArray(JSObj[i]["tags"], resTags);
-                        popArray(JSObj[i]["instruments"], resInstruments);
-                        popArray(JSObj[i]["denominations"], resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
+                    var toReturn = [];
 
-                        var resEth_all.push(resEth);
-                        var resCategories_all.push(resCategories);
-                        var resTopics_all.push(resTopics);
-                        var resAcc_all.push(resAcc);
-                        var resLanguages_all.push(resLanguages);
-                        var resEnsembles_all.push(resEnsembles);
-                        var resTags_all.push(resTags);
-                        var resInstruments_all.push(resInstruments);
-                        var resDenominations_all.push(resDenominations);
-                        //popArray(JSObj[i]["types"], resTypes);
-                        
+                    for (var i in resources) {
+                        toReturn.push(formatJSON(resources[i]));
                     }
-                    */
 
                     if (resources.length <= 0) {
                         return reply(Boom.badRequest("nothing to return"));
                     } else {
-                        return reply(resources);
+                        return reply(toReturn);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where unapproved = 1 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
+                connection.query(`SELECT * from resources where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
-                    var resource = rowsToJS(rows);
+                    //console.log(rows[0]);
+                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    var resource = rowsToJS(rows[0]);
+
+                    resource["url"] = resource.website;
+                    resource["title"] = resource.name;
+                    delete resource["website"];
+                    delete resource["name"];
+
+                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
+                    for (var i in json_columns) {
+                        if (resource[json_columns[i]]) {
+                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                        } else {
+                            console.log("error, ", i, " doesn't exist in resource");
+                        }
+
+
+                    }
 
                     if (resource.length <= 0) {
-                        return reply(Boom.badRequest(`Either resources is not approved, type DNE or id DNE`));
+                        return reply(Boom.badRequest(`resources is not approved`));
                     } else {
-                        return reply(resource);
+                        //
+                        var theUrl = "/resource/" + String(resource.id);
+
+                        var finalObj = {
+                            url: theUrl,
+                            data: resource
+                        };
+
+                        return reply(finalObj);
                     }
 
 

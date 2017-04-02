@@ -622,7 +622,7 @@ var getApprovedRes = require('../../controllers/congregations/get-congregations'
 
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
-    { path: '/congregation/{id?}', method: 'GET', config: congController.getConfig },
+    { path: '/congregation/{id?}', method: 'GET', config: getUnapprovedRes },
     { path: '/congregation/approved/{id?}', method: 'GET', config: getApprovedRes },
     { path: '/congregation/{id}', method: 'DELETE', config: congController.deleteConfig },
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
