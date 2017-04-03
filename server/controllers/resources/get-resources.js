@@ -30,14 +30,47 @@ function rowsToJS(theArray) {
 function formatJSON(resource) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
     for (var i in json_columns) {
-        if (resource[json_columns[i]]) {
+        if (resource[json_columns[i]]) { //if it exists...
             resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+
+
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");
         }
 
 
     }
+
+    //return the JSON columns in an array
+    var theKeys = [];
+
+    //loop through every column, check if it's true
+    for (var col_index in json_columns) {
+        if (resource[json_columns[col_index]]) { //if it exists...
+            var current_obj = resource[json_columns[col_index]];
+            for (var key in current_obj) { //if key is in the current object...
+                if (current_obj.hasOwnProperty(key)) {
+                    var TorForOther = current_obj[key]; //the corresponding value to the key:value pair which is either T,F or TorForOther
+                    if (key == 'Other' || key == 'other') {
+                        theKeys.push(current_obj[key]);
+                    } else if (TorForOther == 1) {
+                        key = key.replace(/_/g, " ");
+                        theKeys.push(key);
+                    } else { /* false, so don't add... */ }
+
+                }
+            }
+
+            resource[json_columns[col_index]] = theKeys;
+            theKeys = [];
+
+        } else {
+            //console.log("error, ", json_columns[i], " doesn't exist in resource");
+        }
+
+
+    } //done looping through certain column
+
 
     return resource;
 }
@@ -82,21 +115,7 @@ module.exports.getUnapprovedResources = {
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
                     var resource = rowsToJS(rows[0]);
 
-                    resource["url"] = resource.website;
-                    resource["title"] = resource.name;
-                    delete resource["website"];
-                    delete resource["name"];
-
-                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
-                    for (var i in json_columns) {
-                        if (resource[json_columns[i]]) {
-                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                        } else {
-                            console.log("error, ", i, " doesn't exist in resource");
-                        }
-
-
-                    }
+                    var fixedRes = formatJSON(resource);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -106,7 +125,7 @@ module.exports.getUnapprovedResources = {
 
                         var finalObj = {
                             url: theUrl,
-                            data: resource
+                            data: fixedRes
                         };
 
                         return reply(finalObj);
@@ -159,21 +178,7 @@ module.exports.getApprovedResources = {
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
                     var resource = rowsToJS(rows[0]);
 
-                    resource["url"] = resource.website;
-                    resource["title"] = resource.name;
-                    delete resource["website"];
-                    delete resource["name"];
-
-                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
-                    for (var i in json_columns) {
-                        if (resource[json_columns[i]]) {
-                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                        } else {
-                            console.log("error, ", i, " doesn't exist in resource");
-                        }
-
-
-                    }
+                    var fixedRes = formatJSON(resource);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -183,7 +188,7 @@ module.exports.getApprovedResources = {
 
                         var finalObj = {
                             url: theUrl,
-                            data: resource
+                            data: fixedRes
                         };
 
                         return reply(finalObj);
@@ -237,21 +242,8 @@ module.exports.getApprovedByType = {
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
                     var resource = rowsToJS(rows[0]);
 
-                    resource["url"] = resource.website;
-                    resource["title"] = resource.name;
-                    delete resource["website"];
-                    delete resource["name"];
+                    var fixedRes = formatJSON(resource);
 
-                    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"];
-                    for (var i in json_columns) {
-                        if (resource[json_columns[i]]) {
-                            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                        } else {
-                            console.log("error, ", i, " doesn't exist in resource");
-                        }
-
-
-                    }
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -261,7 +253,7 @@ module.exports.getApprovedByType = {
 
                         var finalObj = {
                             url: theUrl,
-                            data: resource
+                            data: fixedRes
                         };
 
                         return reply(finalObj);

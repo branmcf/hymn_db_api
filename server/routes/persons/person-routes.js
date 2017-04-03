@@ -655,8 +655,8 @@ personController.editConfig = {
 }
 
 var postQuizController = require('../../controllers/persons/post-quiz-person').postQuiz;
-var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapprovedResources;
-var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedResources;
+var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapprovedpersons;
+var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedpersons;
 
 
 module.exports = [

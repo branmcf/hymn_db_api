@@ -617,8 +617,8 @@ congController.editConfig = {
 };
 
 var postQuizController = require('../../controllers/congregations/post-quiz-congregation').postQuiz;
-var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedResources;
-var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedResources;
+var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedcongregations;
+var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
 
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
