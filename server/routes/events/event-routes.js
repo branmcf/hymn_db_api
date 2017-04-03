@@ -715,8 +715,8 @@ eventController.editConfig = {
 }
 
 var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
-var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedResources;
-var getApprovedRes = require('../../controllers/events/get-events').getApprovedResources;
+var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedevents;
+var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
 
 module.exports = [
     { path: '/event', method: 'POST', config: eventController.postConfig },

@@ -665,8 +665,8 @@ orgController.editConfig = {
 };
 
 var postQuizController = require('../../controllers/organizations/post-quiz-organization').postQuiz;
-var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedResources;
-var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedResources;
+var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedorganizations;
+var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
 
 module.exports = [
     { path: '/orgs', method: 'POST', config: orgController.postConfig },

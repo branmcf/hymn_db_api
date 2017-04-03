@@ -26,29 +26,63 @@ function rowsToJS(theArray) {
     return temp;
 }
 
-function formatJSON(resource) {
+
+function formatJSON(organization) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
     for (var i in json_columns) {
-        if (resource[json_columns[i]]) {
-            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+        if (organization[json_columns[i]]) { //if it exists...
+            organization[json_columns[i]] = JSON.parse(organization[json_columns[i]]);
+
+
         } else {
-            //console.log("error, ", json_columns[i], " doesn't exist in resource");
+            //console.log("error, ", json_columns[i], " doesn't exist in organization");
         }
 
 
     }
 
-    return resource;
+    //return the JSON columns in an array
+    var theKeys = [];
+
+    //loop through every column, check if it's true
+    for (var col_index in json_columns) {
+        if (organization[json_columns[col_index]]) { //if it exists...
+            var current_obj = organization[json_columns[col_index]];
+            for (var key in current_obj) { //if key is in the current object...
+                if (current_obj.hasOwnProperty(key)) {
+                    var TorForOther = current_obj[key]; //the corresponding value to the key:value pair which is either T,F or TorForOther
+                    if (key == 'Other' || key == 'other') {
+                        theKeys.push(current_obj[key]);
+                    } else if (TorForOther == 1) {
+                        key = key.replace(/_/g, " ");
+                        theKeys.push(key);
+                    } else { /* false, so don't add... */ }
+
+                }
+            }
+
+            organization[json_columns[col_index]] = theKeys;
+            theKeys = [];
+
+        } else {
+            //console.log("error, ", json_columns[i], " doesn't exist in organization");
+        }
+
+
+    } //done looping through certain column
+
+
+    return organization;
 }
 
-module.exports.getUnapprovedResources = {
+module.exports.getUnapprovedorganizations = {
     handler: function(request, reply) {
 
             if (!request.params.id) {
                 connection.query(`SELECT * from organizations where approved = 0`, function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
 
-                    var resources = rowsToJS(rows);
+                    var organizations = rowsToJS(rows);
                     /*
                     var resCategories = [];
                     var resTopics = [];
@@ -60,14 +94,14 @@ module.exports.getUnapprovedResources = {
                     var resDenominations = [];
                     var resInstruments = [];
                     */
-                    var numUnApprovedRes = resources.length;
+                    var numUnApprovedRes = organizations.length;
                     var toReturn = [];
 
-                    for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                    for (var i in organizations) {
+                        toReturn.push(formatJSON(organizations[i]));
                     }
 
-                    if (resources.length <= 0) {
+                    if (toReturn.length <= 0) {
                         return reply(Boom.badRequest("nothing to return"));
                     } else {
                         return reply(toReturn);
@@ -77,23 +111,23 @@ module.exports.getUnapprovedResources = {
             } else { //there is an id in the parameters
                 connection.query(`SELECT * from organizations where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
+                    //console.log(rows[0]);
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var resources = rowsToJS(rows);
-                    var toReturn = [];
+                    var organization = rowsToJS(rows[0]);
 
-                    for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
-                    }
+                    var fixedRes = formatJSON(organization);
 
-                    if (resources.length <= 0) {
+                    if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));
                     } else {
-                        var theUrl = "/person/" + String(toReturn[0].id);
+                        //
+                        var theUrl = "/organization/" + String(organization.id);
 
                         var finalObj = {
                             url: theUrl,
-                            data: toReturn[0]
+                            data: fixedRes
                         };
+
                         return reply(finalObj);
                     }
 
@@ -104,14 +138,14 @@ module.exports.getUnapprovedResources = {
         } //end handler
 };
 
-module.exports.getApprovedResources = {
+module.exports.getApprovedorganizations = {
     handler: function(request, reply) {
 
             if (!request.params.id) {
                 connection.query(`SELECT * from organizations where approved = 1`, function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
 
-                    var resources = rowsToJS(rows);
+                    var organizations = rowsToJS(rows);
                     /*
                     var resCategories = [];
                     var resTopics = [];
@@ -123,15 +157,15 @@ module.exports.getApprovedResources = {
                     var resDenominations = [];
                     var resInstruments = [];
                     */
-                    var numUnApprovedRes = resources.length;
+                    var numUnApprovedRes = organizations.length;
                     var toReturn = [];
 
-                    for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                    for (var i in organizations) {
+                        toReturn.push(formatJSON(organizations[i]));
                     }
 
-                    if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return for organizations"));
+                    if (organizations.length <= 0) {
+                        return reply(Boom.badRequest("nothing to return"));
                     } else {
                         return reply(toReturn);
                     }
@@ -139,24 +173,24 @@ module.exports.getApprovedResources = {
 
             } else { //there is an id in the parameters
                 connection.query(`SELECT * from organizations where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
+                    if (err) { return reply(Boom.badRequest(`Error getting approved organization`)); }
+                    //console.log(rows[0]);
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var resources = rowsToJS(rows);
-                    var toReturn = [];
+                    var organization = rowsToJS(rows[0]);
 
-                    for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
-                    }
+                    var fixedRes = formatJSON(organization);
 
-                    if (resources.length <= 0) {
+                    if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));
                     } else {
-                        var theUrl = "/person/" + String(toReturn[0].id);
+                        //
+                        var theUrl = "/organization/" + String(organization.id);
 
                         var finalObj = {
                             url: theUrl,
-                            data: toReturn[0]
+                            data: fixedRes
                         };
+
                         return reply(finalObj);
                     }
 
@@ -175,7 +209,7 @@ module.exports.getApprovedByType = {
                 connection.query(`SELECT * from organizations where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
 
-                    var resources = rowsToJS(rows);
+                    var organizations = rowsToJS(rows);
                     /*
                     var resCategories = [];
                     var resTopics = [];
@@ -187,20 +221,46 @@ module.exports.getApprovedByType = {
                     var resDenominations = [];
                     var resInstruments = [];
                     */
-                    var numUnApprovedRes = resources.length;
+                    var numUnApprovedRes = organizations.length;
                     var toReturn = [];
 
-                    for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                    for (var i in organizations) {
+                        toReturn.push(formatJSON(organizations[i]));
                     }
 
-                    if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return for organizations"));
+                    if (organizations.length <= 0) {
+                        return reply(Boom.badRequest("nothing to return"));
                     } else {
                         return reply(toReturn);
                     }
                 });
 
+            } else { //there is an id in the parameters
+                connection.query(`SELECT * from organizations where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
+                    //console.log(rows[0]);
+                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    var organization = rowsToJS(rows[0]);
+
+                    var fixedRes = formatJSON(organization);
+
+
+                    if (organization.length <= 0) {
+                        return reply(Boom.badRequest(`organizations is not approved`));
+                    } else {
+                        //
+                        var theUrl = "/organization/" + String(organization.id);
+
+                        var finalObj = {
+                            url: theUrl,
+                            data: fixedRes
+                        };
+
+                        return reply(finalObj);
+                    }
+
+
+                });
             }
 
         } //end handler
