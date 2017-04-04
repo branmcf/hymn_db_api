@@ -26,6 +26,18 @@ function rowsToJS(theArray) {
     return temp;
 }
 
+function reformatTinyInt(toFormat) {
+    if (toFormat == 1) {
+        return ("true");
+    } else if (toFormat == 0) {
+        return ("false");
+    } else if (toFormat == 2) {
+        return ("partially");
+    } else {
+        return (toFormat);
+    }
+}
+
 
 function formatJSON(organization) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
@@ -98,7 +110,23 @@ module.exports.getUnapprovedorganizations = {
                     var toReturn = [];
 
                     for (var i in organizations) {
-                        toReturn.push(formatJSON(organizations[i]));
+                        var toPush = formatJSON(organizations[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["geographic_area"] = toPush["geography"];
+                        toPush["is_org_free"] = toPush["is_free"];
+                        delete toPush["website"];
+                        delete toPush["geography"];
+                        delete toPush["is_free"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+                        toPush.events_free = reformatTinyInt(toPush.events_free);
+                        toPush.membership_free = reformatTinyInt(toPush.membership_free);
+
+                        toReturn.push(toPush);
                     }
 
                     if (toReturn.length <= 0) {
@@ -116,6 +144,20 @@ module.exports.getUnapprovedorganizations = {
                     var organization = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(organization);
+                    fixedRes["url"] = fixedRes["website"];
+                    fixedRes["geographic_area"] = fixedRes["geography"];
+                    fixedRes["is_org_free"] = fixedRes["is_free"];
+                    delete fixedRes["website"];
+                    delete fixedRes["geography"];
+                    delete fixedRes["is_free"];
+
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
+                    fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
 
                     if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));
@@ -161,7 +203,23 @@ module.exports.getApprovedorganizations = {
                     var toReturn = [];
 
                     for (var i in organizations) {
-                        toReturn.push(formatJSON(organizations[i]));
+                        var toPush = formatJSON(organizations[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["geographic_area"] = toPush["geography"];
+                        toPush["is_org_free"] = toPush["is_free"];
+                        delete toPush["website"];
+                        delete toPush["geography"];
+                        delete toPush["is_free"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+                        toPush.events_free = reformatTinyInt(toPush.events_free);
+                        toPush.membership_free = reformatTinyInt(toPush.membership_free);
+
+                        toReturn.push(toPush);
                     }
 
                     if (organizations.length <= 0) {
@@ -179,71 +237,20 @@ module.exports.getApprovedorganizations = {
                     var organization = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(organization);
+                    fixedRes["url"] = fixedRes["website"];
+                    fixedRes["geographic_area"] = fixedRes["geography"];
+                    fixedRes["is_org_free"] = fixedRes["is_free"];
+                    delete fixedRes["website"];
+                    delete fixedRes["geography"];
+                    delete fixedRes["is_free"];
 
-                    if (organization.length <= 0) {
-                        return reply(Boom.badRequest(`organizations is not approved`));
-                    } else {
-                        //
-                        var theUrl = "/organization/" + String(organization.id);
-
-                        var finalObj = {
-                            url: theUrl,
-                            data: fixedRes
-                        };
-
-                        return reply(finalObj);
-                    }
-
-
-                });
-            }
-
-        } //end handler
-
-};
-
-module.exports.getApprovedByType = {
-    handler: function(request, reply) {
-
-            if (!request.params.id) {
-                connection.query(`SELECT * from organizations where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
-
-                    var organizations = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
-                    var numUnApprovedRes = organizations.length;
-                    var toReturn = [];
-
-                    for (var i in organizations) {
-                        toReturn.push(formatJSON(organizations[i]));
-                    }
-
-                    if (organizations.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
-                    } else {
-                        return reply(toReturn);
-                    }
-                });
-
-            } else { //there is an id in the parameters
-                connection.query(`SELECT * from organizations where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
-                    //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var organization = rowsToJS(rows[0]);
-
-                    var fixedRes = formatJSON(organization);
-
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
+                    fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
 
                     if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));

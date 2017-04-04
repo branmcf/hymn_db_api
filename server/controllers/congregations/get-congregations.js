@@ -1,3 +1,7 @@
+//getting all: don't return everything in "data",
+//getting individual: return everything in "data"
+//for quizes too?
+
 var Joi = require('joi');
 var mysql = require('mysql');
 var Boom = require('boom');
@@ -17,6 +21,18 @@ var connection = mysql.createConnection({
 
 if (process.env.JAWSDB_URL) {
     connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
+
+function reformatTinyInt(toFormat) {
+    if (toFormat == 1) {
+        return ("true");
+    } else if (toFormat == 0) {
+        return ("false");
+    } else if (toFormat == 2) {
+        return ("partially");
+    } else {
+        return (toFormat);
+    }
 }
 
 function rowsToJS(theArray) {
@@ -83,22 +99,23 @@ module.exports.getUnapprovedcongregations = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from congregations`)); }
 
                     var congregations = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
+
                     var numUnApprovedRes = congregations.length;
                     var toReturn = [];
 
                     for (var i in congregations) {
-                        toReturn.push(formatJSON(congregations[i]));
+                        var toPush = formatJSON(congregations[i]);
+                        toPush["url"] = toPush["website"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+
+                        toReturn.push(toPush);
                     }
 
                     if (toReturn.length <= 0) {
@@ -116,6 +133,14 @@ module.exports.getUnapprovedcongregations = {
                     var congregation = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(congregation);
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["website"];
+
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (congregation.length <= 0) {
                         return reply(Boom.badRequest(`congregations is not approved`));
@@ -146,22 +171,22 @@ module.exports.getApprovedcongregations = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from congregations`)); }
 
                     var congregations = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
                     var numUnApprovedRes = congregations.length;
                     var toReturn = [];
 
                     for (var i in congregations) {
-                        toReturn.push(formatJSON(congregations[i]));
+                        var toPush = formatJSON(congregations[i]);
+                        toPush["url"] = toPush["website"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+
+                        toReturn.push(toPush);
                     }
 
                     if (congregations.length <= 0) {
@@ -179,71 +204,14 @@ module.exports.getApprovedcongregations = {
                     var congregation = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(congregation);
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["website"];
 
-                    if (congregation.length <= 0) {
-                        return reply(Boom.badRequest(`congregations is not approved`));
-                    } else {
-                        //
-                        var theUrl = "/congregation/" + String(congregation.id);
-
-                        var finalObj = {
-                            url: theUrl,
-                            data: fixedRes
-                        };
-
-                        return reply(finalObj);
-                    }
-
-
-                });
-            }
-
-        } //end handler
-
-};
-
-module.exports.getApprovedByType = {
-    handler: function(request, reply) {
-
-            if (!request.params.id) {
-                connection.query(`SELECT * from congregations where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from congregations`)); }
-
-                    var congregations = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
-                    var numUnApprovedRes = congregations.length;
-                    var toReturn = [];
-
-                    for (var i in congregations) {
-                        toReturn.push(formatJSON(congregations[i]));
-                    }
-
-                    if (congregations.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
-                    } else {
-                        return reply(toReturn);
-                    }
-                });
-
-            } else { //there is an id in the parameters
-                connection.query(`SELECT * from congregations where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from congregations`)); }
-                    //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var congregation = rowsToJS(rows[0]);
-
-                    var fixedRes = formatJSON(congregation);
-
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (congregation.length <= 0) {
                         return reply(Boom.badRequest(`congregations is not approved`));

@@ -19,6 +19,32 @@ if (process.env.JAWSDB_URL) {
     connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
 
+function reformatTinyInt(toFormat) {
+    switch (toFormat) {
+        case (1):
+            return ("true");
+            break;
+        case (0):
+            return ("false");
+            break;
+        case (2):
+            return ("partially");
+            break;
+    }
+}
+
+function reformatPractSchol(toFormat) {
+    if (toFormat == 1) {
+        return ("Practical");
+    } else if (toFormat == 0) {
+        return ("Scholarly");
+    } else if (toFormat == 2) {
+        return ("Both");
+    } else {
+        return (toFormat);
+    }
+}
+
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
@@ -32,7 +58,6 @@ function formatJSON(resource) {
     for (var i in json_columns) {
         if (resource[json_columns[i]]) { //if it exists...
             resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-
 
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");
@@ -83,17 +108,7 @@ module.exports.getUnapprovedResources = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
 
                     var resources = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
                     var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
@@ -103,6 +118,13 @@ module.exports.getUnapprovedResources = {
                         toPush["title"] = toPush["name"];
                         delete toPush["website"];
                         delete toPush["name"];
+
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+                        toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -126,6 +148,13 @@ module.exports.getUnapprovedResources = {
                     fixedRes["title"] = fixedRes["name"];
                     delete fixedRes["website"];
                     delete fixedRes["name"];
+
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -156,17 +185,7 @@ module.exports.getApprovedResources = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
 
                     var resources = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
                     var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
@@ -176,6 +195,13 @@ module.exports.getApprovedResources = {
                         toPush["title"] = toPush["name"];
                         delete toPush["website"];
                         delete toPush["name"];
+
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+                        toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -199,6 +225,13 @@ module.exports.getApprovedResources = {
                     fixedRes["title"] = fixedRes["name"];
                     delete fixedRes["website"];
                     delete fixedRes["name"];
+
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -230,17 +263,7 @@ module.exports.getApprovedByType = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
 
                     var resources = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
                     var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
@@ -250,6 +273,14 @@ module.exports.getApprovedByType = {
                         toPush["title"] = toPush["name"];
                         delete toPush["website"];
                         delete toPush["name"];
+
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+
                         toReturn.push(toPush);
                     }
 
@@ -272,6 +303,13 @@ module.exports.getApprovedByType = {
                     fixedRes["title"] = fixedRes["name"];
                     delete fixedRes["website"];
                     delete fixedRes["name"];
+
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
