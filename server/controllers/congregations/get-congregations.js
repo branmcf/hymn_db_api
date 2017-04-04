@@ -113,7 +113,7 @@ module.exports.getUnapprovedcongregations = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_free = reformatTinyInt(toPush.is_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -140,7 +140,7 @@ module.exports.getUnapprovedcongregations = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (congregation.length <= 0) {
                         return reply(Boom.badRequest(`congregations is not approved`));
@@ -184,7 +184,7 @@ module.exports.getApprovedcongregations = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_free = reformatTinyInt(toPush.is_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -211,7 +211,7 @@ module.exports.getApprovedcongregations = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (congregation.length <= 0) {
                         return reply(Boom.badRequest(`congregations is not approved`));

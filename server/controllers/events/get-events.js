@@ -45,6 +45,18 @@ function reformatPractSchol(toFormat) {
     }
 }
 
+function reformatFree(toFormat) {
+    if (toFormat == 1) {
+        return ("Yes");
+    } else if (toFormat == 0) {
+        return ("No");
+    } else if (toFormat == 2) {
+        return ("We do not offer this");
+    } else {
+        return (toFormat);
+    }
+}
+
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
@@ -132,9 +144,9 @@ module.exports.getUnapprovedevents = {
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.is_free = reformatFree(toPush.is_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
 
                         toReturn.push(toPush);
@@ -163,9 +175,9 @@ module.exports.getUnapprovedevents = {
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
                     if (event.length <= 0) {
@@ -220,9 +232,9 @@ module.exports.getApprovedevents = {
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.is_free = reformatFree(toPush.is_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
 
                         toReturn.push(toPush);
@@ -251,9 +263,9 @@ module.exports.getApprovedevents = {
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
                     if (event.length <= 0) {
