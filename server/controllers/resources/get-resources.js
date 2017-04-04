@@ -131,8 +131,8 @@ module.exports.getUnapprovedResources = {
                         delete toPush["website"];
                         delete toPush["name"];
 
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
@@ -161,8 +161,8 @@ module.exports.getUnapprovedResources = {
                     delete fixedRes["website"];
                     delete fixedRes["name"];
 
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
@@ -208,8 +208,8 @@ module.exports.getApprovedResources = {
                         delete toPush["website"];
                         delete toPush["name"];
 
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
@@ -238,8 +238,8 @@ module.exports.getApprovedResources = {
                     delete fixedRes["website"];
                     delete fixedRes["name"];
 
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
@@ -286,8 +286,8 @@ module.exports.getApprovedByType = {
                         delete toPush["website"];
                         delete toPush["name"];
 
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
@@ -316,8 +316,8 @@ module.exports.getApprovedByType = {
                     delete fixedRes["website"];
                     delete fixedRes["name"];
 
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);

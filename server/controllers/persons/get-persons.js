@@ -117,8 +117,8 @@ module.exports.getUnapprovedpersons = {
                         delete toPush["website"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
@@ -143,8 +143,8 @@ module.exports.getUnapprovedpersons = {
                     delete fixedRes["website"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (person.length <= 0) {
@@ -196,8 +196,8 @@ module.exports.getApprovedpersons = {
                         delete toPush["website"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
@@ -222,8 +222,8 @@ module.exports.getApprovedpersons = {
                     delete fixedRes["website"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (person.length <= 0) {

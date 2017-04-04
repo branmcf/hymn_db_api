@@ -143,9 +143,9 @@ module.exports.getUnapprovedevents = {
                         delete toPush["website"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_free = reformatFree(toPush.is_free);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
 
@@ -174,9 +174,9 @@ module.exports.getUnapprovedevents = {
                     delete fixedRes["website"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
@@ -231,9 +231,9 @@ module.exports.getApprovedevents = {
                         delete toPush["website"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_free = reformatFree(toPush.is_free);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
 
@@ -262,9 +262,9 @@ module.exports.getApprovedevents = {
                     delete fixedRes["website"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
