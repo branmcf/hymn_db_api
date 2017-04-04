@@ -26,6 +26,20 @@ function rowsToJS(theArray) {
     return temp;
 }
 
+function reformatTinyInt(toFormat) {
+    switch (toFormat) {
+        case (1):
+            return ("true");
+            break;
+        case (0):
+            return ("false");
+            break;
+        case (2):
+            return ("partially");
+            break;
+    }
+}
+
 
 function formatJSON(person) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];

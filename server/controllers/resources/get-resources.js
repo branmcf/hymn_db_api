@@ -98,7 +98,13 @@ module.exports.getUnapprovedResources = {
                     var toReturn = [];
 
                     for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                        var toPush = formatJSON(resources[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["title"] = toPush["name"];
+                        delete toPush["website"];
+                        delete toPush["name"];
+
+                        toReturn.push(toPush);
                     }
 
                     if (toReturn.length <= 0) {
@@ -116,6 +122,10 @@ module.exports.getUnapprovedResources = {
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
+                    fixedRes["url"] = fixedRes["website"];
+                    fixedRes["title"] = fixedRes["name"];
+                    delete fixedRes["website"];
+                    delete fixedRes["name"];
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -161,7 +171,13 @@ module.exports.getApprovedResources = {
                     var toReturn = [];
 
                     for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                        var toPush = formatJSON(resources[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["title"] = toPush["name"];
+                        delete toPush["website"];
+                        delete toPush["name"];
+
+                        toReturn.push(toPush);
                     }
 
                     if (resources.length <= 0) {
@@ -179,6 +195,10 @@ module.exports.getApprovedResources = {
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
+                    fixedRes["url"] = fixedRes["website"];
+                    fixedRes["title"] = fixedRes["name"];
+                    delete fixedRes["website"];
+                    delete fixedRes["name"];
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -225,7 +245,12 @@ module.exports.getApprovedByType = {
                     var toReturn = [];
 
                     for (var i in resources) {
-                        toReturn.push(formatJSON(resources[i]));
+                        var toPush = formatJSON(resources[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["title"] = toPush["name"];
+                        delete toPush["website"];
+                        delete toPush["name"];
+                        toReturn.push(toPush);
                     }
 
                     if (resources.length <= 0) {
@@ -243,7 +268,10 @@ module.exports.getApprovedByType = {
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
-
+                    fixedRes["url"] = fixedRes["website"];
+                    fixedRes["title"] = fixedRes["name"];
+                    delete fixedRes["website"];
+                    delete fixedRes["name"];
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
