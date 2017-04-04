@@ -38,6 +38,18 @@ function reformatTinyInt(toFormat) {
     }
 }
 
+function reformatFree(toFormat) {
+    if (toFormat == 1) {
+        return ("Yes");
+    } else if (toFormat == 0) {
+        return ("No");
+    } else if (toFormat == 2) {
+        return ("We do not offer this");
+    } else {
+        return (toFormat);
+    }
+}
+
 
 function formatJSON(organization) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
@@ -95,17 +107,7 @@ module.exports.getUnapprovedorganizations = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
 
                     var organizations = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
+
                     var numUnApprovedRes = organizations.length;
                     var toReturn = [];
 
@@ -119,12 +121,12 @@ module.exports.getUnapprovedorganizations = {
                         delete toPush["is_free"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_org_free = reformatFree(toPush.is_org_free);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
-                        toPush.events_free = reformatTinyInt(toPush.events_free);
-                        toPush.membership_free = reformatTinyInt(toPush.membership_free);
+                        toPush.events_free = reformatFree(toPush.events_free);
+                        toPush.membership_free = reformatFree(toPush.membership_free);
 
                         toReturn.push(toPush);
                     }
@@ -152,12 +154,12 @@ module.exports.getUnapprovedorganizations = {
                     delete fixedRes["is_free"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_org_free = reformatFree(fixedRes.is_org_free);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
-                    fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
-                    fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
+                    fixedRes.events_free = reformatFree(fixedRes.events_free);
+                    fixedRes.membership_free = reformatFree(fixedRes.membership_free);
 
                     if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));
@@ -212,12 +214,12 @@ module.exports.getApprovedorganizations = {
                         delete toPush["is_free"];
 
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_active = reformatTinyInt(toPush.is_active);
-                        toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
-                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        //toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_org_free = reformatFree(toPush.is_org_free);
+                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         //toPush.approved = reformatTinyInt(toPush.approved);
-                        toPush.events_free = reformatTinyInt(toPush.events_free);
-                        toPush.membership_free = reformatTinyInt(toPush.membership_free);
+                        toPush.events_free = reformatFree(toPush.events_free);
+                        toPush.membership_free = reformatFree(toPush.membership_free);
 
                         toReturn.push(toPush);
                     }
@@ -245,12 +247,12 @@ module.exports.getApprovedorganizations = {
                     delete fixedRes["is_free"];
 
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
-                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_org_free = reformatFree(fixedRes.is_org_free);
+                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     //fixedRes.approved = reformatTinyInt(fixedRes.approved);
-                    fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
-                    fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
+                    fixedRes.events_free = reformatFree(fixedRes.events_free);
+                    fixedRes.membership_free = reformatFree(fixedRes.membership_free);
 
                     if (organization.length <= 0) {
                         return reply(Boom.badRequest(`organizations is not approved`));
