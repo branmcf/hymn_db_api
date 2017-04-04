@@ -3,6 +3,8 @@ var mysql = require('mysql');
 var Boom = require('boom');
 var async = require('async');
 
+//type, title, website
+
 var options = require('../../config/config.js');
 
 //mysql connection
@@ -17,6 +19,30 @@ var connection = mysql.createConnection({
 
 if (process.env.JAWSDB_URL) {
     connection = mysql.createConnection(process.env.JAWSDB_URL);
+}
+
+function reformatTinyInt(toFormat) {
+    if (toFormat == 1) {
+        return ("true");
+    } else if (toFormat == 0) {
+        return ("false");
+    } else if (toFormat == 2) {
+        return ("partially");
+    } else {
+        return (toFormat);
+    }
+}
+
+function reformatPractSchol(toFormat) {
+    if (toFormat == 1) {
+        return ("Practical");
+    } else if (toFormat == 0) {
+        return ("Scholarly");
+    } else if (toFormat == 2) {
+        return ("Both");
+    } else {
+        return (toFormat);
+    }
 }
 
 function rowsToJS(theArray) {
@@ -98,7 +124,21 @@ module.exports.getUnapprovedevents = {
                     var toReturn = [];
 
                     for (var i in events) {
-                        toReturn.push(formatJSON(events[i]));
+                        var toPush = formatJSON(events[i]);
+                        toPush["title"] = toPush["name"];
+                        toPush["url"] = toPush["website"];
+                        delete toPush["name"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+
+                        toReturn.push(toPush);
+
                     }
 
                     if (toReturn.length <= 0) {
@@ -116,6 +156,17 @@ module.exports.getUnapprovedevents = {
                     var event = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(event);
+                    fixedRes["title"] = fixedRes["name"];
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["name"];
+                    delete fixedRes["website"];
+
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
                     if (event.length <= 0) {
                         return reply(Boom.badRequest(`events is not approved`));
@@ -161,7 +212,21 @@ module.exports.getApprovedevents = {
                     var toReturn = [];
 
                     for (var i in events) {
-                        toReturn.push(formatJSON(events[i]));
+                        var toPush = formatJSON(events[i]);
+                        toPush["title"] = toPush["name"];
+                        toPush["url"] = toPush["website"];
+                        delete toPush["name"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+
+                        toReturn.push(toPush);
+
                     }
 
                     if (events.length <= 0) {
@@ -179,71 +244,17 @@ module.exports.getApprovedevents = {
                     var event = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(event);
+                    fixedRes["title"] = fixedRes["name"];
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["name"];
+                    delete fixedRes["website"];
 
-                    if (event.length <= 0) {
-                        return reply(Boom.badRequest(`events is not approved`));
-                    } else {
-                        //
-                        var theUrl = "/event/" + String(event.id);
-
-                        var finalObj = {
-                            url: theUrl,
-                            data: fixedRes
-                        };
-
-                        return reply(finalObj);
-                    }
-
-
-                });
-            }
-
-        } //end handler
-
-};
-
-module.exports.getApprovedByType = {
-    handler: function(request, reply) {
-
-            if (!request.params.id) {
-                connection.query(`SELECT * from events where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
-
-                    var events = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
-                    var numUnApprovedRes = events.length;
-                    var toReturn = [];
-
-                    for (var i in events) {
-                        toReturn.push(formatJSON(events[i]));
-                    }
-
-                    if (events.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
-                    } else {
-                        return reply(toReturn);
-                    }
-                });
-
-            } else { //there is an id in the parameters
-                connection.query(`SELECT * from events where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
-                    //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var event = rowsToJS(rows[0]);
-
-                    var fixedRes = formatJSON(event);
-
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
                     if (event.length <= 0) {
                         return reply(Boom.badRequest(`events is not approved`));

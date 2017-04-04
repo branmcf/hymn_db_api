@@ -26,6 +26,20 @@ function rowsToJS(theArray) {
     return temp;
 }
 
+function reformatTinyInt(toFormat) {
+    switch (toFormat) {
+        case (1):
+            return ("true");
+            break;
+        case (0):
+            return ("false");
+            break;
+        case (2):
+            return ("partially");
+            break;
+    }
+}
+
 
 function formatJSON(person) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
@@ -98,7 +112,16 @@ module.exports.getUnapprovedpersons = {
                     var toReturn = [];
 
                     for (var i in persons) {
-                        toReturn.push(formatJSON(persons[i]));
+                        var toPush = formatJSON(persons[i]);
+                        toPush["url"] = toPush["website"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+
+                        toReturn.push(toPush);
                     }
 
                     if (toReturn.length <= 0) {
@@ -116,6 +139,13 @@ module.exports.getUnapprovedpersons = {
                     var person = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(person);
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["website"];
+
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (person.length <= 0) {
                         return reply(Boom.badRequest(`persons is not approved`));
@@ -161,7 +191,16 @@ module.exports.getApprovedpersons = {
                     var toReturn = [];
 
                     for (var i in persons) {
-                        toReturn.push(formatJSON(persons[i]));
+                        var toPush = formatJSON(persons[i]);
+                        toPush["url"] = toPush["website"];
+                        delete toPush["website"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_active = reformatTinyInt(toPush.is_active);
+                        toPush.high_level = reformatTinyInt(toPush.high_level);
+                        toPush.approved = reformatTinyInt(toPush.approved);
+
+                        toReturn.push(toPush);
                     }
 
                     if (persons.length <= 0) {
@@ -179,71 +218,13 @@ module.exports.getApprovedpersons = {
                     var person = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(person);
+                    fixedRes["url"] = fixedRes["website"];
+                    delete fixedRes["website"];
 
-                    if (person.length <= 0) {
-                        return reply(Boom.badRequest(`persons is not approved`));
-                    } else {
-                        //
-                        var theUrl = "/person/" + String(person.id);
-
-                        var finalObj = {
-                            url: theUrl,
-                            data: fixedRes
-                        };
-
-                        return reply(finalObj);
-                    }
-
-
-                });
-            }
-
-        } //end handler
-
-};
-
-module.exports.getApprovedByType = {
-    handler: function(request, reply) {
-
-            if (!request.params.id) {
-                connection.query(`SELECT * from persons where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from persons`)); }
-
-                    var persons = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
-                    var numUnApprovedRes = persons.length;
-                    var toReturn = [];
-
-                    for (var i in persons) {
-                        toReturn.push(formatJSON(persons[i]));
-                    }
-
-                    if (persons.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
-                    } else {
-                        return reply(toReturn);
-                    }
-                });
-
-            } else { //there is an id in the parameters
-                connection.query(`SELECT * from persons where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from persons`)); }
-                    //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
-                    var person = rowsToJS(rows[0]);
-
-                    var fixedRes = formatJSON(person);
-
+                    fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
+                    fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
+                    fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
+                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (person.length <= 0) {
                         return reply(Boom.badRequest(`persons is not approved`));
