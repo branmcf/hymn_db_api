@@ -122,7 +122,7 @@ module.exports.getUnapprovedorganizations = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.events_free = reformatTinyInt(toPush.events_free);
                         toPush.membership_free = reformatTinyInt(toPush.membership_free);
 
@@ -155,7 +155,7 @@ module.exports.getUnapprovedorganizations = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
                     fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
 
@@ -215,7 +215,7 @@ module.exports.getApprovedorganizations = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.is_org_free = reformatTinyInt(toPush.is_org_free);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
                         toPush.events_free = reformatTinyInt(toPush.events_free);
                         toPush.membership_free = reformatTinyInt(toPush.membership_free);
 
@@ -248,7 +248,7 @@ module.exports.getApprovedorganizations = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.is_org_free = reformatTinyInt(fixedRes.is_org_free);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
                     fixedRes.events_free = reformatTinyInt(fixedRes.events_free);
                     fixedRes.membership_free = reformatTinyInt(fixedRes.membership_free);
 

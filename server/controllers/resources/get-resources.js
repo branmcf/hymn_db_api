@@ -45,6 +45,18 @@ function reformatPractSchol(toFormat) {
     }
 }
 
+function reformatFree(toFormat) {
+    if (toFormat == 1) {
+        return ("Yes");
+    } else if (toFormat == 0) {
+        return ("No");
+    } else if (toFormat == 2) {
+        return ("We do not offer this");
+    } else {
+        return (toFormat);
+    }
+}
+
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
@@ -122,9 +134,9 @@ module.exports.getUnapprovedResources = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -152,9 +164,9 @@ module.exports.getUnapprovedResources = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -199,9 +211,9 @@ module.exports.getApprovedResources = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -229,9 +241,9 @@ module.exports.getApprovedResources = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
@@ -277,9 +289,9 @@ module.exports.getApprovedByType = {
                         toPush.is_active = reformatTinyInt(toPush.is_active);
                         toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
-                        toPush.is_free = reformatTinyInt(toPush.is_free);
+                        toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
-                        toPush.approved = reformatTinyInt(toPush.approved);
+                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -307,9 +319,9 @@ module.exports.getApprovedByType = {
                     fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
                     fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
-                    fixedRes.is_free = reformatTinyInt(fixedRes.is_free);
+                    fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
-                    fixedRes.approved = reformatTinyInt(fixedRes.approved);
+                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
