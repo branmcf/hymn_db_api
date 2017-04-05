@@ -714,7 +714,9 @@ eventController.editConfig = {
     }
 }
 
-var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
+//var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
+
+var postQuizController = require('../../controllers/post-quiz-then-get').postQuizEvents;
 var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedevents;
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
 

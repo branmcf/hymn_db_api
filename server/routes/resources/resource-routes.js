@@ -659,7 +659,9 @@ resourceController.getApprovedTypeConfig = {
 
 }
 
-var postQuizController = require('../../controllers/resources/post-quiz-resource').postQuiz;
+//var postQuizController = require('../../controllers/resources/post-quiz-resource').postQuiz;
+var postQuizController = require('../../controllers/post-quiz-then-get').postQuizResources;;
+
 var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
