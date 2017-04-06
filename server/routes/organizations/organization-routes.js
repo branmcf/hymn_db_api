@@ -664,6 +664,49 @@ orgController.editConfig = {
         } //end handler  
 };
 
+orgController.addTagConfig = {
+    //auth:
+    handler: function(request, reply) {
+        connection.query(`SELECT id FROM organizations`, (err, rows, fields) => {
+            if (err) { return reply(Boom.badRequest("error selecting organizations in updateConfig")); }
+            if (request.params.id) {
+                var numRes = rows.length;
+                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
+
+                //console.log("request.payload.tag: ", request.payload.tag);
+                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+
+                //get existing tag
+                connection.query(`SELECT tags FROM organizations WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error selecting tag from organization")); }
+                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                    if (rowsToJS(rows[0].tags) !== null) {
+                        var currenttag = JSON.parse(rows[0].tags);
+                    } else {
+                        var currenttag = [];
+                    }
+
+                    currenttag.push(receivedtag);
+
+                    connection.query(`UPDATE organizations SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest("error adding tag to organization")); }
+                        return reply({ statusCode: 201 });
+
+                    });
+
+                });
+
+
+
+            } else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+
+            }
+        });
+    }
+
+};
+
 //var postQuizController = require('../../controllers/organizations/post-quiz-organization').postQuiz;
 
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizOrganizations;
@@ -677,6 +720,8 @@ module.exports = [
     { path: '/orgs/{id}', method: 'DELETE', config: orgController.deleteConfig },
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
     { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
-    { path: '/quiz/orgs', method: 'POST', config: postQuizController }
+    { path: '/quiz/orgs', method: 'POST', config: postQuizController },
+    { path: '/orgs/addtag/{id}', method: 'PUT', config: orgController.addTagConfig }
+
 
 ];

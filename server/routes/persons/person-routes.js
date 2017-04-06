@@ -654,6 +654,49 @@ personController.editConfig = {
 
 }
 
+personController.addTagConfig = {
+    //auth:
+    handler: function(request, reply) {
+        connection.query(`SELECT id FROM persons`, (err, rows, fields) => {
+            if (err) { return reply(Boom.badRequest("error selecting persons in updateConfig")); }
+            if (request.params.id) {
+                var numRes = rows.length;
+                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
+
+                //console.log("request.payload.tag: ", request.payload.tag);
+                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+
+                //get existing tag
+                connection.query(`SELECT tags FROM persons WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error selecting tag from person")); }
+                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                    if (rowsToJS(rows[0].tags) !== null) {
+                        var currenttag = JSON.parse(rows[0].tags);
+                    } else {
+                        var currenttag = [];
+                    }
+
+                    currenttag.push(receivedtag);
+
+                    connection.query(`UPDATE persons SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest("error adding tag to person")); }
+                        return reply({ statusCode: 201 });
+
+                    });
+
+                });
+
+
+
+            } else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+
+            }
+        });
+    }
+
+};
+
 //var postQuizController = require('../../controllers/persons/post-quiz-person').postQuiz;
 
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizPersons;
@@ -668,6 +711,8 @@ module.exports = [
     { path: '/person/{id}', method: 'DELETE', config: personController.deleteConfig },
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
     { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
-    { path: '/quiz/person', method: 'POST', config: postQuizController }
+    { path: '/quiz/person', method: 'POST', config: postQuizController },
+    { path: '/person/addtag/{id}', method: 'PUT', config: personController.addTagConfig }
+
 
 ];
