@@ -664,7 +664,9 @@ orgController.editConfig = {
         } //end handler  
 };
 
-var postQuizController = require('../../controllers/organizations/post-quiz-organization').postQuiz;
+//var postQuizController = require('../../controllers/organizations/post-quiz-organization').postQuiz;
+
+var postQuizController = require('../../controllers/post-quiz-then-get').postQuizOrganizations;
 var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedorganizations;
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
 

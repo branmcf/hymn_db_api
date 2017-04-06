@@ -616,7 +616,9 @@ congController.editConfig = {
         } //end handler  
 };
 
-var postQuizController = require('../../controllers/congregations/post-quiz-congregation').postQuiz;
+//var postQuizController = require('../../controllers/congregations/post-quiz-congregation').postQuiz;
+
+var postQuizController = require('../../controllers/post-quiz-then-get').postQuizCongregations;
 var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedcongregations;
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
 
