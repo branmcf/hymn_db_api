@@ -616,6 +616,49 @@ congController.editConfig = {
         } //end handler  
 };
 
+congController.addTagConfig = {
+    //auth:
+    handler: function(request, reply) {
+        connection.query(`SELECT id FROM congregations`, (err, rows, fields) => {
+            if (err) { return reply(Boom.badRequest("error selecting congregations in updateConfig")); }
+            if (request.params.id) {
+                var numRes = rows.length;
+                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
+
+                //console.log("request.payload.tag: ", request.payload.tag);
+                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+
+                //get existing tag
+                connection.query(`SELECT tags FROM congregations WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error selecting tag from congregation")); }
+                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                    if (rowsToJS(rows[0].tags) !== null) {
+                        var currenttag = JSON.parse(rows[0].tags);
+                    } else {
+                        var currenttag = [];
+                    }
+
+                    currenttag.push(receivedtag);
+
+                    connection.query(`UPDATE congregations SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest("error adding tag to congregation")); }
+                        return reply({ statusCode: 201 });
+
+                    });
+
+                });
+
+
+
+            } else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+
+            }
+        });
+    }
+
+};
+
 //var postQuizController = require('../../controllers/congregations/post-quiz-congregation').postQuiz;
 
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizCongregations;
@@ -630,6 +673,8 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
+    { path: '/congregation/addtag/{id}', method: 'PUT', config: congController.addTagConfig }
+
 
 
 ];

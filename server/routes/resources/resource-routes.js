@@ -503,17 +503,31 @@ resourceController.editConfig = {
             } else if (typeof justResource.is_free !== "number") {
                 justResource.is_free = 2;
             }
+            connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
+                if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
+                if (req.params.id) {
 
-            var query = connection.query(`
-      UPDATE resources SET ?
-      WHERE ?`, [justResource, { id: req.params.id }], function(err, rows, fields) {
-                if (err) {
-                    return reply(Boom.badRequest(`invalid query when updating resources with id= ${req.params.id} `));
-                } else {
-                    console.log("set resource #", req.params.id);
+                    var numRes = rows.length;
+
+                    if (numRes < req.params.id) {
+                        return reply(Boom.notFound("Not enough resources in database for this id, id is invalid"));
+
+                    }
+                    var query = connection.query(`
+                        UPDATE resources SET ?
+                        WHERE ?`, [justResource, { id: req.params.id }], function(err, rows, fields) {
+                        if (err) {
+                            return reply(Boom.badRequest(`invalid query when updating resources with id= ${req.params.id} `));
+                        } else {
+                            //console.log("set resource #", req.params.id);
+                        }
+
+                        return reply({ statusCode: 201 });
+                    });
+                } //end "if there is an id" in the parameters
+                else {
+                    return reply(Boom.notFound("must supply and id as a parameter"));
                 }
-
-                return reply({ statusCode: 201 });
             });
 
         }
@@ -545,120 +559,95 @@ resourceController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
 
-        if (request.params.id) {
-            if (numRes <= request.params.id - 1) {
-                //return reply('Not enough resources in the database for your request').code(404);
-                return reply(Boom.notFound());
-            }
-            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-            var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
+            connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
+                if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
+                if (request.params.id) {
 
-            var mysqlIndex = Number(request.params.id);
+                    var numRes = rows.length;
 
-            var theCol = request.payload.column;
-            var theVal = request.payload.value;
-
-            if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
-
-            var query = connection.query(`
-            UPDATE resources SET ?
-            WHERE ?`, [{
-                [theCol]: theVal
-            }, { id: mysqlIndex }], function(err, rows, fields) {
-                if (err) {
-                    return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
-                } else {
-                    console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
-                }
-
-                return reply({ statusCode: 201 });
-            });
-
-            //return reply(resources[actualId]);
-        }
-
-
-    }
-};
-
-resourceController.getApprovedTypeConfig = {
-    handler: function(request, reply) {
-
-            connection.query(`SELECT * from resources`, function(err, rows, fields) {
-                if (err) { return reply(Boom.badRequest()); }
-
-                var JSObj = rowsToJS(rows);
-                //var JSObj = rows;
-
-                resources = [];
-                //resTypes = [];
-                resCategories = [];
-                resTopics = [];
-                resAcc = [];
-                resLanguages = [];
-                resTags = [];
-                resEnsembles = [];
-                resEth = [];
-                resDenominations = [];
-                resInstruments = [];
-
-                resources = JSObj;
-                numRes = resources.length;
-
-                for (var i = 0; i < JSObj.length; i++) {
-                    popArray(JSObj[i]["ethnicities"], resEth);
-                    popArray(JSObj[i]["categories"], resCategories);
-                    popArray(JSObj[i]["topics"], resTopics);
-                    popArray(JSObj[i]["accompaniment"], resAcc);
-                    popArray(JSObj[i]["languages"], resLanguages);
-                    popArray(JSObj[i]["ensembles"], resEnsembles);
-                    popArray(JSObj[i]["tags"], resTags);
-                    popArray(JSObj[i]["instruments"], resInstruments);
-                    popArray(JSObj[i]["denominations"], resDenominations);
-
-                    resEth_all.push(resEth);
-                    resCategories_all.push(resCategories);
-                    resTopics_all.push(resTopics);
-                    resAcc_all.push(resAcc);
-                    resLanguages_all.push(resLanguages);
-                    resEnsembles_all.push(resEnsembles);
-                    resTags_all.push(resTags);
-                    resInstruments_all.push(resInstruments);
-                    resDenominations_all.push(resDenominations);
-                    //popArray(JSObj[i]["types"], resTypes);
-
-                }
-                //console.log(resEth_all);
-
-                //if no ID specified
-                var objToReturn = [];
-                var theType = request.params.type.toLowerCase();
-
-                for (var i = 0; i < resources.length; i++) {
-                    //var bob = formatResource(i);
-                    if (resources[i].type == null) { continue; }
-                    if (resources[i].approved == 1 && resources[i].type.toLowerCase() == theType) {
-
-                        var str = formatResource(i);
-                        objToReturn.push(str);
+                    if (numRes <= request.params.id - 1) {
+                        //return reply('Not enough resources in the database for your request').code(404);
+                        return reply(Boom.notFound());
                     }
-                } //end for
+                    //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
+                    var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
 
-                //console.log(objToReturn);
-                if (objToReturn.length <= 0) {
-                    return reply(Boom.badRequest("nothing to return, nothing is approved"));
-                } else {
-                    reply(objToReturn);
+                    var mysqlIndex = Number(request.params.id);
+
+                    var theCol = request.payload.column;
+                    var theVal = request.payload.value;
+
+                    if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+
+                    var query = connection.query(`
+                    UPDATE resources SET ?
+                    WHERE ?`, [{
+                        [theCol]: theVal
+                    }, { id: mysqlIndex }], function(err, rows, fields) {
+                        if (err) {
+                            return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+                        } else {
+                            console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                        }
+
+                        return reply({ statusCode: 201 });
+                    });
+
+                    //return reply(resources[actualId]);
+                } //end if id is supplied
+                else {
+                    return reply(Boom.notFound("must supply and id as a parameter"));
                 }
-
-
             });
+
 
 
 
         } //end handler
+};
 
-}
+resourceController.addTagConfig = {
+    //auth:
+    handler: function(request, reply) {
+        connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
+            if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
+            if (request.params.id) {
+                var numRes = rows.length;
+                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
+
+                //console.log("request.payload.tag: ", request.payload.tag);
+                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+
+                //get existing tag
+                connection.query(`SELECT tags FROM resources WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error selecting tag from resource")); }
+                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                    if (rowsToJS(rows[0].tags) !== null) {
+                        var currenttag = JSON.parse(rows[0].tags);
+                    } else {
+                        var currenttag = [];
+                    }
+
+                    currenttag.push(receivedtag);
+
+                    connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest("error adding tag to resource")); }
+                        return reply({ statusCode: 201 });
+
+                    });
+
+                });
+
+
+
+            } else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+
+            }
+        });
+    }
+
+};
 
 //var postQuizController = require('../../controllers/resources/post-quiz-resource').postQuiz;
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizResources;
@@ -678,5 +667,7 @@ module.exports = [
     { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig },
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
-    { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType }
+    { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType },
+    { path: '/resource/addtag/{id}', method: 'PUT', config: resourceController.addTagConfig },
+
 ];

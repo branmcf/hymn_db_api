@@ -712,7 +712,50 @@ eventController.editConfig = {
 
 
     }
-}
+};
+
+eventController.addTagConfig = {
+    //auth:
+    handler: function(request, reply) {
+        connection.query(`SELECT id FROM events`, (err, rows, fields) => {
+            if (err) { return reply(Boom.badRequest("error selecting events in updateConfig")); }
+            if (request.params.id) {
+                var numRes = rows.length;
+                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
+
+                //console.log("request.payload.tag: ", request.payload.tag);
+                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+
+                //get existing tag
+                connection.query(`SELECT tags FROM events WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error selecting tag from event")); }
+                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                    if (rowsToJS(rows[0].tags) !== null) {
+                        var currenttag = JSON.parse(rows[0].tags);
+                    } else {
+                        var currenttag = [];
+                    }
+
+                    currenttag.push(receivedtag);
+
+                    connection.query(`UPDATE events SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest("error adding tag to event")); }
+                        return reply({ statusCode: 201 });
+
+                    });
+
+                });
+
+
+
+            } else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+
+            }
+        });
+    }
+
+};
 
 //var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
 
@@ -728,5 +771,7 @@ module.exports = [
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
     { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
     { path: '/quiz/event', method: 'POST', config: postQuizController },
+    { path: '/event/addtag/{id}', method: 'PUT', config: eventController.addTagConfig }
+
 
 ];
