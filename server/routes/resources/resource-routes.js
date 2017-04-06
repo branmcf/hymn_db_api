@@ -430,6 +430,9 @@ resourceController.editConfig = {
 
 
             var theData = {
+                user_id: req.payload.uid,
+                user: req.payload.user,
+
                 name: req.payload.data.title,
                 type: req.payload.data.type,
                 website: req.payload.data.url,
@@ -443,8 +446,6 @@ resourceController.editConfig = {
                 country: req.payload.data.country,
                 high_level: req.payload.data.high_level,
                 is_active: 1,
-                user_id: req.payload.uid,
-                user: req.payload.user,
                 pract_schol: req.payload.data.pract_schol,
                 //approved not included because by default it is not approved
 
