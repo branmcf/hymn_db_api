@@ -661,7 +661,8 @@ resourceController.getApprovedTypeConfig = {
 }
 
 //var postQuizController = require('../../controllers/resources/post-quiz-resource').postQuiz;
-var postQuizController = require('../../controllers/post-quiz-then-get').postQuizResources;;
+var postQuizController = require('../../controllers/post-quiz-then-get').postQuizResources;
+var postQuizControllerType = require('../../controllers/post-quiz-then-get').postQuizResourcesType;
 
 var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
@@ -676,5 +677,6 @@ module.exports = [
     { path: '/resource/{id}', method: 'PUT', config: resourceController.editConfig },
     { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig },
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
+    { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType }
 ];

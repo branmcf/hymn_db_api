@@ -43,7 +43,7 @@ function checkForTrue(obj, callback) {
             }
         }
     }
-    callback(null, tempArray)
+    return callback(null, tempArray)
 }
 
 module.exports.postQuizResources = {
@@ -57,27 +57,48 @@ module.exports.postQuizResources = {
 
 module.exports.postQuizPersons = {
     handler: function(request, reply) {
-            getQuizAndReturnResults("persons", request, reply);
+            getQuizAndReturnResults("persons", request, (err, results) => {
+                if (err) { return reply(Boom.badRequest("error getting results from persons")); }
+                return reply(results);
+            });
         } //end handler
 };
 
 module.exports.postQuizOrganizations = {
     handler: function(request, reply) {
-            getQuizAndReturnResults("organizations", request, reply);
+            getQuizAndReturnResults("organizations", request, (err, results) => {
+                if (err) { return reply(Boom.badRequest("error getting results from organizations")); }
+                return reply(results);
+            });
         } //end handler
 };
 
 module.exports.postQuizCongregations = {
     handler: function(request, reply) {
-            getQuizAndReturnResults("congregations", request, reply);
+            getQuizAndReturnResults("congregations", request, (err, results) => {
+                if (err) { return reply(Boom.badRequest("error getting results from congregations")); }
+                return reply(results);
+            });
         } //end handler
 };
 
 module.exports.postQuizEvents = {
     handler: function(request, reply) {
-            getQuizAndReturnResults("events", request, reply);
+            getQuizAndReturnResults("events", request, (err, results) => {
+                if (err) { return reply(Boom.badRequest("error getting results from events")); }
+                return reply(results);
+            });
         } //end handler
 };
+
+module.exports.postQuizResourcesType = {
+    handler: function(request, reply) {
+            getQuizAndReturnResultsType("resources", request, request.params.type, (err, results) => {
+                if (err) { return reply(Boom.badRequest(`no resources of type= ${request.params.type}`)); }
+                return reply(results);
+            });
+        } //end handler
+}
 
 
 /*
@@ -194,8 +215,8 @@ function getQuizAndReturnResults(whichTable, request, callback) {
     var query = connection.query(`SELECT 
 			id, ${colsToSelect}
 			FROM ${whichTable} WHERE approved = 1`, (err, rows, fields) => {
-        if (err) { callback(err, null); }
-        if (rows.length <= 0) { callback(null, null); }
+        if (err) { return callback(err, null); }
+        if (rows.length <= 0) { return callback(true, null); }
         var jsobj = rowsToJS(rows);
 
         var tempArray = [];
@@ -429,18 +450,23 @@ function getQuizAndReturnResults(whichTable, request, callback) {
 
         //if there are 0 matching resources
         if (toReturn.length <= 0) {
-            callback(null, null);
+            return callback(true, null);
         }
 
         var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in ?`, [
             [toReturn]
         ], (err, rows, fields) => {
-            if (err) { callback(err, null); }
+            if (err) { return callback(err, null); }
             var jsobj = rowsToJS(rows);
+
+            for (var i in jsobj) {
+                jsobj[i] = formatResource(jsobj[i], whichTable);
+            }
 
             var toReturn = [];
             for (var i in jsobj) {
-                var toPush = formatJSON(jsobj[i]);
+
+                var toPush = formatJSONColumns(jsobj[i]);
                 //below: reformating the tinyint values so that frontend can simply return and display
                 if (toPush.hymn_soc_member)
                     toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
@@ -459,12 +485,445 @@ function getQuizAndReturnResults(whichTable, request, callback) {
             }
 
             //console.log(jsobj);
-            callback(null, toReturn);
+            return callback(null, toReturn);
         });
 
 
 
     });
+} //end first function
+
+function getQuizAndReturnResultsType(whichTable, request, res_type, callback) {
+
+    //1. Receive quiz request
+
+    //2. create seperate arrays for 
+    //categories, instruments, ensembles and ethnicities which will be
+    //cross-referenced with resources' attributes
+
+    //3. A dictionary will be created that maps the resourceID -> number of matches from step 2)
+
+    //4. After all resources have been checked, loop thru dict (from step 4), return top 5 matches
+
+    //1,2:
+
+    var receivedQuiz = request.payload.quiz;
+
+    var quiz_categories = [];
+    var quiz_instruments = [];
+    var quiz_ensembles = [];
+    var quiz_ethnicities = [];
+
+    var quiz_shape = [];
+    var quiz_clothing = [];
+    var quiz_size = [];
+
+    var resID_dict = {};
+
+    checkForTrue(receivedQuiz["categories"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_categories.push(valuesToPush[i]);
+        } else { console.log("no categories received"); }
+    });
+    checkForTrue(receivedQuiz["ethnicities"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_ethnicities.push(valuesToPush[i]);
+        } else { console.log("no ethnicities received"); }
+    });
+    checkForTrue(receivedQuiz["instruments"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_instruments.push(valuesToPush[i]);
+        } else { console.log("no instruments received"); }
+    });
+    checkForTrue(receivedQuiz["ensembles"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_ensembles.push(valuesToPush[i]);
+        } else { console.log("no ensembles received"); }
+    });
+    checkForTrue(receivedQuiz["shape"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_shape.push(valuesToPush[i]);
+        } else { console.log("no shape received"); }
+    });
+    checkForTrue(receivedQuiz["clothing"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_clothing.push(valuesToPush[i]);
+        } else { console.log("no clothing received"); }
+    });
+    checkForTrue(receivedQuiz["size"], (err, valuesToPush) => {
+        if (err) { throw err; }
+        if (valuesToPush.length > 0) {
+            for (var i in valuesToPush)
+                quiz_size.push(valuesToPush[i]);
+        } else { console.log("no size received"); }
+    });
+
+    //console.log("ensembles: ", quiz_ensembles);
+
+    //now step 1 and 2 are complete, commence step 2b, which is
+    //select * approved resources, go through rows, parse categories, topics, etc
+    //into temporary arrays which will be cross-referenced with quiz_categories, etc.
+
+    var colsToSelect = [];
+    switch (whichTable) {
+        case ("resources"):
+            colsToSelect = ["categories", "topics", "accompaniment", "ensembles", "ethnicities"];
+            break;
+        case ("persons"):
+            colsToSelect = ["topics", "ensembles", "ethnicities", "instruments", "categories"];
+            break;
+        case ("organizations"):
+            colsToSelect = ["clothing", "ethnicities", "instruments", "categories", "shape"];
+            break;
+        case ("congregations"):
+            colsToSelect = ["clothing", "ethnicities", "instruments", "categories", "shape"];
+        case ("events"):
+            colsToSelect = ["clothing", "ethnicities", "ensembles", "shape"];
+            break;
+        default:
+            //for default, just get them recommended resources...
+            console.log("INVALID TABLENAME SENT IN post-quiz-then-get.js");
+            colsToSelect = ["categories", "topics", "accompaniment", "ensembles", "ethnicities"];
+            break;
+    }
+
+    var whichTypes = [];
+    whichTypes.push(String(res_type).toLowerCase());
+    whichTypes.push(String(res_type.charAt(0).toUpperCase() + res_type.slice(1)));
+    //console.log("whichTypes: ", whichTypes);
+
+    var query = connection.query(`SELECT 
+			id, ${colsToSelect}
+			FROM ${whichTable} WHERE approved = 1 AND type in ?`, [
+        [whichTypes]
+    ], (err, rows, fields) => {
+        if (err) { return callback(err, null); } else if (!rows || rows.length <= 0) {
+            return callback(true, null);
+        }
+
+        var jsobj = rowsToJS(rows);
+        //console.log("rows: ", rows);
+
+        var tempArray = [];
+        //var colsToSelect = ["categories", "topics", "accompaniment", "ensembles", "ethnicities"];
+        for (var i in jsobj) { //loop thru every resource
+            for (var whichCol in colsToSelect) { //loop through every column (see the array 2 lines above...)
+                var currentCol = colsToSelect[whichCol];
+                jsobj[i][currentCol] = JSON.parse(jsobj[i][currentCol]);
+
+                for (var key in jsobj[i][currentCol]) { //loop through every element of the current column
+                    //console.log(key, " -> ", jsobj[i][currentCol][key]);
+                    if (jsobj[i][currentCol].hasOwnProperty(key)) {
+                        var theVal = jsobj[i][currentCol][key]; //the corresponding value to the key:value pair that is either true, false, or a string (for other)
+                        if (key == 'Other' || key == 'other') {
+                            tempArray.push(jsobj[i][currentCol][key]);
+                        } else if (theVal == 'True' || theVal == true || theVal == 'true' || theVal == 1) {
+
+                            key = key.replace(/_/g, " ");
+                            //console.log(key, " -> ", theVal);
+                            tempArray.push(key);
+                            //add to dictionary if there is a match
+                            if (currentCol == "categories" || currentCol == "topics") {
+                                for (var j in quiz_categories) {
+                                    if (quiz_categories[j] == key) {
+                                        //console.log("matching ", currentCol);
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "accompaniment") {
+                                for (var j in quiz_instruments) {
+                                    if (quiz_instruments[j] == key) {
+                                        if (jsobj[i].id in resID_dict) {
+                                            //console.log("matching instrument");
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "ensembles") {
+                                for (var j in quiz_ensembles) {
+                                    if (quiz_ensembles[j] == key) {
+                                        if (jsobj[i].id in resID_dict) {
+                                            //console.log("matching ensemble");
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "ethnicities") {
+                                for (var j in quiz_ethnicities) {
+                                    if (quiz_ethnicities[j] == key) {
+                                        //console.log("matching ethnicity");
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "shape") {
+                                for (var j in quiz_shape) {
+                                    if (quiz_shape[j] == key) {
+                                        //console.log("matching ethnicity");
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "clothing") {
+                                for (var j in quiz_clothing) {
+                                    if (quiz_clothing[j] == key) {
+                                        //console.log("matching ethnicity");
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "size") {
+                                for (var j in quiz_size) {
+                                    if (quiz_size[j] == key) {
+                                        //console.log("matching ethnicity");
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            } else if (currentCol == "instruments" || currentCol == "accompaniment") {
+                                for (var j in quiz_instruments) {
+                                    if (quiz_instruments[j] == key) {
+                                        //console.log("matching ethnicity");
+                                        if (jsobj[i].id in resID_dict) {
+                                            resID_dict[jsobj[i].id] = resID_dict[jsobj[i].id] + 1;
+                                        } else {
+                                            //console.log("doesn't exist yet, so create...");
+                                            resID_dict[jsobj[i].id] = 1;
+                                        }
+                                    }
+                                }
+                            }
+
+                        } else {
+                            //false, dont add...
+                        }
+                    }
+                } //now we are done looping thru a certain column for a single resource
+                //tempArray = [];
+
+
+
+            } //done looping thru a column
+            //tempArray = [];
+
+        } //end looping thru every resource
+
+        //console.log("dict: ", resID_dict);
+
+        //loop thru resID_dict, get top 5
+        var top_5_dict = {
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            '5': 0
+        };
+
+        var top_5_array = [];
+
+        //below for loop just initializes the top_5_array to the default values of the current top_5_dict
+        for (var top5_key in top_5_dict) {
+            if (top_5_dict.hasOwnProperty(top5_key)) {
+                top_5_array.push({
+                    [top5_key]: top_5_dict[top5_key]
+                });
+            }
+
+        } //top_5_array has been initialized
+
+        //console.log("initial array: ", top_5_array);
+
+
+        for (var key in resID_dict) {
+            if (resID_dict.hasOwnProperty(key)) {
+                var freqNum = resID_dict[key]; //number to check
+
+                //now we want to loop through the 5 elements in the top_5 dictionary
+
+                var key1 = 0;
+                var key2 = 0;
+                var key3 = 0;
+                var key4 = 0;
+                var key5 = 0;
+
+                key1 = Object.keys(top_5_array[0]);
+                key2 = Object.keys(top_5_array[1]);
+                key3 = Object.keys(top_5_array[2]);
+                key4 = Object.keys(top_5_array[3]);
+                key5 = Object.keys(top_5_array[4]);
+
+                //TODO: narrow this if statement collection down 
+                if (freqNum > top_5_array[0][key1]) {
+                    top_5_array[4] = top_5_array[3]; //last element is popped off, replace with 2nd to last element
+                    top_5_array[3] = top_5_array[2]; //and continue...
+                    top_5_array[2] = top_5_array[1];
+                    top_5_array[1] = top_5_array[0];
+                    top_5_array[0] = {
+                        [key]: freqNum
+                    }; //store the KEY, not the freNum because top_5 is keeping track
+                    continue;
+                } else if (freqNum > top_5_array[1][key2]) {
+                    top_5_array[4] = top_5_array[3];
+                    top_5_array[3] = top_5_array[2];
+                    top_5_array[2] = top_5_array[1];
+                    top_5_array[1] = {
+                        [key]: freqNum
+                    };
+                    continue;
+                } else if (freqNum > top_5_array[2][key3]) {
+                    top_5_array[4] = top_5_array[3];
+                    top_5_array[3] = top_5_array[2];
+                    top_5_array[2] = {
+                        [key]: freqNum
+                    };
+                    continue;
+                } else if (freqNum > top_5_array[3][key4]) {
+                    top_5_array[4] = top_5_array[3];
+                    top_5_array[3] = {
+                        [key]: freqNum
+                    };
+                    continue;
+                } else if (freqNum > top_5_array[4][key5]) {
+                    top_5_array[4] = {
+                        [key]: freqNum
+                    };
+                    continue;
+                } else {
+                    //do nothing because the number to check is smaller than OR OR EQUAL TO any of those in the top_5 array
+                }
+            }
+        } //end for loop that goes thru resID_dict
+
+        //now we have an array with the top_5 results...
+
+        var toReturn = [];
+        for (var i = 0; i < top_5_array.length; i++) {
+            //check to see if the current key's value is greater than 0 (why? because,
+            //we initialized the array to contain values of 0)..
+            if (top_5_array[i][Object.keys(top_5_array[i])] > 0) {
+                toReturn.push(Number(Object.keys(top_5_array[i])));
+
+            }
+        }
+
+        //if there are 0 matching resources
+        if (toReturn.length <= 0) {
+            return callback(true, null);
+        }
+
+        var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in ?`, [
+            [toReturn]
+        ], (err, rows, fields) => {
+            if (err) { return callback(err, null); }
+            var jsobj = rowsToJS(rows);
+
+            for (var i in jsobj) {
+                jsobj[i] = formatResource(jsobj[i], whichTable);
+            }
+
+            var toReturn = [];
+            for (var i in jsobj) {
+
+                var toPush = formatJSONColumns(jsobj[i]);
+                console.log("t: ", toPush.is_org_free);
+                //below: reformating the tinyint values so that frontend can simply return and display
+                if (toPush.hymn_soc_member)
+                    toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                if (toPush.is_free)
+                    toPush.is_free = reformatFree(toPush.is_free);
+                if (toPush.pract_schol)
+                    toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+                if (toPush.is_org_free)
+                    toPush.is_org_free = reformatFree(toPush.is_org_free);
+                if (toPush.events_free)
+                    toPush.events_free = reformatFree(toPush.events_free);
+                if (toPush.membership_free)
+                    toPush.membership_free = reformatFree(toPush.membership_free);
+
+                toReturn.push(toPush);
+            }
+
+            //console.log(jsobj);
+            return callback(null, toReturn);
+        });
+
+
+
+    });
+    //console.log("query: ", query.sql);
+
+}
+
+
+
+function formatResource(toFormat, whichTable) {
+    toFormat["url"] = toFormat["website"];
+    delete toFormat["website"];
+
+    switch (whichTable) {
+        case ("resources"):
+            toFormat["title"] = toFormat["name"];
+            delete toFormat["name"];
+            break;
+        case ("persons"):
+            break;
+        case ("organizations"):
+            toFormat["geographic_area"] = toFormat["geography"];
+            toFormat["is_org_free"] = toFormat["is_free"];
+            delete toFormat["geography"];
+            delete toFormat["is_free"];
+            break;
+        case ("events"):
+            toFormat["title"] = toFormat["name"];
+            delete toFormat["name"];
+            break;
+        case ("congregations"):
+            break;
+        default:
+            console.log("table name sent to formatResource()");
+            break;
+    }
+
+    return toFormat;
 }
 
 function reformatTinyInt(toFormat) {
@@ -513,7 +972,7 @@ function rowsToJS(theArray) {
 }
 
 
-function formatJSON(resource) {
+function formatJSONColumns(resource) {
     var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
     for (var i in json_columns) {
         if (resource[json_columns[i]]) { //if it exists...
