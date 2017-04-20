@@ -44,7 +44,7 @@ function rowsToJS(theArray) {
 function getOrganizationsJSON() {
     //get orgs from db
     connection.query('SELECT * from organizations', function(err, rows, fields) {
-        if (err) { console.log('Error while performing orgs Query.'); throw err; } else {
+        if (err) { throw err; } else {
 
             orgs = [];
             orgCategories = [];
@@ -144,20 +144,15 @@ function insertOrganization(theObj) {
 
     // TYPE CONVERSION
     if (typeof justOrganization.hymn_soc_member == "string") {
-        if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
-            justOrganization.hymn_soc_member = false;
+        if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No" || justOrganization.hymn_soc_member == "false" || justOrganization.hymn_soc_member == "False") {
+            justOrganization.hymn_soc_member = 0;
+        } else if (justOrganization.hymn_soc_member == "partially") {
+            justOrganization.hymn_soc_member = 2;
         } else {
-            justOrganization.hymn_soc_member = true;
+            justOrganization.hymn_soc_member = 1;
         }
-    } else if (typeof justOrganization.hymn_soc_member == "number") {
-        if (justOrganization.hymn_soc_member == 0) {
-            justOrganization.hymn_soc_member = false;
-        } else {
-            justOrganization.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justOrganization.hymn_soc_member = false;
+    } else if (typeof justOrganization.hymn_soc_member !== "number") {
+        justOrganization.hymn_soc_member = 2;
     }
 
     if (typeof justOrganization.is_free == "string") {
@@ -456,12 +451,12 @@ orgController.updateConfig = {
                 [theCol]: theVal
             }, { id: mysqlIndex }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
                     getOrganizationsJSON();
-                    console.log(query.sql);
-                    console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                    //console.log(query.sql);
+                    //console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
 
                 return reply({ statusCode: 201 });
@@ -580,7 +575,7 @@ orgController.editConfig = {
 
             };
 
-            var justOrganization = JSON.parse(JSON.stringify(theObj));
+            var justOrganization = JSON.parse(JSON.stringify(newOrg));
 
             justOrganization.categories = JSON.stringify(justOrganization.categories);
             justOrganization.ethnicities = JSON.stringify(justOrganization.ethnicities);
@@ -592,20 +587,15 @@ orgController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justOrganization.hymn_soc_member == "string") {
-                if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
-                    justOrganization.hymn_soc_member = false;
+                if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No" || justOrganization.hymn_soc_member == "false" || justOrganization.hymn_soc_member == "False") {
+                    justOrganization.hymn_soc_member = 0;
+                } else if (justOrganization.hymn_soc_member == "partially") {
+                    justOrganization.hymn_soc_member = 2;
                 } else {
-                    justOrganization.hymn_soc_member = true;
+                    justOrganization.hymn_soc_member = 1;
                 }
-            } else if (typeof justOrganization.hymn_soc_member == "number") {
-                if (justOrganization.hymn_soc_member == 0) {
-                    justOrganization.hymn_soc_member = false;
-                } else {
-                    justOrganization.hymn_soc_member = true;
-                }
-            } else {
-                //neither a string nor Number
-                justOrganization.hymn_soc_member = false;
+            } else if (typeof justOrganization.hymn_soc_member !== "number") {
+                justOrganization.hymn_soc_member = 2;
             }
 
             if (typeof justOrganization.is_free == "string") {

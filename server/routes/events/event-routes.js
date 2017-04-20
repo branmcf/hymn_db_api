@@ -134,21 +134,14 @@ function insertEvent(theObj) {
     //console.log("\n\njustEvent: \n\n", justEvent);
 
     // TYPE CONVERSION
-    if (typeof justEvent.hymn_soc_member == "string") {
-        if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
-            justEvent.hymn_soc_member = false;
+    if (typeof justEvent.hymn_soc_member == "string" || justEvent.hymn_soc_member !== undefined) {
+        if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "false" || justEvent.hymn_soc_member == "False") {
+            justEvent.hymn_soc_member = 0;
+        } else if (justEvent.hymn_soc_member == "Yes" || justEvent.hymn_soc_member == "yes" || justEvent.hymn_soc_member == "True" || justEvent.hymn_soc_member == "true") {
+            justEvent.hymn_soc_member = 1;
         } else {
-            justEvent.hymn_soc_member = true;
+            justEvent.hymn_soc_member = 0;
         }
-    } else if (typeof justEvent.hymn_soc_member == "number") {
-        if (justEvent.hymn_soc_member == 0) {
-            justEvent.hymn_soc_member = false;
-        } else {
-            justEvent.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justEvent.hymn_soc_member = false;
     }
 
     if (justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
@@ -622,7 +615,7 @@ eventController.editConfig = {
         }
 
         // DATE FORMATTING
-        if (newEvent.event_date !== null) {
+        if (newEvent.event_date !== undefined) {
             var fixed_date_1 = newEvent.event_date.toString().slice(0, 4);
             var fixed_date_2 = newEvent.event_date.toString().slice(5, 7);
             var fixed_date_3 = newEvent.event_date.toString().slice(8, 10);
@@ -636,7 +629,7 @@ eventController.editConfig = {
             newEvent.event_date = str;
         }
 
-        if (newEvent.event_end_date !== null) {
+        if (newEvent.event_end_date !== undefined) {
             var fixed_date_1 = newEvent.event_end_date.toString().slice(0, 4);
             var fixed_date_2 = newEvent.event_end_date.toString().slice(5, 7);
             var fixed_date_3 = newEvent.event_end_date.toString().slice(8, 10);
@@ -651,7 +644,7 @@ eventController.editConfig = {
         }
         // END DATE FORMATTING
 
-        var justEvent = JSON.parse(JSON.stringify(theObj));
+        var justEvent = JSON.parse(JSON.stringify(newEvent));
 
         justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
         justEvent.tags = JSON.stringify(justEvent.tags);
@@ -663,34 +656,27 @@ eventController.editConfig = {
 
         // TYPE CONVERSION
         if (typeof justEvent.hymn_soc_member == "string") {
-            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
-                justEvent.hymn_soc_member = false;
+            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No" || justEvent.hymn_soc_member == "False" || justEvent.hymn_soc_member == "false") {
+                justEvent.hymn_soc_member = 0;
+            } else if (justEvent.hymn_soc_member == "yes" || justEvent.hymn_soc_member == "Yes" || justEvent.hymn_soc_member == "True" || justEvent.hymn_soc_member == "true") {
+                justEvent.hymn_soc_member = 1;
             } else {
-                justEvent.hymn_soc_member = true;
-            }
-        } else if (typeof justEvent.hymn_soc_member == "number") {
-            if (justEvent.hymn_soc_member == 0) {
-                justEvent.hymn_soc_member = false;
-            } else {
-                justEvent.hymn_soc_member = true;
+                justEvent.hymn_soc_member = 2;
             }
         } else {
-            //neither a string nor Number
-            justEvent.hymn_soc_member = false;
+            justEvent.hymn_soc_member = 0;
         }
 
-        if (justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
-            if (typeof justEvent.is_free == "string") {
-                if (justEvent.is_free == "yes" || justEvent.is_free == "Yes") {
-                    justEvent.is_free = 1;
-                } else if (justEvent.is_free == "no" || justEvent.is_free == "No") {
-                    justEvent.is_free = 0;
-                } else {
-                    justEvent.is_free = 2;
-                }
-            } else if (typeof justEvent.is_free !== "number") {
+        if (typeof justEvent.is_free == "string") {
+            if (justEvent.is_free == "no" || justEvent.is_free == "No" || justEvent.is_free == "False" || justEvent.is_free == "false") {
+                justEvent.is_free = 0;
+            } else if (justEvent.is_free == "yes" || justEvent.is_free == "Yes" || justEvent.is_free == "True" || justEvent.is_free == "true") {
+                justEvent.is_free = 1;
+            } else {
                 justEvent.is_free = 2;
             }
+        } else {
+            justEvent.is_free = 0;
         }
 
         if (typeof justEvent.cost !== "string") {
@@ -704,7 +690,7 @@ eventController.editConfig = {
             if (err) {
                 return reply(Boom.badRequest(`invalid query when updating events with id = ${req.params.id} `));
             } else {
-                console.log("edited event #", req.params.id);
+                //console.log("edited event #", req.params.id);
             }
 
             return reply({ statusCode: 201 });

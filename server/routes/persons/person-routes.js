@@ -150,20 +150,21 @@ function insertPerson(theObj) {
 
     // TYPE CONVERSION
     if (typeof justPerson.hymn_soc_member == "string") {
-        if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
-            justPerson.hymn_soc_member = false;
+        if (justPerson.hymn_soc_member == "yes" || justPerson.hymn_soc_member == "Yes" || justPerson.hymn_soc_member == "true" || justPerson.hymn_soc_member == "True") {
+            justPerson.hymn_soc_member = 1;
         } else {
-            justPerson.hymn_soc_member = true;
+            justPerson.hymn_soc_member = 0;
         }
-    } else if (typeof justPerson.hymn_soc_member == "number") {
-        if (justPerson.hymn_soc_member == 0) {
-            justPerson.hymn_soc_member = false;
+    }
+
+    if (typeof justPerson.pract_schol == "string") {
+        if (justPerson.pract_schol == "Practical" || justPerson.pract_schol == "practical") {
+            justPerson.pract_schol = 1;
+        } else if (justPerson.pract_schol == "Scholarly" || justPerson.pract_schol == "scholarly") {
+            justPerson.pract_schol = 0;
         } else {
-            justPerson.hymn_soc_member = true;
+            justPerson.pract_schol = 2;
         }
-    } else {
-        //neither a string nor Number
-        justPerson.hymn_soc_member = false;
     }
 
 
@@ -444,12 +445,12 @@ personController.updateConfig = {
                     [theCol]: theVal
                 }, { id: mysqlIndex }], function(err, rows, fields) {
                     if (err) {
-                        console.log(query.sql);
+                        //console.log(query.sql);
                         return reply(Boom.badRequest(`invalid query when updating persons on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                     } else {
                         getPersonsJSON();
-                        console.log(query.sql);
-                        console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                        //console.log(query.sql);
+                        //console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                     }
 
                     return reply({ statusCode: 200 });
@@ -579,7 +580,7 @@ personController.editConfig = {
 
             };
 
-            var justPerson = JSON.parse(JSON.stringify(theObj));
+            var justPerson = JSON.parse(JSON.stringify(theData));
 
             justPerson.categories = JSON.stringify(justPerson.categories);
             justPerson.topics = JSON.stringify(justPerson.topics);
@@ -591,36 +592,34 @@ personController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justPerson.hymn_soc_member == "string") {
-                if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
-                    justPerson.hymn_soc_member = false;
+                if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No" || justPerson.hymn_soc_member == "false" || justPerson.hymn_soc_member == "False") {
+                    justPerson.hymn_soc_member = 0;
                 } else {
-                    justPerson.hymn_soc_member = true;
+                    justPerson.hymn_soc_member = 1;
                 }
-            } else if (typeof justPerson.hymn_soc_member == "number") {
-                if (justPerson.hymn_soc_member == 0) {
-                    justPerson.hymn_soc_member = false;
+            }
+            if (typeof justPerson.pract_schol == "string") {
+                if (justPerson.pract_schol == "practical" || justPerson.pract_schol == "Practical") {
+                    justPerson.pract_schol = 0;
+                } else if (justPerson.pract_schol == "Scholarly" || justPerson.pract_schol == "scholarly") {
+                    justPerson.pract_schol = 1;
                 } else {
-                    justPerson.hymn_soc_member = true;
+                    justPerson.pract_schol = 2;
                 }
-            } else {
-                //neither a string nor Number
-                justPerson.hymn_soc_member = false;
             }
 
             //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-
-            if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
             var query = connection.query(`
     UPDATE persons SET ?
     WHERE ?`, [justPerson, { id: req.params.id }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating persons with id = ${req.payload.id} `));
                 } else {
                     getPersonsJSON();
-                    console.log(query.sql);
-                    console.log("set person #", req.params.id);
+                    //console.log(query.sql);
+                    //console.log("set person #", req.params.id);
                 }
 
                 return reply({ statusCode: 201 });

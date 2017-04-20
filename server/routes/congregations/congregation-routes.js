@@ -138,20 +138,13 @@ function insertCongregation(theObj) {
 
     // TYPE CONVERSION
     if (typeof justCongregation.hymn_soc_member == "string") {
-        if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No") {
-            justCongregation.hymn_soc_member = false;
+        if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "false" || justCongregation.hymn_soc_member == "False") {
+            justCongregation.hymn_soc_member = 0;
+        } else if (justCongregation.hymn_soc_member == "Yes" || justCongregation.hymn_soc_member == "yes" || justCongregation.hymn_soc_member == "True") {
+            justCongregation.hymn_soc_member = 1;
         } else {
-            justCongregation.hymn_soc_member = true;
+            justCongregation.hymn_soc_member = 0;
         }
-    } else if (typeof justCongregation.hymn_soc_member == "number") {
-        if (justCongregation.hymn_soc_member == 0) {
-            justCongregation.hymn_soc_member = false;
-        } else {
-            justCongregation.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justCongregation.hymn_soc_member = false;
     }
 
     if (typeof justCongregation.is_free == "string") {
@@ -426,12 +419,12 @@ congController.updateConfig = {
                 [theCol]: theVal
             }, { id: mysqlIndex }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
                     getcongregationsJSON();
-                    console.log(query.sql);
-                    console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                    //console.log(query.sql);
+                    //console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
 
                 return reply({ statusCode: 201 });
@@ -539,7 +532,7 @@ congController.editConfig = {
                 state: req.payload.data.state,
                 country: req.payload.data.country,
                 geography: req.payload.data.geography,
-                is_free: req.payload.data.is_org_free,
+                is_free: req.payload.data.is_free,
                 attendance: req.payload.data.attendance,
                 process: req.payload.data.process,
                 hymn_soc_member: req.payload.data.hymn_soc_member,
@@ -549,6 +542,7 @@ congController.editConfig = {
                 shape: req.payload.data.shape,
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
+                events_free: req.payload.data.events_free,
 
                 approved: false,
                 categories: req.payload.data.categories,
@@ -558,7 +552,7 @@ congController.editConfig = {
 
             };
 
-            var justCongregation = JSON.parse(JSON.stringify(theObj));
+            var justCongregation = JSON.parse(JSON.stringify(newCong));
 
             justCongregation.categories = JSON.stringify(justCongregation.categories);
             justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
@@ -569,32 +563,39 @@ congController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justCongregation.hymn_soc_member == "string") {
-                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No") {
-                    justCongregation.hymn_soc_member = false;
+                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "False" || justCongregation.hymn_soc_member == "false") {
+                    justCongregation.hymn_soc_member = 0;
+                } else if (justCongregation.hymn_soc_member == "yes" || justCongregation.hymn_soc_member == "Yes" || justCongregation.hymn_soc_member == "True" || justCongregation.hymn_soc_member == "true") {
+                    justCongregation.hymn_soc_member = 1;
                 } else {
-                    justCongregation.hymn_soc_member = true;
-                }
-            } else if (typeof justCongregation.hymn_soc_member == "number") {
-                if (justCongregation.hymn_soc_member == 0) {
-                    justCongregation.hymn_soc_member = false;
-                } else {
-                    justCongregation.hymn_soc_member = true;
+                    justCongregation.hymn_soc_member = 2;
                 }
             } else {
-                //neither a string nor Number
-                justCongregation.hymn_soc_member = false;
+                justCongregation.hymn_soc_member = 0;
             }
 
             if (typeof justCongregation.is_free == "string") {
-                if (justCongregation.is_free == "yes" || justCongregation.is_free == "Yes") {
-                    justCongregation.is_free = 1;
-                } else if (justCongregation.is_free == "no" || justCongregation.is_free == "No") {
+                if (justCongregation.is_free == "no" || justCongregation.is_free == "No" || justCongregation.is_free == "False" || justCongregation.is_free == "false") {
                     justCongregation.is_free = 0;
+                } else if (justCongregation.is_free == "yes" || justCongregation.is_free == "Yes" || justCongregation.is_free == "True" || justCongregation.is_free == "true") {
+                    justCongregation.is_free = 1;
                 } else {
                     justCongregation.is_free = 2;
                 }
-            } else if (typeof justCongregation.is_free !== "number") {
-                justCongregation.is_free = 2;
+            } else {
+                justCongregation.is_free = 0;
+            }
+
+            if (typeof justCongregation.events_free == "string") {
+                if (justCongregation.events_free == "no" || justCongregation.events_free == "No" || justCongregation.events_free == "False" || justCongregation.events_free == "false") {
+                    justCongregation.events_free = 0;
+                } else if (justCongregation.events_free == "yes" || justCongregation.events_free == "Yes" || justCongregation.events_free == "True" || justCongregation.events_free == "true") {
+                    justCongregation.events_free = 1;
+                } else {
+                    justCongregation.events_free = 2;
+                }
+            } else {
+                justCongregation.events_free = 0;
             }
             // END TYPE CONVERSION
 
@@ -604,7 +605,7 @@ congController.editConfig = {
                 if (err) {
                     return reply(Boom.badRequest(`invalid query when updating congregations with id = ${req.params.id} `));
                 } else {
-                    console.log("edited cong #", req.params.id);
+                    //console.log("edited cong #", req.params.id);
                 }
 
                 return reply({ statusCode: 201 });

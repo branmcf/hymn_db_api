@@ -319,8 +319,6 @@ function insertAndGet(toInsert, callback) {
 
             var JSObj = rowsToJS(rows);
 
-            console.log("debug: ", JSObj[JSObj.length - 1].id);
-
             callback(null, JSObj[JSObj.length - 1].id); //get the last element's id
 
         });
@@ -476,20 +474,11 @@ resourceController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justResource.hymn_soc_member == "string") {
-                if (justResource.hymn_soc_member == "no" || justResource.hymn_soc_member == "No") {
-                    justResource.hymn_soc_member = false;
+                if (justResource.hymn_soc_member == "yes" || justResource.hymn_soc_member == "Yes" || justResource.hymn_soc_member == "true" || justResource.hymn_soc_member == "True") {
+                    justResource.hymn_soc_member = 1;
                 } else {
-                    justResource.hymn_soc_member = true;
+                    justResource.hymn_soc_member = 0;
                 }
-            } else if (typeof justResource.hymn_soc_member == "number") {
-                if (justResource.hymn_soc_member == 0) {
-                    justResource.hymn_soc_member = false;
-                } else {
-                    justResource.hymn_soc_member = true;
-                }
-            } else {
-                //neither a string nor Number
-                justResource.hymn_soc_member = false;
             }
 
             if (typeof justResource.is_free == "string") {
@@ -587,7 +576,7 @@ resourceController.updateConfig = {
                         if (err) {
                             return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                         } else {
-                            console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                            //console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                         }
 
                         return reply({ statusCode: 201 });
