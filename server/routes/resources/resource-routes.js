@@ -431,29 +431,29 @@ resourceController.editConfig = {
                 user_id: req.payload.uid,
                 user: req.payload.user,
 
-                name: req.payload.data.title,
-                type: req.payload.data.type,
-                website: req.payload.data.url,
-                author: req.payload.data.author,
-                parent: req.payload.data.parent,
-                description: req.payload.data.description,
-                hymn_soc_member: req.payload.data.hymn_soc_member,
-                is_free: req.payload.data.is_free,
+                name: req.payload.data.title, //
+                type: req.payload.data.type, //
+                website: req.payload.data.url, //
+                author: req.payload.data.author, //
+                parent: req.payload.data.parent, //
+                description: req.payload.data.description, //
+                hymn_soc_member: req.payload.data.hymn_soc_member, //
+                is_free: req.payload.data.is_free, //
                 city: req.payload.data.city,
                 state: req.payload.data.state,
                 country: req.payload.data.country,
                 high_level: req.payload.data.high_level,
                 is_active: 1,
-                pract_schol: req.payload.data.pract_schol,
+                pract_schol: req.payload.data.pract_schol, //
                 //approved not included because by default it is not approved
 
                 approved: false,
-                categories: req.payload.data.categories,
-                topics: req.payload.data.topics,
-                accompaniment: req.payload.data.accompaniment,
-                languages: req.payload.data.languages,
-                ensembles: req.payload.data.ensembles,
-                ethnicities: req.payload.data.ethnicities,
+                categories: req.payload.data.categories, //
+                topics: req.payload.data.topics, //
+                accompaniment: req.payload.data.accompaniment, //
+                languages: req.payload.data.languages, //
+                ensembles: req.payload.data.ensembles, //
+                ethnicities: req.payload.data.ethnicities, //
                 tags: req.payload.data.tags,
                 denominations: req.payload.data.denominations,
                 instruments: req.payload.data.instruments
@@ -474,11 +474,15 @@ resourceController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justResource.hymn_soc_member == "string") {
-                if (justResource.hymn_soc_member == "yes" || justResource.hymn_soc_member == "Yes" || justResource.hymn_soc_member == "true" || justResource.hymn_soc_member == "True") {
-                    justResource.hymn_soc_member = 1;
-                } else {
+                if (justResource.hymn_soc_member == "no" || justResource.hymn_soc_member == "No" || justResource.hymn_soc_member == "false" || justResource.hymn_soc_member == "False") {
                     justResource.hymn_soc_member = 0;
+                } else if (justResource.hymn_soc_member == "partially" || justResource.hymn_soc_member == "Partially") {
+                    justResource.hymn_soc_member = 2;
+                } else {
+                    justResource.hymn_soc_member = 1;
                 }
+            } else if (typeof justResource.hymn_soc_member !== "number") {
+                justResource.hymn_soc_member = 2;
             }
 
             if (typeof justResource.is_free == "string") {

@@ -563,15 +563,15 @@ congController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justCongregation.hymn_soc_member == "string") {
-                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "False" || justCongregation.hymn_soc_member == "false") {
+                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "false" || justCongregation.hymn_soc_member == "False") {
                     justCongregation.hymn_soc_member = 0;
-                } else if (justCongregation.hymn_soc_member == "yes" || justCongregation.hymn_soc_member == "Yes" || justCongregation.hymn_soc_member == "True" || justCongregation.hymn_soc_member == "true") {
-                    justCongregation.hymn_soc_member = 1;
-                } else {
+                } else if (justCongregation.hymn_soc_member == "partially" || justCongregation.hymn_soc_member == "Partially") {
                     justCongregation.hymn_soc_member = 2;
+                } else {
+                    justCongregation.hymn_soc_member = 1;
                 }
-            } else {
-                justCongregation.hymn_soc_member = 0;
+            } else if (typeof justCongregation.hymn_soc_member !== "number") {
+                justCongregation.hymn_soc_member = 2;
             }
 
             if (typeof justCongregation.is_free == "string") {

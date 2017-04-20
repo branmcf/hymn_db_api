@@ -576,7 +576,7 @@ eventController.editConfig = {
     handler: function(req, reply) {
 
         var newEvent = {
-            name: req.payload.data.title,
+            name: req.payload.data.title, //
             frequency: req.payload.data.occurance,
             website: req.payload.data.url,
             parent: req.payload.data.parent,
@@ -656,15 +656,15 @@ eventController.editConfig = {
 
         // TYPE CONVERSION
         if (typeof justEvent.hymn_soc_member == "string") {
-            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No" || justEvent.hymn_soc_member == "False" || justEvent.hymn_soc_member == "false") {
+            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No" || justEvent.hymn_soc_member == "false" || justEvent.hymn_soc_member == "False") {
                 justEvent.hymn_soc_member = 0;
-            } else if (justEvent.hymn_soc_member == "yes" || justEvent.hymn_soc_member == "Yes" || justEvent.hymn_soc_member == "True" || justEvent.hymn_soc_member == "true") {
-                justEvent.hymn_soc_member = 1;
-            } else {
+            } else if (justEvent.hymn_soc_member == "partially" || justEvent.hymn_soc_member == "Partially") {
                 justEvent.hymn_soc_member = 2;
+            } else {
+                justEvent.hymn_soc_member = 1;
             }
-        } else {
-            justEvent.hymn_soc_member = 0;
+        } else if (typeof justEvent.hymn_soc_member !== "number") {
+            justEvent.hymn_soc_member = 2;
         }
 
         if (typeof justEvent.is_free == "string") {

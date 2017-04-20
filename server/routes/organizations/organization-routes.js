@@ -547,29 +547,29 @@ orgController.editConfig = {
     handler: function(req, reply) {
 
             var newOrg = {
-                name: req.payload.data.name,
-                website: req.payload.data.url,
-                parent: req.payload.data.parent,
-                denomination: req.payload.data.denomination,
-                city: req.payload.data.city,
-                state: req.payload.data.state,
-                country: req.payload.data.country,
-                geography: req.payload.data.geographic_area,
-                is_free: req.payload.data.is_org_free,
-                events_free: req.payload.data.events_free,
-                membership_free: req.payload.data.membership_free,
-                mission: req.payload.data.mission,
-                process: req.payload.data.process,
+                name: req.payload.data.name, //
+                website: req.payload.data.url, //
+                parent: req.payload.data.parent, //
+                denomination: req.payload.data.denomination, //
+                city: req.payload.data.city, //
+                state: req.payload.data.state, //
+                country: req.payload.data.country, //
+                geography: req.payload.data.geographic_area, //
+                is_free: req.payload.data.is_org_free, //
+                events_free: req.payload.data.events_free, //
+                membership_free: req.payload.data.membership_free, //
+                mission: req.payload.data.mission, //
+                process: req.payload.data.process, //
                 hymn_soc_member: req.payload.data.hymn_soc_member,
                 user: req.payload.user,
                 user_id: req.payload.uid,
-                clothing: req.payload.data.clothing,
-                shape: req.payload.data.shape,
+                clothing: req.payload.data.clothing, //
+                shape: req.payload.data.shape, //
 
                 approved: false,
-                categories: req.payload.data.categories,
-                instruments: req.payload.data.instruments,
-                ethnicities: req.payload.data.ethnicities,
+                categories: req.payload.data.categories, //
+                instruments: req.payload.data.instruments, //
+                ethnicities: req.payload.data.ethnicities, //
                 tags: req.payload.data.tags,
                 is_active: 1
 
@@ -589,7 +589,7 @@ orgController.editConfig = {
             if (typeof justOrganization.hymn_soc_member == "string") {
                 if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No" || justOrganization.hymn_soc_member == "false" || justOrganization.hymn_soc_member == "False") {
                     justOrganization.hymn_soc_member = 0;
-                } else if (justOrganization.hymn_soc_member == "partially") {
+                } else if (justOrganization.hymn_soc_member == "partially" || justOrganization.hymn_soc_member == "Partially") {
                     justOrganization.hymn_soc_member = 2;
                 } else {
                     justOrganization.hymn_soc_member = 1;

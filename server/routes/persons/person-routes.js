@@ -551,31 +551,31 @@ personController.editConfig = {
     handler: function(req, reply) {
 
             var theData = {
-                first_name: req.payload.data.first_name,
-                last_name: req.payload.data.last_name,
-                email: req.payload.data.email,
-                city: req.payload.data.city,
-                state: req.payload.data.state,
-                country: req.payload.data.country,
-                website: req.payload.data.url,
-                social_facebook: req.payload.data.social_facebook,
-                social_twitter: req.payload.data.social_twitter,
-                social_other: req.payload.data.social_other,
-                emphasis: req.payload.data.emphasis,
-                hymn_soc_member: req.payload.data.hymn_soc_member,
+                first_name: req.payload.data.first_name, //
+                last_name: req.payload.data.last_name, //
+                email: req.payload.data.email, //
+                city: req.payload.data.city, //
+                state: req.payload.data.state, //
+                country: req.payload.data.country, //
+                website: req.payload.data.url, //
+                social_facebook: req.payload.data.social_facebook, //
+                social_twitter: req.payload.data.social_twitter, //
+                social_other: req.payload.data.social_other, //
+                emphasis: req.payload.data.emphasis, //
+                hymn_soc_member: req.payload.data.hymn_soc_member, //
                 high_level: req.payload.data.high_level,
                 user_id: req.payload.uid,
                 user: req.payload.user,
                 is_active: true,
-                pract_schol: req.payload.data.pract_schol,
+                pract_schol: req.payload.data.pract_schol, //
 
                 approved: false,
-                languages: req.payload.data.languages,
-                instruments: req.payload.data.instruments,
-                categories: req.payload.data.categories,
-                ensembles: req.payload.data.ensembles,
-                ethnicities: req.payload.data.ethnicities,
-                topics: req.payload.data.topics,
+                languages: req.payload.data.languages, //
+                instruments: req.payload.data.instruments, //
+                categories: req.payload.data.categories, //
+                ensembles: req.payload.data.ensembles, //
+                ethnicities: req.payload.data.ethnicities, //
+                topics: req.payload.data.topics, //
                 tags: req.payload.data.tags
 
             };
@@ -594,10 +594,15 @@ personController.editConfig = {
             if (typeof justPerson.hymn_soc_member == "string") {
                 if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No" || justPerson.hymn_soc_member == "false" || justPerson.hymn_soc_member == "False") {
                     justPerson.hymn_soc_member = 0;
+                } else if (justPerson.hymn_soc_member == "partially" || justPerson.hymn_soc_member == "Partially") {
+                    justPerson.hymn_soc_member = 2;
                 } else {
                     justPerson.hymn_soc_member = 1;
                 }
+            } else if (typeof justPerson.hymn_soc_member !== "number") {
+                justPerson.hymn_soc_member = 2;
             }
+
             if (typeof justPerson.pract_schol == "string") {
                 if (justPerson.pract_schol == "practical" || justPerson.pract_schol == "Practical") {
                     justPerson.pract_schol = 0;
