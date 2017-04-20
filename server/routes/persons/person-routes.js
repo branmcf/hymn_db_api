@@ -264,10 +264,7 @@ personController.getConfig = {
         //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
 
         if (request.params.id) {
-            if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                //return reply('Not enough Persons in the database for your request').code(404);
-                return reply(Boom.notFound("Index out of range for Persons get request"));
-            }
+
             var actualIndex = Number(request.params.id - 1);
 
             //create new object, convert to json
@@ -425,10 +422,7 @@ personController.updateConfig = {
             var thePersonID = persons.length + 1;
 
             if (request.params.id) {
-                if (numPersons <= request.params.id - 1) {
-                    //return reply('Not enough events in the database for your request').code(404);
-                    return reply(Boom.notFound("Not enough persons"));
-                }
+
                 //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
                 var actualIndex = Number(request.params.id - 1); //if you request for events/1 you'll get events[0]
 
@@ -664,8 +658,6 @@ personController.addTagConfig = {
         connection.query(`SELECT id FROM persons`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting persons in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj

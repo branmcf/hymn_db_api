@@ -431,10 +431,6 @@ orgController.updateConfig = {
         getOrganizationsJSON();
 
         if (request.params.id) {
-            if (numOrgs <= request.params.id - 1) {
-                //return reply('Not enough orgs in the database for your request').code(404);
-                return reply(Boom.notFound());
-            }
             //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
             var actualIndex = Number(request.params.id - 1); //if you request for orgs/1 you'll get orgs[0]
 
@@ -508,9 +504,7 @@ orgController.getApprovedConfig = {
 
 
             if (request.params.id) {
-                if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                    return reply(Boom.notFound("Index out of range for Orgs get request"));
-                }
+
 
                 var actualIndex = Number(request.params.id) - 1;
                 //create new object, convert to json
@@ -660,8 +654,6 @@ orgController.addTagConfig = {
         connection.query(`SELECT id FROM organizations`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting organizations in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj

@@ -521,8 +521,6 @@ congController.editConfig = {
 
             //getcongregationsJSON();
 
-            var theCongID = congregations.length + 1;
-
             var newCong = {
                 name: req.payload.data.name,
                 website: req.payload.data.url,
@@ -623,8 +621,6 @@ congController.addTagConfig = {
         connection.query(`SELECT id FROM congregations`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting congregations in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj

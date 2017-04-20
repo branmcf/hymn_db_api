@@ -530,10 +530,7 @@ eventController.getApprovedConfig = {
 
                     if (request.params.id) {
                         //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-                        if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                            //return reply('Not enough events in the database for your request').code(404);
-                            return reply(Boom.notFound("Index out of range for Events get request"));
-                        }
+
 
                         var actualIndex = Number(request.params.id) - 1;
                         //
@@ -706,8 +703,6 @@ eventController.addTagConfig = {
         connection.query(`SELECT id FROM events`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting events in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj

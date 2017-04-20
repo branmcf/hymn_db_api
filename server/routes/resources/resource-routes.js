@@ -59,7 +59,6 @@ function getResourcesJSON() {
 
             //resources.push(JSObj);
             resources = JSObj;
-            numRes = resources.length;
             //console.log("rows[0]: ", JSObj[0]);
 
             //console.log("\nT: ", rows[0]);
@@ -500,12 +499,6 @@ resourceController.editConfig = {
                 if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
                 if (req.params.id) {
 
-                    var numRes = rows.length;
-
-                    if (numRes < req.params.id) {
-                        return reply(Boom.notFound("Not enough resources in database for this id, id is invalid"));
-
-                    }
                     var query = connection.query(`
                         UPDATE resources SET ?
                         WHERE ?`, [justResource, { id: req.params.id }], function(err, rows, fields) {
@@ -556,12 +549,6 @@ resourceController.updateConfig = {
                 if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
                 if (request.params.id) {
 
-                    var numRes = rows.length;
-
-                    if (numRes <= request.params.id - 1) {
-                        //return reply('Not enough resources in the database for your request').code(404);
-                        return reply(Boom.notFound());
-                    }
                     //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
                     var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
 
@@ -605,9 +592,6 @@ resourceController.addTagConfig = {
         connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
-
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
 
