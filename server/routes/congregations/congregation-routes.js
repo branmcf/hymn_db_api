@@ -661,6 +661,7 @@ congController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizCongregations;
 var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedcongregations;
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
+var addTagConfig = require('../../controllers/shared/add-tags').congregations;
 
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
@@ -670,7 +671,7 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
-    { path: '/congregation/addtag/{id}', method: 'PUT', config: congController.addTagConfig }
+    { path: '/congregation/addtag/{id}', method: 'PUT', config: addTagConfig }
 
 
 

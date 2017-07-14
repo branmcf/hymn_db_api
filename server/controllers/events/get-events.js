@@ -66,7 +66,7 @@ function rowsToJS(theArray) {
 
 
 function formatJSON(event) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
     for (var i in json_columns) {
         if (event[json_columns[i]]) { //if it exists...
             event[json_columns[i]] = JSON.parse(event[json_columns[i]]);
@@ -75,9 +75,11 @@ function formatJSON(event) {
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in event");
         }
-
-
     }
+
+    //now do tags seperately and REMOVE DUPLICATES
+    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(event["tags"]));
+    event["tags"] = tagsWithoutDuplicates;
 
     //return the JSON columns in an array
     var theKeys = [];

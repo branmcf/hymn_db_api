@@ -61,7 +61,6 @@ function getUsersNew() {
         var JSObj = rowsToJS(rows);
         users.push(JSObj);
         numUsers = users[0].length;
-        console.log("done with getUsersNew");
 
     });
 }; //end getUsersNew
@@ -217,7 +216,6 @@ server.route({
                     var JSObj = rowsToJS(rows);
                     users.push(JSObj);
                     numUsers = users[0].length;
-                    console.log("done with getUsersNew");
 
                     //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
 
@@ -694,7 +692,6 @@ server.register(BasicAuth, function(err) {
                             var JSObj = rowsToJS(rows);
                             users.push(JSObj);
                             numUsers = users[0].length;
-                            console.log("done with getUsersNew");
 
                             callback(null, 'one');
                         });

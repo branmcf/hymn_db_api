@@ -42,7 +42,7 @@ function reformatTinyInt(toFormat) {
 
 
 function formatJSON(person) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
     for (var i in json_columns) {
         if (person[json_columns[i]]) { //if it exists...
             person[json_columns[i]] = JSON.parse(person[json_columns[i]]);
@@ -51,9 +51,11 @@ function formatJSON(person) {
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in person");
         }
-
-
     }
+
+    //now do tags seperately and REMOVE DUPLICATES
+    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(person["tags"]));
+    person["tags"] = tagsWithoutDuplicates;
 
     //return the JSON columns in an array
     var theKeys = [];

@@ -589,39 +589,49 @@ resourceController.updateConfig = {
 resourceController.addTagConfig = {
     //auth:
     handler: function(request, reply) {
-        connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
-            if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
-            if (request.params.id) {
-                //console.log("request.payload.tag: ", request.payload.tag);
-                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+        if (request.params.id) {
+            //TODO: receive an array of tags to push, or a single tag...
+            var receivedTags = request.payload.tags; //receive tag from body, parse to JSObj
 
-                //get existing tag
-                connection.query(`SELECT tags FROM resources WHERE id = ?`, [request.params.id], (err, rows, fields) => {
-                    if (err) { return reply(Boom.badRequest("error selecting tag from resource")); }
-                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
-                    if (rowsToJS(rows[0].tags) !== null) {
-                        var currenttag = JSON.parse(rows[0].tags);
-                    } else {
-                        var currenttag = [];
+            //get existing tag
+            connection.query(`SELECT tags FROM resources WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                if (err) { return reply(Boom.badRequest("error selecting tag from resource")); }
+                //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                if (rowsToJS(rows[0].tags) !== null) {
+                    var currentTags = JSON.parse(rows[0].tags);
+                } else {
+                    var currentTags = [];
+                }
+
+                console.log("receivedTags: ", receivedTags);
+
+                if (typeof receivedTags == "string") {
+                    currentTags.push(receivedTags);
+                } else {
+                    console.log("typeof receivedTags: ", typeof receivedTags);
+                    for (var rec_tag_index in receivedTags) {
+                        console.log("pushing: ", receivedTags[rec_tag_index]);
+                        currentTags.push(receivedTags[rec_tag_index]);
                     }
+                }
 
-                    currenttag.push(receivedtag);
+                console.log("ct: ", JSON.stringify(currentTags))
 
-                    connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
-                        if (err) { return reply(Boom.badRequest("error adding tag to resource")); }
-                        return reply({ statusCode: 201 });
-
-                    });
+                connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currentTags), request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error adding tag to resource")); }
+                    return reply({ statusCode: 201 });
 
                 });
 
+            });
 
 
-            } else {
-                return reply(Boom.notFound("must supply and id as a parameter"));
 
-            }
-        });
+        } else {
+            return reply(Boom.notFound("must supply and id as a parameter"));
+
+        }
+
     }
 
 };
@@ -633,7 +643,7 @@ var postQuizControllerType = require('../../controllers/post-quiz-then-get').pos
 var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
-
+var addTagConfig = require('../../controllers/shared/add-tags').resources;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -645,6 +655,6 @@ module.exports = [
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType },
-    { path: '/resource/addtag/{id}', method: 'PUT', config: resourceController.addTagConfig },
+    { path: '/resource/addtag/{id}', method: 'PUT', config: addTagConfig },
 
 ];

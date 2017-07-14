@@ -698,7 +698,7 @@ personController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizPersons;
 var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapprovedpersons;
 var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedpersons;
-
+var addTagConfig = require('../../controllers/shared/add-tags').persons;
 
 module.exports = [
     { path: '/person', method: 'POST', config: personController.postConfig },
@@ -708,7 +708,7 @@ module.exports = [
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
     { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
     { path: '/quiz/person', method: 'POST', config: postQuizController },
-    { path: '/person/addtag/{id}', method: 'PUT', config: personController.addTagConfig }
+    { path: '/person/addtag/{id}', method: 'PUT', config: addTagConfig }
 
 
 ];
