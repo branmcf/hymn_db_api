@@ -42,10 +42,16 @@ function reformatTinyInt(toFormat) {
 
 
 function formatJSON(person) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags"];
     for (var i in json_columns) {
         if (person[json_columns[i]]) { //if it exists...
-            person[json_columns[i]] = JSON.parse(person[json_columns[i]]);
+            if (Array.isArray(person[json_columns[i]])) {
+                //now do tags seperately and REMOVE DUPLICATES
+                var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(person["tags"]));
+                person["tags"] = tagsWithoutDuplicates;
+            } else {
+                person[json_columns[i]] = JSON.parse(person[json_columns[i]]);
+            }
 
 
         } else {
@@ -53,16 +59,15 @@ function formatJSON(person) {
         }
     }
 
-    //now do tags seperately and REMOVE DUPLICATES
-    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(person["tags"]));
-    person["tags"] = tagsWithoutDuplicates;
-
     //return the JSON columns in an array
     var theKeys = [];
 
     //loop through every column, check if it's true
     for (var col_index in json_columns) {
         if (person[json_columns[col_index]]) { //if it exists...
+            if (Array.isArray(person[json_columns[col_index]])) { //if it's an array, just continue with the next iteration
+                continue;
+            }
             var current_obj = person[json_columns[col_index]];
             for (var key in current_obj) { //if key is in the current object...
                 if (current_obj.hasOwnProperty(key)) {

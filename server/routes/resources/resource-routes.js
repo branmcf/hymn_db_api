@@ -553,7 +553,12 @@ resourceController.updateConfig = {
                     var mysqlIndex = Number(request.params.id);
 
                     var theCol = request.payload.column;
-                    var theVal = request.payload.value;
+
+                    if (["tags", "denominations", "instruments", "topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"].includes(theCol)) {
+                        var theVal = JSON.stringify(request.payload.value);
+                    } else {
+                        var theVal = request.payload.value;
+                    }
 
                     if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
 
@@ -563,7 +568,7 @@ resourceController.updateConfig = {
                         [theCol]: theVal
                     }, { id: mysqlIndex }], function(err, rows, fields) {
                         if (err) {
-                            return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+                            return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.column} with value = ${request.payload.value} `));
                         } else {
                             //console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                         }

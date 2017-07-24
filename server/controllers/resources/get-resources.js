@@ -66,18 +66,22 @@ function rowsToJS(theArray) {
 
 
 function formatJSON(resource) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags"];
     for (var i in json_columns) {
         if (resource[json_columns[i]]) { //if it exists...
-            resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-
+            //check to see if it's an array...
+            if (Array.isArray(resource[json_columns[i]]) == true) {
+                //now do tags seperately and REMOVE DUPLICATES
+                var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(resource["tags"]);
+                resource["tags"] = tagsWithoutDuplicates;
+                //nothing...
+            } else {
+                resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+            }
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");
         }
     }
-    //now do tags seperately and REMOVE DUPLICATES
-    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(resource["tags"]));
-    resource["tags"] = tagsWithoutDuplicates;
 
     //return the JSON columns in an array
     var theKeys = [];
@@ -85,6 +89,9 @@ function formatJSON(resource) {
     //loop through every column, check if it's true
     for (var col_index in json_columns) {
         if (resource[json_columns[col_index]]) { //if it exists...
+            if (Array.isArray(resource[json_columns[col_index]])) { //if it's an array, just continue with the next iteration
+                continue;
+            }
             var current_obj = resource[json_columns[col_index]];
             for (var key in current_obj) { //if key is in the current object...
                 if (current_obj.hasOwnProperty(key)) {

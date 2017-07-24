@@ -52,10 +52,16 @@ function reformatFree(toFormat) {
 
 
 function formatJSON(organization) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags"];
     for (var i in json_columns) {
         if (organization[json_columns[i]]) { //if it exists...
-            organization[json_columns[i]] = JSON.parse(organization[json_columns[i]]);
+            if (Array.isArray(organization[json_columns[i]])) {
+                //now do tags seperately and REMOVE DUPLICATES
+                var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(organization["tags"]));
+                organization["tags"] = tagsWithoutDuplicates;
+            } else {
+                organization[json_columns[i]] = JSON.parse(organization[json_columns[i]]);
+            }
 
 
         } else {
@@ -63,16 +69,15 @@ function formatJSON(organization) {
         }
     }
 
-    //now do tags seperately and REMOVE DUPLICATES
-    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(organization["tags"]));
-    organization["tags"] = tagsWithoutDuplicates;
-
     //return the JSON columns in an array
     var theKeys = [];
 
     //loop through every column, check if it's true
     for (var col_index in json_columns) {
         if (organization[json_columns[col_index]]) { //if it exists...
+            if (Array.isArray(organization[json_columns[col_index]])) { //if it's an array, just continue with the next iteration
+                continue;
+            }
             var current_obj = organization[json_columns[col_index]];
             for (var key in current_obj) { //if key is in the current object...
                 if (current_obj.hasOwnProperty(key)) {

@@ -66,10 +66,16 @@ function rowsToJS(theArray) {
 
 
 function formatJSON(event) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags"];
     for (var i in json_columns) {
         if (event[json_columns[i]]) { //if it exists...
-            event[json_columns[i]] = JSON.parse(event[json_columns[i]]);
+            if (Array.isArray(event[json_columns[i]])) {
+                //now do tags seperately and REMOVE DUPLICATES
+                var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(event["tags"]));
+                event["tags"] = tagsWithoutDuplicates;
+            } else {
+                event[json_columns[i]] = JSON.parse(event[json_columns[i]]);
+            }
 
 
         } else {
@@ -77,16 +83,15 @@ function formatJSON(event) {
         }
     }
 
-    //now do tags seperately and REMOVE DUPLICATES
-    var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(JSON.parse(event["tags"]));
-    event["tags"] = tagsWithoutDuplicates;
-
     //return the JSON columns in an array
     var theKeys = [];
 
     //loop through every column, check if it's true
     for (var col_index in json_columns) {
         if (event[json_columns[col_index]]) { //if it exists...
+            if (Array.isArray(event[json_columns[i]])) {
+                continue;
+            }
             var current_obj = event[json_columns[col_index]];
             for (var key in current_obj) { //if key is in the current object...
                 if (current_obj.hasOwnProperty(key)) {

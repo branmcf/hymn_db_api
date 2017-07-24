@@ -466,7 +466,11 @@ eventController.updateConfig = {
                 var mysqlIndex = Number(request.params.id);
 
                 var theCol = request.payload.column;
-                var theVal = request.payload.value;
+                if (["tags", "ensembles", "clothing", "shape", "ensembles", "ethnicities"].includes(theCol)) {
+                    var theVal = JSON.stringify(request.payload.value);
+                } else {
+                    var theVal = request.payload.value;
+                }
 
                 if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
