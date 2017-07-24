@@ -541,6 +541,9 @@ orgController.editConfig = {
     handler: function(req, reply) {
 
             var newOrg = {
+                user: req.payload.user,
+                user_id: req.payload.uid,
+
                 name: req.payload.data.name, //
                 website: req.payload.data.url, //
                 parent: req.payload.data.parent, //
@@ -555,12 +558,10 @@ orgController.editConfig = {
                 mission: req.payload.data.mission, //
                 process: req.payload.data.process, //
                 hymn_soc_member: req.payload.data.hymn_soc_member,
-                user: req.payload.user,
-                user_id: req.payload.uid,
                 clothing: req.payload.data.clothing, //
                 shape: req.payload.data.shape, //
-
                 approved: false,
+
                 categories: req.payload.data.categories, //
                 instruments: req.payload.data.instruments, //
                 ethnicities: req.payload.data.ethnicities, //

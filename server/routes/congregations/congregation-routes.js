@@ -522,6 +522,9 @@ congController.editConfig = {
             //getcongregationsJSON();
 
             var newCong = {
+                user: req.payload.user,
+                user_id: req.payload.uid,
+
                 name: req.payload.data.name,
                 website: req.payload.data.url,
                 parent: req.payload.data.parent,
@@ -534,15 +537,13 @@ congController.editConfig = {
                 attendance: req.payload.data.attendance,
                 process: req.payload.data.process,
                 hymn_soc_member: req.payload.data.hymn_soc_member,
-                user: req.payload.user,
-                user_id: req.payload.uid,
                 clothing: req.payload.data.clothing,
                 shape: req.payload.data.shape,
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
                 events_free: req.payload.data.events_free,
-
                 approved: false,
+
                 categories: req.payload.data.categories,
                 instruments: req.payload.data.instruments,
                 ethnicities: req.payload.data.ethnicities,

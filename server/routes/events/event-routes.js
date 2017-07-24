@@ -573,6 +573,9 @@ eventController.editConfig = {
     handler: function(req, reply) {
 
         var newEvent = {
+            user_id: req.payload.uid,
+            user: req.payload.user,
+
             name: req.payload.data.title, //
             frequency: req.payload.data.occurance,
             website: req.payload.data.url,
@@ -585,8 +588,6 @@ eventController.editConfig = {
             state: req.payload.data.state,
             country: req.payload.data.country,
             hymn_soc_member: req.payload.data.hymn_soc_member,
-            user_id: req.payload.uid,
-            user: req.payload.user,
             theme: req.payload.data.theme,
             shape: req.payload.data.shape,
             clothing: req.payload.data.clothing,

@@ -422,9 +422,7 @@ resourceController.deleteConfig = {
 resourceController.editConfig = {
     //auth: 'high_or_admin',
     handler: function(req, reply) {
-
             //getResources();
-
 
             var theData = {
                 user_id: req.payload.uid,
@@ -496,7 +494,7 @@ resourceController.editConfig = {
                 justResource.is_free = 2;
             }
             connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
-                if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
+                if (err) { return reply(Boom.badRequest("error selecting resources in editConfig")); }
                 if (req.params.id) {
 
                     var query = connection.query(`

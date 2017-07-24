@@ -545,6 +545,9 @@ personController.editConfig = {
     handler: function(req, reply) {
 
             var theData = {
+                user_id: req.payload.uid,
+                user: req.payload.user,
+
                 first_name: req.payload.data.first_name, //
                 last_name: req.payload.data.last_name, //
                 email: req.payload.data.email, //
@@ -558,12 +561,10 @@ personController.editConfig = {
                 emphasis: req.payload.data.emphasis, //
                 hymn_soc_member: req.payload.data.hymn_soc_member, //
                 high_level: req.payload.data.high_level,
-                user_id: req.payload.uid,
-                user: req.payload.user,
                 is_active: true,
                 pract_schol: req.payload.data.pract_schol, //
-
                 approved: false,
+
                 languages: req.payload.data.languages, //
                 instruments: req.payload.data.instruments, //
                 categories: req.payload.data.categories, //
