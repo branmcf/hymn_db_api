@@ -27,6 +27,18 @@ if (process.env.JAWSDB_URL) {
 
 connection.connect();
 
+function JSONobjectToArray(json_object) {
+    for (var key in json_object) {
+        // skip loop if the property is from prototype
+        if (!json_object.hasOwnProperty(key)) continue;
+
+        var obj = json_object[key];
+        console.log("obj: ", obj);
+    }
+
+    return json_object;
+}
+
 module.exports.resources = {
     handler: (request, reply) => {
         if (request.params.id) {

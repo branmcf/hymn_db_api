@@ -75,8 +75,20 @@ function formatJSON(resource) {
                 var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(resource["tags"]);
                 resource["tags"] = tagsWithoutDuplicates;
                 //nothing...
+            } else if (json_columns[i] == "tags") {
+                try {
+                    var tagsWithoutDuplicates = JSON.parse(resource[json_columns[i]]);
+                    tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(tagsWithoutDuplicates);
+                    resource["tags"] = tagsWithoutDuplicates;
+                } catch (e) {
+                    console.log(e.message);
+                    resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                    console.log(resource[json_columns[i]]);
+                }
+
             } else {
                 resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                console.log(resource[json_columns[i]]);
             }
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");
