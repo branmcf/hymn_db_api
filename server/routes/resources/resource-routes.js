@@ -547,20 +547,22 @@ resourceController.updateConfig = {
                 if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
                 if (request.params.id) {
 
+                    if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+
                     //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
                     var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
 
                     var mysqlIndex = Number(request.params.id);
 
                     var theCol = request.payload.column;
+                    var theVal = request.payload.value;
 
-                    if (["tags", "denominations", "instruments", "topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities"].includes(theCol)) {
-                        var theVal = JSON.stringify(request.payload.value);
-                    } else {
-                        var theVal = request.payload.value;
+                    //replace the inner single quotes with double quotes...
+                    try {
+                        theVal = theVal.replace(/'/g, '"');
+                    } catch (e) {
+                        console.log("ERROR: ", e.message);
                     }
-
-                    if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
 
                     var query = connection.query(`
                     UPDATE resources SET ?

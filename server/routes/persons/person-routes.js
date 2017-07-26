@@ -430,10 +430,13 @@ personController.updateConfig = {
 
                 var theCol = request.payload.column;
 
-                if (["tags", "instruments", "topics", "ensembles", "languages", "categories", "ethnicities"].includes(theCol)) {
-                    var theVal = JSON.stringify(request.payload.value);
-                } else {
-                    var theVal = request.payload.value;
+                var theVal = request.payload.value;
+
+                //replace the inner single quotes with double quotes...
+                try {
+                    theVal = theVal.replace(/'/g, '"');
+                } catch (e) {
+                    console.log("ERROR: ", e.message);
                 }
 
                 if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
@@ -447,12 +450,12 @@ personController.updateConfig = {
                         //console.log(query.sql);
                         return reply(Boom.badRequest(`invalid query when updating persons on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                     } else {
-                        getPersonsJSON();
+                        //getPersonsJSON();
                         //console.log(query.sql);
                         //console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                     }
 
-                    return reply({ statusCode: 200 });
+                    return reply({ statusCode: 201 });
                 });
 
                 //return reply(persons[actualId]);

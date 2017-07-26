@@ -437,10 +437,12 @@ orgController.updateConfig = {
             var mysqlIndex = Number(request.params.id);
 
             var theCol = request.payload.column;
-            if (["tags", "clothing", "instruments", "shape", "categories", "ethnicities"].includes(theCol)) {
-                var theVal = JSON.stringify(request.payload.value);
-            } else {
-                var theVal = request.payload.value;
+            var theVal = request.payload.value;
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
             }
 
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
@@ -454,7 +456,7 @@ orgController.updateConfig = {
                     //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getOrganizationsJSON();
+                    //getOrganizationsJSON();
                     //console.log(query.sql);
                     //console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }

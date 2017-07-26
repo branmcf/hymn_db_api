@@ -409,10 +409,13 @@ congController.updateConfig = {
             var mysqlIndex = Number(request.params.id);
 
             var theCol = request.payload.column;
-            if (["tags", "clothing", "shape", "ensembles", "ethnicities"].includes(theCol)) {
-                var theVal = JSON.stringify(request.payload.value);
-            } else {
-                var theVal = request.payload.value;
+            var theVal = request.payload.value;
+
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
             }
 
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
@@ -426,7 +429,7 @@ congController.updateConfig = {
                     //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getcongregationsJSON();
+                    //getcongregationsJSON();
                     //console.log(query.sql);
                     //console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }

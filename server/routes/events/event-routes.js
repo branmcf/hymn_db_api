@@ -466,10 +466,13 @@ eventController.updateConfig = {
                 var mysqlIndex = Number(request.params.id);
 
                 var theCol = request.payload.column;
-                if (["tags", "ensembles", "clothing", "shape", "ensembles", "ethnicities"].includes(theCol)) {
-                    var theVal = JSON.stringify(request.payload.value);
-                } else {
-                    var theVal = request.payload.value;
+                var theVal = request.payload.value;
+
+                //replace the inner single quotes with double quotes...
+                try {
+                    theVal = theVal.replace(/'/g, '"');
+                } catch (e) {
+                    console.log("ERROR: ", e.message);
                 }
 
                 if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
@@ -480,15 +483,15 @@ eventController.updateConfig = {
                     [theCol]: theVal
                 }, { id: mysqlIndex }], function(err, rows, fields) {
                     if (err) {
-                        console.log(query.sql);
+                        //console.log(query.sql);
                         return reply(Boom.badRequest(`invalid query when updating events on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                     } else {
-                        getEventsJSON();
-                        console.log(query.sql);
-                        console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                        //getEventsJSON();
+                        //console.log(query.sql);
+                        //console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                     }
 
-                    return reply({ statusCode: 200 });
+                    return reply({ statusCode: 201 });
                 });
 
                 //return reply(events[actualId]);
