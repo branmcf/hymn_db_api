@@ -83,7 +83,7 @@ function formatJSON(resource) {
                 } catch (e) {
                     console.log(e.message);
                     resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                    console.log(resource[json_columns[i]]);
+                    //console.log(resource[json_columns[i]]);
                 }
 
             } else {

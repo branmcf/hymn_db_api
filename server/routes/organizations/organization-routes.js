@@ -701,7 +701,7 @@ orgController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizOrganizations;
 var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedorganizations;
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
-var addTagConfig = require('../../controllers/shared/add-tags').organizations;
+var addValueConfig = require('../../controllers/shared/add-values').organizations;
 
 module.exports = [
     { path: '/orgs', method: 'POST', config: orgController.postConfig },
@@ -711,7 +711,7 @@ module.exports = [
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
     { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
     { path: '/quiz/orgs', method: 'POST', config: postQuizController },
-    { path: '/orgs/addtag/{id}', method: 'PUT', config: addTagConfig }
+    { path: '/orgs/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

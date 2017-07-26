@@ -24,7 +24,6 @@ module.exports = function(tagsArray) {
             // skip loop if the property is from prototype
             if (!tagsArray.hasOwnProperty(key)) continue;
             var theValue = tagsArray[key];
-            console.log("obj: ", obj);
 
             if (theValue !== 'false' && theValue !== false) {
                 if (!tagsWithoutDuplicates.includes(key)) {

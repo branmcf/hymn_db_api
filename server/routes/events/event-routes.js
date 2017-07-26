@@ -710,7 +710,7 @@ eventController.editConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizEvents;
 var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedevents;
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
-var addTagConfig = require('../../controllers/shared/add-tags').events;
+var addValueConfig = require('../../controllers/shared/add-values').events;
 
 module.exports = [
     { path: '/event', method: 'POST', config: eventController.postConfig },
@@ -720,7 +720,7 @@ module.exports = [
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
     { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
     { path: '/quiz/event', method: 'POST', config: postQuizController },
-    { path: '/event/addtag/{id}', method: 'PUT', config: addTagConfig }
+    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

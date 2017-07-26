@@ -648,7 +648,7 @@ var postQuizControllerType = require('../../controllers/post-quiz-then-get').pos
 var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
-var addTagConfig = require('../../controllers/shared/add-tags').resources;
+var addValueConfig = require('../../controllers/shared/add-values').resources;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -660,6 +660,6 @@ module.exports = [
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType },
-    { path: '/resource/addtag/{id}', method: 'PUT', config: addTagConfig },
+    { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
 
 ];
