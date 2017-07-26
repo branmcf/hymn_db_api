@@ -608,19 +608,13 @@ resourceController.addTagConfig = {
                     var currentTags = [];
                 }
 
-                console.log("receivedTags: ", receivedTags);
-
                 if (typeof receivedTags == "string") {
                     currentTags.push(receivedTags);
                 } else {
-                    console.log("typeof receivedTags: ", typeof receivedTags);
                     for (var rec_tag_index in receivedTags) {
-                        console.log("pushing: ", receivedTags[rec_tag_index]);
                         currentTags.push(receivedTags[rec_tag_index]);
                     }
                 }
-
-                console.log("ct: ", JSON.stringify(currentTags))
 
                 connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currentTags), request.params.id], (err, rows, fields) => {
                     if (err) { return reply(Boom.badRequest("error adding tag to resource")); }

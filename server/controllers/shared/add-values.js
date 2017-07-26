@@ -71,7 +71,6 @@ function addToTags(request, reply, tagsArray, whichColumn, whichTable) {
         //if an OBJECT is received:
         if (typeof receivedValues == "object" || typeof receivedValues == "Object") {
             for (var rec_tag_index in receivedValues) {
-                console.log("pushing to : ", currentVals);
                 currentVals.push(receivedValues[rec_tag_index]);
             }
         } else if (typeof receivedValues == "string" || typeof receivedValues == "String") {
@@ -103,9 +102,7 @@ function addToJSONColumn(request, reply, valuesArray, whichColumn, whichTable) {
         if (err) { return reply(Boom.badRequest(`error selecting tag from ${whichTable}`)); }
         if (rowsToJS(rows[0][whichColumn]) !== null) {
             var currentVals = JSON.parse(rows[0][whichColumn]);
-            if (typeof currentVals == "array") {
-                console.log("\n\nFOUND ARRAY\n\n");
-            }
+
             //since you will receive a json object (after parsing it), store the true and other items into an array
             currentVals = JSONobjectToArray(currentVals);
         } else {

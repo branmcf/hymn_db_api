@@ -73,7 +73,6 @@ function formatJSON(resource) {
 
             } else {
                 resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                console.log(resource[json_columns[i]]);
             }
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");

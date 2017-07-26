@@ -6,7 +6,6 @@ module.exports = function(tagsArray) {
                 if (tagsWithoutDuplicates.includes(tagsArray[tag_index])) {
                     continue;
                 } else {
-                    console.log("pushing: ", tagsArray[tag_index]);
                     tagsWithoutDuplicates.push(tagsArray[tag_index]);
                 }
             }

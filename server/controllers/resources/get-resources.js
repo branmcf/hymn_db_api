@@ -66,7 +66,7 @@ function rowsToJS(theArray) {
 
 
 function formatJSON(resource) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags"];
+    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "clothing", "shape", "tags", "denominations"];
     for (var i in json_columns) {
         if (resource[json_columns[i]]) { //if it exists...
             //check to see if it's an array...
@@ -88,7 +88,6 @@ function formatJSON(resource) {
 
             } else {
                 resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
-                console.log(resource[json_columns[i]]);
             }
         } else {
             //console.log("error, ", json_columns[i], " doesn't exist in resource");
