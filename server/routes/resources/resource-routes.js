@@ -35,58 +35,6 @@ var resEth, resEth_all = [];
 var resDenominations, resDenominations_all = [];
 var resInstruments, resInstruments_all = [];
 
-getResourcesJSON();
-
-function getResourcesJSON() {
-    //console.log("===== GETTING RESOURCES =====");
-    connection.query(`SELECT * from resources`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-            //var JSObj = rows;
-
-            resources = [];
-            //resTypes = [];
-            resCategories = [];
-            resTopics = [];
-            resAcc = [];
-            resLanguages = [];
-            resTags = [];
-            resEnsembles = [];
-            resEth = [];
-            resDenominations = [];
-            resInstruments = [];
-
-            //resources.push(JSObj);
-            resources = JSObj;
-            //console.log("rows[0]: ", JSObj[0]);
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], resEth);
-                popArray(JSObj[i]["categories"], resCategories);
-                popArray(JSObj[i]["topics"], resTopics);
-                popArray(JSObj[i]["accompaniment"], resAcc);
-                popArray(JSObj[i]["languages"], resLanguages);
-                popArray(JSObj[i]["ensembles"], resEnsembles);
-                popArray(JSObj[i]["tags"], resTags);
-                popArray(JSObj[i]["instruments"], resInstruments);
-                popArray(JSObj[i]["denominations"], resDenominations);
-                //popArray(JSObj[i]["types"], resTypes);
-
-            }
-
-
-            //popArray(JSObj[0].categories, resCategories);
-
-
-        } else
-            console.log('Error while performing Resources Query.');
-
-    });
-} //end func
-
-
 function popArray(obj, whichArray) {
 
     obj = JSON.parse(obj);

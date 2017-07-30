@@ -29,65 +29,12 @@ var orgTags, orgTags_all = [];
 var orgShape, orgShape_all = [];
 var orgAttire, orgAttire_all = [];
 
-
-getOrganizationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getOrganizationsJSON() {
-    //get orgs from db
-    connection.query('SELECT * from organizations', function(err, rows, fields) {
-        if (err) { throw err; } else {
-
-            orgs = [];
-            orgCategories = [];
-            orgInstruments = [];
-            orgEthnicities = [];
-            orgTags = [];
-            orgAttire = [];
-            orgShape = [];
-
-            var JSObj = rowsToJS(rows);
-            orgs = JSObj;
-            numOrgs = orgs.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], orgEthnicities);
-                popArray(JSObj[i]["categories"], orgCategories);
-                popArray(JSObj[i]["tags"], orgTags);
-                popArray(JSObj[i]["instruments"], orgInstruments);
-                popArray(JSObj[i]["shape"], orgShape);
-                popArray(JSObj[i]["clothing"], orgAttire);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                orgEthnicities_all.push(orgEthnicities);
-                orgCategories_all.push(orgCategories);
-                orgTags_all.push(orgTags);
-                orgInstruments_all.push(orgInstruments);
-                orgShape_all.push(orgShape);
-                orgAttire_all.push(orgAttire);
-            }
-
-        }
-
-    });
-} //end getOrganizationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -295,8 +242,6 @@ orgController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getOrganizationsJSON();
-
             if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for Orgs get request"));
             }
@@ -438,7 +383,6 @@ orgController.deleteConfig = {
 orgController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getOrganizationsJSON();
 
         if (request.params.id) {
             //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);

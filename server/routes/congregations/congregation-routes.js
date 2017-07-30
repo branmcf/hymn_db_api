@@ -29,59 +29,12 @@ var congTags, congTags_all = [];
 var congShape, congShape_all = [];
 var congAttire, congAttire_all = [];
 
-
-getcongregationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getcongregationsJSON() {
-    //get congregations from db
-    connection.query('SELECT * from congregations', function(err, rows, fields) {
-        if (err) { console.log('Error while performing congregations Query.'); throw err; } else {
-
-            congregations = [];
-            congCategories = [];
-            congInstruments = [];
-            congEthnicities = [];
-            congTags = [];
-            congShape = [];
-            congAttire = [];
-
-            var JSObj = rowsToJS(rows);
-            congregations = JSObj;
-
-            numCongs = congregations.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], congEthnicities);
-                popArray(JSObj[i]["categories"], congCategories);
-                popArray(JSObj[i]["tags"], congTags);
-                popArray(JSObj[i]["instruments"], congInstruments);
-                popArray(JSObj[i]["shape"], congShape);
-                popArray(JSObj[i]["clothing"], congAttire);
-
-                congAttire_all.push(congAttire);
-                congEthnicities_all.push(congEthnicities);
-                congCategories_all.push(congCategories);
-                congTags_all.push(congTags);
-                congInstruments_all.push(congInstruments);
-                congShape_all.push(congShape);
-
-            }
-
-        }
-
-    });
-} //end getcongregationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -259,8 +212,6 @@ congController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getcongregationsJSON();
-
             if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for congregations get request"));
             }
@@ -406,8 +357,6 @@ congController.deleteConfig = {
 congController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getcongregationsJSON();
-
         if (request.params.id) {
             if (numCongs <= request.params.id - 1) {
                 //return reply('Not enough resources in the database for your request').code(404);

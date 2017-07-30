@@ -26,73 +26,12 @@ var personTags, personTags_all = [];
 var personLangs, personLangs_all = [];
 
 
-getPersonsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-
-
-function getPersonsJSON() {
-    //console.log("===== GETTING PERSONS =====");
-    connection.query(`SELECT * from persons`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-
-            persons = [];
-            personTopics = [];
-            personEnsembles = [];
-            personEthnicities = [];
-            personInstruments = [];
-            personCategories = [];
-            personTags = [];
-            personLangs = [];
-
-
-            persons = JSObj;
-
-            numPersons = persons.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], personEthnicities);
-                popArray(JSObj[i]["categories"], personCategories);
-                popArray(JSObj[i]["topics"], personTopics);
-                popArray(JSObj[i]["ensembles"], personEnsembles);
-                popArray(JSObj[i]["tags"], personTags);
-                popArray(JSObj[i]["instruments"], personInstruments);
-                popArray(JSObj[i]["languages"], personLangs);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                personEthnicities_all.push(personEthnicities);
-                personCategories_all.push(personCategories);
-                personTopics_all.push(personTopics);
-                personEnsembles_all.push(personEnsembles);
-                personTags_all.push(personTags);
-                personInstruments_all.push(personInstruments);
-                personLangs_all.push(personLangs);
-            }
-
-        } else
-            console.log('Error while performing Persons Query.');
-
-    });
-} //end func
-
 
 function popArray(obj, whichArray) {
 
@@ -252,61 +191,6 @@ function reformatTinyInt(toFormat) {
     }
 }
 
-
-
-//PERSON GET REQUEST
-personController.getConfig = {
-
-    handler: function(request, reply) {
-
-        getPersonsJSON();
-
-        //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
-
-        if (request.params.id) {
-
-            var actualIndex = Number(request.params.id - 1);
-
-            //create new object, convert to json
-
-            if (persons[actualIndex].approved == 0) {
-                var str = formatPerson(actualIndex);
-                return reply(str);
-            } else {
-                return reply(Boom.badRequest("The Person you request is already approved"));
-            }
-
-
-            //return reply(persons[actualId]);
-        }
-
-        //if no ID specified
-        var objToReturn = [];
-
-        for (var i = 0; i < persons.length; i++) {
-            //var bob = formatResource(i);
-
-            if (persons[i].approved == 0) {
-                var str = {
-                    id: persons[i].id,
-                    user: persons[i].user,
-                    first_name: persons[i].first_name,
-                    last_name: persons[i].last_name
-
-                }
-                objToReturn.push(str);
-            }
-        } //end for
-
-        //console.log(objToReturn);
-        if (objToReturn.length <= 0) {
-            return reply(Boom.badRequest("All resources already approved, nothing to return"));
-        } else {
-            reply(objToReturn);
-        }
-    }
-};
-
 //BELOW is for the POST request
 function insertFirst(toInsert, _callback) {
 
@@ -428,7 +312,6 @@ personController.deleteConfig = {
 personController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-            getPersonsJSON();
             var thePersonID = persons.length + 1;
 
             if (request.params.id) {
@@ -635,7 +518,6 @@ personController.editConfig = {
                     //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating persons with id = ${req.payload.id} `));
                 } else {
-                    getPersonsJSON();
                     //console.log(query.sql);
                     //console.log("set person #", req.params.id);
                 }

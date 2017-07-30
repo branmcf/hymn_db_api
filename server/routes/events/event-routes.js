@@ -25,59 +25,11 @@ var eventEthnicities, eventEthnicities_all = [];
 var eventShape, eventShape_all = [];
 var eventsAttire, eventsAttire_all = [];
 
-getEventsJSON();
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
-}
-
-function getEventsJSON() {
-    //console.log("===== GETTING EVENTS =====");
-    connection.query(`SELECT * from events`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-
-            events = [];
-            numEvents = 0;
-            eventTags = [];
-            eventEnsembles = [];
-            eventEthnicities = [];
-            eventShape = [];
-            eventsAttire = [];
-
-            events = JSObj;
-            numEvents = events.length;
-
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], eventEthnicities);
-                popArray(JSObj[i]["ensembles"], eventEnsembles);
-                popArray(JSObj[i]["tags"], eventTags);
-                popArray(JSObj[i]["shape"], eventShape);
-                popArray(JSObj[i]["clothing"], eventsAttire);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                eventShape_all.push(eventShape);
-                eventTags_all.push(eventTags);
-                eventEnsembles_all.push(eventEnsembles);
-                eventEthnicities_all.push(eventEthnicities);
-                eventsAttire_all.push(eventsAttire);
-            }
-
-        } else
-            console.log('Error while performing events Query.');
-
-    });
 }
 
 //Object.keys(obj.ethnicities).length
@@ -257,8 +209,6 @@ function reformatTinyInt(toFormat) {
 //EVENT GET REQUEST
 eventController.getConfig = {
     handler: function(request, reply) {
-
-            getEventsJSON();
 
             if (request.params.id) {
                 //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
@@ -462,7 +412,6 @@ eventController.deleteConfig = {
 eventController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-            getEventsJSON();
 
             if (request.params.id) {
                 if (numEvents <= request.params.id - 1) {
