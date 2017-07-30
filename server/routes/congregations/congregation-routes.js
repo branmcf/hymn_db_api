@@ -365,10 +365,20 @@ congController.postConfig = {
 
                 insertAndGet(newCong, (err, theID) => {
                     var toReturn = {
-                        cong_id: theID
+                        cong_id: theID,
+                        id_of_matches_found: []
                     }
 
-                    return reply(toReturn);
+                    var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("congregations", theData, (err, results) => {
+                        if (err) { console.log("ERROR: ", err); }
+                        //results is an array of id's of matching resources/congrgations/etc.
+                        //if it is empty, then there were no matches found
+                        else {
+                            toReturn.id_of_matches_found = results;
+                        }
+
+                        return reply(toReturn);
+                    });
                 });
 
 
