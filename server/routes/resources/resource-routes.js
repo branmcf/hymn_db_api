@@ -373,6 +373,13 @@ resourceController.postConfig = {
                     resource_id: theID
                 }
 
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("resources", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                });
+
+
                 return reply(toReturn);
             });
 
