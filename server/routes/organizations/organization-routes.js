@@ -29,65 +29,12 @@ var orgTags, orgTags_all = [];
 var orgShape, orgShape_all = [];
 var orgAttire, orgAttire_all = [];
 
-
-getOrganizationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getOrganizationsJSON() {
-    //get orgs from db
-    connection.query('SELECT * from organizations', function(err, rows, fields) {
-        if (err) { console.log('Error while performing orgs Query.'); throw err; } else {
-
-            orgs = [];
-            orgCategories = [];
-            orgInstruments = [];
-            orgEthnicities = [];
-            orgTags = [];
-            orgAttire = [];
-            orgShape = [];
-
-            var JSObj = rowsToJS(rows);
-            orgs = JSObj;
-            numOrgs = orgs.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], orgEthnicities);
-                popArray(JSObj[i]["categories"], orgCategories);
-                popArray(JSObj[i]["tags"], orgTags);
-                popArray(JSObj[i]["instruments"], orgInstruments);
-                popArray(JSObj[i]["shape"], orgShape);
-                popArray(JSObj[i]["clothing"], orgAttire);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                orgEthnicities_all.push(orgEthnicities);
-                orgCategories_all.push(orgCategories);
-                orgTags_all.push(orgTags);
-                orgInstruments_all.push(orgInstruments);
-                orgShape_all.push(orgShape);
-                orgAttire_all.push(orgAttire);
-            }
-
-        }
-
-    });
-} //end getOrganizationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -144,20 +91,15 @@ function insertOrganization(theObj) {
 
     // TYPE CONVERSION
     if (typeof justOrganization.hymn_soc_member == "string") {
-        if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
-            justOrganization.hymn_soc_member = false;
+        if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No" || justOrganization.hymn_soc_member == "false" || justOrganization.hymn_soc_member == "False") {
+            justOrganization.hymn_soc_member = 0;
+        } else if (justOrganization.hymn_soc_member == "partially") {
+            justOrganization.hymn_soc_member = 2;
         } else {
-            justOrganization.hymn_soc_member = true;
+            justOrganization.hymn_soc_member = 1;
         }
-    } else if (typeof justOrganization.hymn_soc_member == "number") {
-        if (justOrganization.hymn_soc_member == 0) {
-            justOrganization.hymn_soc_member = false;
-        } else {
-            justOrganization.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justOrganization.hymn_soc_member = false;
+    } else if (typeof justOrganization.hymn_soc_member !== "number") {
+        justOrganization.hymn_soc_member = 2;
     }
 
     if (typeof justOrganization.is_free == "string") {
@@ -300,8 +242,6 @@ orgController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getOrganizationsJSON();
-
             if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for Orgs get request"));
             }
@@ -402,10 +342,20 @@ orgController.postConfig = {
 
             insertAndGet(newOrg, (err, theID) => {
                 var toReturn = {
-                    org_id: theID
+                    org_id: theID,
+                    id_of_matches_found: []
                 }
 
-                return reply(toReturn);
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("organizations", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                    else {
+                        toReturn.id_of_matches_found = results;
+                    }
+
+                    return reply(toReturn);
+                });
             });
 
 
@@ -433,13 +383,8 @@ orgController.deleteConfig = {
 orgController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getOrganizationsJSON();
 
         if (request.params.id) {
-            if (numOrgs <= request.params.id - 1) {
-                //return reply('Not enough orgs in the database for your request').code(404);
-                return reply(Boom.notFound());
-            }
             //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
             var actualIndex = Number(request.params.id - 1); //if you request for orgs/1 you'll get orgs[0]
 
@@ -447,6 +392,12 @@ orgController.updateConfig = {
 
             var theCol = request.payload.column;
             var theVal = request.payload.value;
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
+            }
 
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
@@ -456,12 +407,12 @@ orgController.updateConfig = {
                 [theCol]: theVal
             }, { id: mysqlIndex }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getOrganizationsJSON();
-                    console.log(query.sql);
-                    console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                    //getOrganizationsJSON();
+                    //console.log(query.sql);
+                    //console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
 
                 return reply({ statusCode: 201 });
@@ -513,9 +464,7 @@ orgController.getApprovedConfig = {
 
 
             if (request.params.id) {
-                if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                    return reply(Boom.notFound("Index out of range for Orgs get request"));
-                }
+
 
                 var actualIndex = Number(request.params.id) - 1;
                 //create new object, convert to json
@@ -552,35 +501,36 @@ orgController.editConfig = {
     handler: function(req, reply) {
 
             var newOrg = {
-                name: req.payload.data.name,
-                website: req.payload.data.url,
-                parent: req.payload.data.parent,
-                denomination: req.payload.data.denomination,
-                city: req.payload.data.city,
-                state: req.payload.data.state,
-                country: req.payload.data.country,
-                geography: req.payload.data.geographic_area,
-                is_free: req.payload.data.is_org_free,
-                events_free: req.payload.data.events_free,
-                membership_free: req.payload.data.membership_free,
-                mission: req.payload.data.mission,
-                process: req.payload.data.process,
-                hymn_soc_member: req.payload.data.hymn_soc_member,
                 user: req.payload.user,
                 user_id: req.payload.uid,
-                clothing: req.payload.data.clothing,
-                shape: req.payload.data.shape,
 
+                name: req.payload.data.name, //
+                website: req.payload.data.url, //
+                parent: req.payload.data.parent, //
+                denomination: req.payload.data.denomination, //
+                city: req.payload.data.city, //
+                state: req.payload.data.state, //
+                country: req.payload.data.country, //
+                geography: req.payload.data.geographic_area, //
+                is_free: req.payload.data.is_org_free, //
+                events_free: req.payload.data.events_free, //
+                membership_free: req.payload.data.membership_free, //
+                mission: req.payload.data.mission, //
+                process: req.payload.data.process, //
+                hymn_soc_member: req.payload.data.hymn_soc_member,
+                clothing: req.payload.data.clothing, //
+                shape: req.payload.data.shape, //
                 approved: false,
-                categories: req.payload.data.categories,
-                instruments: req.payload.data.instruments,
-                ethnicities: req.payload.data.ethnicities,
+
+                categories: req.payload.data.categories, //
+                instruments: req.payload.data.instruments, //
+                ethnicities: req.payload.data.ethnicities, //
                 tags: req.payload.data.tags,
                 is_active: 1
 
             };
 
-            var justOrganization = JSON.parse(JSON.stringify(theObj));
+            var justOrganization = JSON.parse(JSON.stringify(newOrg));
 
             justOrganization.categories = JSON.stringify(justOrganization.categories);
             justOrganization.ethnicities = JSON.stringify(justOrganization.ethnicities);
@@ -592,20 +542,15 @@ orgController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justOrganization.hymn_soc_member == "string") {
-                if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No") {
-                    justOrganization.hymn_soc_member = false;
+                if (justOrganization.hymn_soc_member == "no" || justOrganization.hymn_soc_member == "No" || justOrganization.hymn_soc_member == "false" || justOrganization.hymn_soc_member == "False") {
+                    justOrganization.hymn_soc_member = 0;
+                } else if (justOrganization.hymn_soc_member == "partially" || justOrganization.hymn_soc_member == "Partially") {
+                    justOrganization.hymn_soc_member = 2;
                 } else {
-                    justOrganization.hymn_soc_member = true;
+                    justOrganization.hymn_soc_member = 1;
                 }
-            } else if (typeof justOrganization.hymn_soc_member == "number") {
-                if (justOrganization.hymn_soc_member == 0) {
-                    justOrganization.hymn_soc_member = false;
-                } else {
-                    justOrganization.hymn_soc_member = true;
-                }
-            } else {
-                //neither a string nor Number
-                justOrganization.hymn_soc_member = false;
+            } else if (typeof justOrganization.hymn_soc_member !== "number") {
+                justOrganization.hymn_soc_member = 2;
             }
 
             if (typeof justOrganization.is_free == "string") {
@@ -670,8 +615,6 @@ orgController.addTagConfig = {
         connection.query(`SELECT id FROM organizations`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting organizations in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
@@ -712,6 +655,7 @@ orgController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizOrganizations;
 var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedorganizations;
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
+var addValueConfig = require('../../controllers/shared/add-values').organizations;
 
 module.exports = [
     { path: '/orgs', method: 'POST', config: orgController.postConfig },
@@ -721,7 +665,7 @@ module.exports = [
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
     { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
     { path: '/quiz/orgs', method: 'POST', config: postQuizController },
-    { path: '/orgs/addtag/{id}', method: 'PUT', config: orgController.addTagConfig }
+    { path: '/orgs/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

@@ -25,59 +25,11 @@ var eventEthnicities, eventEthnicities_all = [];
 var eventShape, eventShape_all = [];
 var eventsAttire, eventsAttire_all = [];
 
-getEventsJSON();
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
-}
-
-function getEventsJSON() {
-    //console.log("===== GETTING EVENTS =====");
-    connection.query(`SELECT * from events`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-
-            events = [];
-            numEvents = 0;
-            eventTags = [];
-            eventEnsembles = [];
-            eventEthnicities = [];
-            eventShape = [];
-            eventsAttire = [];
-
-            events = JSObj;
-            numEvents = events.length;
-
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], eventEthnicities);
-                popArray(JSObj[i]["ensembles"], eventEnsembles);
-                popArray(JSObj[i]["tags"], eventTags);
-                popArray(JSObj[i]["shape"], eventShape);
-                popArray(JSObj[i]["clothing"], eventsAttire);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                eventShape_all.push(eventShape);
-                eventTags_all.push(eventTags);
-                eventEnsembles_all.push(eventEnsembles);
-                eventEthnicities_all.push(eventEthnicities);
-                eventsAttire_all.push(eventsAttire);
-            }
-
-        } else
-            console.log('Error while performing events Query.');
-
-    });
 }
 
 //Object.keys(obj.ethnicities).length
@@ -134,21 +86,14 @@ function insertEvent(theObj) {
     //console.log("\n\njustEvent: \n\n", justEvent);
 
     // TYPE CONVERSION
-    if (typeof justEvent.hymn_soc_member == "string") {
-        if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
-            justEvent.hymn_soc_member = false;
+    if (typeof justEvent.hymn_soc_member == "string" || justEvent.hymn_soc_member !== undefined) {
+        if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "false" || justEvent.hymn_soc_member == "False") {
+            justEvent.hymn_soc_member = 0;
+        } else if (justEvent.hymn_soc_member == "Yes" || justEvent.hymn_soc_member == "yes" || justEvent.hymn_soc_member == "True" || justEvent.hymn_soc_member == "true") {
+            justEvent.hymn_soc_member = 1;
         } else {
-            justEvent.hymn_soc_member = true;
+            justEvent.hymn_soc_member = 0;
         }
-    } else if (typeof justEvent.hymn_soc_member == "number") {
-        if (justEvent.hymn_soc_member == 0) {
-            justEvent.hymn_soc_member = false;
-        } else {
-            justEvent.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justEvent.hymn_soc_member = false;
     }
 
     if (justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
@@ -264,8 +209,6 @@ function reformatTinyInt(toFormat) {
 //EVENT GET REQUEST
 eventController.getConfig = {
     handler: function(request, reply) {
-
-            getEventsJSON();
 
             if (request.params.id) {
                 //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
@@ -421,11 +364,20 @@ eventController.postConfig = {
 
             insertAndGet(newEvent, (err, theID) => {
                 var toReturn = {
-
-                    event_id: theID
+                    event_id: theID,
+                    id_of_matches_found: []
                 }
 
-                return reply(toReturn);
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("events", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                    else {
+                        toReturn.id_of_matches_found = results;
+                    }
+
+                    return reply(toReturn);
+                });
             });
 
             //reply(newRes);
@@ -460,7 +412,6 @@ eventController.deleteConfig = {
 eventController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-            getEventsJSON();
 
             if (request.params.id) {
                 if (numEvents <= request.params.id - 1) {
@@ -475,6 +426,13 @@ eventController.updateConfig = {
                 var theCol = request.payload.column;
                 var theVal = request.payload.value;
 
+                //replace the inner single quotes with double quotes...
+                try {
+                    theVal = theVal.replace(/'/g, '"');
+                } catch (e) {
+                    console.log("ERROR: ", e.message);
+                }
+
                 if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
                 var query = connection.query(`
@@ -483,15 +441,15 @@ eventController.updateConfig = {
                     [theCol]: theVal
                 }, { id: mysqlIndex }], function(err, rows, fields) {
                     if (err) {
-                        console.log(query.sql);
+                        //console.log(query.sql);
                         return reply(Boom.badRequest(`invalid query when updating events on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                     } else {
-                        getEventsJSON();
-                        console.log(query.sql);
-                        console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                        //getEventsJSON();
+                        //console.log(query.sql);
+                        //console.log("set event #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                     }
 
-                    return reply({ statusCode: 200 });
+                    return reply({ statusCode: 201 });
                 });
 
                 //return reply(events[actualId]);
@@ -537,10 +495,7 @@ eventController.getApprovedConfig = {
 
                     if (request.params.id) {
                         //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-                        if ((numEvents <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                            //return reply('Not enough events in the database for your request').code(404);
-                            return reply(Boom.notFound("Index out of range for Events get request"));
-                        }
+
 
                         var actualIndex = Number(request.params.id) - 1;
                         //
@@ -583,7 +538,10 @@ eventController.editConfig = {
     handler: function(req, reply) {
 
         var newEvent = {
-            name: req.payload.data.title,
+            user_id: req.payload.uid,
+            user: req.payload.user,
+
+            name: req.payload.data.title, //
             frequency: req.payload.data.occurance,
             website: req.payload.data.url,
             parent: req.payload.data.parent,
@@ -595,8 +553,6 @@ eventController.editConfig = {
             state: req.payload.data.state,
             country: req.payload.data.country,
             hymn_soc_member: req.payload.data.hymn_soc_member,
-            user_id: req.payload.uid,
-            user: req.payload.user,
             theme: req.payload.data.theme,
             shape: req.payload.data.shape,
             clothing: req.payload.data.clothing,
@@ -622,7 +578,7 @@ eventController.editConfig = {
         }
 
         // DATE FORMATTING
-        if (newEvent.event_date !== null) {
+        if (newEvent.event_date !== undefined) {
             var fixed_date_1 = newEvent.event_date.toString().slice(0, 4);
             var fixed_date_2 = newEvent.event_date.toString().slice(5, 7);
             var fixed_date_3 = newEvent.event_date.toString().slice(8, 10);
@@ -636,7 +592,7 @@ eventController.editConfig = {
             newEvent.event_date = str;
         }
 
-        if (newEvent.event_end_date !== null) {
+        if (newEvent.event_end_date !== undefined) {
             var fixed_date_1 = newEvent.event_end_date.toString().slice(0, 4);
             var fixed_date_2 = newEvent.event_end_date.toString().slice(5, 7);
             var fixed_date_3 = newEvent.event_end_date.toString().slice(8, 10);
@@ -651,7 +607,7 @@ eventController.editConfig = {
         }
         // END DATE FORMATTING
 
-        var justEvent = JSON.parse(JSON.stringify(theObj));
+        var justEvent = JSON.parse(JSON.stringify(newEvent));
 
         justEvent.ethnicities = JSON.stringify(justEvent.ethnicities);
         justEvent.tags = JSON.stringify(justEvent.tags);
@@ -663,34 +619,27 @@ eventController.editConfig = {
 
         // TYPE CONVERSION
         if (typeof justEvent.hymn_soc_member == "string") {
-            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No") {
-                justEvent.hymn_soc_member = false;
+            if (justEvent.hymn_soc_member == "no" || justEvent.hymn_soc_member == "No" || justEvent.hymn_soc_member == "false" || justEvent.hymn_soc_member == "False") {
+                justEvent.hymn_soc_member = 0;
+            } else if (justEvent.hymn_soc_member == "partially" || justEvent.hymn_soc_member == "Partially") {
+                justEvent.hymn_soc_member = 2;
             } else {
-                justEvent.hymn_soc_member = true;
+                justEvent.hymn_soc_member = 1;
             }
-        } else if (typeof justEvent.hymn_soc_member == "number") {
-            if (justEvent.hymn_soc_member == 0) {
-                justEvent.hymn_soc_member = false;
-            } else {
-                justEvent.hymn_soc_member = true;
-            }
-        } else {
-            //neither a string nor Number
-            justEvent.hymn_soc_member = false;
+        } else if (typeof justEvent.hymn_soc_member !== "number") {
+            justEvent.hymn_soc_member = 2;
         }
 
-        if (justEvent.is_free !== "undefined" || justEvent.is_free !== undefined) {
-            if (typeof justEvent.is_free == "string") {
-                if (justEvent.is_free == "yes" || justEvent.is_free == "Yes") {
-                    justEvent.is_free = 1;
-                } else if (justEvent.is_free == "no" || justEvent.is_free == "No") {
-                    justEvent.is_free = 0;
-                } else {
-                    justEvent.is_free = 2;
-                }
-            } else if (typeof justEvent.is_free !== "number") {
+        if (typeof justEvent.is_free == "string") {
+            if (justEvent.is_free == "no" || justEvent.is_free == "No" || justEvent.is_free == "False" || justEvent.is_free == "false") {
+                justEvent.is_free = 0;
+            } else if (justEvent.is_free == "yes" || justEvent.is_free == "Yes" || justEvent.is_free == "True" || justEvent.is_free == "true") {
+                justEvent.is_free = 1;
+            } else {
                 justEvent.is_free = 2;
             }
+        } else {
+            justEvent.is_free = 0;
         }
 
         if (typeof justEvent.cost !== "string") {
@@ -704,7 +653,7 @@ eventController.editConfig = {
             if (err) {
                 return reply(Boom.badRequest(`invalid query when updating events with id = ${req.params.id} `));
             } else {
-                console.log("edited event #", req.params.id);
+                //console.log("edited event #", req.params.id);
             }
 
             return reply({ statusCode: 201 });
@@ -714,54 +663,12 @@ eventController.editConfig = {
     }
 };
 
-eventController.addTagConfig = {
-    //auth:
-    handler: function(request, reply) {
-        connection.query(`SELECT id FROM events`, (err, rows, fields) => {
-            if (err) { return reply(Boom.badRequest("error selecting events in updateConfig")); }
-            if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
-
-                //console.log("request.payload.tag: ", request.payload.tag);
-                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
-
-                //get existing tag
-                connection.query(`SELECT tags FROM events WHERE id = ?`, [request.params.id], (err, rows, fields) => {
-                    if (err) { return reply(Boom.badRequest("error selecting tag from event")); }
-                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
-                    if (rowsToJS(rows[0].tags) !== null) {
-                        var currenttag = JSON.parse(rows[0].tags);
-                    } else {
-                        var currenttag = [];
-                    }
-
-                    currenttag.push(receivedtag);
-
-                    connection.query(`UPDATE events SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
-                        if (err) { return reply(Boom.badRequest("error adding tag to event")); }
-                        return reply({ statusCode: 201 });
-
-                    });
-
-                });
-
-
-
-            } else {
-                return reply(Boom.notFound("must supply and id as a parameter"));
-
-            }
-        });
-    }
-
-};
-
 //var postQuizController = require('../../controllers/events/post-quiz-event').postQuiz;
 
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizEvents;
 var getUnapprovedRes = require('../../controllers/events/get-events').getUnapprovedevents;
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
+var addValueConfig = require('../../controllers/shared/add-values').events;
 
 module.exports = [
     { path: '/event', method: 'POST', config: eventController.postConfig },
@@ -771,7 +678,7 @@ module.exports = [
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
     { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
     { path: '/quiz/event', method: 'POST', config: postQuizController },
-    { path: '/event/addtag/{id}', method: 'PUT', config: eventController.addTagConfig }
+    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

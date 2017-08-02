@@ -29,59 +29,12 @@ var congTags, congTags_all = [];
 var congShape, congShape_all = [];
 var congAttire, congAttire_all = [];
 
-
-getcongregationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getcongregationsJSON() {
-    //get congregations from db
-    connection.query('SELECT * from congregations', function(err, rows, fields) {
-        if (err) { console.log('Error while performing congregations Query.'); throw err; } else {
-
-            congregations = [];
-            congCategories = [];
-            congInstruments = [];
-            congEthnicities = [];
-            congTags = [];
-            congShape = [];
-            congAttire = [];
-
-            var JSObj = rowsToJS(rows);
-            congregations = JSObj;
-
-            numCongs = congregations.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], congEthnicities);
-                popArray(JSObj[i]["categories"], congCategories);
-                popArray(JSObj[i]["tags"], congTags);
-                popArray(JSObj[i]["instruments"], congInstruments);
-                popArray(JSObj[i]["shape"], congShape);
-                popArray(JSObj[i]["clothing"], congAttire);
-
-                congAttire_all.push(congAttire);
-                congEthnicities_all.push(congEthnicities);
-                congCategories_all.push(congCategories);
-                congTags_all.push(congTags);
-                congInstruments_all.push(congInstruments);
-                congShape_all.push(congShape);
-
-            }
-
-        }
-
-    });
-} //end getcongregationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -138,20 +91,13 @@ function insertCongregation(theObj) {
 
     // TYPE CONVERSION
     if (typeof justCongregation.hymn_soc_member == "string") {
-        if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No") {
-            justCongregation.hymn_soc_member = false;
+        if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "false" || justCongregation.hymn_soc_member == "False") {
+            justCongregation.hymn_soc_member = 0;
+        } else if (justCongregation.hymn_soc_member == "Yes" || justCongregation.hymn_soc_member == "yes" || justCongregation.hymn_soc_member == "True") {
+            justCongregation.hymn_soc_member = 1;
         } else {
-            justCongregation.hymn_soc_member = true;
+            justCongregation.hymn_soc_member = 0;
         }
-    } else if (typeof justCongregation.hymn_soc_member == "number") {
-        if (justCongregation.hymn_soc_member == 0) {
-            justCongregation.hymn_soc_member = false;
-        } else {
-            justCongregation.hymn_soc_member = true;
-        }
-    } else {
-        //neither a string nor Number
-        justCongregation.hymn_soc_member = false;
     }
 
     if (typeof justCongregation.is_free == "string") {
@@ -266,8 +212,6 @@ congController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getcongregationsJSON();
-
             if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for congregations get request"));
             }
@@ -372,10 +316,20 @@ congController.postConfig = {
 
                 insertAndGet(newCong, (err, theID) => {
                     var toReturn = {
-                        cong_id: theID
+                        cong_id: theID,
+                        id_of_matches_found: []
                     }
 
-                    return reply(toReturn);
+                    var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("congregations", theData, (err, results) => {
+                        if (err) { console.log("ERROR: ", err); }
+                        //results is an array of id's of matching resources/congrgations/etc.
+                        //if it is empty, then there were no matches found
+                        else {
+                            toReturn.id_of_matches_found = results;
+                        }
+
+                        return reply(toReturn);
+                    });
                 });
 
 
@@ -403,8 +357,6 @@ congController.deleteConfig = {
 congController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getcongregationsJSON();
-
         if (request.params.id) {
             if (numCongs <= request.params.id - 1) {
                 //return reply('Not enough resources in the database for your request').code(404);
@@ -418,6 +370,13 @@ congController.updateConfig = {
             var theCol = request.payload.column;
             var theVal = request.payload.value;
 
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
+            }
+
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
             var query = connection.query(`
@@ -426,12 +385,12 @@ congController.updateConfig = {
                 [theCol]: theVal
             }, { id: mysqlIndex }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getcongregationsJSON();
-                    console.log(query.sql);
-                    console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                    //getcongregationsJSON();
+                    //console.log(query.sql);
+                    //console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
 
                 return reply({ statusCode: 201 });
@@ -528,9 +487,10 @@ congController.editConfig = {
 
             //getcongregationsJSON();
 
-            var theCongID = congregations.length + 1;
-
             var newCong = {
+                user: req.payload.user,
+                user_id: req.payload.uid,
+
                 name: req.payload.data.name,
                 website: req.payload.data.url,
                 parent: req.payload.data.parent,
@@ -539,18 +499,17 @@ congController.editConfig = {
                 state: req.payload.data.state,
                 country: req.payload.data.country,
                 geography: req.payload.data.geography,
-                is_free: req.payload.data.is_org_free,
+                is_free: req.payload.data.is_free,
                 attendance: req.payload.data.attendance,
                 process: req.payload.data.process,
                 hymn_soc_member: req.payload.data.hymn_soc_member,
-                user: req.payload.user,
-                user_id: req.payload.uid,
                 clothing: req.payload.data.clothing,
                 shape: req.payload.data.shape,
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
-
+                events_free: req.payload.data.events_free,
                 approved: false,
+
                 categories: req.payload.data.categories,
                 instruments: req.payload.data.instruments,
                 ethnicities: req.payload.data.ethnicities,
@@ -558,7 +517,7 @@ congController.editConfig = {
 
             };
 
-            var justCongregation = JSON.parse(JSON.stringify(theObj));
+            var justCongregation = JSON.parse(JSON.stringify(newCong));
 
             justCongregation.categories = JSON.stringify(justCongregation.categories);
             justCongregation.ethnicities = JSON.stringify(justCongregation.ethnicities);
@@ -569,32 +528,39 @@ congController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justCongregation.hymn_soc_member == "string") {
-                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No") {
-                    justCongregation.hymn_soc_member = false;
+                if (justCongregation.hymn_soc_member == "no" || justCongregation.hymn_soc_member == "No" || justCongregation.hymn_soc_member == "false" || justCongregation.hymn_soc_member == "False") {
+                    justCongregation.hymn_soc_member = 0;
+                } else if (justCongregation.hymn_soc_member == "partially" || justCongregation.hymn_soc_member == "Partially") {
+                    justCongregation.hymn_soc_member = 2;
                 } else {
-                    justCongregation.hymn_soc_member = true;
+                    justCongregation.hymn_soc_member = 1;
                 }
-            } else if (typeof justCongregation.hymn_soc_member == "number") {
-                if (justCongregation.hymn_soc_member == 0) {
-                    justCongregation.hymn_soc_member = false;
-                } else {
-                    justCongregation.hymn_soc_member = true;
-                }
-            } else {
-                //neither a string nor Number
-                justCongregation.hymn_soc_member = false;
+            } else if (typeof justCongregation.hymn_soc_member !== "number") {
+                justCongregation.hymn_soc_member = 2;
             }
 
             if (typeof justCongregation.is_free == "string") {
-                if (justCongregation.is_free == "yes" || justCongregation.is_free == "Yes") {
-                    justCongregation.is_free = 1;
-                } else if (justCongregation.is_free == "no" || justCongregation.is_free == "No") {
+                if (justCongregation.is_free == "no" || justCongregation.is_free == "No" || justCongregation.is_free == "False" || justCongregation.is_free == "false") {
                     justCongregation.is_free = 0;
+                } else if (justCongregation.is_free == "yes" || justCongregation.is_free == "Yes" || justCongregation.is_free == "True" || justCongregation.is_free == "true") {
+                    justCongregation.is_free = 1;
                 } else {
                     justCongregation.is_free = 2;
                 }
-            } else if (typeof justCongregation.is_free !== "number") {
-                justCongregation.is_free = 2;
+            } else {
+                justCongregation.is_free = 0;
+            }
+
+            if (typeof justCongregation.events_free == "string") {
+                if (justCongregation.events_free == "no" || justCongregation.events_free == "No" || justCongregation.events_free == "False" || justCongregation.events_free == "false") {
+                    justCongregation.events_free = 0;
+                } else if (justCongregation.events_free == "yes" || justCongregation.events_free == "Yes" || justCongregation.events_free == "True" || justCongregation.events_free == "true") {
+                    justCongregation.events_free = 1;
+                } else {
+                    justCongregation.events_free = 2;
+                }
+            } else {
+                justCongregation.events_free = 0;
             }
             // END TYPE CONVERSION
 
@@ -604,7 +570,7 @@ congController.editConfig = {
                 if (err) {
                     return reply(Boom.badRequest(`invalid query when updating congregations with id = ${req.params.id} `));
                 } else {
-                    console.log("edited cong #", req.params.id);
+                    //console.log("edited cong #", req.params.id);
                 }
 
                 return reply({ statusCode: 201 });
@@ -622,8 +588,6 @@ congController.addTagConfig = {
         connection.query(`SELECT id FROM congregations`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting congregations in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
@@ -664,6 +628,7 @@ congController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizCongregations;
 var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedcongregations;
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
+var addValueConfig = require('../../controllers/shared/add-values').congregations;
 
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
@@ -673,7 +638,7 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
-    { path: '/congregation/addtag/{id}', method: 'PUT', config: congController.addTagConfig }
+    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 

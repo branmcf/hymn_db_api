@@ -26,73 +26,12 @@ var personTags, personTags_all = [];
 var personLangs, personLangs_all = [];
 
 
-getPersonsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-
-
-function getPersonsJSON() {
-    //console.log("===== GETTING PERSONS =====");
-    connection.query(`SELECT * from persons`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-
-            persons = [];
-            personTopics = [];
-            personEnsembles = [];
-            personEthnicities = [];
-            personInstruments = [];
-            personCategories = [];
-            personTags = [];
-            personLangs = [];
-
-
-            persons = JSObj;
-
-            numPersons = persons.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], personEthnicities);
-                popArray(JSObj[i]["categories"], personCategories);
-                popArray(JSObj[i]["topics"], personTopics);
-                popArray(JSObj[i]["ensembles"], personEnsembles);
-                popArray(JSObj[i]["tags"], personTags);
-                popArray(JSObj[i]["instruments"], personInstruments);
-                popArray(JSObj[i]["languages"], personLangs);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                personEthnicities_all.push(personEthnicities);
-                personCategories_all.push(personCategories);
-                personTopics_all.push(personTopics);
-                personEnsembles_all.push(personEnsembles);
-                personTags_all.push(personTags);
-                personInstruments_all.push(personInstruments);
-                personLangs_all.push(personLangs);
-            }
-
-        } else
-            console.log('Error while performing Persons Query.');
-
-    });
-} //end func
-
 
 function popArray(obj, whichArray) {
 
@@ -150,20 +89,21 @@ function insertPerson(theObj) {
 
     // TYPE CONVERSION
     if (typeof justPerson.hymn_soc_member == "string") {
-        if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
-            justPerson.hymn_soc_member = false;
+        if (justPerson.hymn_soc_member == "yes" || justPerson.hymn_soc_member == "Yes" || justPerson.hymn_soc_member == "true" || justPerson.hymn_soc_member == "True") {
+            justPerson.hymn_soc_member = 1;
         } else {
-            justPerson.hymn_soc_member = true;
+            justPerson.hymn_soc_member = 0;
         }
-    } else if (typeof justPerson.hymn_soc_member == "number") {
-        if (justPerson.hymn_soc_member == 0) {
-            justPerson.hymn_soc_member = false;
+    }
+
+    if (typeof justPerson.pract_schol == "string") {
+        if (justPerson.pract_schol == "Practical" || justPerson.pract_schol == "practical") {
+            justPerson.pract_schol = 1;
+        } else if (justPerson.pract_schol == "Scholarly" || justPerson.pract_schol == "scholarly") {
+            justPerson.pract_schol = 0;
         } else {
-            justPerson.hymn_soc_member = true;
+            justPerson.pract_schol = 2;
         }
-    } else {
-        //neither a string nor Number
-        justPerson.hymn_soc_member = false;
     }
 
 
@@ -251,64 +191,6 @@ function reformatTinyInt(toFormat) {
     }
 }
 
-
-
-//PERSON GET REQUEST
-personController.getConfig = {
-
-    handler: function(request, reply) {
-
-        getPersonsJSON();
-
-        //console.log("\n\nETHS[", persons.length-1, "] => ",personEthnicities[persons.length-1]);
-
-        if (request.params.id) {
-            if ((numPersons <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                //return reply('Not enough Persons in the database for your request').code(404);
-                return reply(Boom.notFound("Index out of range for Persons get request"));
-            }
-            var actualIndex = Number(request.params.id - 1);
-
-            //create new object, convert to json
-
-            if (persons[actualIndex].approved == 0) {
-                var str = formatPerson(actualIndex);
-                return reply(str);
-            } else {
-                return reply(Boom.badRequest("The Person you request is already approved"));
-            }
-
-
-            //return reply(persons[actualId]);
-        }
-
-        //if no ID specified
-        var objToReturn = [];
-
-        for (var i = 0; i < persons.length; i++) {
-            //var bob = formatResource(i);
-
-            if (persons[i].approved == 0) {
-                var str = {
-                    id: persons[i].id,
-                    user: persons[i].user,
-                    first_name: persons[i].first_name,
-                    last_name: persons[i].last_name
-
-                }
-                objToReturn.push(str);
-            }
-        } //end for
-
-        //console.log(objToReturn);
-        if (objToReturn.length <= 0) {
-            return reply(Boom.badRequest("All resources already approved, nothing to return"));
-        } else {
-            reply(objToReturn);
-        }
-    }
-};
-
 //BELOW is for the POST request
 function insertFirst(toInsert, _callback) {
 
@@ -374,10 +256,20 @@ personController.postConfig = {
             insertAndGet(theData, (err, theID) => {
                 var toReturn = {
 
-                    person_id: theID
+                    person_id: theID,
+                    id_of_matches_found: []
                 }
 
-                return reply(toReturn);
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("persons", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                    else {
+                        toReturn.id_of_matches_found = results;
+                    }
+
+                    return reply(toReturn);
+                });
             });
 
         }
@@ -420,21 +312,25 @@ personController.deleteConfig = {
 personController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-            getPersonsJSON();
             var thePersonID = persons.length + 1;
 
             if (request.params.id) {
-                if (numPersons <= request.params.id - 1) {
-                    //return reply('Not enough events in the database for your request').code(404);
-                    return reply(Boom.notFound("Not enough persons"));
-                }
+
                 //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
                 var actualIndex = Number(request.params.id - 1); //if you request for events/1 you'll get events[0]
 
                 var mysqlIndex = Number(request.params.id);
 
                 var theCol = request.payload.column;
+
                 var theVal = request.payload.value;
+
+                //replace the inner single quotes with double quotes...
+                try {
+                    theVal = theVal.replace(/'/g, '"');
+                } catch (e) {
+                    console.log("ERROR: ", e.message);
+                }
 
                 if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
@@ -444,15 +340,15 @@ personController.updateConfig = {
                     [theCol]: theVal
                 }, { id: mysqlIndex }], function(err, rows, fields) {
                     if (err) {
-                        console.log(query.sql);
+                        //console.log(query.sql);
                         return reply(Boom.badRequest(`invalid query when updating persons on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                     } else {
-                        getPersonsJSON();
-                        console.log(query.sql);
-                        console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
+                        //getPersonsJSON();
+                        //console.log(query.sql);
+                        //console.log("set person #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                     }
 
-                    return reply({ statusCode: 200 });
+                    return reply({ statusCode: 201 });
                 });
 
                 //return reply(persons[actualId]);
@@ -550,36 +446,37 @@ personController.editConfig = {
     handler: function(req, reply) {
 
             var theData = {
-                first_name: req.payload.data.first_name,
-                last_name: req.payload.data.last_name,
-                email: req.payload.data.email,
-                city: req.payload.data.city,
-                state: req.payload.data.state,
-                country: req.payload.data.country,
-                website: req.payload.data.url,
-                social_facebook: req.payload.data.social_facebook,
-                social_twitter: req.payload.data.social_twitter,
-                social_other: req.payload.data.social_other,
-                emphasis: req.payload.data.emphasis,
-                hymn_soc_member: req.payload.data.hymn_soc_member,
-                high_level: req.payload.data.high_level,
                 user_id: req.payload.uid,
                 user: req.payload.user,
-                is_active: true,
-                pract_schol: req.payload.data.pract_schol,
 
+                first_name: req.payload.data.first_name, //
+                last_name: req.payload.data.last_name, //
+                email: req.payload.data.email, //
+                city: req.payload.data.city, //
+                state: req.payload.data.state, //
+                country: req.payload.data.country, //
+                website: req.payload.data.url, //
+                social_facebook: req.payload.data.social_facebook, //
+                social_twitter: req.payload.data.social_twitter, //
+                social_other: req.payload.data.social_other, //
+                emphasis: req.payload.data.emphasis, //
+                hymn_soc_member: req.payload.data.hymn_soc_member, //
+                high_level: req.payload.data.high_level,
+                is_active: true,
+                pract_schol: req.payload.data.pract_schol, //
                 approved: false,
-                languages: req.payload.data.languages,
-                instruments: req.payload.data.instruments,
-                categories: req.payload.data.categories,
-                ensembles: req.payload.data.ensembles,
-                ethnicities: req.payload.data.ethnicities,
-                topics: req.payload.data.topics,
+
+                languages: req.payload.data.languages, //
+                instruments: req.payload.data.instruments, //
+                categories: req.payload.data.categories, //
+                ensembles: req.payload.data.ensembles, //
+                ethnicities: req.payload.data.ethnicities, //
+                topics: req.payload.data.topics, //
                 tags: req.payload.data.tags
 
             };
 
-            var justPerson = JSON.parse(JSON.stringify(theObj));
+            var justPerson = JSON.parse(JSON.stringify(theData));
 
             justPerson.categories = JSON.stringify(justPerson.categories);
             justPerson.topics = JSON.stringify(justPerson.topics);
@@ -591,36 +488,38 @@ personController.editConfig = {
 
             // TYPE CONVERSION
             if (typeof justPerson.hymn_soc_member == "string") {
-                if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No") {
-                    justPerson.hymn_soc_member = false;
+                if (justPerson.hymn_soc_member == "no" || justPerson.hymn_soc_member == "No" || justPerson.hymn_soc_member == "false" || justPerson.hymn_soc_member == "False") {
+                    justPerson.hymn_soc_member = 0;
+                } else if (justPerson.hymn_soc_member == "partially" || justPerson.hymn_soc_member == "Partially") {
+                    justPerson.hymn_soc_member = 2;
                 } else {
-                    justPerson.hymn_soc_member = true;
+                    justPerson.hymn_soc_member = 1;
                 }
-            } else if (typeof justPerson.hymn_soc_member == "number") {
-                if (justPerson.hymn_soc_member == 0) {
-                    justPerson.hymn_soc_member = false;
+            } else if (typeof justPerson.hymn_soc_member !== "number") {
+                justPerson.hymn_soc_member = 2;
+            }
+
+            if (typeof justPerson.pract_schol == "string") {
+                if (justPerson.pract_schol == "practical" || justPerson.pract_schol == "Practical") {
+                    justPerson.pract_schol = 0;
+                } else if (justPerson.pract_schol == "Scholarly" || justPerson.pract_schol == "scholarly") {
+                    justPerson.pract_schol = 1;
                 } else {
-                    justPerson.hymn_soc_member = true;
+                    justPerson.pract_schol = 2;
                 }
-            } else {
-                //neither a string nor Number
-                justPerson.hymn_soc_member = false;
             }
 
             //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-
-            if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
             var query = connection.query(`
     UPDATE persons SET ?
     WHERE ?`, [justPerson, { id: req.params.id }], function(err, rows, fields) {
                 if (err) {
-                    console.log(query.sql);
+                    //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating persons with id = ${req.payload.id} `));
                 } else {
-                    getPersonsJSON();
-                    console.log(query.sql);
-                    console.log("set person #", req.params.id);
+                    //console.log(query.sql);
+                    //console.log("set person #", req.params.id);
                 }
 
                 return reply({ statusCode: 201 });
@@ -660,8 +559,6 @@ personController.addTagConfig = {
         connection.query(`SELECT id FROM persons`, (err, rows, fields) => {
             if (err) { return reply(Boom.badRequest("error selecting persons in updateConfig")); }
             if (request.params.id) {
-                var numRes = rows.length;
-                if (numRes < request.params.id) { return reply(Boom.notFound("A row with that id does not exist")); }
 
                 //console.log("request.payload.tag: ", request.payload.tag);
                 var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
@@ -702,7 +599,7 @@ personController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizPersons;
 var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapprovedpersons;
 var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedpersons;
-
+var addValueConfig = require('../../controllers/shared/add-values').persons;
 
 module.exports = [
     { path: '/person', method: 'POST', config: personController.postConfig },
@@ -712,7 +609,7 @@ module.exports = [
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
     { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
     { path: '/quiz/person', method: 'POST', config: postQuizController },
-    { path: '/person/addtag/{id}', method: 'PUT', config: personController.addTagConfig }
+    { path: '/person/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

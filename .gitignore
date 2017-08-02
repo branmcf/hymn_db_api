@@ -42,3 +42,4 @@ jspm_packages
 
 /server/database/profile-creation/*
 
+.DS_Store
