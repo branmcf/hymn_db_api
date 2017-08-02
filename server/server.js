@@ -27,9 +27,6 @@ if (process.env.JAWSDB_URL) {
 
 connection.connect();
 
-getUsersNew();
-//
-
 // create new server instance
 var server = new Hapi.Server();
 
@@ -54,19 +51,6 @@ var userController = {};
 var users = [];
 var numUsers = 0;
 
-function getUsersNew() {
-
-    var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
-        if (err) { throw err; }
-        var JSObj = rowsToJS(rows);
-        users.push(JSObj);
-        numUsers = users[0].length;
-
-    });
-}; //end getUsersNew
-
-
-
 //
 // login (accepted email and password)
 //
@@ -81,24 +65,16 @@ server.route({
                 if (!err) {
                     users = [];
                     numUsers = 0;
-                    //console.log(">>>>>select from db");
                     var JSObj = rowsToJS(rows);
                     users.push(JSObj);
                     numUsers = users[0].length;
 
                     if (users[0].length == 0) { return reply(Boom.unauthorized('no users register right now because tyler doesnt know how to computer')); }
 
-                    //console.log("length: ", users[0].length);
                     for (var i = 0; i < users[0].length; i++) {
-                        //console.log("trying...", users[0][i]);
                         if (users[0][i].email == req.payload.email) {
 
-                            //console.log("found matching user email...");
-
-                            //var user = users[0][i];     
-
                             var checkThis = Bcrypt.compareSync(req.payload.password, users[0][i].password);
-                            //console.log(checkThis);
 
                             if (checkThis == true) {
                                 var returnThis = {
@@ -114,18 +90,15 @@ server.route({
                                 //server.inject(`/user/${i+1}`, (res) => { return reply(res.result).code(201); });
                                 returnThis.ethnicities = JSON.parse(returnThis.ethnicities);
 
-                                console.log("successfull login");
                                 return reply(returnThis).code(201);
 
                             } //end if password matches...
                             else {
-                                console.log("NO MATCHING PASSWORD FOUND");
                                 return reply(Boom.unauthorized('invalid email/password'));
                             }
 
                         } //end matching email found
                         else if (i == users[0].length - 1) {
-                            console.log("invalid email...");
                             return reply(Boom.unauthorized('invalid email/password combination'));
 
                         }
@@ -156,7 +129,6 @@ server.route({
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
-    //console.log(temp);
     return temp;
 }
 
@@ -200,7 +172,6 @@ server.route({
                     var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
                         if (err) { return reply(Boom.badRequest()); }
                         toReturn = rowsToJS(rows);
-                        console.log(toReturn);
 
                         for (var i = 0; i < toReturn.length; i++) {
                             try {
@@ -220,365 +191,6 @@ server.route({
     }
 });
 
-
-/*
-//USER POST REQUEST
-server.route({
-  
-  method: 'POST',
-  path: '/user',
-  config: { 
-
-    handler: function(req, reply) {
-
-    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
-
-    var newUser = {
-      email: req.payload.email,
-      password: req.payload.password,
-      first_name: req.payload.first_name,
-      last_name: req.payload.last_name,
-      //salt: null,
-      //high_level: req.payload.high_level,
-      
-      city_name: req.payload.city_name,
-      state_name: req.payload.state_name,
-      country_name: req.payload.country_name,
-      website: req.payload.website,
-      hymn_soc_member: req.payload.hymn_soc_member
-      
-      is_active:        req.payload.is_active,
-      reg_date:         req.payload.reg_date,
-      high_level:       req.payload.high_level,
-      website:          req.payload.website,
-      ethnicities:      req.payload.ethnicities
-
-    };
-    
-
-
-// mysql
-
-    users[0].push(newUser);
-    console.log(users[0]);
-
-    //bottom necessary?
-    getUsersNew();
-
-    connection.query(
-      'INSERT INTO users SET ?', newUser,
-      function(err, rows) {
-
-        console.log("inserted into db");
-
-
-        if(err) {
-          throw new Error(err);
-          return;
-        }
-
-        reply([{
-          statusCode: 200,
-          message: 'Inserted Successfully',
-        }]);
-
-      }
-    )
-
-    console.log("out of connection func...");
-
-//end mysql
-
-    //console.log("\n\nINSERTED!\n\n");
-
-    //reply(newUser);
-
-
-
-  },//end handler
-  validate: {
-    payload: {
-      email:      Joi.string().email(),
-      password:   Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
-      first_name: Joi.string().required(),
-      last_name:  Joi.string().required()
-    }
-  }
-  
-  }//end config
-});//end user POST
-*/
-
-//
-//
-//
-
-/*
-server.route({
-  
-  method: 'POST',
-  path: '/user/admin/{id}',
-  config: { 
-
-    handler: function(request, reply) {
-
-      if (request.params.id) {
-        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough users in the database for your request').code(404);
-          return reply(Boom.notFound());
-        }
-
-        var theValue = {
-          is_admin: request.payload.is_admin
-
-        };
-
-        
-
-        var query = connection.query(
-          'UPDATE users SET is_admin = ? WHERE id = ?', [theValue.is_admin, request.params.id],
-          function(err, rows) {
-            if(err) {
-              return reply(Boom.badRequest(`Error while trying to make user with id=${request.params.id} an admin...`));
-            }
-
-            console.log(`made user with id=${request.params.id} an admin...`);
-
-            reply([{
-              statusCode: 200,
-              message: 'Made admin Successfully',
-            }]);
-
-          }); //end mysql connection
-
-
-
-        }//end if(req.params)
-        else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
-  
-  },//end handler
-  validate: {
-    payload: {
-      is_admin: Joi.boolean()
-    }
-  }
-  }//end config
-});
-*/
-
-//
-//
-//
-
-/*
-server.route({
-  
-  method: 'POST',
-  path: '/user/approve/{id}',
-  config: { 
-
-    handler: function(request, reply) {
-
-      if (request.params.id) {
-        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough users in the database for your request').code(404);
-          return reply(Boom.notFound());
-        }
-
-        var theValue = {
-          approved: request.payload.approved
-        };
-        
-
-        var query = connection.query(
-          'UPDATE users SET approved = ? WHERE id = ?', [theValue.approved, request.params.id],
-          function(err, rows) {
-            if(err) {
-              return reply(Boom.badRequest(`Error while trying to approve user with id=${request.params.id}...`));
-            }
-
-            console.log(`Approved user with id=${request.params.id}...`);
-
-            reply([{
-              statusCode: 200,
-              message: 'Approved user Successfully',
-            }]);
-
-          }); //end mysql connection
-
-
-
-        }//end if(req.params)
-        else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
-  
-  },//end handler
-  validate: {
-    payload: {
-      approved: Joi.boolean()
-    }
-  }
-  }//end config
-});
-
-//
-//
-//
-
-server.route({
-  
-  method: 'POST',
-  path: '/user/highlevel/{id}',
-  config: { 
-
-    handler: function(request, reply) {
-
-      if (request.params.id) {
-        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-          //return reply('Not enough users in the database for your request').code(404);
-          return reply(Boom.notFound());
-        }
-
-        var theValue = {
-          high_level: request.payload.high_level
-        };
-        
-
-        var query = connection.query(
-          'UPDATE users SET high_level = ? WHERE id = ?', [theValue.high_level, request.params.id],
-          function(err, rows) {
-            if(err) {
-              return reply(Boom.badRequest(`Error while trying to user with id=${request.params.id} a high level user...`)); 
-            }
-
-            console.log(`Made user with id=${request.params.id} a high_level user...`);
-
-            reply([{
-              statusCode: 200,
-              message: 'User made high level successfully',
-            }]);
-
-          }); //end mysql connection
-
-
-
-        }//end if(req.params)
-        else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
-  
-  },//end handler
-  validate: {
-    payload: {
-      approved: Joi.boolean()
-    }
-  }
-  }//end config
-});
-*/
-
-//
-//
-//
-
-/*
-server.route({
-  method: 'DELETE',
-  path: '/user/delete/{id}',
-  config: {
-
-    handler: function(request, reply) {
-
-        if (request.params.id) {
-            if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-              //return reply('Not enough users in the database for your request').code(404);
-              return reply(Boom.notFound("Error with users DELETE endpoint"));
-            }
-            //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-            var actualIndex = Number(request.params.id -1 );  //if you request for resources/1 you'll get resources[0]
-
-            var mysqlIndex = Number(request.params.id);
-
-            var query = connection.query(`
-            UPDATE users SET is_active = false
-            WHERE id = ${mysqlIndex}`, function(err, rows, fields) {
-              if(err) {
-                  return reply(Boom.badRequest(`Error while trying to DELETE user with id=${request.params.id}...`));
-              } else {
-                  console.log("set user #", request.params.id, " to innactive (is_active = false)");
-              }
-
-              reply([{
-                statusCode: 200,
-                message: `User with id=${request.params.id} set to innactive`,
-              }]);
-            });
-
-        } else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
-    }//end handler
-  }
-
-});
-*/
-
-//
-//
-//
-/*
-server.route({
-  method: 'PUT',
-  path: '/user/activate/{id}',
-  config: {
-
-    handler: function(request, reply) {
-        if (request.params.id) {
-            if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-              //return reply('Not enough users in the database for your request').code(404);
-              return reply(Boom.notFound("Error with users activate users endpoint"));
-            }
-
-            var query = connection.query(`
-            UPDATE users SET is_active = true
-            WHERE id = ${request.params.id}`, function(err, rows, fields) {
-              if(err) {
-                  return reply(Boom.badRequest(`Error while trying to make user active with id=${request.params.id}...`));
-              } else {
-                  console.log("set user #", request.params.id, " to active (is_active = true)");
-              }
-
-              reply([{
-                statusCode: 200,
-                message: `User with id=${request.params.id} set to ACTIVE`,
-              }]);
-            });
-
-        } else {
-          return reply(Boom.notFound("You must specify an id as a parameter"));
-        }
-    }
-  }
-
-});
-*/
-
-/*
-server.start(function (err) {
-    if (err) {
-      server.log('error', 'failed to start server');
-      server.log('error', err);
-
-      throw err;
-  };
-
-    server.log('info', 'Server running at: ' + server.info.uri);
-});
-*/
-
 server.register(BasicAuth, function(err) {
     if (err) { throw err; }
 
@@ -591,7 +203,6 @@ server.register(BasicAuth, function(err) {
             //if(username == options.email_admin && password == options.password_admin) {
             connection.query(`SELECT * from users where email = ?`, [username], function(err, rows, fields) {
                 if (err) { throw err; }
-                console.log("rows: ", rows);
 
                 var user = {
                     id: rows[0].id,
@@ -617,7 +228,6 @@ server.register(BasicAuth, function(err) {
     const highLevelValidation = function(request, username, password, callback) {
             connection.query(`SELECT * from users where email = ?`, [username], function(err, rows, fields) {
                 if (err) { throw err; }
-                console.log("rows: ", rows);
 
                 var user = {
                     id: rows[0].id,
@@ -653,41 +263,25 @@ server.register(BasicAuth, function(err) {
             //auth: 'admin_only',
             handler: function(req, reply) {
 
-                async.series([
-                    function(callback) {
-                        var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
-                            if (err) { return reply(Boom.badRequest()); }
-                            var JSObj = rowsToJS(rows);
-                            users.push(JSObj);
-                            numUsers = users[0].length;
-
-                            callback(null, 'one');
-                        });
-
-                    },
-                    function(callback) {
-                        //
-
-                        var salt = Bcrypt.genSaltSync(10);
-                        var hash = Bcrypt.hashSync(req.payload.password, salt);
-
-                        //console.log(req.payload.password, " TURNED INTO : ", hash);
-                        // Store hash in your password DB. 
-
+                connection.query(`SELECT email from users`, (err, rows) => {
+                    if (err) {
+                        return reply(Boom.badRequest("error selecting email from users..."));
+                    } else {
                         //loop thru all emails and see if email is already in users_db
-                        if (users.length !== 0) {
-                            //console.log(users);
-                            for (var i = 0; i < users[0].length; i++) {
-                                if (users[0][i].email == req.payload.email) {
+                        var emailsToCheck = rowsToJS(rows);
+                        if (emailsToCheck.length !== 0) {
+                            for (var i = 0; i < emailsToCheck.length; i++) {
+                                if (emailsToCheck.email == req.payload.email) {
                                     return reply(Boom.badRequest('invalid query, email already exists!'));
                                 }
                             }
-                        }
 
-                        //console.log("ethnicities: ", req.payload.ethnicities);
-                        var theEth = JSON.stringify(req.payload.ethnicities);
-                        //console.log("theEth: ", theEth);
-                        var query = connection.query('INSERT INTO users SET ?', {
+                            //email was not found, so continue to register user
+                            var salt = Bcrypt.genSaltSync(10);
+                            var hash = Bcrypt.hashSync(req.payload.password, salt);
+
+                            var theEth = JSON.stringify(req.payload.ethnicities);
+                            var query = connection.query('INSERT INTO users SET ?', {
                                 email: req.payload.email,
                                 password: hash,
                                 salt: salt,
@@ -697,40 +291,26 @@ server.register(BasicAuth, function(err) {
                                 website: req.payload.website,
                                 is_admin: req.payload.is_admin,
                                 ethnicities: theEth
-                            },
-                            function(err, rows, fields) {
+                            }, (err, rows, fields) => {
                                 if (err) {
                                     console.log("Error with registering a user...");
                                     return reply(Boom.badRequest('invalid query'));
                                 }
 
-                                users[0].push({ email: req.payload.email, password: hash, salt: salt, iterations: 10 });
-                                console.log("SUCCESSFULLY ENTERED USER INTO DB\n\n", query.sql);
-
-
                                 return reply({
                                     email: req.payload.email,
-                                    user_id: users[0].length,
+                                    user_id: rows.insertId,
                                     first_name: req.payload.first_name,
                                     last_name: req.payload.last_name,
                                     is_admin: req.payload.is_admin,
                                     ethnicities: req.payload.ethnicities
                                 }).code(201);
                             });
-
-
-                        //
-                        callback(null, 'two');
+                        } else {
+                            return reply(Boom.badRequest("no emails in the database..."));
+                        }
                     }
-
-                ], function(err, results) {
-                    console.log("done with both");
                 });
-
-
-
-
-
 
             }, //end handler
             validate: {
@@ -760,7 +340,6 @@ server.register(BasicAuth, function(err) {
                         var JSObj = rowsToJS(rows);
                         users.push(JSObj);
                         numUsers = users[0].length;
-                        console.log("done with getUsersNew");
 
                         if (request.params.id) {
                             if (numUsers <= request.params.id - 1) {
@@ -786,7 +365,6 @@ server.register(BasicAuth, function(err) {
                                     console.log(query.sql);
                                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                                 } else {
-                                    //getUsersNew();
                                     console.log(query.sql);
                                     console.log("set user #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                                 }
@@ -802,10 +380,8 @@ server.register(BasicAuth, function(err) {
         } //end config
     });
 
-    var routesArray = [];
+    let routesArray = [];
 
-    //var routes = require('./routes.js')
-    //routesArray.push(routes)
     routes = require('./routes/resources/resource-routes');
     routesArray.push(routes);
 
@@ -830,13 +406,11 @@ server.register(BasicAuth, function(err) {
         server.route(routesArray[i]);
     };
 
-    // start your server after plugin registration
     server.start(function(err) {
         if (err) {
             throw err
         }
-
         console.log('info', 'Server running at: ' + server.info.uri)
-    })
+    });
 
 });
