@@ -29,59 +29,12 @@ var congTags, congTags_all = [];
 var congShape, congShape_all = [];
 var congAttire, congAttire_all = [];
 
-
-getcongregationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getcongregationsJSON() {
-    //get congregations from db
-    connection.query('SELECT * from congregations', function(err, rows, fields) {
-        if (err) { console.log('Error while performing congregations Query.'); throw err; } else {
-
-            congregations = [];
-            congCategories = [];
-            congInstruments = [];
-            congEthnicities = [];
-            congTags = [];
-            congShape = [];
-            congAttire = [];
-
-            var JSObj = rowsToJS(rows);
-            congregations = JSObj;
-
-            numCongs = congregations.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], congEthnicities);
-                popArray(JSObj[i]["categories"], congCategories);
-                popArray(JSObj[i]["tags"], congTags);
-                popArray(JSObj[i]["instruments"], congInstruments);
-                popArray(JSObj[i]["shape"], congShape);
-                popArray(JSObj[i]["clothing"], congAttire);
-
-                congAttire_all.push(congAttire);
-                congEthnicities_all.push(congEthnicities);
-                congCategories_all.push(congCategories);
-                congTags_all.push(congTags);
-                congInstruments_all.push(congInstruments);
-                congShape_all.push(congShape);
-
-            }
-
-        }
-
-    });
-} //end getcongregationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -259,8 +212,6 @@ congController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getcongregationsJSON();
-
             if ((numCongs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for congregations get request"));
             }
@@ -365,10 +316,20 @@ congController.postConfig = {
 
                 insertAndGet(newCong, (err, theID) => {
                     var toReturn = {
-                        cong_id: theID
+                        cong_id: theID,
+                        id_of_matches_found: []
                     }
 
-                    return reply(toReturn);
+                    var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("congregations", theData, (err, results) => {
+                        if (err) { console.log("ERROR: ", err); }
+                        //results is an array of id's of matching resources/congrgations/etc.
+                        //if it is empty, then there were no matches found
+                        else {
+                            toReturn.id_of_matches_found = results;
+                        }
+
+                        return reply(toReturn);
+                    });
                 });
 
 
@@ -396,8 +357,6 @@ congController.deleteConfig = {
 congController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getcongregationsJSON();
-
         if (request.params.id) {
             if (numCongs <= request.params.id - 1) {
                 //return reply('Not enough resources in the database for your request').code(404);
@@ -411,6 +370,13 @@ congController.updateConfig = {
             var theCol = request.payload.column;
             var theVal = request.payload.value;
 
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
+            }
+
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
             var query = connection.query(`
@@ -422,7 +388,7 @@ congController.updateConfig = {
                     //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getcongregationsJSON();
+                    //getcongregationsJSON();
                     //console.log(query.sql);
                     //console.log("set cong #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
@@ -522,6 +488,9 @@ congController.editConfig = {
             //getcongregationsJSON();
 
             var newCong = {
+                user: req.payload.user,
+                user_id: req.payload.uid,
+
                 name: req.payload.data.name,
                 website: req.payload.data.url,
                 parent: req.payload.data.parent,
@@ -534,15 +503,13 @@ congController.editConfig = {
                 attendance: req.payload.data.attendance,
                 process: req.payload.data.process,
                 hymn_soc_member: req.payload.data.hymn_soc_member,
-                user: req.payload.user,
-                user_id: req.payload.uid,
                 clothing: req.payload.data.clothing,
                 shape: req.payload.data.shape,
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
                 events_free: req.payload.data.events_free,
-
                 approved: false,
+
                 categories: req.payload.data.categories,
                 instruments: req.payload.data.instruments,
                 ethnicities: req.payload.data.ethnicities,
@@ -661,6 +628,7 @@ congController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizCongregations;
 var getUnapprovedRes = require('../../controllers/congregations/get-congregations').getUnapprovedcongregations;
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
+var addValueConfig = require('../../controllers/shared/add-values').congregations;
 
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
@@ -670,7 +638,7 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
-    { path: '/congregation/addtag/{id}', method: 'PUT', config: congController.addTagConfig }
+    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 

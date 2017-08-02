@@ -35,58 +35,6 @@ var resEth, resEth_all = [];
 var resDenominations, resDenominations_all = [];
 var resInstruments, resInstruments_all = [];
 
-getResourcesJSON();
-
-function getResourcesJSON() {
-    //console.log("===== GETTING RESOURCES =====");
-    connection.query(`SELECT * from resources`, function(err, rows, fields) {
-        if (!err) {
-
-            var JSObj = rowsToJS(rows);
-            //var JSObj = rows;
-
-            resources = [];
-            //resTypes = [];
-            resCategories = [];
-            resTopics = [];
-            resAcc = [];
-            resLanguages = [];
-            resTags = [];
-            resEnsembles = [];
-            resEth = [];
-            resDenominations = [];
-            resInstruments = [];
-
-            //resources.push(JSObj);
-            resources = JSObj;
-            //console.log("rows[0]: ", JSObj[0]);
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], resEth);
-                popArray(JSObj[i]["categories"], resCategories);
-                popArray(JSObj[i]["topics"], resTopics);
-                popArray(JSObj[i]["accompaniment"], resAcc);
-                popArray(JSObj[i]["languages"], resLanguages);
-                popArray(JSObj[i]["ensembles"], resEnsembles);
-                popArray(JSObj[i]["tags"], resTags);
-                popArray(JSObj[i]["instruments"], resInstruments);
-                popArray(JSObj[i]["denominations"], resDenominations);
-                //popArray(JSObj[i]["types"], resTypes);
-
-            }
-
-
-            //popArray(JSObj[0].categories, resCategories);
-
-
-        } else
-            console.log('Error while performing Resources Query.');
-
-    });
-} //end func
-
-
 function popArray(obj, whichArray) {
 
     obj = JSON.parse(obj);
@@ -370,10 +318,20 @@ resourceController.postConfig = {
 
             var theID = insertAndGet(theData, (err, theID) => {
                 var toReturn = {
-                    resource_id: theID
+                    resource_id: theID,
+                    id_of_matches_found: []
                 }
 
-                return reply(toReturn);
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("resources", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                    else {
+                        toReturn.id_of_matches_found = results;
+                    }
+
+                    return reply(toReturn);
+                });
             });
 
 
@@ -422,9 +380,7 @@ resourceController.deleteConfig = {
 resourceController.editConfig = {
     //auth: 'high_or_admin',
     handler: function(req, reply) {
-
             //getResources();
-
 
             var theData = {
                 user_id: req.payload.uid,
@@ -496,7 +452,7 @@ resourceController.editConfig = {
                 justResource.is_free = 2;
             }
             connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
-                if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
+                if (err) { return reply(Boom.badRequest("error selecting resources in editConfig")); }
                 if (req.params.id) {
 
                     var query = connection.query(`
@@ -549,6 +505,8 @@ resourceController.updateConfig = {
                 if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
                 if (request.params.id) {
 
+                    if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+
                     //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
                     var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
 
@@ -557,7 +515,12 @@ resourceController.updateConfig = {
                     var theCol = request.payload.column;
                     var theVal = request.payload.value;
 
-                    if (theCol == "id") { return reply(Boom.unauthorized("cannot change the id... what are you doing?")); }
+                    //replace the inner single quotes with double quotes...
+                    try {
+                        theVal = theVal.replace(/'/g, '"');
+                    } catch (e) {
+                        console.log("ERROR: ", e.message);
+                    }
 
                     var query = connection.query(`
                     UPDATE resources SET ?
@@ -565,7 +528,7 @@ resourceController.updateConfig = {
                         [theCol]: theVal
                     }, { id: mysqlIndex }], function(err, rows, fields) {
                         if (err) {
-                            return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+                            return reply(Boom.badRequest(`invalid query when updating resources on column ${request.payload.column} with value = ${request.payload.value} `));
                         } else {
                             //console.log("set resource #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                         }
@@ -589,39 +552,43 @@ resourceController.updateConfig = {
 resourceController.addTagConfig = {
     //auth:
     handler: function(request, reply) {
-        connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
-            if (err) { return reply(Boom.badRequest("error selecting resources in updateConfig")); }
-            if (request.params.id) {
-                //console.log("request.payload.tag: ", request.payload.tag);
-                var receivedtag = request.payload.tag; //receive tag from body, parse to JSObj
+        if (request.params.id) {
+            //TODO: receive an array of tags to push, or a single tag...
+            var receivedTags = request.payload.tags; //receive tag from body, parse to JSObj
 
-                //get existing tag
-                connection.query(`SELECT tags FROM resources WHERE id = ?`, [request.params.id], (err, rows, fields) => {
-                    if (err) { return reply(Boom.badRequest("error selecting tag from resource")); }
-                    //console.log("rows[0]: ", rowsToJS(rows[0].tag));
-                    if (rowsToJS(rows[0].tags) !== null) {
-                        var currenttag = JSON.parse(rows[0].tags);
-                    } else {
-                        var currenttag = [];
+            //get existing tag
+            connection.query(`SELECT tags FROM resources WHERE id = ?`, [request.params.id], (err, rows, fields) => {
+                if (err) { return reply(Boom.badRequest("error selecting tag from resource")); }
+                //console.log("rows[0]: ", rowsToJS(rows[0].tag));
+                if (rowsToJS(rows[0].tags) !== null) {
+                    var currentTags = JSON.parse(rows[0].tags);
+                } else {
+                    var currentTags = [];
+                }
+
+                if (typeof receivedTags == "string") {
+                    currentTags.push(receivedTags);
+                } else {
+                    for (var rec_tag_index in receivedTags) {
+                        currentTags.push(receivedTags[rec_tag_index]);
                     }
+                }
 
-                    currenttag.push(receivedtag);
-
-                    connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currenttag), request.params.id], (err, rows, fields) => {
-                        if (err) { return reply(Boom.badRequest("error adding tag to resource")); }
-                        return reply({ statusCode: 201 });
-
-                    });
+                connection.query(`UPDATE resources SET tags = ? WHERE id = ?`, [JSON.stringify(currentTags), request.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest("error adding tag to resource")); }
+                    return reply({ statusCode: 201 });
 
                 });
 
+            });
 
 
-            } else {
-                return reply(Boom.notFound("must supply and id as a parameter"));
 
-            }
-        });
+        } else {
+            return reply(Boom.notFound("must supply and id as a parameter"));
+
+        }
+
     }
 
 };
@@ -633,7 +600,7 @@ var postQuizControllerType = require('../../controllers/post-quiz-then-get').pos
 var getUnapprovedRes = require('../../controllers/resources/get-resources').getUnapprovedResources;
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
-
+var addValueConfig = require('../../controllers/shared/add-values').resources;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -645,6 +612,6 @@ module.exports = [
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType },
-    { path: '/resource/addtag/{id}', method: 'PUT', config: resourceController.addTagConfig },
+    { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
 
 ];

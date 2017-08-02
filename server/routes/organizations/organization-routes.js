@@ -29,65 +29,12 @@ var orgTags, orgTags_all = [];
 var orgShape, orgShape_all = [];
 var orgAttire, orgAttire_all = [];
 
-
-getOrganizationsJSON();
-
-
-
 function rowsToJS(theArray) {
     var temp = JSON.stringify(theArray);
     temp = JSON.parse(temp);
     //console.log(temp);
     return temp;
 }
-
-function getOrganizationsJSON() {
-    //get orgs from db
-    connection.query('SELECT * from organizations', function(err, rows, fields) {
-        if (err) { throw err; } else {
-
-            orgs = [];
-            orgCategories = [];
-            orgInstruments = [];
-            orgEthnicities = [];
-            orgTags = [];
-            orgAttire = [];
-            orgShape = [];
-
-            var JSObj = rowsToJS(rows);
-            orgs = JSObj;
-            numOrgs = orgs.length;
-
-            //console.log("\nT: ", rows[0]);
-            for (var i = 0; i < JSObj.length; i++) {
-                popArray(JSObj[i]["ethnicities"], orgEthnicities);
-                popArray(JSObj[i]["categories"], orgCategories);
-                popArray(JSObj[i]["tags"], orgTags);
-                popArray(JSObj[i]["instruments"], orgInstruments);
-                popArray(JSObj[i]["shape"], orgShape);
-                popArray(JSObj[i]["clothing"], orgAttire);
-
-                //console.log("\nETH[",i, "] : ", resEth[i]);
-                //console.log("\nCAT[",i, "] : ", resCategories[i]);
-                //console.log("\nTOPICS[",i, "] : ", resTopics[i]);
-                //console.log("\nACC[",i, "] : ", resAcc[i]);
-                //console.log("\nLANG[",i, "] : ", resLanguages[i]);
-                //console.log("\nENSEMBLES[",i, "] : ", resEnsembles[i]);
-                //console.log("\nresTags[",i, "] : ", resTags[i]);
-
-                orgEthnicities_all.push(orgEthnicities);
-                orgCategories_all.push(orgCategories);
-                orgTags_all.push(orgTags);
-                orgInstruments_all.push(orgInstruments);
-                orgShape_all.push(orgShape);
-                orgAttire_all.push(orgAttire);
-            }
-
-        }
-
-    });
-} //end getOrganizationsJSON function
-
 
 function popArray(obj, whichArray) {
 
@@ -295,8 +242,6 @@ orgController.getConfig = {
     handler: function(request, reply) {
         if (request.params.id) {
 
-            getOrganizationsJSON();
-
             if ((numOrgs <= request.params.id - 1) || (0 > request.params.id - 1)) {
                 return reply(Boom.notFound("Index out of range for Orgs get request"));
             }
@@ -397,10 +342,20 @@ orgController.postConfig = {
 
             insertAndGet(newOrg, (err, theID) => {
                 var toReturn = {
-                    org_id: theID
+                    org_id: theID,
+                    id_of_matches_found: []
                 }
 
-                return reply(toReturn);
+                var lookForDuplicate = require('../../controllers/shared/check-for-duplicates')("organizations", theData, (err, results) => {
+                    if (err) { console.log("ERROR: ", err); }
+                    //results is an array of id's of matching resources/congrgations/etc.
+                    //if it is empty, then there were no matches found
+                    else {
+                        toReturn.id_of_matches_found = results;
+                    }
+
+                    return reply(toReturn);
+                });
             });
 
 
@@ -428,7 +383,6 @@ orgController.deleteConfig = {
 orgController.updateConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        getOrganizationsJSON();
 
         if (request.params.id) {
             //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
@@ -438,6 +392,12 @@ orgController.updateConfig = {
 
             var theCol = request.payload.column;
             var theVal = request.payload.value;
+            //replace the inner single quotes with double quotes...
+            try {
+                theVal = theVal.replace(/'/g, '"');
+            } catch (e) {
+                console.log("ERROR: ", e.message);
+            }
 
             if (theCol == "id") { return reply(Boom.unauthorized("cannot change that...")); }
 
@@ -450,7 +410,7 @@ orgController.updateConfig = {
                     //console.log(query.sql);
                     return reply(Boom.badRequest(`invalid query when updating organizations on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
                 } else {
-                    getOrganizationsJSON();
+                    //getOrganizationsJSON();
                     //console.log(query.sql);
                     //console.log("set org #", mysqlIndex, ` variable ${theCol} = ${theVal}`);
                 }
@@ -541,6 +501,9 @@ orgController.editConfig = {
     handler: function(req, reply) {
 
             var newOrg = {
+                user: req.payload.user,
+                user_id: req.payload.uid,
+
                 name: req.payload.data.name, //
                 website: req.payload.data.url, //
                 parent: req.payload.data.parent, //
@@ -555,12 +518,10 @@ orgController.editConfig = {
                 mission: req.payload.data.mission, //
                 process: req.payload.data.process, //
                 hymn_soc_member: req.payload.data.hymn_soc_member,
-                user: req.payload.user,
-                user_id: req.payload.uid,
                 clothing: req.payload.data.clothing, //
                 shape: req.payload.data.shape, //
-
                 approved: false,
+
                 categories: req.payload.data.categories, //
                 instruments: req.payload.data.instruments, //
                 ethnicities: req.payload.data.ethnicities, //
@@ -694,6 +655,7 @@ orgController.addTagConfig = {
 var postQuizController = require('../../controllers/post-quiz-then-get').postQuizOrganizations;
 var getUnapprovedRes = require('../../controllers/organizations/get-organizations').getUnapprovedorganizations;
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
+var addValueConfig = require('../../controllers/shared/add-values').organizations;
 
 module.exports = [
     { path: '/orgs', method: 'POST', config: orgController.postConfig },
@@ -703,7 +665,7 @@ module.exports = [
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
     { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
     { path: '/quiz/orgs', method: 'POST', config: postQuizController },
-    { path: '/orgs/addtag/{id}', method: 'PUT', config: orgController.addTagConfig }
+    { path: '/orgs/addvalues/{id}', method: 'PUT', config: addValueConfig }
 
 
 ];

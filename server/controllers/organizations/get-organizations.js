@@ -50,19 +50,33 @@ function reformatFree(toFormat) {
     }
 }
 
-
-function formatJSON(organization) {
-    var json_columns = ["topics", "ensembles", "accompaniment", "languages", "categories", "ethnicities", "instruments", "tags", "clothing", "shape"];
+function formatJSON(resource) {
+    var json_columns = ["clothing", "shape", "categories", "instruments", "ethnicities", "tags"];
     for (var i in json_columns) {
-        if (organization[json_columns[i]]) { //if it exists...
-            organization[json_columns[i]] = JSON.parse(organization[json_columns[i]]);
+        if (resource[json_columns[i]]) { //if it exists...
+            //check to see if it's an array...
+            if (Array.isArray(resource[json_columns[i]]) == true) {
+                //now do tags seperately and REMOVE DUPLICATES
+                var tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(resource["tags"]);
+                resource["tags"] = tagsWithoutDuplicates;
+                //nothing...
+            } else if (json_columns[i] == "tags") {
+                try {
+                    var tagsWithoutDuplicates = JSON.parse(resource[json_columns[i]]);
+                    tagsWithoutDuplicates = require('../../controllers/shared/remove-duplicate-tags')(tagsWithoutDuplicates);
+                    resource["tags"] = tagsWithoutDuplicates;
+                } catch (e) {
+                    console.log(e.message);
+                    resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+                    //console.log(resource[json_columns[i]]);
+                }
 
-
+            } else {
+                resource[json_columns[i]] = JSON.parse(resource[json_columns[i]]);
+            }
         } else {
-            //console.log("error, ", json_columns[i], " doesn't exist in organization");
+            //console.log("error, ", json_columns[i], " doesn't exist in resource");
         }
-
-
     }
 
     //return the JSON columns in an array
@@ -70,8 +84,11 @@ function formatJSON(organization) {
 
     //loop through every column, check if it's true
     for (var col_index in json_columns) {
-        if (organization[json_columns[col_index]]) { //if it exists...
-            var current_obj = organization[json_columns[col_index]];
+        if (resource[json_columns[col_index]]) { //if it exists...
+            if (Array.isArray(resource[json_columns[col_index]])) { //if it's an array, just continue with the next iteration
+                continue;
+            }
+            var current_obj = resource[json_columns[col_index]];
             for (var key in current_obj) { //if key is in the current object...
                 if (current_obj.hasOwnProperty(key)) {
                     var TorForOther = current_obj[key]; //the corresponding value to the key:value pair which is either T,F or TorForOther
@@ -85,18 +102,18 @@ function formatJSON(organization) {
                 }
             }
 
-            organization[json_columns[col_index]] = theKeys;
+            resource[json_columns[col_index]] = theKeys;
             theKeys = [];
 
         } else {
-            //console.log("error, ", json_columns[i], " doesn't exist in organization");
+            //console.log("error, ", json_columns[i], " doesn't exist in resource");
         }
 
 
     } //done looping through certain column
 
 
-    return organization;
+    return resource;
 }
 
 module.exports.getUnapprovedorganizations = {
