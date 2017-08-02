@@ -339,15 +339,9 @@ server.register(BasicAuth, function(err) {
                         if (err) { return reply(Boom.badRequest()); }
                         var JSObj = rowsToJS(rows);
                         users.push(JSObj);
-                        numUsers = users[0].length;
 
                         if (request.params.id) {
-                            if (numUsers <= request.params.id - 1) {
-                                //return reply('Not enough resources in the database for your request').code(404);
-                                return reply(Boom.notFound("Entered invalid id for congregations activate endpoint"));
-                            }
                             //if (resources.length <= request.params.id - 1) return reply('Not enough resources in the database for your request').code(404);
-                            var actualIndex = Number(request.params.id - 1); //if you request for resources/1 you'll get resources[0]
 
                             var mysqlIndex = Number(request.params.id);
 
