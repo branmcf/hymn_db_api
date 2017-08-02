@@ -167,33 +167,6 @@ function rowsToJS(theArray) {
 ===================================================
 */
 
-function formatUser(actualIndex) {
-    //console.log(`>>>>>formatUser()`);
-    var userData = {};
-
-    userData = {
-        url: "/user/" + String(actualIndex + 1),
-        id: users[0][actualIndex].id,
-        email: users[0][actualIndex].email,
-        password: users[0][actualIndex].password,
-        first_name: users[0][actualIndex].first_name,
-        hymn_soc_member: users[0][actualIndex].hymn_soc_member,
-        last_name: users[0][actualIndex].last_name,
-        is_active: users[0][actualIndex].is_active,
-        reg_date: users[0][actualIndex].reg_date,
-        high_level: users[0][actualIndex].high_level,
-        website: users[0][actualIndex].website,
-        approved: users[0][actualIndex].approved,
-        is_admin: users[0][actualIndex].is_admin
-            //ethnicity_name:   eth[0]
-
-    };
-
-    //console.log(`end getInter()`);
-
-    return userData;
-}
-
 //USER GET REQUEST
 server.route({
 
@@ -202,45 +175,47 @@ server.route({
     config: {
 
         handler: function(request, reply) {
-                //console.log("eth[x]: ", eth[Number(request.params.id-1)]);
 
-                var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest()); }
-                    var JSObj = rowsToJS(rows);
-                    users.push(JSObj);
-                    numUsers = users[0].length;
+                var toReturn = {};
 
-                    //console.log("\n\n======================TOTAL USERS: ", numUsers, "\n\n");
+                if (request.params.id) {
+                    var query = connection.query(`SELECT * from users where ?`, [{ id: request.params.id }], function(err, rows, fields) {
+                        if (err) { return reply(Boom.badRequest()); }
+                        toReturn = rowsToJS(rows[0]); //add the [0] because we only want ONE object, not a potential array of multiple objects...
 
-                    if (request.params.id) {
-                        if ((numUsers <= request.params.id - 1) || (0 > request.params.id - 1)) {
-                            //return reply('Not enough users in the database for your request').code(404);
-                            return reply(Boom.notFound());
+                        try {
+                            toReturn["url"] = "/user/" + String(toReturn.id)
+                        } catch (e) {
+                            toReturn["url"] = "";
+                            console.log("Error in getting user by id: ", e);
                         }
-
-                        var actualIndex = Number(request.params.id) - 1;
-
-                        var userData = formatUser(actualIndex);
-                        delete userData.password;
+                        delete toReturn.password;
 
                         //var str = JSON.stringify(userData);
 
-                        return reply(userData);
-
-
-                    }
+                        return reply(toReturn);
+                    });
+                } else {
                     //if no ID specified
-                    var objToReturn = [];
+                    var query = connection.query(`SELECT * from users`, function(err, rows, fields) {
+                        if (err) { return reply(Boom.badRequest()); }
+                        toReturn = rowsToJS(rows);
+                        console.log(toReturn);
 
-                    for (var i = 0; i < users[0].length; i++) {
-                        var temp = formatUser(i);
-                        delete temp.password;
-                        objToReturn.push(temp);
-                    }
+                        for (var i = 0; i < toReturn.length; i++) {
+                            try {
+                                toReturn[i]["url"] = "/user/" + String(toReturn[i].id)
+                            } catch (e) {
+                                toReturn[i]["url"] = "";
+                                console.log("Error in getting user by id: ", e);
+                            }
+                            delete toReturn[i].password;
+                        }
 
+                        return reply(toReturn);
+                    });
 
-                    reply(objToReturn);
-                });
+                } //end if no id...
             } //end handler
     }
 });
