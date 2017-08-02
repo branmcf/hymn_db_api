@@ -849,18 +849,18 @@ server.register(BasicAuth, function(err) {
     routes = require('./routes/persons/person-routes');
     routesArray.push(routes);
 
-
     routes = require('./routes/organizations/organization-routes');
     routesArray.push(routes);
 
     routes = require('./routes/congregations/congregation-routes');
     routesArray.push(routes);
 
+    routes = require('./routes/all/all-routes');
+    routesArray.push(routes);
+
     for (var i = 0; i < routesArray.length; i++) {
         server.route(routesArray[i]);
     };
-
-
 
     // start your server after plugin registration
     server.start(function(err) {

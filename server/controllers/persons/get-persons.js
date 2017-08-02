@@ -193,17 +193,6 @@ module.exports.getApprovedpersons = {
                     if (err) { return reply(Boom.badRequest(`Error getting all from persons`)); }
 
                     var persons = rowsToJS(rows);
-                    /*
-                    var resCategories = [];
-                    var resTopics = [];
-                    var resAcc = [];
-                    var resLanguages = [];
-                    var resTags = [];
-                    var resEnsembles = [];
-                    var resEth = [];
-                    var resDenominations = [];
-                    var resInstruments = [];
-                    */
                     var numUnApprovedRes = persons.length;
                     var toReturn = [];
 
