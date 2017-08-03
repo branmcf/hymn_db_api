@@ -611,7 +611,7 @@ module.exports = [
     { path: '/resource/update/{id}', method: 'PUT', config: resourceController.updateConfig },
     { path: '/quiz/resource', method: 'POST', config: postQuizController },
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
-    { path: '/resource/approved/type/{type}', method: 'GET', config: getApprovedByType },
+    { path: '/resource/approved/type/{type}/{id?}', method: 'GET', config: getApprovedByType },
     { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
 
 ];

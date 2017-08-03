@@ -305,12 +305,9 @@ module.exports.getApprovedByType = {
                         delete toPush["website"];
                         delete toPush["name"];
 
-                        //toPush.is_active = reformatTinyInt(toPush.is_active);
-                        //toPush.high_level = reformatTinyInt(toPush.high_level);
                         toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
                         toPush.is_free = reformatFree(toPush.is_free);
                         toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
-                        //toPush.approved = reformatTinyInt(toPush.approved);
 
                         toReturn.push(toPush);
                     }
@@ -323,7 +320,7 @@ module.exports.getApprovedByType = {
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where approved = 0 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
+                connection.query(`SELECT * from resources where approved = 1 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
                     //console.log(rows[0]);
                     if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
@@ -335,12 +332,9 @@ module.exports.getApprovedByType = {
                     delete fixedRes["website"];
                     delete fixedRes["name"];
 
-                    //fixedRes.is_active = reformatTinyInt(fixedRes.is_active);
-                    //fixedRes.high_level = reformatTinyInt(fixedRes.high_level);
                     fixedRes.hymn_soc_member = reformatTinyInt(fixedRes.hymn_soc_member);
                     fixedRes.is_free = reformatFree(fixedRes.is_free);
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
-                    //fixedRes.approved = reformatTinyInt(fixedRes.approved);
 
                     if (resource.length <= 0) {
                         return reply(Boom.badRequest(`resources is not approved`));
