@@ -601,6 +601,7 @@ var getUnapprovedRes = require('../../controllers/resources/get-resources').getU
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
 var addValueConfig = require('../../controllers/shared/add-values').resources;
+var searchResourceConfig = require('../../controllers/search.js').searchResources;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -613,5 +614,6 @@ module.exports = [
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}/{id?}', method: 'GET', config: getApprovedByType },
     { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/resource/search', method: 'POST', config: searchResourceConfig }
 
 ];

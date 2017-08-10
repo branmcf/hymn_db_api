@@ -601,6 +601,8 @@ var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapp
 var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedpersons;
 var addValueConfig = require('../../controllers/shared/add-values').persons;
 
+var searchResourceConfig = require('../../controllers/search.js').searchPersons;
+
 module.exports = [
     { path: '/person', method: 'POST', config: personController.postConfig },
     { path: '/person/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -609,7 +611,8 @@ module.exports = [
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
     { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
     { path: '/quiz/person', method: 'POST', config: postQuizController },
-    { path: '/person/addvalues/{id}', method: 'PUT', config: addValueConfig }
+    { path: '/person/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/person/search', method: 'POST', config: searchResourceConfig }
 
 
 ];

@@ -590,6 +590,8 @@ var getUnapprovedRes = require('../../controllers/events/get-events').getUnappro
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
 var addValueConfig = require('../../controllers/shared/add-values').events;
 
+var searchResourceConfig = require('../../controllers/search.js').searchEvents;
+
 module.exports = [
     { path: '/event', method: 'POST', config: eventController.postConfig },
     { path: '/event/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -598,7 +600,8 @@ module.exports = [
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
     { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
     { path: '/quiz/event', method: 'POST', config: postQuizController },
-    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig }
+    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/event/search', method: 'POST', config: searchResourceConfig }
 
 
 ];
