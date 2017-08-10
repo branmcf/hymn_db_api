@@ -81,9 +81,33 @@ module.exports.searchPersons = {
 
 module.exports.searchAll = {
     handler: function(request, reply) {
-            getQueryAndReturnResultsAll(request, (err, results) => {
+
+            // VERY UGLY, INEFFICIENT, AND A DISGRACE... FIX LATER
+
+            getQueryAndReturnResults("resources", request, (err, resourceResults) => {
                 if (err == true) { return reply(Boom.badRequest(err)); }
-                return reply(results);
+                getQueryAndReturnResults("events", request, (err, eventResults) => {
+                    if (err == true) { return reply(Boom.badRequest(err)); }
+                    getQueryAndReturnResults("congregations", request, (err, congregationResults) => {
+                        if (err == true) { return reply(Boom.badRequest(err)); }
+                        getQueryAndReturnResults("organizations", request, (err, organizationResults) => {
+                            if (err == true) { return reply(Boom.badRequest(err)); }
+                            getQueryAndReturnResults("persons", request, (err, personResults) => {
+                                if (err == true) { return reply(Boom.badRequest(err)); }
+
+                                let toReturn = {
+                                    resources: resourceResults,
+                                    events: eventResults,
+                                    congregations: congregationResults,
+                                    organizations: organizationResults,
+                                    persons: personResults
+                                }
+
+                                return reply(toReturn);
+                            });
+                        });
+                    });
+                });
             });
         } //end handler
 }
