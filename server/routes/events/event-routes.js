@@ -414,12 +414,8 @@ eventController.updateConfig = {
     handler: function(request, reply) {
 
             if (request.params.id) {
-                if (numEvents <= request.params.id - 1) {
-                    //return reply('Not enough events in the database for your request').code(404);
-                    return reply(Boom.notFound("Not enough events"));
-                }
+
                 //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-                var actualIndex = Number(request.params.id - 1); //if you request for events/1 you'll get events[0]
 
                 var mysqlIndex = Number(request.params.id);
 
@@ -442,7 +438,7 @@ eventController.updateConfig = {
                 }, { id: mysqlIndex }], function(err, rows, fields) {
                     if (err) {
                         //console.log(query.sql);
-                        return reply(Boom.badRequest(`invalid query when updating events on column ${request.payload.what_var} with value = ${request.payload.what_val} `));
+                        return reply(Boom.badRequest(`invalid query when updating events on column ${request.payload.column} with value = ${request.payload.value} `));
                     } else {
                         //getEventsJSON();
                         //console.log(query.sql);
@@ -455,82 +451,6 @@ eventController.updateConfig = {
                 //return reply(events[actualId]);
             }
         } //handler
-};
-
-//EVENT GET REQUEST
-eventController.getApprovedConfig = {
-    handler: function(request, reply) {
-
-            connection.query(`SELECT * from events`, function(err, rows, fields) {
-                if (err) { return reply(Boom.badRequest()); }
-                if (!err) {
-
-                    var JSObj = rowsToJS(rows);
-
-                    events = [];
-                    numEvents = 0;
-                    eventTags = [];
-                    eventEnsembles = [];
-                    eventEthnicities = [];
-                    eventShape = [];
-                    eventsAttire = [];
-
-                    events = JSObj;
-                    numEvents = events.length;
-
-                    for (var i = 0; i < JSObj.length; i++) {
-                        popArray(JSObj[i]["ethnicities"], eventEthnicities);
-                        popArray(JSObj[i]["ensembles"], eventEnsembles);
-                        popArray(JSObj[i]["tags"], eventTags);
-                        popArray(JSObj[i]["shape"], eventShape);
-                        popArray(JSObj[i]["clothing"], eventsAttire);
-
-                        eventShape_all.push(eventShape);
-                        eventTags_all.push(eventTags);
-                        eventEnsembles_all.push(eventEnsembles);
-                        eventEthnicities_all.push(eventEthnicities);
-                        eventsAttire_all.push(eventsAttire);
-                    }
-
-
-                    if (request.params.id) {
-                        //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
-
-
-                        var actualIndex = Number(request.params.id) - 1;
-                        //
-                        //create new object, convert to json  
-                        if (events[actualIndex].approved == 1) {
-                            var str = formatEvent(actualIndex);
-                            return reply(str);
-                        } else {
-                            return reply(Boom.badRequest("The Event you request is already approved"));
-                        }
-
-                        //return reply(events[actualId]);
-                    }
-                    //if no ID specified
-                    var objToReturn = [];
-
-                    for (var i = 0; i < events.length; i++) {
-                        //var bob = formatevent(i);
-                        if (events[i].approved == 1) {
-                            var str = formatEvent(i);
-                            objToReturn.push(str);
-                        }
-
-
-                    } //end for
-
-                    //console.log(objToReturn);
-                    if (objToReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return, nothing is approved"));
-                    } else {
-                        reply(objToReturn);
-                    }
-                }
-            });
-        } //end handler
 };
 
 eventController.editConfig = {
