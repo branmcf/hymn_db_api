@@ -630,6 +630,8 @@ var getUnapprovedRes = require('../../controllers/congregations/get-congregation
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
 var addValueConfig = require('../../controllers/shared/add-values').congregations;
 
+var searchResourceConfig = require('../../controllers/search.js').searchCongregations;
+
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
     { path: '/congregation/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -638,8 +640,8 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
-    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig }
-
+    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/congregation/search', method: 'POST', config: searchResourceConfig }
 
 
 ];

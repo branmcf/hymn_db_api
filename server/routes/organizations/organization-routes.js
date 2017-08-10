@@ -657,6 +657,8 @@ var getUnapprovedRes = require('../../controllers/organizations/get-organization
 var getApprovedRes = require('../../controllers/organizations/get-organizations').getApprovedorganizations;
 var addValueConfig = require('../../controllers/shared/add-values').organizations;
 
+var searchResourceConfig = require('../../controllers/search.js').searchOrganizations;
+
 module.exports = [
     { path: '/orgs', method: 'POST', config: orgController.postConfig },
     { path: '/orgs/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -665,7 +667,8 @@ module.exports = [
     { path: '/orgs/{id}', method: 'PUT', config: orgController.editConfig },
     { path: '/orgs/update/{id}', method: 'PUT', config: orgController.updateConfig },
     { path: '/quiz/orgs', method: 'POST', config: postQuizController },
-    { path: '/orgs/addvalues/{id}', method: 'PUT', config: addValueConfig }
+    { path: '/orgs/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/orgs/search', method: 'POST', config: searchResourceConfig }
 
 
 ];
