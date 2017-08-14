@@ -212,12 +212,28 @@ function getQueryAndReturnResults(whichTable, request, callback) {
 
         //console.log("resource matches: ", resource_matches);
 
+        var arrayOfIDs = [];
+        for (var id_key in resource_matches) {
+            if (resource_matches.hasOwnProperty(id_key)) {
+                arrayOfIDs.push(id_key);
+            }
+        }
+
+        console.log("resource_matches: ", resource_matches);
+        console.log("ids: ", arrayOfIDs);
 
         //2. Get name, author, type, website, description, parent (no JSON cols for now) from ALL APPROVED resources
+        var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
+            if (err) { console.log("HEEEELP"); return callback(true, null); }
+            if (rows.length <= 0) { return callback(true, null); }
+            var relevant_resources = rowsToJS(rows);
+
+            return callback(null, relevant_resources);
+        });
 
         //3. 
 
-        return callback(null, resource_matches);
+        //return callback(null, resource_matches);
 
 
     });
