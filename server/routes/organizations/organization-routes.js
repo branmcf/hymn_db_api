@@ -520,7 +520,7 @@ orgController.editConfig = {
                 hymn_soc_member: req.payload.data.hymn_soc_member,
                 clothing: req.payload.data.clothing, //
                 shape: req.payload.data.shape, //
-                approved: false,
+                approved: req.payload.data.approved,
 
                 categories: req.payload.data.categories, //
                 instruments: req.payload.data.instruments, //
@@ -591,6 +591,32 @@ orgController.editConfig = {
 
             // END TYPE CONVERSION
             //if (orgs.length <= request.params.id - 1) return reply('Not enough orgs in the database for your request').code(404);
+
+            try {
+                if (req.params.id) {
+                    connection.query(`SELECT approved FROM organizations WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest(err)); } else {
+                            if (rows.length > 0) {
+                                try {
+                                    var isApproved = rowsToJS(rows)[0].approved;
+                                    if (isApproved == 1) {
+                                        justOrganization.approved = 1;
+                                        console.log("ALREADY APPROVED");
+                                    } else {
+                                        justOrganization.approved = 0;
+                                    }
+                                } catch (e) {
+                                    return reply(Boom.badRequest(e));
+                                }
+                            }
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.log("couldn't get approved variable...");
+                console.log(e);
+            }
 
             var query = connection.query(`
     UPDATE organizations SET ?

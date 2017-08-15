@@ -483,7 +483,7 @@ eventController.editConfig = {
             is_active: true,
             type: req.payload.data.type,
 
-            approved: false,
+            approved: req.payload.data.approved,
             ethnicities: req.payload.data.ethnicities,
             ensembles: req.payload.data.ensembles,
             tags: req.payload.data.tags
@@ -567,6 +567,32 @@ eventController.editConfig = {
         }
 
         // END TYPE CONVERSION
+
+        try {
+            if (req.params.id) {
+                connection.query(`SELECT approved FROM events WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest(err)); } else {
+                        if (rows.length > 0) {
+                            try {
+                                var isApproved = rowsToJS(rows)[0].approved;
+                                if (isApproved == 1) {
+                                    justEvent.approved = 1;
+                                } else {
+                                    justEvent.approved = 0;
+                                }
+                            } catch (e) {
+                                return reply(Boom.badRequest(e));
+                            }
+                        }
+                    }
+                });
+            }
+
+        } catch (e) {
+            console.log("couldn't get approved variable...");
+            console.log(e);
+        }
+
         var query = connection.query(`
       UPDATE events SET ?
       WHERE ?`, [justEvent, { id: req.params.id }], function(err, rows, fields) {

@@ -508,7 +508,7 @@ congController.editConfig = {
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
                 events_free: req.payload.data.events_free,
-                approved: false,
+                approved: req.payload.data.approved,
 
                 categories: req.payload.data.categories,
                 instruments: req.payload.data.instruments,
@@ -563,6 +563,31 @@ congController.editConfig = {
                 justCongregation.events_free = 0;
             }
             // END TYPE CONVERSION
+
+            try {
+                if (req.params.id) {
+                    connection.query(`SELECT approved FROM congregations WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest(err)); } else {
+                            if (rows.length > 0) {
+                                try {
+                                    var isApproved = rowsToJS(rows)[0].approved;
+                                    if (isApproved == 1) {
+                                        justCongregation.approved = 1;
+                                    } else {
+                                        justCongregation.approved = 0;
+                                    }
+                                } catch (e) {
+                                    return reply(Boom.badRequest(e));
+                                }
+                            }
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.log("couldn't get approved variable...");
+                console.log(e);
+            }
 
             var query = connection.query(`
     UPDATE congregations SET ?
