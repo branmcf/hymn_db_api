@@ -140,7 +140,6 @@ module.exports.getUnapprovedResources = {
 
                     var resources = rowsToJS(rows);
 
-                    var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
                     for (var i in resources) {
@@ -161,7 +160,7 @@ module.exports.getUnapprovedResources = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -171,7 +170,7 @@ module.exports.getUnapprovedResources = {
                 connection.query(`SELECT * from resources where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
@@ -217,7 +216,6 @@ module.exports.getApprovedResources = {
 
                     var resources = rowsToJS(rows);
 
-                    var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
                     for (var i in resources) {
@@ -238,7 +236,7 @@ module.exports.getApprovedResources = {
                     }
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -248,7 +246,7 @@ module.exports.getApprovedResources = {
                 connection.query(`SELECT * from resources where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved resource`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
@@ -289,13 +287,42 @@ module.exports.getApprovedResources = {
 module.exports.getApprovedByType = {
     handler: function(request, reply) {
 
-            if (!request.params.id) {
-                connection.query(`SELECT * from resources where approved = 1 AND type = ?`, [request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+            if (request.params.type == "other") {
+                var notPartOfOther = [
+                    "book",
+                    "books",
+                    "hymn",
+                    "hymns",
+                    "hymnal/songbook",
+                    "thesis",
+                    "thesis/dissertation",
+                    "dissertation",
+                    "article",
+                    "articles",
+                    "article(s)",
+                    "article/index",
+                    "blog",
+                    "blogs",
+                    "forum",
+                    "forums",
+                    "news",
+                    "audio",
+                    "audio track(s)",
+                    "audio tracks",
+                    "podcast",
+                    "video",
+                    "videos",
+                    "video/visual(s)"
+                ];
 
+                connection.query(`SELECT * FROM resources WHERE approved =1 AND type NOT IN (?)`, [notPartOfOther], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest("Error getting other types from resources")); }
+                    console.log(rows);
+                    if (rows.length <= 0) {
+                        return reply({});
+                    }
                     var resources = rowsToJS(rows);
 
-                    var numUnApprovedRes = resources.length;
                     var toReturn = [];
 
                     for (var i in resources) {
@@ -313,17 +340,51 @@ module.exports.getApprovedByType = {
                     }
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
+                    } else {
+                        return reply(toReturn);
+                    }
+
+                });
+
+            } else if (!request.params.id) {
+                connection.query(`
+                            SELECT * from resources where approved = 1 AND type = ? `, [request.params.type], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`
+                            Error getting all from resources `)); }
+
+                    var resources = rowsToJS(rows);
+
+                    var toReturn = [];
+
+                    for (var i in resources) {
+                        var toPush = formatJSON(resources[i]);
+                        toPush["url"] = toPush["website"];
+                        toPush["title"] = toPush["name"];
+                        delete toPush["website"];
+                        delete toPush["name"];
+
+                        toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                        toPush.is_free = reformatFree(toPush.is_free);
+                        toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+
+                        toReturn.push(toPush);
+                    }
+
+                    if (resources.length <= 0) {
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
                 });
 
             } else { //there is an id in the parameters
-                connection.query(`SELECT * from resources where approved = 1 AND id = ? AND type = ?`, [request.params.id, request.params.type], function(err, rows, fields) {
-                    if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
+                connection.query(`
+                            SELECT * from resources where approved = 1 AND id = ? AND type = ? `, [request.params.id, request.params.type], function(err, rows, fields) {
+                    if (err) { return reply(Boom.badRequest(`
+                            Error getting all from resources `)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
@@ -337,7 +398,8 @@ module.exports.getApprovedByType = {
                     fixedRes.pract_schol = reformatPractSchol(fixedRes.pract_schol);
 
                     if (resource.length <= 0) {
-                        return reply(Boom.badRequest(`resources is not approved`));
+                        return reply(Boom.badRequest(`
+                            resources is not approved `));
                     } else {
                         //
                         var theUrl = "/resource/" + String(resource.id);

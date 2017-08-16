@@ -136,7 +136,7 @@ module.exports.getUnapprovedcongregations = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -146,7 +146,7 @@ module.exports.getUnapprovedcongregations = {
                 connection.query(`SELECT * from congregations where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from congregations`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var congregation = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(congregation);
@@ -207,7 +207,7 @@ module.exports.getApprovedcongregations = {
                     }
 
                     if (congregations.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -217,7 +217,7 @@ module.exports.getApprovedcongregations = {
                 connection.query(`SELECT * from congregations where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved congregation`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var congregation = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(congregation);

@@ -171,7 +171,7 @@ module.exports.getUnapprovedevents = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -181,7 +181,7 @@ module.exports.getUnapprovedevents = {
                 connection.query(`SELECT * from events where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from events`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var event = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(event);
@@ -259,7 +259,7 @@ module.exports.getApprovedevents = {
                     }
 
                     if (events.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -269,7 +269,7 @@ module.exports.getApprovedevents = {
                 connection.query(`SELECT * from events where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved event`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var event = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(event);
