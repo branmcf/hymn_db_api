@@ -136,7 +136,20 @@ function formatJSON(resource) {
 allController.getConfig = {
     //auth: 'admin_only',
     handler: function(request, reply) {
-        var resourcesToReturn = [];
+        //var resourcesToReturn = [];
+
+        var booksToReturn = [];
+        var hymnToReturn = [];
+        var thesisToReturn = [];
+        var articlesToReturn = [];
+        var blogToReturn = [];
+        var forumToReturn = [];
+        var newsToReturn = [];
+        var audioToReturn = [];
+        var podcastToReturn = [];
+        var videoToReturn = [];
+        var otherToReturn = [];
+
         var eventsToReturn = [];
         var congregationsToReturn = [];
         var organizationsToReturn = [];
@@ -169,7 +182,56 @@ allController.getConfig = {
                 toPush.is_free = reformatFree(toPush.is_free);
                 toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
 
-                resourcesToReturn.push(toPush);
+                switch (toPush["type"].toLowerCase()) {
+                    case "book":
+                    case "books":
+                        booksToReturn.push(toPush);
+                        break;
+                    case "hymn":
+                    case "hymns":
+                    case "hymnal/songbook":
+                        hymnToReturn.push(toPush);
+                        break;
+                    case "thesis":
+                    case "thesis/dissertation":
+                    case "dissertation":
+                        thesisToReturn.push(toPush);
+                        break;
+                    case "article":
+                    case "articles":
+                    case "article(s)":
+                    case "article/index":
+                        articlesToReturn.push(toPush);
+                        break;
+                    case "blog":
+                    case "blogs":
+                        blogToReturn.push(toPush);
+                        break;
+                    case "forum":
+                    case "forums":
+                        forumToReturn.push(toPush);
+                        break;
+                    case "news":
+                        newsToReturn.push(toPush);
+                        break;
+                    case "audio":
+                    case "audio track(s)":
+                    case "audio tracks":
+                        audioToReturn.push(toPush);
+                        break;
+                    case "podcast":
+                        podcastToReturn.push(toPush);
+                        break;
+                    case "video":
+                    case "videos":
+                    case "video/visual(s)":
+                        videoToReturn.push(toPush);
+                        break;
+                    default:
+                        otherToReturn.push(toPush);
+                        break;
+                }
+                //resourcesToReturn.push(toPush);
             }
             /* =================================== Events =================================== */
             connection.query(`SELECT * from events where ?`, [parameters], function(err, rows, fields) {
@@ -247,7 +309,17 @@ allController.getConfig = {
                             //now ready to return everything
                             try {
                                 let toReturn = {
-                                    resources: resourcesToReturn,
+                                    book: booksToReturn,
+                                    hymn: hymnToReturn,
+                                    thesis: thesisToReturn,
+                                    articles: articlesToReturn,
+                                    blog: blogToReturn,
+                                    forum: forumToReturn,
+                                    news: newsToReturn,
+                                    audio: audioToReturn,
+                                    podcast: podcastToReturn,
+                                    video: videoToReturn,
+                                    other: otherToReturn,
                                     events: eventsToReturn,
                                     congregations: congregationsToReturn,
                                     organizations: organizationsToReturn,
