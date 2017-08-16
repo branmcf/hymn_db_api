@@ -149,7 +149,7 @@ module.exports.getUnapprovedorganizations = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -159,7 +159,7 @@ module.exports.getUnapprovedorganizations = {
                 connection.query(`SELECT * from organizations where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from organizations`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var organization = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(organization);
@@ -242,7 +242,7 @@ module.exports.getApprovedorganizations = {
                     }
 
                     if (organizations.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -252,7 +252,7 @@ module.exports.getApprovedorganizations = {
                 connection.query(`SELECT * from organizations where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved organization`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var organization = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(organization);

@@ -160,7 +160,7 @@ module.exports.getUnapprovedResources = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -170,7 +170,7 @@ module.exports.getUnapprovedResources = {
                 connection.query(`SELECT * from resources where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from resources`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
@@ -236,7 +236,7 @@ module.exports.getApprovedResources = {
                     }
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -246,7 +246,7 @@ module.exports.getApprovedResources = {
                 connection.query(`SELECT * from resources where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved resource`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
@@ -315,8 +315,9 @@ module.exports.getApprovedByType = {
                     "video/visual(s)"
                 ];
 
-                connection.query(`SELECT * FROM resources WHERE approved =1 WHERE type NOT IN (?)`, [notPartOfOther], function(err, rows, fields) {
+                connection.query(`SELECT * FROM resources WHERE approved =1 AND type NOT IN (?)`, [notPartOfOther], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest("Error getting other types from resources")); }
+                    console.log(rows);
                     if (rows.length <= 0) {
                         return reply({});
                     }
@@ -371,7 +372,7 @@ module.exports.getApprovedByType = {
                     }
 
                     if (resources.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -383,7 +384,7 @@ module.exports.getApprovedByType = {
                     if (err) { return reply(Boom.badRequest(`
                             Error getting all from resources `)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var resource = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(resource);
