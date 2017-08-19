@@ -628,6 +628,17 @@ var getApprovedRes = require('../../controllers/resources/get-resources').getApp
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
 var addValueConfig = require('../../controllers/shared/add-values').resources;
 var searchResourceConfig = require('../../controllers/search.js').searchResources;
+var searchBooks = require('../../controllers/search.js').searchBooks;
+var searchArticles = require('../../controllers/search.js').searchArticles;
+var searchThesis = require('../../controllers/search.js').searchThesis;
+var searchHymns = require('../../controllers/search.js').searchHymns;
+var searchBlogs = require('../../controllers/search.js').searchBlogs;
+var searchForums = require('../../controllers/search.js').searchForums;
+var searchNews = require('../../controllers/search.js').searchNews;
+var searchAudio = require('../../controllers/search.js').searchAudio;
+var searchPodcast = require('../../controllers/search.js').searchPodcast;
+var searchVideo = require('../../controllers/search.js').searchVideo;
+
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -640,6 +651,17 @@ module.exports = [
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}/{id?}', method: 'GET', config: getApprovedByType },
     { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
-    { path: '/resource/search', method: 'POST', config: searchResourceConfig }
+    { path: '/resource/search', method: 'POST', config: searchResourceConfig },
+    { path: '/resource/search/book', method: 'POST', config: searchBooks },
+    { path: '/resource/search/articles', method: 'POST', config: searchArticles },
+    { path: '/resource/search/hymns', method: 'POST', config: searchHymns },
+    { path: '/resource/search/thesis', method: 'POST', config: searchThesis },
+    { path: '/resource/search/blog', method: 'POST', config: searchBlogs },
+    { path: '/resource/search/forum', method: 'POST', config: searchForums },
+    { path: '/resource/search/news', method: 'POST', config: searchNews },
+    { path: '/resource/search/audio', method: 'POST', config: searchAudio },
+    { path: '/resource/search/podcast', method: 'POST', config: searchPodcast },
+    { path: '/resource/search/video', method: 'POST', config: searchVideo },
+
 
 ];
