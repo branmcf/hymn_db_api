@@ -37,8 +37,7 @@ function rowsToJS(theArray) {
 module.exports.searchResources = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", null, request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Resources")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest(err)); } else { return reply(results); }
             });
         } //end handler
 };
@@ -46,8 +45,7 @@ module.exports.searchResources = {
 module.exports.searchEvents = {
     handler: function(request, reply) {
             getQueryAndReturnResults("events", request, null, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Events")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest(err)); } else { return reply(results); }
             });
         } //end handler
 };
@@ -55,8 +53,7 @@ module.exports.searchEvents = {
 module.exports.searchCongregations = {
     handler: function(request, reply) {
             getQueryAndReturnResults("congregations", null, request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Congregations")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest(err)); } else { return reply(results); }
             });
         } //end handler
 };
@@ -64,8 +61,7 @@ module.exports.searchCongregations = {
 module.exports.searchOrganizations = {
     handler: function(request, reply) {
             getQueryAndReturnResults("organizations", null, request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Organizations")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest(err)); } else { return reply(results); }
             });
         } //end handler
 };
@@ -73,8 +69,7 @@ module.exports.searchOrganizations = {
 module.exports.searchPersons = {
     handler: function(request, reply) {
             getQueryAndReturnResults("persons", null, request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest(err)); } else { return reply(results); }
             });
         } //end handler
 };
@@ -82,8 +77,7 @@ module.exports.searchPersons = {
 module.exports.searchArticles = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "articles", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Articles")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -91,8 +85,7 @@ module.exports.searchArticles = {
 module.exports.searchBooks = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "book", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Books")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -100,8 +93,7 @@ module.exports.searchBooks = {
 module.exports.searchHymns = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "hymn", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Hymns")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -109,8 +101,7 @@ module.exports.searchHymns = {
 module.exports.searchThesis = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "thesis", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Thesis")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -118,8 +109,7 @@ module.exports.searchThesis = {
 module.exports.searchBlogs = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "blog", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Blogs")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -127,8 +117,7 @@ module.exports.searchBlogs = {
 module.exports.searchForums = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "forum", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Forums")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -136,8 +125,7 @@ module.exports.searchForums = {
 module.exports.searchNews = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "news", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from News")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -145,8 +133,7 @@ module.exports.searchNews = {
 module.exports.searchAudio = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "audio", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Audio")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -154,8 +141,7 @@ module.exports.searchAudio = {
 module.exports.searchPodcast = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "podcast", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Podcasts")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -163,8 +149,7 @@ module.exports.searchPodcast = {
 module.exports.searchVideo = {
     handler: function(request, reply) {
             getQueryAndReturnResults("resources", "video", request, (err, results) => {
-                if (err == true) { return reply(Boom.badRequest("error getting query and returning results from Persons")); }
-                return reply(results);
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Videos")); } else { return reply(results); }
             });
         } //end handler
 };
@@ -213,8 +198,8 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
 
 		*/
 
-    argsObj = {
-        "approved": 1
+    var argsObj = {
+        approved: 1
     };
 
     switch (additionalArgs) {
@@ -252,6 +237,8 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
             break;
     }
 
+    console.log("here?");
+
     var columnsToCheck = ["name", "author", "type", "website", "parent", "description", "city", "state", "country", "ethnicities", "tags", "ensembles", "accompaniment", "categories"]
 
     var resource_matches = {}; //object that will hold (resource_id: # matches) key-value pairs
@@ -260,14 +247,46 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
 
     }
 
-    var query = connection.query(`SELECT * FROM ${whichTable} WHERE ?`, [argsObj], (err, rows, fields) => {
+    var key_1 = 0;
+    var val_1 = 0;
+    var key_2 = 0;
+    var val_2 = 0;
+
+    for (var k in argsObj) {
+        if (argsObj.hasOwnProperty(k)) {
+            if (key_1 == 0) {
+                key_1 = k;
+                val_1 = argsObj[k];
+            } else {
+                key_2 = k;
+                val_2 = argsObj[k];
+            }
+        }
+        //doing this (below) incase the endpoint '/resource/search' is called (without a type endpoint)
+        if (Object.keys(argsObj).length == 1) {
+            key_2 = "approved";
+            val_2 = 1;
+        }
+    }
+
+    var query = connection.query(`SELECT * FROM ${whichTable} WHERE ? AND ?`, [{
+        [key_1]: val_1
+    }, {
+        [key_2]: val_2
+    }], (err, rows, fields) => {
+
         if (err) { return callback(true, null); }
         if (rows.length <= 0) { return callback(true, null); }
         var resources = rowsToJS(rows);
         //1. Stem query
-        var toStem = request.payload.query;
-        //a. Add individual words to an array
-        var QueryArray = toStem.match(/("[^"]+"|[^"\s]+)/g); //adds space-seperated words into an array
+        try {
+            var toStem = request.payload.query;
+            //a. Add individual words to an array
+            var QueryArray = toStem.match(/("[^"]+"|[^"\s]+)/g); //adds space-seperated words into an array
+        } catch (err) {
+            console.log("error: ", err);
+            return callback(err, null);
+        }
 
         //Also remove stopwords!
         for (var q_index in QueryArray) {
