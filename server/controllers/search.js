@@ -276,7 +276,7 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
     }], (err, rows, fields) => {
 
         if (err) { return callback(true, null); }
-        if (rows.length <= 0) { return callback(true, null); }
+        if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
         var resources = rowsToJS(rows);
         //1. Stem query
         try {
@@ -372,8 +372,8 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
 
         //2. Get name, author, type, website, description, parent (no JSON cols for now) from ALL APPROVED resources
         var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
-            if (err) { console.log("HEEEELP"); return callback(true, null); }
-            if (rows.length <= 0) { return callback(true, null); }
+            if (err) { return callback(true, null); }
+            if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
             var relevant_resources = rowsToJS(rows);
 
             return callback(null, relevant_resources);
