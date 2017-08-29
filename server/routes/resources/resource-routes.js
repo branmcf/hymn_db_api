@@ -638,7 +638,7 @@ var searchNews = require('../../controllers/search.js').searchNews;
 var searchAudio = require('../../controllers/search.js').searchAudio;
 var searchPodcast = require('../../controllers/search.js').searchPodcast;
 var searchVideo = require('../../controllers/search.js').searchVideo;
-
+var searchOther = require('../../controllers/search.js').searchOther;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -662,6 +662,8 @@ module.exports = [
     { path: '/resource/search/audio', method: 'POST', config: searchAudio },
     { path: '/resource/search/podcast', method: 'POST', config: searchPodcast },
     { path: '/resource/search/video', method: 'POST', config: searchVideo },
+    { path: '/resource/search/other', method: 'POST', config: searchOther },
+
 
 
 ];

@@ -154,6 +154,14 @@ module.exports.searchVideo = {
         } //end handler
 };
 
+module.exports.searchOther = {
+    handler: function(request, reply) {
+            getOtherQueryAndReturnResults(request, (err, results) => {
+                if (err) { return reply(Boom.badRequest("error getting query and returning results from Videos")); } else { return reply(results); }
+            });
+        } //end handler
+};
+
 module.exports.searchAll = {
     handler: function(request, reply) {
 
@@ -368,7 +376,7 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
         }
 
         //2. Get name, author, type, website, description, parent (no JSON cols for now) from ALL APPROVED resources
-        var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
+        var query = connection.query(`SELECT * FROM resources WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
             if (err) { return callback(true, null); }
             if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
             var relevant_resources = rowsToJS(rows);
@@ -518,4 +526,164 @@ function addToResIDObject(id, resource_matches) {
 
     return resource_matches;
 
+}
+
+function getOtherQueryAndReturnResults(request, callback) {
+
+    //receiving in body:
+    /*
+    
+        {
+                "query": "<query_text_here>"
+        }
+    
+            */
+
+    var columnsToCheck = ["name", "author", "type", "website", "parent", "description", "city", "state", "country", "ethnicities", "tags", "ensembles", "accompaniment", "categories"]
+
+    var resource_matches = {}; //object that will hold (resource_id: # matches) key-value pairs
+
+
+    var query = connection.query(`SELECT * FROM resources WHERE approved = 1`, (err, rows, fields) => {
+
+        if (err) { return callback(true, null); }
+        if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
+
+        var non_other_type_aray = ["article", "articles", "book", "hymn", "news", "audio", "podcast", "video", "blog", "thesis", "podcast", "forum"];
+
+        var newRows = [];
+
+        for (let row of rows) {
+            newRows.push(row);
+            for (let other of non_other_type_aray) {
+                if (other.toUpperCase() == row.type.toUpperCase()) {
+                    newRows.pop();
+                }
+            }
+        }
+
+        var resources = rowsToJS(newRows);
+        //1. Stem query
+        try {
+            var toStem = request.payload.query;
+            //a. Add individual words to an array
+            var QueryArray = toStem.match(/("[^"]+"|[^"\s]+)/g); //adds space-seperated words into an array
+        } catch (err) {
+            console.log("error: ", err);
+            return callback(err, null);
+        }
+
+        //Also remove stopwords!
+        for (var q_index in QueryArray) {
+            if (QueryArray[q_index].match(/\bto+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bthe+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\ba+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\ban+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bare+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bis+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bwhat+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bwhere+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bwhen+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bwhy+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bwho+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+            else if (QueryArray[q_index].match(/\bhow+$/gi)) { QueryArray.splice([q_index], 1); } //remove stop word from array
+
+        }
+
+        //b. Remove -ing, -ed, -er, -d, -er, -es, -ies, 
+        for (var i in QueryArray) {
+
+            var temp = QueryArray[i];
+
+            if (temp.match(/ing+$/gi))
+                temp = temp.replace(/ing+$/gi, "");
+            else if (temp.match(/er+$/gi))
+                temp = temp.replace(/er+$/, "");
+            else if (temp.match(/es+$/gi))
+                temp = temp.replace(/es+$/, "");
+            else if (temp.match(/s+$/gi)) {
+                if (!temp.match(/[aeiou]s+$/gi)) {
+                    temp = temp.replace(/s+$/, "");
+                }
+            } else if (temp.match(/ed+$/gi))
+                temp = temp.replace(/ed+$/, "");
+            else if (temp.match(/lly+$/gi))
+                temp = temp.replace(/lly+$/, "");
+            else if (temp.match(/ly+$/gi))
+                temp = temp.replace(/ly+$/, "");
+
+            QueryArray[i] = temp;
+
+        }
+
+        //b. Now all words are stemmed, commence matching resource attributes
+
+        //loop thru every resource
+        for (var res_i in resources) {
+            //loop thru every search_query
+            for (var query_i in QueryArray) {
+                //check every relevant column
+
+                var regex = new RegExp(QueryArray[query_i], "gi");
+
+                for (var col_i in columnsToCheck) {
+                    var whichColumn = columnsToCheck[col_i];
+                    try {
+                        if (resources[res_i][whichColumn]) {
+                            if (resources[res_i][whichColumn].match(regex))
+                                resource_matches = addToResIDObject(resources[res_i].id, resource_matches);
+                        }
+                    } catch (e) {
+                        console.log("error");
+                        //doesn't exist, move along
+                    }
+                }
+
+            }
+
+        }
+
+        //console.log("resource matches: ", resource_matches);
+
+        var arrayOfIDs = [];
+        for (var id_key in resource_matches) {
+            if (resource_matches.hasOwnProperty(id_key)) {
+                arrayOfIDs.push(id_key);
+            }
+        }
+
+        //2. Get name, author, type, website, description, parent (no JSON cols for now) from ALL APPROVED resources
+        var query = connection.query(`SELECT * FROM resources WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
+            if (err) { return callback(true, null); }
+            if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
+            var relevant_resources = rowsToJS(rows);
+
+            var toReturn = [];
+
+            for (var i in relevant_resources) {
+                var toPush = formatJSON(relevant_resources[i]);
+                toPush["url"] = toPush["website"];
+                toPush["title"] = toPush["name"];
+                delete toPush["website"];
+                delete toPush["name"];
+
+                //toPush.is_active = reformatTinyInt(toPush.is_active);
+                //toPush.high_level = reformatTinyInt(toPush.high_level);
+                toPush.hymn_soc_member = reformatTinyInt(toPush.hymn_soc_member);
+                toPush.is_free = reformatFree(toPush.is_free);
+                toPush.pract_schol = reformatPractSchol(toPush.pract_schol);
+                //toPush.approved = reformatTinyInt(toPush.approved);
+
+                toReturn.push(toPush);
+            }
+
+            return callback(null, toReturn);
+        });
+
+        //3. 
+
+        //return callback(null, resource_matches);
+
+
+    });
 }
