@@ -287,32 +287,67 @@ congController.postConfig = {
 
                 //var theCongID = congregations.length + 1;
 
-                var newCong = {
-                    name: req.payload.data.name,
-                    website: req.payload.data.url,
-                    parent: req.payload.data.parent,
-                    denomination: req.payload.data.denomination,
-                    city: req.payload.data.city,
-                    state: req.payload.data.state,
-                    country: req.payload.data.country,
-                    geography: req.payload.data.geography,
-                    is_free: req.payload.data.is_org_free,
-                    attendance: req.payload.data.attendance,
-                    process: req.payload.data.process,
-                    hymn_soc_member: req.payload.data.hymn_soc_member,
-                    user: req.payload.user,
-                    user_id: req.payload.uid,
-                    clothing: req.payload.data.clothing,
-                    shape: req.payload.data.shape,
-                    description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
-                    is_active: true,
+                if (!req.payload.data.uid) {
+                    try {
+                        var newCong = {
+                            name: req.payload.data.name,
+                            website: req.payload.data.url,
+                            parent: req.payload.data.parent,
+                            denomination: req.payload.data.denomination,
+                            city: req.payload.data.city,
+                            state: req.payload.data.state,
+                            country: req.payload.data.country,
+                            geography: req.payload.data.geography,
+                            is_free: req.payload.data.is_org_free,
+                            attendance: req.payload.data.attendance,
+                            process: req.payload.data.process,
+                            hymn_soc_member: req.payload.data.hymn_soc_member,
+                            user: req.payload.user,
+                            user_id: null,
+                            clothing: req.payload.data.clothing,
+                            shape: req.payload.data.shape,
+                            description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+                            is_active: true,
 
-                    categories: req.payload.data.categories,
-                    instruments: req.payload.data.instruments,
-                    ethnicities: req.payload.data.ethnicities,
-                    tags: req.payload.data.tags
+                            categories: req.payload.data.categories,
+                            instruments: req.payload.data.instruments,
+                            ethnicities: req.payload.data.ethnicities,
+                            tags: req.payload.data.tags
 
-                };
+                        };
+                    } catch (e) {
+                        return reply(Boom.badData("No uid supplied and error in another variable"));
+                    }
+
+                } else {
+
+                    var newCong = {
+                        name: req.payload.data.name,
+                        website: req.payload.data.url,
+                        parent: req.payload.data.parent,
+                        denomination: req.payload.data.denomination,
+                        city: req.payload.data.city,
+                        state: req.payload.data.state,
+                        country: req.payload.data.country,
+                        geography: req.payload.data.geography,
+                        is_free: req.payload.data.is_org_free,
+                        attendance: req.payload.data.attendance,
+                        process: req.payload.data.process,
+                        hymn_soc_member: req.payload.data.hymn_soc_member,
+                        user: req.payload.user,
+                        user_id: req.payload.uid,
+                        clothing: req.payload.data.clothing,
+                        shape: req.payload.data.shape,
+                        description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+                        is_active: true,
+
+                        categories: req.payload.data.categories,
+                        instruments: req.payload.data.instruments,
+                        ethnicities: req.payload.data.ethnicities,
+                        tags: req.payload.data.tags
+
+                    };
+                }
 
                 insertAndGet(newCong, (err, theID) => {
                     var toReturn = {

@@ -376,7 +376,7 @@ function getQueryAndReturnResults(whichTable, additionalArgs, request, callback)
         }
 
         //2. Get name, author, type, website, description, parent (no JSON cols for now) from ALL APPROVED resources
-        var query = connection.query(`SELECT * FROM resources WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
+        var query = connection.query(`SELECT * FROM ${whichTable} WHERE id in (?)`, [arrayOfIDs], (err, rows, fields) => {
             if (err) { return callback(true, null); }
             if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
             var relevant_resources = rowsToJS(rows);
@@ -549,7 +549,32 @@ function getOtherQueryAndReturnResults(request, callback) {
         if (err) { return callback(true, null); }
         if (rows.length <= 0) { return callback("did not find any matching items, nothing to return", null); }
 
-        var non_other_type_aray = ["article", "articles", "book", "hymn", "news", "audio", "podcast", "video", "blog", "thesis", "podcast", "forum"];
+        var non_other_type_aray = [
+            "book",
+            "books",
+            "hymn",
+            "hymns",
+            "hymnal/songbook",
+            "thesis",
+            "thesis/dissertation",
+            "dissertation",
+            "article",
+            "articles",
+            "article(s)",
+            "article/index",
+            "blog",
+            "blogs",
+            "forum",
+            "forums",
+            "news",
+            "audio",
+            "audio track(s)",
+            "audio tracks",
+            "podcast",
+            "video",
+            "videos",
+            "video/visual(s)"
+        ];
 
         var newRows = [];
 
