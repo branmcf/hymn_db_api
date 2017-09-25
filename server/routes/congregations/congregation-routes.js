@@ -287,7 +287,7 @@ congController.postConfig = {
 
                 //var theCongID = congregations.length + 1;
 
-                if (!req.payload.data.uid) {
+                if (!req.payload.uid) {
                     try {
                         var newCong = {
                             name: req.payload.data.name,
