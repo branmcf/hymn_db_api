@@ -268,7 +268,10 @@ allController.getConfig = {
     }
 }
 
+var searchConfig = require('../../controllers/search.js').searchAll;
+
 module.exports = [
-    { path: '/all/{type?}', method: 'GET', config: allController.getConfig }
+    { path: '/all/{type?}', method: 'GET', config: allController.getConfig },
+    { path: '/all/search', method: 'POST', config: searchConfig }
 
 ];

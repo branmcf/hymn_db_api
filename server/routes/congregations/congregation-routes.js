@@ -287,32 +287,67 @@ congController.postConfig = {
 
                 //var theCongID = congregations.length + 1;
 
-                var newCong = {
-                    name: req.payload.data.name,
-                    website: req.payload.data.url,
-                    parent: req.payload.data.parent,
-                    denomination: req.payload.data.denomination,
-                    city: req.payload.data.city,
-                    state: req.payload.data.state,
-                    country: req.payload.data.country,
-                    geography: req.payload.data.geography,
-                    is_free: req.payload.data.is_org_free,
-                    attendance: req.payload.data.attendance,
-                    process: req.payload.data.process,
-                    hymn_soc_member: req.payload.data.hymn_soc_member,
-                    user: req.payload.user,
-                    user_id: req.payload.uid,
-                    clothing: req.payload.data.clothing,
-                    shape: req.payload.data.shape,
-                    description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
-                    is_active: true,
+                if (!req.payload.uid) {
+                    try {
+                        var newCong = {
+                            name: req.payload.data.name,
+                            website: req.payload.data.url,
+                            parent: req.payload.data.parent,
+                            denomination: req.payload.data.denomination,
+                            city: req.payload.data.city,
+                            state: req.payload.data.state,
+                            country: req.payload.data.country,
+                            geography: req.payload.data.geography,
+                            is_free: req.payload.data.is_org_free,
+                            attendance: req.payload.data.attendance,
+                            process: req.payload.data.process,
+                            hymn_soc_member: req.payload.data.hymn_soc_member,
+                            user: req.payload.user,
+                            user_id: null,
+                            clothing: req.payload.data.clothing,
+                            shape: req.payload.data.shape,
+                            description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+                            is_active: true,
 
-                    categories: req.payload.data.categories,
-                    instruments: req.payload.data.instruments,
-                    ethnicities: req.payload.data.ethnicities,
-                    tags: req.payload.data.tags
+                            categories: req.payload.data.categories,
+                            instruments: req.payload.data.instruments,
+                            ethnicities: req.payload.data.ethnicities,
+                            tags: req.payload.data.tags
 
-                };
+                        };
+                    } catch (e) {
+                        return reply(Boom.badData("No uid supplied and error in another variable"));
+                    }
+
+                } else {
+
+                    var newCong = {
+                        name: req.payload.data.name,
+                        website: req.payload.data.url,
+                        parent: req.payload.data.parent,
+                        denomination: req.payload.data.denomination,
+                        city: req.payload.data.city,
+                        state: req.payload.data.state,
+                        country: req.payload.data.country,
+                        geography: req.payload.data.geography,
+                        is_free: req.payload.data.is_org_free,
+                        attendance: req.payload.data.attendance,
+                        process: req.payload.data.process,
+                        hymn_soc_member: req.payload.data.hymn_soc_member,
+                        user: req.payload.user,
+                        user_id: req.payload.uid,
+                        clothing: req.payload.data.clothing,
+                        shape: req.payload.data.shape,
+                        description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
+                        is_active: true,
+
+                        categories: req.payload.data.categories,
+                        instruments: req.payload.data.instruments,
+                        ethnicities: req.payload.data.ethnicities,
+                        tags: req.payload.data.tags
+
+                    };
+                }
 
                 insertAndGet(newCong, (err, theID) => {
                     var toReturn = {
@@ -508,7 +543,7 @@ congController.editConfig = {
                 description_of_worship_to_guests: req.payload.data.description_of_worship_to_guests,
                 is_active: true,
                 events_free: req.payload.data.events_free,
-                approved: false,
+                approved: req.payload.data.approved,
 
                 categories: req.payload.data.categories,
                 instruments: req.payload.data.instruments,
@@ -563,6 +598,31 @@ congController.editConfig = {
                 justCongregation.events_free = 0;
             }
             // END TYPE CONVERSION
+
+            try {
+                if (req.params.id) {
+                    connection.query(`SELECT approved FROM congregations WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest(err)); } else {
+                            if (rows.length > 0) {
+                                try {
+                                    var isApproved = rowsToJS(rows)[0].approved;
+                                    if (isApproved == 1) {
+                                        justCongregation.approved = 1;
+                                    } else {
+                                        justCongregation.approved = 0;
+                                    }
+                                } catch (e) {
+                                    return reply(Boom.badRequest(e));
+                                }
+                            }
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.log("couldn't get approved variable...");
+                console.log(e);
+            }
 
             var query = connection.query(`
     UPDATE congregations SET ?
@@ -630,6 +690,8 @@ var getUnapprovedRes = require('../../controllers/congregations/get-congregation
 var getApprovedRes = require('../../controllers/congregations/get-congregations').getApprovedcongregations;
 var addValueConfig = require('../../controllers/shared/add-values').congregations;
 
+var searchResourceConfig = require('../../controllers/search.js').searchCongregations;
+
 module.exports = [
     { path: '/congregation', method: 'POST', config: congController.postConfig },
     { path: '/congregation/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -638,8 +700,8 @@ module.exports = [
     { path: '/congregation/{id}', method: 'PUT', config: congController.editConfig },
     { path: '/congregation/update/{id}', method: 'PUT', config: congController.updateConfig },
     { path: '/quiz/congregation', method: 'POST', config: postQuizController },
-    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig }
-
+    { path: '/congregation/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/congregation/search', method: 'POST', config: searchResourceConfig }
 
 
 ];

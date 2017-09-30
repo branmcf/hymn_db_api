@@ -464,7 +464,7 @@ personController.editConfig = {
                 high_level: req.payload.data.high_level,
                 is_active: true,
                 pract_schol: req.payload.data.pract_schol, //
-                approved: false,
+                approved: req.payload.data.approved,
 
                 languages: req.payload.data.languages, //
                 instruments: req.payload.data.instruments, //
@@ -510,6 +510,31 @@ personController.editConfig = {
             }
 
             //if (events.length <= request.params.id - 1) return reply('Not enough events in the database for your request').code(404);
+
+            try {
+                if (req.params.id) {
+                    connection.query(`SELECT approved FROM persons WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest(err)); } else {
+                            if (rows.length > 0) {
+                                try {
+                                    var isApproved = rowsToJS(rows)[0].approved;
+                                    if (isApproved == 1) {
+                                        justPerson.approved = 1;
+                                    } else {
+                                        justPerson.approved = 0;
+                                    }
+                                } catch (e) {
+                                    return reply(Boom.badRequest(e));
+                                }
+                            }
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.log("couldn't get approved variable...");
+                console.log(e);
+            }
 
             var query = connection.query(`
     UPDATE persons SET ?
@@ -601,6 +626,8 @@ var getUnapprovedRes = require('../../controllers/persons/get-persons').getUnapp
 var getApprovedRes = require('../../controllers/persons/get-persons').getApprovedpersons;
 var addValueConfig = require('../../controllers/shared/add-values').persons;
 
+var searchResourceConfig = require('../../controllers/search.js').searchPersons;
+
 module.exports = [
     { path: '/person', method: 'POST', config: personController.postConfig },
     { path: '/person/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -609,7 +636,8 @@ module.exports = [
     { path: '/person/{id}', method: 'PUT', config: personController.editConfig },
     { path: '/person/update/{id}', method: 'PUT', config: personController.updateConfig },
     { path: '/quiz/person', method: 'POST', config: postQuizController },
-    { path: '/person/addvalues/{id}', method: 'PUT', config: addValueConfig }
+    { path: '/person/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/person/search', method: 'POST', config: searchResourceConfig }
 
 
 ];

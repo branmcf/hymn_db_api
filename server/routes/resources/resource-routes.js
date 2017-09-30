@@ -402,7 +402,7 @@ resourceController.editConfig = {
                 pract_schol: req.payload.data.pract_schol, //
                 //approved not included because by default it is not approved
 
-                approved: false,
+                approved: req.payload.data.approved,
                 categories: req.payload.data.categories, //
                 topics: req.payload.data.topics, //
                 accompaniment: req.payload.data.accompaniment, //
@@ -451,26 +451,52 @@ resourceController.editConfig = {
             } else if (typeof justResource.is_free !== "number") {
                 justResource.is_free = 2;
             }
-            connection.query(`SELECT id FROM resources`, (err, rows, fields) => {
-                if (err) { return reply(Boom.badRequest("error selecting resources in editConfig")); }
+
+            try {
                 if (req.params.id) {
-
-                    var query = connection.query(`
-                        UPDATE resources SET ?
-                        WHERE ?`, [justResource, { id: req.params.id }], function(err, rows, fields) {
-                        if (err) {
-                            return reply(Boom.badRequest(`invalid query when updating resources with id= ${req.params.id} `));
-                        } else {
-                            //console.log("set resource #", req.params.id);
+                    connection.query(`SELECT approved FROM resources WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                        if (err) { return reply(Boom.badRequest(err)); } else {
+                            if (rows.length > 0) {
+                                try {
+                                    var isApproved = rowsToJS(rows)[0].approved;
+                                    if (isApproved == 1) {
+                                        justResource.approved = 1;
+                                    } else {
+                                        justResource.approved = 0;
+                                    }
+                                } catch (e) {
+                                    return reply(Boom.badRequest(e));
+                                }
+                            }
                         }
-
-                        return reply({ statusCode: 201 });
                     });
-                } //end "if there is an id" in the parameters
-                else {
-                    return reply(Boom.notFound("must supply and id as a parameter"));
                 }
-            });
+
+            } catch (e) {
+                console.log("couldn't get approved variable...");
+                console.log(e);
+            }
+
+
+
+            if (req.params.id) {
+
+                var query = connection.query(`
+                    UPDATE resources SET ?
+                    WHERE ?`, [justResource, { id: req.params.id }], function(err, rows, fields) {
+                    if (err) {
+                        return reply(Boom.badRequest(`invalid query when updating resources with id= ${req.params.id} `));
+                    } else {
+                        //console.log("set resource #", req.params.id);
+                    }
+
+                    return reply({ statusCode: 201 });
+                });
+            } //end "if there is an id" in the parameters
+            else {
+                return reply(Boom.notFound("must supply and id as a parameter"));
+            }
+
 
         }
         /* ADD COMMA ^
@@ -601,6 +627,18 @@ var getUnapprovedRes = require('../../controllers/resources/get-resources').getU
 var getApprovedRes = require('../../controllers/resources/get-resources').getApprovedResources;
 var getApprovedByType = require('../../controllers/resources/get-resources').getApprovedByType;
 var addValueConfig = require('../../controllers/shared/add-values').resources;
+var searchResourceConfig = require('../../controllers/search.js').searchResources;
+var searchBooks = require('../../controllers/search.js').searchBooks;
+var searchArticles = require('../../controllers/search.js').searchArticles;
+var searchThesis = require('../../controllers/search.js').searchThesis;
+var searchHymns = require('../../controllers/search.js').searchHymns;
+var searchBlogs = require('../../controllers/search.js').searchBlogs;
+var searchForums = require('../../controllers/search.js').searchForums;
+var searchNews = require('../../controllers/search.js').searchNews;
+var searchAudio = require('../../controllers/search.js').searchAudio;
+var searchPodcast = require('../../controllers/search.js').searchPodcast;
+var searchVideo = require('../../controllers/search.js').searchVideo;
+var searchOther = require('../../controllers/search.js').searchOther;
 
 module.exports = [
     { path: '/resource', method: 'POST', config: resourceController.postConfig },
@@ -613,5 +651,19 @@ module.exports = [
     { path: '/quiz/resource/{type}', method: 'POST', config: postQuizControllerType },
     { path: '/resource/approved/type/{type}/{id?}', method: 'GET', config: getApprovedByType },
     { path: '/resource/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/resource/search', method: 'POST', config: searchResourceConfig },
+    { path: '/resource/search/book', method: 'POST', config: searchBooks },
+    { path: '/resource/search/articles', method: 'POST', config: searchArticles },
+    { path: '/resource/search/hymns', method: 'POST', config: searchHymns },
+    { path: '/resource/search/thesis', method: 'POST', config: searchThesis },
+    { path: '/resource/search/blog', method: 'POST', config: searchBlogs },
+    { path: '/resource/search/forum', method: 'POST', config: searchForums },
+    { path: '/resource/search/news', method: 'POST', config: searchNews },
+    { path: '/resource/search/audio', method: 'POST', config: searchAudio },
+    { path: '/resource/search/podcast', method: 'POST', config: searchPodcast },
+    { path: '/resource/search/video', method: 'POST', config: searchVideo },
+    { path: '/resource/search/other', method: 'POST', config: searchOther },
+
+
 
 ];

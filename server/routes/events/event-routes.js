@@ -483,7 +483,7 @@ eventController.editConfig = {
             is_active: true,
             type: req.payload.data.type,
 
-            approved: false,
+            approved: req.payload.data.approved,
             ethnicities: req.payload.data.ethnicities,
             ensembles: req.payload.data.ensembles,
             tags: req.payload.data.tags
@@ -567,6 +567,32 @@ eventController.editConfig = {
         }
 
         // END TYPE CONVERSION
+
+        try {
+            if (req.params.id) {
+                connection.query(`SELECT approved FROM events WHERE id = ?`, [req.params.id], (err, rows, fields) => {
+                    if (err) { return reply(Boom.badRequest(err)); } else {
+                        if (rows.length > 0) {
+                            try {
+                                var isApproved = rowsToJS(rows)[0].approved;
+                                if (isApproved == 1) {
+                                    justEvent.approved = 1;
+                                } else {
+                                    justEvent.approved = 0;
+                                }
+                            } catch (e) {
+                                return reply(Boom.badRequest(e));
+                            }
+                        }
+                    }
+                });
+            }
+
+        } catch (e) {
+            console.log("couldn't get approved variable...");
+            console.log(e);
+        }
+
         var query = connection.query(`
       UPDATE events SET ?
       WHERE ?`, [justEvent, { id: req.params.id }], function(err, rows, fields) {
@@ -590,6 +616,8 @@ var getUnapprovedRes = require('../../controllers/events/get-events').getUnappro
 var getApprovedRes = require('../../controllers/events/get-events').getApprovedevents;
 var addValueConfig = require('../../controllers/shared/add-values').events;
 
+var searchResourceConfig = require('../../controllers/search.js').searchEvents;
+
 module.exports = [
     { path: '/event', method: 'POST', config: eventController.postConfig },
     { path: '/event/{id?}', method: 'GET', config: getUnapprovedRes },
@@ -598,7 +626,8 @@ module.exports = [
     { path: '/event/{id}', method: 'PUT', config: eventController.editConfig },
     { path: '/event/update/{id}', method: 'PUT', config: eventController.updateConfig },
     { path: '/quiz/event', method: 'POST', config: postQuizController },
-    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig }
+    { path: '/event/addvalues/{id}', method: 'PUT', config: addValueConfig },
+    { path: '/event/search', method: 'POST', config: searchResourceConfig }
 
 
 ];

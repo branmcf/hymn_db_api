@@ -142,7 +142,7 @@ module.exports.getUnapprovedpersons = {
                     }
 
                     if (toReturn.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -152,7 +152,7 @@ module.exports.getUnapprovedpersons = {
                 connection.query(`SELECT * from persons where approved = 0 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting all from persons`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var person = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(person);
@@ -210,7 +210,7 @@ module.exports.getApprovedpersons = {
                     }
 
                     if (persons.length <= 0) {
-                        return reply(Boom.badRequest("nothing to return"));
+                        return reply({});
                     } else {
                         return reply(toReturn);
                     }
@@ -220,7 +220,7 @@ module.exports.getApprovedpersons = {
                 connection.query(`SELECT * from persons where approved = 1 AND id = ?`, [request.params.id], function(err, rows, fields) {
                     if (err) { return reply(Boom.badRequest(`Error getting approved person`)); }
                     //console.log(rows[0]);
-                    if (rows[0] == undefined) { return reply(Boom.badRequest("nothing to return")); }
+                    if (rows[0] == undefined) { return reply({}); }
                     var person = rowsToJS(rows[0]);
 
                     var fixedRes = formatJSON(person);
