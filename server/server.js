@@ -9,19 +9,25 @@ const fs = require('fs');
 //const https = require('https');
 var BasicAuth = require('hapi-auth-basic')
 
-var options = require('./config/config.js');
+const options = require('./config/config.js');
+
+console.log(options.host);
+console.log(options.user);
+console.log(options.password);
+console.log(options.database);
+console.log(options.port);
 
 //mysql connection
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host: options.host,
     user: options.user,
     password: options.password,
     database: options.database,
-    port: options.port
-
+    port: options.port,
 });
 
 if (process.env.JAWSDB_URL) {
+    console.log("JAWSDB_URL FOUND")
     connection = mysql.createConnection(process.env.JAWSDB_URL);
 }
 
