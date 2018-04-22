@@ -11,12 +11,6 @@ var BasicAuth = require('hapi-auth-basic')
 
 const options = require('./config/config.js');
 
-console.log(options.host);
-console.log(options.user);
-console.log(options.password);
-console.log(options.database);
-console.log(options.port);
-
 //mysql connection
 const connection = mysql.createConnection({
     host: options.host,
