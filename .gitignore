@@ -38,7 +38,7 @@ jspm_packages
 
 /server/.DS_Store
 
-/server/config/*
+# /server/config/*
 
 /server/database/profile-creation/*
 
